@@ -16,6 +16,8 @@ export class RulesEngine {
   resetMatch({ gamesToWin = this.gamesToWin, scoringMode = this.scoringMode } = {}) {
     this.gamesToWin = gamesToWin;
     this.scoringMode = scoringMode;
+    this.safetyWarnings = { player: 0, opponent: 0 };
+    this.uncalledLetWarnings = { player: 0, opponent: 0 };
     this.score = {
       playerPoints: 0,
       opponentPoints: 0,
@@ -49,6 +51,99 @@ export class RulesEngine {
     ball.shotType = shotType;
     ball.isDisguised = !!isDisguised;
     ball.rallyStrokeCount = isServe ? 1 : (ball.rallyStrokeCount || 0) + 1;
+    ball.timeSinceHitSec = 0;
+    ball.hadClearInterference = false;
+    ball.interferenceDecision = null;
+    ball.interferenceReason = '';
+  }
+
+  /**
+   * Checks if the live squash ball physically hits the non-striking player's body.
+   * Enforces WSF Rule 9 (Ball Hitting a Player) AND issues mandatory safety warnings
+   * when a striker hits into an opponent instead of stopping play and calling a Let.
+   */
+  evaluateBallPlayerBodyCollision(ball, playerActor, opponentActor) {
+    if (!ball || !ball.inPlay || !playerActor || !opponentActor) {
+      return { hitPlayer: false };
+    }
+    const elapsed = Number(ball.timeSinceHitSec ?? 0);
+    if (elapsed < 0.045) {
+      return { hitPlayer: false };
+    }
+
+    const hitter = ball.lastHitter || 'player';
+    const targetRole = hitter === 'player' ? 'opponent' : 'player';
+    const targetActor = targetRole === 'player' ? playerActor : opponentActor;
+
+    const dx = ball.pos.x - targetActor.pos.x;
+    const dz = ball.pos.z - targetActor.pos.z;
+    const distXZ = Math.hypot(dx, dz);
+    const inBodyHeight = ball.pos.y >= 0.08 && ball.pos.y <= 1.78;
+    const hitRadius = !ball.hitFrontWallThisShot ? 0.48 : 0.40;
+
+    if (!inBodyHeight || distXZ > hitRadius) {
+      return { hitPlayer: false };
+    }
+
+    // Case 1: Ball struck the opponent BEFORE reaching the front wall (Dangerous Line-of-Fire Hit!)
+    if (!ball.hitFrontWallThisShot) {
+      const goingDirectToFront = ball.vel.z < -2.0 && (ball.wallHitCountThisShot || 0) === 0;
+      this.safetyWarnings[hitter] = (this.safetyWarnings[hitter] || 0) + 1;
+      const warnCount = this.safetyWarnings[hitter];
+      const hitterName = hitter === 'player' ? 'Player 1' : 'Player 2';
+
+      if (goingDirectToFront) {
+        // WSF Rule 9.1.1: Ball was going directly to the front wall -> Stroke to Striker,
+        // PLUS explicit Referee Safety Warning to call a Let instead of hitting the opponent!
+        const safetyCallout =
+          warnCount >= 2
+            ? `Stop play! Ball hit opponent! Stroke awarded, but SECOND SAFETY WARNING to ${hitterName}: Never strike the ball when your opponent is in the line of fire! Hold your shot and call Let, please!`
+            : `Stop play! Ball hit opponent! Stroke awarded, but Referee Safety Warning: Always stop and call Let, please instead of hitting an opponent!`;
+        return {
+          hitPlayer: true,
+          victimRole: targetRole,
+          hitterRole: hitter,
+          decision: 'STROKE_WITH_SAFETY_WARNING',
+          winner: hitter,
+          reason: 'Ball Hit Opponent (Stroke + Safety Warning)',
+          callout: safetyCallout,
+          shortBanner: '⚠️ STROKE + SAFETY WARNING!',
+          subBanner: `Point awarded, but DO NOT hit into an opponent! Call "Let, please!" (Key F/L, Raise Hand, or Phone Up) [${warnCount}x Warning]`,
+          bannerStyle: 'style-fault',
+          warningCount: warnCount
+        };
+      }
+
+      // Ball hit side wall first or was not going directly to front wall -> Replay Let + Safety Warning
+      return {
+        hitPlayer: true,
+        victimRole: targetRole,
+        hitterRole: hitter,
+        decision: 'LET_WITH_SAFETY_WARNING',
+        winner: null,
+        reason: 'Ball Hit Opponent Indirectly (Let + Safety Warning)',
+        callout: `Stop play! Ball hit opponent after turning. Yes, let! Safety warning: Hold your swing and call Let, please when the court is blocked!`,
+        shortBanner: '⚠️ LET + SAFETY WARNING!',
+        subBanner: 'Indirect ball hit opponent — Replay Let! Always hold up and call Let for safety.',
+        bannerStyle: 'style-fault',
+        warningCount: warnCount
+      };
+    }
+
+    // Case 2: Ball already rebounded off the Front Wall and hit the receiver
+    return {
+      hitPlayer: true,
+      victimRole: targetRole,
+      hitterRole: hitter,
+      decision: 'REBOUND_HIT_RECEIVER',
+      winner: hitter,
+      reason: 'Stroke (Ball Hit Receiver)',
+      callout: 'Stop play! Ball struck receiver after front wall. Stroke!',
+      shortBanner: 'BALL HIT PLAYER • STROKE',
+      subBanner: 'Rebound off front wall struck receiver — Point to Striker.',
+      bannerStyle: 'style-fault',
+      warningCount: 0
+    };
   }
 
   /**
@@ -109,6 +204,19 @@ export class RulesEngine {
       // Second bounce on floor -> Point to Hitter!
       if (ball.bounceCountOnFloor >= 2) {
         const isNickWinner = !!ball.lastBounceWasNick;
+        // Check if receiver had a clear Let/Stroke obstruction and held up, but FAILED to call a Let!
+        if (!isNickWinner && ball.hadClearInterference) {
+          this.uncalledLetWarnings[receiver] = (this.uncalledLetWarnings[receiver] || 0) + 1;
+          return {
+            rallyEnded: true,
+            winner: hitter,
+            reason: 'Uncalled Let (Two Bounces)',
+            uncalledLetPenalty: true,
+            callout:
+              'Not up! Point to striker. Referee warning: You had interference, but you must call Let, please to stop play — otherwise you lose the point!',
+            bannerStyle: 'style-fault'
+          };
+        }
         return {
           rallyEnded: true,
           winner: hitter,
@@ -123,13 +231,21 @@ export class RulesEngine {
   }
 
   /**
-   * Optional Let / Stroke interference evaluation when the incoming receiver is
-   * physically blocked by the last hitter within the direct path to the ball.
+   * Evaluates live WSF Rule 8 Interference (Let / Stroke) when the incoming receiver is
+   * physically obstructed by the outgoing hitter in the swing radius, front-wall cone, or access line.
    */
   evaluateInterference(receiverActor, hitterActor, ball) {
-    if (this.interferenceRule === 'ARCADE_NO_FAULT' || !ball || !ball.inPlay || !ball.hitFrontWallThisShot) {
+    if (
+      this.interferenceRule === 'ARCADE_NO_FAULT' ||
+      !ball ||
+      !ball.inPlay ||
+      !ball.hitFrontWallThisShot ||
+      !receiverActor ||
+      !hitterActor
+    ) {
       return { interference: false };
     }
+
     const distBetweenActors = Math.hypot(
       receiverActor.pos.x - hitterActor.pos.x,
       receiverActor.pos.z - hitterActor.pos.z
@@ -143,19 +259,136 @@ export class RulesEngine {
       ball.pos.z - hitterActor.pos.z
     );
 
-    // If players collide closely while the ball is within strike range and the hitter is closer to the ball
-    if (distBetweenActors < 0.52 && distReceiverToBall < 1.35 && distHitterToBall < distReceiverToBall) {
-      // If ball is directly in front of the front wall cone -> Stroke; otherwise Let
-      const isDirectFrontAccessBlocked = Math.abs(hitterActor.pos.x - ball.pos.x) < 0.45 && hitterActor.pos.z < receiverActor.pos.z;
+    // 1. Direct Front-Wall Cone or Swing-Radius Obstruction (STROKE danger!)
+    // If receiver is close enough to play the ball (< 2.35m) and hitter is either inside the swing cylinder
+    // or directly in the front-wall shot triangle between the ball and the front wall.
+    const inFrontCone =
+      hitterActor.pos.z < Math.max(ball.pos.z, receiverActor.pos.z) + 0.25 &&
+      Math.abs(hitterActor.pos.x - ball.pos.x) < 0.72 &&
+      distHitterToBall < 1.65;
+    const inSwingZone = distBetweenActors < 1.05 && distReceiverToBall < 2.05;
+
+    if (distReceiverToBall < 2.45 && (inSwingZone || inFrontCone)) {
+      const isDirectStroke =
+        (inFrontCone && distReceiverToBall < 2.1) ||
+        (distBetweenActors < 0.88 && distHitterToBall <= distReceiverToBall + 0.15);
+      const decision = isDirectStroke ? 'STROKE' : 'LET';
+      ball.hadClearInterference = true;
+      ball.interferenceDecision = decision;
+      ball.interferenceReason = isDirectStroke
+        ? 'Opponent blocking front-wall cone / swing zone'
+        : 'Opponent crowding ball access';
       return {
         interference: true,
-        decision: isDirectFrontAccessBlocked ? 'STROKE' : 'LET',
-        winner: isDirectFrontAccessBlocked ? receiverActor.role : null,
-        callout: isDirectFrontAccessBlocked ? 'Stroke to Receiver!' : 'Let Please — Play a Let!'
+        decision,
+        winner: isDirectStroke ? receiverActor.role : null,
+        reason: ball.interferenceReason,
+        callout: isDirectStroke
+          ? 'Stroke! Opponent in swing/front-wall cone!'
+          : 'Yes, Let! Crowded access to the ball.'
       };
     }
 
+    // 2. Access Path Obstruction (YES, LET): Hitter is between Receiver and the Ball
+    const toBallX = ball.pos.x - receiverActor.pos.x;
+    const toBallZ = ball.pos.z - receiverActor.pos.z;
+    const toBallLen = Math.hypot(toBallX, toBallZ);
+    if (toBallLen > 0.35 && toBallLen < 3.4) {
+      const ux = toBallX / toBallLen;
+      const uz = toBallZ / toBallLen;
+      const toHitterX = hitterActor.pos.x - receiverActor.pos.x;
+      const toHitterZ = hitterActor.pos.z - receiverActor.pos.z;
+      const proj = toHitterX * ux + toHitterZ * uz;
+      const perpDist = Math.abs(toHitterX * -uz + toHitterZ * ux);
+
+      if (proj > 0.15 && proj < toBallLen + 0.25 && perpDist < 0.72) {
+        ball.hadClearInterference = true;
+        ball.interferenceDecision = 'LET';
+        ball.interferenceReason = 'Opponent blocking direct line of run to the ball';
+        return {
+          interference: true,
+          decision: 'LET',
+          winner: null,
+          reason: ball.interferenceReason,
+          callout: 'Yes, Let! Line of access obstructed.'
+        };
+      }
+    }
+
     return { interference: false };
+  }
+
+  /**
+   * Resolves an explicit "Let, please!" call made by `callerRole` (via Key F/L, HUD button,
+   * Webcam raised open hand, or Phone Racket hold-up).
+   */
+  resolveLetAppeal({ callerRole = 'player', activeInterference = null, ball, receiverActor, hitterActor }) {
+    const otherRole = callerRole === 'player' ? 'opponent' : 'player';
+
+    // Check if interference was active on this shot or is occurring right now
+    const liveEval = this.evaluateInterference(receiverActor, hitterActor, ball);
+    const hasInterference =
+      Boolean(liveEval.interference) ||
+      Boolean(activeInterference && activeInterference.active) ||
+      Boolean(ball && ball.hadClearInterference);
+
+    const effectiveDecision =
+      liveEval.decision ||
+      activeInterference?.decision ||
+      ball?.interferenceDecision ||
+      'LET';
+
+    if (hasInterference) {
+      if (effectiveDecision === 'STROKE') {
+        return {
+          decision: 'STROKE',
+          winner: callerRole,
+          bannerTitle: '✋ STROKE AWARDED! (GOOD SAFETY HOLD)',
+          callout:
+            'Stroke! Opponent failed to clear the shot cone. Good safety discipline holding your swing!',
+          bannerStyle: 'style-gold'
+        };
+      }
+      return {
+        decision: 'YES_LET',
+        winner: null,
+        bannerTitle: '✋ YES, LET! • REPLAY POINT',
+        callout: 'Yes, let! Interference on access — replay the point.',
+        bannerStyle: 'style-start'
+      };
+    }
+
+    // Check if players are reasonably close while ball is still playable (benefit of the doubt Let)
+    if (ball && ball.inPlay && receiverActor && hitterActor) {
+      const distBetween = Math.hypot(
+        receiverActor.pos.x - hitterActor.pos.x,
+        receiverActor.pos.z - hitterActor.pos.z
+      );
+      const distToBall = Math.hypot(
+        ball.pos.x - receiverActor.pos.x,
+        ball.pos.z - receiverActor.pos.z
+      );
+      if (distBetween < 1.55 && distToBall < 2.85) {
+        return {
+          decision: 'YES_LET',
+          winner: null,
+          bannerTitle: '✋ YES, LET! • SAFETY REPLAY',
+          callout: 'Yes, let! Close quarters on the T — replay the point.',
+          bannerStyle: 'style-start'
+        };
+      }
+    }
+
+    // Otherwise: No interference existed! Referee denies the appeal ("No Let!") and awards point to opponent.
+    this.uncalledLetWarnings[callerRole] = (this.uncalledLetWarnings[callerRole] || 0) + 1;
+    return {
+      decision: 'NO_LET',
+      winner: otherRole,
+      bannerTitle: '❌ NO LET! • POINT TO OPPONENT',
+      callout:
+        'No let! Opponent cleared the ball and there was no interference. Point to opponent!',
+      bannerStyle: 'style-fault'
+    };
   }
 
   /**

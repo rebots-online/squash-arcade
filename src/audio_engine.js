@@ -1327,6 +1327,55 @@ export class AudioEngine {
     osc.start(now);
     osc.stop(now + 0.075);
   }
+
+  playRefereeWhistle(urgent = false) {
+    if (this.muted) return;
+    const ctx = this._ensureContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const dur = urgent ? 0.34 : 0.22;
+    [2780, 2940].forEach((baseFreq, idx) => {
+      const osc = ctx.createOscillator();
+      const lfo = ctx.createOscillator();
+      const lfoGain = ctx.createGain();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(baseFreq, now);
+      lfo.type = 'sine';
+      lfo.frequency.setValueAtTime(42, now);
+      lfoGain.gain.setValueAtTime(65, now);
+      lfo.connect(lfoGain).connect(osc.frequency);
+      g.gain.setValueAtTime(0.001, now);
+      g.gain.linearRampToValueAtTime(idx === 0 ? 0.055 : 0.035, now + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      osc.connect(g).connect(this.sfxGain);
+      if (this.reverbSend) g.connect(this.reverbSend);
+      lfo.start(now);
+      osc.start(now);
+      lfo.stop(now + dur + 0.01);
+      osc.stop(now + dur + 0.01);
+    });
+  }
+
+  playBodyImpactThud() {
+    if (this.muted) return;
+    const ctx = this._ensureContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(115, now);
+    osc.frequency.exponentialRampToValueAtTime(38, now + 0.16);
+    g.gain.setValueAtTime(0.001, now);
+    g.gain.linearRampToValueAtTime(0.18, now + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.17);
+    osc.connect(g).connect(this.sfxGain);
+    osc.start(now);
+    osc.stop(now + 0.18);
+    this.playRefereeWhistle(true);
+  }
 }
 
 export default AudioEngine;
+

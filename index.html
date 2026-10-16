@@ -73,11 +73,14 @@
         <button id="btn-wonder-intro" class="hud-tactical-pill wonder-pill" type="button" title="Play the 2-Part 'Wonder First' Front-Corner Nick Demonstration">
           <span>✨ Wonder Demo</span>
         </button>
+        <button id="btn-rules-modal" class="hud-tactical-pill rules-pill" type="button" title="Pause Play &amp; View Complete Official Rules of Squash (Key: K)">
+          <span>📜 Rules (K)</span>
+        </button>
         <button id="btn-controls-guide" class="hud-tactical-pill guide-pill" type="button" title="How to Play, Swing Controls &amp; Pose Cam Guide (Key: H)">
           <span>❓ Controls (H)</span>
         </button>
-        <button id="btn-tuning-lab-toggle" class="hud-tactical-pill lab-pill" type="button" title="Open Live Squash Tuning Lab &amp; Nick Cannon (Key: L)">
-          <span>⚗️ Tune Lab (L)</span>
+        <button id="btn-tuning-lab-toggle" class="hud-tactical-pill lab-pill" type="button" title="Open Live Squash Tuning Lab &amp; Nick Cannon (Key: Shift+L)">
+          <span>⚗️ Tune Lab</span>
         </button>
         <button id="btn-exit-menu" class="hud-tactical-pill menu-exit-pill" type="button" title="Exit Back to Main Menu (Keys: Esc or Q)">
           <span>🏠 Menu (Esc/Q)</span>
@@ -141,12 +144,16 @@
     </div>
 
     <div id="bottom-right-dock" class="hud-corner-dock bottom-right-dock">
+      <div id="let-advisory-banner" class="let-advisory-banner hidden" role="status" aria-live="polite">
+        ⚠️ OBSTRUCTED! Press <kbd>F</kbd> / <kbd>L</kbd>, Raise Open Hand ✋, or Hold Phone Upright to Call <strong>LET!</strong>
+      </div>
       <div class="squash-shot-selector-row" aria-label="Squash Shot Shaping & Disguise">
         <button type="button" class="shot-chip active" data-shot-type="topspin" title="Drive / Rail (Key 1 or Hold Space)">1: Drive</button>
         <button type="button" class="shot-chip" data-shot-type="drop" title="Open-Face Cut / Drop (Key 2 or Shift+Swing / Right-Click)">2: Cut Drop</button>
         <button type="button" class="shot-chip" data-shot-type="boast" title="2-Wall Boast (Key 3 or B)">3: Boast</button>
         <button type="button" class="shot-chip" data-shot-type="lob" title="High Lob (Key 4)">4: Lob</button>
         <button type="button" class="shot-chip" data-shot-type="smash" title="Volley Kill (Key 5)">5: Kill</button>
+        <button type="button" id="btn-call-let" class="shot-chip let-call-chip" title="Stop Play &amp; Appeal for a Let / Stroke when Obstructed (Key: F or L, Webcam: Raise Open Hand ✋, Phone: Hold Upright)">✋ Let (F)</button>
       </div>
 
       <div id="timing-gauge-card" class="timing-gauge-card">
@@ -227,7 +234,7 @@
 
   <!-- TITLE MODAL -->
   <div id="title-modal" class="wii-modal-backdrop">
-    <div class="wii-title-card">
+    <div class="wii-title-card progressive-menu-card">
       <div class="wii-logo-header">
         <h1 class="argon-logo-title">
           <span class="logo-word-argon">Virtual</span>
@@ -242,12 +249,15 @@
             <span>🔊 "Welcome to Virtual Squash!"</span>
           </button>
           <button type="button" id="btn-setup-jukebox" class="welcome-callout-pill jukebox-tag-pill" title="Open 7-Track Music Jukebox &amp; Audio Mixer (Key: J)">
-            <span>🎵 Music Jukebox (7 Tracks)</span>
+            <span>🎵 Jukebox (J)</span>
+          </button>
+          <button type="button" id="btn-setup-rules" class="welcome-callout-pill rules-tag-pill" title="View Complete Official Rules of Squash &amp; WSF Reference (Key: K)">
+            <span>📜 Squash Rules (K)</span>
           </button>
         </div>
       </div>
 
-      <div class="court-preview-diagram squash-preview-diagram">
+      <div class="court-preview-diagram squash-preview-diagram compact-preview-diagram">
         <div class="mini-squash-court">
           <div class="mini-front-wall-bar" title="Front Wall &amp; 0.48m Tin">FRONT WALL + TIN</div>
           <div class="mini-short-line"></div>
@@ -266,75 +276,99 @@
         </div>
       </div>
 
-      <div class="setup-section">
-        <div class="setup-label-row">Opponent &amp; Mode</div>
-        <div class="wii-green-btn-row" id="difficulty-mode-group" style="grid-template-columns: repeat(4, 1fr);">
-          <button type="button" class="wii-green-choice selected" data-difficulty="casual">
-            <span class="choice-main">Club AI</span>
-          </button>
-          <button type="button" class="wii-green-choice" data-difficulty="pro">
-            <span class="choice-main">Pro Chess AI</span>
-          </button>
-          <button type="button" class="wii-green-choice" data-difficulty="ai_vs_ai" title="Continuous Spectator Mode: Both players controlled by Pro Tactical AI with full physics">
-            <span class="choice-main">🤖 AI vs AI</span>
-          </button>
-          <button type="button" class="wii-green-choice" data-difficulty="1v1">
-            <span class="choice-main">1v1 Match</span>
-          </button>
+      <div class="setup-step-hint">
+        Hover over any step or select an option to reveal the next step's choices:
+      </div>
+
+      <div class="setup-section setup-step step-active" id="setup-step-1" data-step="1">
+        <div class="setup-label-row">
+          <span class="step-title-text"><span class="step-badge">1</span> Opponent &amp; Mode</span>
+          <span class="step-summary-pill" id="step-summary-1">Club AI</span>
+        </div>
+        <div class="setup-step-body">
+          <div class="wii-green-btn-row" id="difficulty-mode-group" style="grid-template-columns: repeat(4, 1fr);">
+            <button type="button" class="wii-green-choice selected" data-difficulty="casual">
+              <span class="choice-main">Club AI</span>
+            </button>
+            <button type="button" class="wii-green-choice" data-difficulty="pro">
+              <span class="choice-main">Pro Chess AI</span>
+            </button>
+            <button type="button" class="wii-green-choice" data-difficulty="ai_vs_ai" title="Continuous Spectator Mode: Both players controlled by Pro Tactical AI with full physics">
+              <span class="choice-main">🤖 AI vs AI</span>
+            </button>
+            <button type="button" class="wii-green-choice" data-difficulty="1v1">
+              <span class="choice-main">1v1 Match</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="setup-section">
-        <div class="setup-label-row">Court Environment &amp; Scoring</div>
-        <div class="wii-green-btn-row" id="court-theme-group">
-          <button type="button" class="wii-green-choice selected" data-theme="glass_showcourt">
-            <span class="choice-main">Glass Arena</span>
-          </button>
-          <button type="button" class="wii-green-choice" data-theme="classic_hardwood">
-            <span class="choice-main">Hardwood Club</span>
-          </button>
-          <button type="button" class="wii-green-choice" data-theme="neon_cyber">
-            <span class="choice-main">Neon Cube</span>
-          </button>
+      <div class="setup-section setup-step" id="setup-step-2" data-step="2">
+        <div class="setup-label-row">
+          <span class="step-title-text"><span class="step-badge">2</span> Court Environment</span>
+          <span class="step-summary-pill" id="step-summary-2">Glass Arena</span>
+        </div>
+        <div class="setup-step-body">
+          <div class="wii-green-btn-row" id="court-theme-group">
+            <button type="button" class="wii-green-choice selected" data-theme="glass_showcourt">
+              <span class="choice-main">Glass Arena</span>
+            </button>
+            <button type="button" class="wii-green-choice" data-theme="classic_hardwood">
+              <span class="choice-main">Hardwood Club</span>
+            </button>
+            <button type="button" class="wii-green-choice" data-theme="neon_cyber">
+              <span class="choice-main">Neon Cube</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="setup-section" id="match-length-section">
-        <div class="wii-green-btn-row" id="match-length-group">
-          <button type="button" class="wii-green-choice" data-games="1" data-scoring="ARCADE_5">
-            <span class="choice-main">Arcade 5-Pt</span>
-          </button>
-          <button type="button" class="wii-green-choice selected" data-games="3" data-scoring="PAR_11">
-            <span class="choice-main">PAR 11 (Bo3)</span>
-          </button>
-          <button type="button" class="wii-green-choice" data-games="5" data-scoring="HIHO_9">
-            <span class="choice-main">Hi-Ho 9 (Bo5)</span>
-          </button>
+      <div class="setup-section setup-step" id="match-length-section" data-step="3">
+        <div class="setup-label-row">
+          <span class="step-title-text"><span class="step-badge">3</span> Scoring &amp; Match Format</span>
+          <span class="step-summary-pill" id="step-summary-3">PAR 11 (Bo3)</span>
+        </div>
+        <div class="setup-step-body">
+          <div class="wii-green-btn-row" id="match-length-group">
+            <button type="button" class="wii-green-choice" data-games="1" data-scoring="ARCADE_5">
+              <span class="choice-main">Arcade 5-Pt</span>
+            </button>
+            <button type="button" class="wii-green-choice selected" data-games="3" data-scoring="PAR_11">
+              <span class="choice-main">PAR 11 (Bo3)</span>
+            </button>
+            <button type="button" class="wii-green-choice" data-games="5" data-scoring="HIHO_9">
+              <span class="choice-main">Hi-Ho 9 (Bo5)</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="setup-section">
-        <div class="setup-label-row">Footwork, Deep Referee Voice &amp; Pose Cam</div>
-        <div class="wii-green-btn-row" style="grid-template-columns: repeat(2, 1fr);">
-          <button type="button" id="btn-setup-auto-t" class="wii-green-choice selected" title="ON = Player moves to ball &amp; recovers to T automatically so you can focus on shot selection!">
-            <span class="choice-main" id="setup-auto-t-text">Auto-Move &amp; T: ON</span>
-          </button>
-          <button type="button" id="btn-setup-ref-voice" class="wii-green-choice selected" title="Toggle Deep Male Referee Voice calling out 'Down! Handout, five-four', 'Not Up!', etc.">
-            <span class="choice-main" id="setup-ref-voice-text">🎙️ Referee Voice: ON (Deep)</span>
-          </button>
-          <button type="button" id="btn-setup-pose-cam" class="wii-green-choice" title="Use Front Cam or Back Cam (Big Screen TV) for full-body lunges + forearm swing tracking">
-            <span class="choice-main">📷 Enable Pose Cam (Front/Back)</span>
-          </button>
-          <button type="button" id="btn-setup-open-guide" class="wii-green-choice" title="View full Swing, Off-Back-Wall Drive &amp; Pose Cam instructions">
-            <span class="choice-main">❓ Full Controls Guide</span>
-          </button>
+      <div class="setup-section setup-step" id="setup-step-4" data-step="4">
+        <div class="setup-label-row">
+          <span class="step-title-text"><span class="step-badge">4</span> Footwork, Referee, Pose Cam &amp; Rules</span>
+          <span class="step-summary-pill" id="step-summary-4">Auto-T: ON • Ref: ON</span>
         </div>
-      </div>
-
-      <div class="setup-quick-controls-strip">
-        <div><strong>Swing &amp; Disguise:</strong> Hold &amp; release <kbd>Spacebar</kbd> or <kbd>Left-Click</kbd> for Drive • Hold <kbd>Shift</kbd> / <kbd>Right-Click</kbd> on release for Open-Face Drop</div>
-        <div><strong>Instant Shots:</strong> <kbd>1</kbd> Drive · <kbd>2</kbd> Cut Drop · <kbd>3</kbd>/<kbd>B</kbd> Boast (<kbd>Shift+B</kbd> Back-Wall) · <kbd>4</kbd> Lob · <kbd>5</kbd> Kill · <kbd>[</kbd>/<kbd>]</kbd> or <kbd>E</kbd> Aim</div>
-        <div><strong>Menu, Referee &amp; Jukebox:</strong> Press <kbd>Esc</kbd> or <kbd>Q</kbd> anytime to exit to Menu • <kbd>V</kbd> Referee Voice • <kbd>J</kbd> 7-Track Music Jukebox!</div>
+        <div class="setup-step-body">
+          <div class="wii-green-btn-row" style="grid-template-columns: repeat(2, 1fr);">
+            <button type="button" id="btn-setup-auto-t" class="wii-green-choice selected" title="ON = Player moves to ball &amp; recovers to T automatically so you can focus on shot selection!">
+              <span class="choice-main" id="setup-auto-t-text">Auto-Move &amp; T: ON</span>
+            </button>
+            <button type="button" id="btn-setup-ref-voice" class="wii-green-choice selected" title="Toggle Deep Male Referee Voice calling out 'Down! Handout, five-four', 'Not Up!', etc.">
+              <span class="choice-main" id="setup-ref-voice-text">🎙️ Referee Voice: ON (Deep)</span>
+            </button>
+            <button type="button" id="btn-setup-pose-cam" class="wii-green-choice" title="Use Front Cam or Back Cam (Big Screen TV) for full-body lunges + forearm swing tracking">
+              <span class="choice-main">📷 Enable Pose Cam (Front/Back)</span>
+            </button>
+            <button type="button" id="btn-setup-open-guide" class="wii-green-choice" title="View full Swing, Off-Back-Wall Drive &amp; Pose Cam instructions">
+              <span class="choice-main">❓ Controls Guide (H)</span>
+            </button>
+          </div>
+          <div class="setup-quick-controls-strip" style="margin-top: 8px;">
+            <div><strong>Swing &amp; Disguise:</strong> Hold &amp; release <kbd>Spacebar</kbd> / <kbd>Left-Click</kbd> for Drive • Hold <kbd>Shift</kbd> / <kbd>Right-Click</kbd> on release for Open-Face Drop</div>
+            <div><strong>Shots &amp; Calling Lets:</strong> <kbd>1</kbd> Drive · <kbd>2</kbd> Drop · <kbd>3</kbd>/<kbd>B</kbd> Boast · <kbd>4</kbd> Lob · <kbd>5</kbd> Kill · <kbd>F</kbd> or <kbd>L</kbd> (or Raise Open Hand ✋ / Upright Phone) = <strong>Call Let!</strong></div>
+            <div><strong>Menu &amp; Rules:</strong> <kbd>K</kbd> Pause &amp; Complete Squash Rules • <kbd>Esc</kbd> or <kbd>Q</kbd> Return to Menu • <kbd>J</kbd> Music Jukebox</div>
+          </div>
+        </div>
       </div>
 
       <div class="wii-modal-actions squash-modal-actions">
@@ -360,7 +394,7 @@
       <div class="controls-guide-header">
         <div>
           <div class="tuning-lab-kicker">PHYSICAL CHESS • HOW TO PLAY</div>
-          <h2 id="controls-guide-title" class="controls-guide-heading">Controls, Off-Back-Wall Drives &amp; Pose Cam</h2>
+          <h2 id="controls-guide-title" class="controls-guide-heading">Controls, Calling Lets, Off-Back-Wall Drives &amp; Pose Cam</h2>
         </div>
         <button type="button" id="btn-close-controls-guide" class="tuning-lab-close-btn" title="Close (H or Esc)">✕</button>
       </div>
@@ -368,10 +402,11 @@
       <div class="controls-guide-grid">
         <div class="guide-box">
           <h3>1. Do I Have to Move My Player?</h3>
-          <p><strong>Your choice! Toggle <code>AUTO-T-RETURN</code> in the top-left bar (or press <kbd>T</kbd>):</strong></p>
+          <p><strong>Your choice! Toggle <code>AUTO-T-RETURN</code> in the top-left bar (or press <kbd>G</kbd>):</strong></p>
           <ul>
-            <li><strong>AUTO-T-RETURN: ON (Default — Focus on Shots &amp; Timing):</strong> Your Mii automatically moves to intercept the ball (including stepping into the back pocket to let deep drives come <em>off the back glass wall</em>) and automatically recovers to the <strong>T-Position</strong> after each shot. You can focus 100% on shot selection and disguise!</li>
-            <li><strong>AUTO-T-RETURN: OFF (Manual Footwork):</strong> You control every step using <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or <kbd>Arrow Keys</kbd> (or Webcam Body Lunges). If you stay stranded in a corner without recovering to the T, the AI will attack the open court!</li>
+            <li><strong>AUTO-T-RETURN: ON (Default — Focus on Shots &amp; Timing):</strong> Your Mii automatically moves to intercept the ball (including stepping into the back pocket to let deep drives come <em>off the back glass wall</em>) and automatically recovers to the <strong>T-Position</strong> after each shot.</li>
+            <li><strong>AUTO-T-RETURN: OFF (Manual Footwork):</strong> You control every step using <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or <kbd>Arrow Keys</kbd> (or Webcam Body Lunges).</li>
+            <li><strong>AI vs AI Spectator Nudges:</strong> While watching AI vs AI, pressing <kbd>1</kbd>–<kbd>5</kbd> or <kbd>WASD</kbd>/<kbd>Arrows</kbd> nudges the next shot or footwork step without turning off autonomous AI play!</li>
           </ul>
         </div>
 
@@ -380,43 +415,138 @@
           <ul>
             <li><strong>Hold &amp; Release (<kbd>Spacebar</kbd> or <kbd>Left-Click</kbd>):</strong>
               <ul>
-                <li><strong>Hold down</strong> as the ball approaches to coil your backswing preparation (shows a hard-drive posture that pushes the opponent deep).</li>
+                <li><strong>Hold down</strong> as the ball approaches to coil your backswing preparation.</li>
                 <li><strong>Release normally</strong> → <strong>Tight Straight / Cross-Court Drive</strong>.</li>
                 <li><strong>Hold <kbd>Shift</kbd> (or <kbd>Right-Click</kbd>) on release</strong> → Opens the racket face (<code>+34° cut</code>) for a <strong>Disguised Soft Drop</strong> into the front nick!</li>
               </ul>
             </li>
             <li><strong>Direct Shot Hotkeys (Instant Swing):</strong>
-              <kbd>1</kbd> Drive · <kbd>2</kbd> Cut Drop · <kbd>3</kbd> or <kbd>B</kbd> 2-Wall Boast (<kbd>Shift+B</kbd> Back-Wall Boast) · <kbd>4</kbd> High Lob · <kbd>5</kbd> Volley Kill · <kbd>[</kbd>/<kbd>]</kbd> or <kbd>E</kbd> Aim · <kbd>Esc</kbd> or <kbd>Q</kbd> Exit to Menu.</li>
-            <li><strong>Mouse / Trackpad Swipe:</strong> Drag &amp; release on court (Swipe Up = Drive, Short/Shift = Drop, Wide Sideways = Boast, Fast Downward Snap = Volley Kill).</li>
+              <kbd>1</kbd> Drive · <kbd>2</kbd> Cut Drop · <kbd>3</kbd> or <kbd>B</kbd> 2-Wall Boast (<kbd>Shift+B</kbd> Back-Wall Boast) · <kbd>4</kbd> High Lob · <kbd>5</kbd> Volley Kill · <kbd>F</kbd> or <kbd>L</kbd> Call Let · <kbd>K</kbd> Complete Rules · <kbd>Esc</kbd>/<kbd>Q</kbd> Menu.</li>
           </ul>
         </div>
 
         <div class="guide-box highlight-box">
-          <h3>3. Returning the Deep "Off-the-Back-Wall" Drive</h3>
-          <p>In squash, an ideally placed deep drive bounces once in the back court, hits the <strong>Back Glass Wall</strong>, and rebounds <strong>forward and upward</strong>.</p>
+          <h3>3. Calling Lets, Strokes &amp; On-Court Safety</h3>
+          <p>In real squash, players share the same physical space and must <strong>never</strong> strike the ball when it risks hitting the opponent:</p>
           <ul>
-            <li><strong>Wait for the Glass Pop:</strong> Do not lunge at a deep drive while it is racing backward past you! Let it hit the back glass wall first.</li>
-            <li><strong>Strike on the Upward Rise:</strong> As the ball rebounds forward off the glass and kicks upward (watch for the <em>"OFF BACK WALL! • STRIKE RISING"</em> cue), press/release <kbd>Spacebar</kbd>, <kbd>Click</kbd>, or <kbd>1</kbd> to unleash a <strong>Rising Off-the-Back-Wall Drive ★</strong>!</li>
+            <li><strong>How to Call a Let Immediately:</strong> Press <kbd>F</kbd> or <kbd>L</kbd>, click <strong>✋ Let (F)</strong>, <strong>Raise an Open Palm ✋</strong> in front of the Webcam, or <strong>Hold your Phone Vertically Upright</strong> (or tap <em>Call Let</em> on the phone pad).</li>
+            <li><strong>Don't Hit Your Opponent!</strong> If you swing and hit your opponent with the ball, the Referee stops play, awards the Stroke/Let under WSF Rule 9, and issues a <strong>Formal Safety Warning</strong> to build safe real-life habits.</li>
+            <li><strong>Call It or Lose It:</strong> If you are clearly obstructed and hold back your swing without calling a Let before the ball bounces twice, you lose the point (<em>"Not Up!"</em>) and receive a Referee reminder!</li>
           </ul>
         </div>
 
         <div class="guide-box">
-          <h3>4. Webcam Pose Estimation (Front Cam &amp; Back Cam / TV)</h3>
-          <p>Click <strong>📷 Pose Cam</strong> in the bottom-right dock (or Setup menu) to play with live computer vision:</p>
+          <h3>4. Webcam Pose &amp; Phone Inertial Racket</h3>
+          <p>Click <strong>📷 Pose Cam</strong> or <strong>📱 Pocket Racket</strong> to play with motion sensors:</p>
           <ul>
-            <li><strong>Arm &amp; Forearm Swing Tracking:</strong> Whip your hand/forearm across the camera to strike! Fast forward/horizontal swing = <strong>Drive</strong>; gentle downward open chop = <strong>Cut Drop</strong>; wide sweep = <strong>Boast</strong>; high snap = <strong>Volley Kill</strong>.</li>
-            <li><strong>Full-Body T-Position Lunges:</strong> Lean or step Left, Right, Forward, or Back in the camera frame to lunge from the T.</li>
-            <li><strong>🔄 Front Cam vs Back Cam (Big Screen):</strong> Click <strong>Front Cam / Back Cam</strong> next to the Pose button to switch between facing your laptop/phone (<code>Front Cam</code>) or outputting to a TV and tracking your body from behind (<code>Back Cam</code>).</li>
+            <li><strong>Webcam Swing &amp; Let Signal:</strong> Whip your hand/forearm to strike; hold an <strong>Open Hand ✋ raised high</strong> for ~0.25s to appeal `"Let, please!"`.</li>
+            <li><strong>Phone Inertial / Spatial Racket:</strong> Swing your phone to hit Drives/Drops/Boasts; hold the phone <strong>vertically upright (Pitch ≥ 58°)</strong> or tap the gold <strong>✋ CALL LET!</strong> button to stop play safely.</li>
           </ul>
         </div>
       </div>
 
       <div class="wii-modal-actions" style="margin-top: 12px;">
+        <button id="btn-guide-open-rules" type="button" class="wii-ok-btn watch-ai-start-btn">
+          <span>📜 View Complete Squash Rules (K)</span>
+        </button>
         <button id="btn-guide-toggle-cam" type="button" class="wii-ok-btn wonder-start-btn">
           <span>📷 Toggle Pose Cam Now</span>
         </button>
         <button id="btn-guide-resume" type="button" class="wii-ok-btn">
           <span>Got It — Back to Court</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPLETE RULES OF THE GAME OF SQUASH MODAL (PAUSES PLAY) -->
+  <div id="squash-rules-modal" class="wii-modal-backdrop hidden" role="dialog" aria-labelledby="squash-rules-title">
+    <div class="wii-title-card controls-guide-card squash-rules-card">
+      <div class="controls-guide-header">
+        <div>
+          <div class="tuning-lab-kicker">WORLD SQUASH FEDERATION (WSF) • OFFICIAL SINGLES REFERENCE</div>
+          <h2 id="squash-rules-title" class="controls-guide-heading">📜 Complete Rules of the Game of Squash (Play Paused)</h2>
+        </div>
+        <button type="button" id="btn-close-squash-rules" class="tuning-lab-close-btn" title="Resume Play (K or Esc)">✕</button>
+      </div>
+
+      <div class="rules-official-links-bar">
+        <span><strong>Official Rules &amp; Public Reference URLs:</strong></span>
+        <a href="https://www.worldsquash.org/rules-of-squash/" target="_blank" rel="noopener noreferrer" class="rules-ext-link">🌐 World Squash (WSF) Official Rules Portal ↗</a>
+        <a href="https://www.worldsquash.org/wp-content/uploads/2023/11/240102_Squash-Rules-2023-V1.2.pdf" target="_blank" rel="noopener noreferrer" class="rules-ext-link">📄 WSF Singles Rules PDF (Full Text) ↗</a>
+        <a href="https://ussquash.org/rules/" target="_blank" rel="noopener noreferrer" class="rules-ext-link">📘 US Squash Official Rules Guide ↗</a>
+      </div>
+
+      <div class="controls-guide-grid squash-rules-scroll-grid">
+        <div class="guide-box">
+          <h3>1. The Court &amp; Boundary Lines (Rule 1)</h3>
+          <ul>
+            <li><strong>Dimensions:</strong> 9.75m long × 6.40m wide. Front Wall Out Line at 4.57m high; Back Wall Out Line at 2.13m high; sloped Side Wall Out Lines connecting them.</li>
+            <li><strong>The Tin (0.48m Club / 0.43m PSA Pro):</strong> Runs across the bottom of the Front Wall. Any ball hitting the Tin or floor after the Front Wall is failed is <strong>"Down!"</strong>.</li>
+            <li><strong>Floor Markings:</strong> The <strong>Short Line</strong> (4.26m from Back Wall) and <strong>Half-Court Line</strong> form the <strong>"T"</strong> intersection. Two <strong>Service Boxes</strong> (1.60m × 1.60m) sit behind the Short Line.</li>
+            <li><strong>Line Balls are OUT:</strong> A ball touching any Out Line, the Service Line (on serve), or the Tin bevel is Fault/Out.</li>
+          </ul>
+        </div>
+
+        <div class="guide-box">
+          <h3>2. Scoring Systems &amp; Match Format (Rule 2)</h3>
+          <ul>
+            <li><strong>PAR-11 (Point-A-Rally to 11 — Official WSF Standard):</strong> A point is scored by the winner of <em>every</em> rally, whether serving or receiving. Games are played to <strong>11 points</strong> (must win by 2 clear points, e.g., 12–10). Matches are Best of 3 or Best of 5 games.</li>
+            <li><strong>Hi-Ho 9 (Hand-In / Hand-Out to 9 — Traditional):</strong> Only the <strong>Server</strong> can score a point. When the Receiver wins a rally, they win the right to serve (<em>"Handout"</em>) without the score changing. At 8–8, the Receiver chooses to play to 9 (Set 1) or 10 (Set 2).</li>
+          </ul>
+        </div>
+
+        <div class="guide-box">
+          <h3>3. The Serve &amp; Service Faults (Rule 4)</h3>
+          <ul>
+            <li><strong>Server's Position:</strong> At least one foot must be fully inside the Service Box (not touching any line) at the moment the racket strikes the ball (otherwise <strong>"Foot Fault!"</strong>).</li>
+            <li><strong>Legal Serve Trajectory:</strong> The ball must be dropped/tossed from the hand or racket and struck directly onto the <strong>Front Wall above the Service Line (1.78m) and below the Out Line (4.57m)</strong> so that—unless volleyed by the Receiver—its first floor bounce lands inside the <strong>opposite rear quarter-court</strong> behind the Short Line without hitting the Back Wall out line.</li>
+            <li><strong>Alternating Boxes:</strong> When the Server wins a point, they switch to the other Service Box for the next serve. Upon winning a Handout, the new Server may choose either box.</li>
+          </ul>
+        </div>
+
+        <div class="guide-box">
+          <h3>4. A Good Return &amp; Rally Play (Rules 5–7)</h3>
+          <ul>
+            <li><strong>Before Second Bounce:</strong> To make a good return, the ball must be struck before it bounces twice on the floor (otherwise <strong>"Not Up!"</strong>).</li>
+            <li><strong>Reaching the Front Wall:</strong> A struck ball must reach the Front Wall above the Tin and below the Out Line. It may hit the Side Walls and/or Back Wall <em>before</em> or <em>after</em> hitting the Front Wall (e.g., 2-Wall Boast, 3-Wall Boast, Back-Wall Boast), provided it does not touch the floor or any Out Line first.</li>
+          </ul>
+        </div>
+
+        <div class="guide-box highlight-box">
+          <h3>5. Interference: Calling Lets &amp; Strokes (Rule 8)</h3>
+          <p>Because both players share the same court, the player who just struck the ball must immediately make every effort to clear so the opponent has:</p>
+          <ol style="margin: 4px 0 6px 18px; font-size: 12px; line-height: 1.45;">
+            <li>A fair view of the ball on its rebound from the front wall;</li>
+            <li>Unobstructed direct access to the ball;</li>
+            <li>Freedom to strike the ball with a reasonable backswing and follow-through;</li>
+            <li>Freedom to play the ball directly to any part of the front wall.</li>
+          </ol>
+          <ul>
+            <li><strong>How to Request a Let:</strong> The obstructed player must stop play immediately and say <em>"Let, please!"</em> (Press <kbd>F</kbd> or <kbd>L</kbd>, click <strong>✋ Let</strong>, raise an <strong>Open Palm ✋</strong> on Webcam, or <strong>Hold Phone Upright</strong>). If you fail to call a clear Let and let the ball bounce twice, you lose the point!</li>
+            <li><strong>No Let (Point to Non-Striker):</strong> Interference was minimal, the striker could not have reached the ball to make a good return, or the striker played past the interference and accepted it.</li>
+            <li><strong>Yes, Let (Replay Rally):</strong> There was interference that the opponent made every effort to avoid, and the striker could have made a good return; OR the striker reasonably held back out of fear of hitting the opponent.</li>
+            <li><strong>Stroke Awarded (Point to Striker):</strong> The opponent failed to make every effort to clear, stood inside the striker's reasonable swing arc, or stood directly in the front-wall shot triangle when the striker was poised to make a winning return.</li>
+          </ul>
+        </div>
+
+        <div class="guide-box highlight-box">
+          <h3>6. Ball Hitting a Player &amp; Safety Discipline (Rule 9)</h3>
+          <ul>
+            <li><strong>Mandatory Safety Rule:</strong> A player must <strong>NEVER</strong> strike the ball if there is any risk of hitting the opponent with the ball or racket. Always stop play and appeal for a Let/Stroke!</li>
+            <li><strong>Ball Hits Non-Striker Going Directly to Front Wall:</strong> It is a <strong>Stroke to the Striker</strong>—<em>unless</em> the striker had "turned" (let the ball pass behind their body and swung around the other side) or made a further attempt, in which case it is a <strong>Stroke to the Non-Striker</strong>.</li>
+            <li><strong>Ball Hits Non-Striker via Another Wall (Boast):</strong> If the ball hits a side or back wall first before hitting the non-striker on its way to the front wall, it is a <strong>Yes, Let</strong> (unless it would have been a winning return, in which case a Stroke may be awarded).</li>
+            <li><strong>Referee Safety Warning (Conduct Rule 15):</strong> Even when a player wins a Stroke because their ball hit an obstructing opponent, the Referee issues a <strong>Formal Safety Warning</strong> reminding the striker to stop and call a Let instead of hitting the opponent. Deliberate or dangerous play can result in a Conduct Stroke or Conduct Game!</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="wii-modal-actions" style="margin-top: 10px;">
+        <button id="btn-rules-test-let" type="button" class="wii-ok-btn wonder-start-btn" title="Hear the Deep Referee Call a Let &amp; Safety Warning">
+          <span>🎙️ Hear Referee Let &amp; Safety Call</span>
+        </button>
+        <button id="btn-rules-resume" type="button" class="wii-ok-btn">
+          <span>▶ Resume Match (K / Esc)</span>
         </button>
       </div>
     </div>

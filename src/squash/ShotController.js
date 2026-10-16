@@ -350,16 +350,39 @@ export class ShotController {
       spin.set(14 * spinScale, 0, 0);
     }
 
+    // Apply realistic AI error modes (clipping the 0.48m Tin or overhitting above the 4.57m Out Line)
+    // or razor-sharp winner margins when triggered by OpponentAI
+    if (inputEvent.aiErrorMode === 'TIN' && dzToFront < -0.5) {
+      const flightEst = Math.max(0.18, Math.abs(dzToFront) / Math.max(10, Math.abs(vel.z)));
+      const tinTargetY = 0.24 + Math.random() * 0.18; // Hits squarely into the 0.48m Tin!
+      vel.y = (tinTargetY - contactPos.y + 0.5 * g * flightEst * flightEst) / flightEst;
+      label = `${label} (TIN ERROR)`;
+    } else if (inputEvent.aiErrorMode === 'OUT' && dzToFront < -0.5) {
+      const flightEst = Math.max(0.22, Math.abs(dzToFront) / Math.max(10, Math.abs(vel.z)));
+      const outTargetY = COURT_SPECS.FRONT_WALL_OUT_Y + 0.14 + Math.random() * 0.32; // Above 4.57m Out line!
+      vel.y = (outTargetY - contactPos.y + 0.5 * g * flightEst * flightEst) / flightEst;
+      label = `${label} (OVERHIT OUT)`;
+    } else if (inputEvent.aiWinnerMargin && dzToFront < -0.5 && !isBoastRequest) {
+      const flightEst = Math.max(0.2, Math.abs(dzToFront) / Math.max(10, Math.abs(vel.z)));
+      const lowWinnerY = 0.56 + Math.random() * 0.1; // Just above the 0.48m Tin for a dead nick/winner
+      vel.y = (lowWinnerY - contactPos.y + 0.5 * g * flightEst * flightEst) / flightEst;
+    }
+
     const speedKmh = Math.round(vel.length() * 3.6);
-    const timingGrade = isRisingOffBackWall
-      ? 'RISING OFF BACK WALL ★'
-      : isOffBackWall
-      ? 'OFF BACK WALL RETURN'
-      : isDisguised
-      ? 'DISGUISED HOLD!'
-      : Math.abs(cutAngleDeg) >= 24
-      ? `OPEN CUT ${Math.round(cutAngleDeg)}°`
-      : 'SWEET SPOT';
+    const timingGrade =
+      inputEvent.aiErrorMode === 'TIN'
+        ? 'CLIPPED TIN!'
+        : inputEvent.aiErrorMode === 'OUT'
+        ? 'OVERHIT OUT!'
+        : isRisingOffBackWall
+        ? 'RISING OFF BACK WALL ★'
+        : isOffBackWall
+        ? 'OFF BACK WALL RETURN'
+        : isDisguised
+        ? 'DISGUISED HOLD!'
+        : Math.abs(cutAngleDeg) >= 24
+        ? `OPEN CUT ${Math.round(cutAngleDeg)}°`
+        : 'SWEET SPOT';
 
     return {
       shotId,

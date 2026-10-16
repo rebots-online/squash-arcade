@@ -702,6 +702,14 @@ export class ArgonTennisEngine {
         if (this.motionController && this.motionController.setShotType) {
           this.motionController.setShotType(shotType.toLowerCase());
         }
+        // If watching AI vs AI, clicking a shot chip nudges the next AI shot without turning off AI play!
+        if ((this.spectatorMatchMode || this.autoPlayMode) && this.phase === 'RALLY') {
+          this._queueSpectatorShotNudge({
+            shotType: shotType.toLowerCase(),
+            cutModifier: shotType.toLowerCase() === 'drop',
+            speed: shotType.toLowerCase() === 'smash' ? 1.42 : shotType.toLowerCase() === 'drop' ? 0.88 : 1.2
+          });
+        }
       },
       onToggleAudio: () => {
         if (this.audioEngine) {
@@ -803,6 +811,7 @@ export class ArgonTennisEngine {
         onPrepEnd: (evt) => this._handleUserPrepEnd(evt),
         onSwing: (evt) => this._handleUserSwingInput(evt),
         onToss: (evt) => this._handleUserTossInput(evt),
+        onCallLet: (evt) => this.requestLetAppeal(evt?.role === 'p2' ? 'opponent' : 'player', evt),
         onP2Swing: (evt) => this._handleP2SwingInput(evt),
         onP2Toss: (evt) => this._handleP2TossInput(evt),
         onRoomState: (state) => this._handleRoomStateUpdate(state),
@@ -819,6 +828,7 @@ export class ArgonTennisEngine {
     }
 
     this._bindJukeboxAndRefereeControls();
+    this._initProgressiveMenuSteps();
 
     window.addEventListener('keydown', (e) => {
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) {
@@ -829,9 +839,13 @@ export class ArgonTennisEngine {
         this.handleEscapeOrQuitKey(e.code);
         return;
       }
+      if (e.code === 'KeyK' || e.code === 'Slash') {
+        e.preventDefault();
+        this.toggleSquashRulesModal();
+        return;
+      }
       if (e.code === 'KeyH') {
-        const guideModal = document.getElementById('controls-guide-modal');
-        if (guideModal) guideModal.classList.toggle('hidden');
+        this.toggleControlsGuideModal();
       } else if (e.code === 'KeyC') {
         this.hud.callbacks.onCycleCamera();
       } else if (e.code === 'KeyR') {
@@ -839,7 +853,12 @@ export class ArgonTennisEngine {
       } else if (e.code === 'KeyG') {
         this.hud.callbacks.onToggleAutoT();
       } else if (e.code === 'KeyL') {
-        this.tuningPanel?.toggle();
+        if (this.phase === 'RALLY' && !e.shiftKey) {
+          e.preventDefault();
+          this.requestLetAppeal('player', { source: 'keyboard', gesture: 'KEY_L_LET' });
+        } else {
+          this.tuningPanel?.toggle();
+        }
       } else if (e.code === 'KeyJ') {
         this.toggleJukeboxModal();
       } else if (e.code === 'KeyN') {
@@ -850,7 +869,7 @@ export class ArgonTennisEngine {
         this.toggleSpectatorAIMode();
       } else if (e.code === 'KeyM') {
         this.hud.callbacks.onToggleAudio();
-      } else if (this.isMultiplayer && (e.code === 'KeyK' || e.code === 'Numpad0')) {
+      } else if (this.isMultiplayer && e.code === 'Numpad0') {
         this._handleP2SwingInput({
           source: 'keyboard_p2',
           shotType: this.p2SelectedShotType,
@@ -860,9 +879,106 @@ export class ArgonTennisEngine {
     });
   }
 
+  _initProgressiveMenuSteps() {
+    const step1 = document.getElementById('setup-step-1');
+    const step2 = document.getElementById('setup-step-2');
+    const step3 = document.getElementById('match-length-section');
+    const step4 = document.getElementById('setup-step-4');
+    const sum1 = document.getElementById('step-summary-1');
+    const sum2 = document.getElementById('step-summary-2');
+    const sum3 = document.getElementById('step-summary-3');
+    const sum4 = document.getElementById('step-summary-4');
+
+    const updateStep4Summary = () => {
+      if (!sum4) return;
+      const autoOn = this.tuningStore.params.movementAndAI.autoTReturn !== false;
+      const refOn = this.tuningStore.params.rulesAndView.refereeVoiceEnabled !== false;
+      sum4.textContent = `Auto-T: ${autoOn ? 'ON' : 'OFF'} • Ref: ${refOn ? 'ON' : 'OFF'}`;
+    };
+
+    document.querySelectorAll('#difficulty-mode-group .wii-green-choice').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (sum1) sum1.textContent = btn.textContent.trim();
+        step2?.classList.add('step-active', 'step-unlocked');
+      });
+    });
+
+    document.querySelectorAll('#court-theme-group .wii-green-choice').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (sum2) sum2.textContent = btn.textContent.trim();
+        step3?.classList.add('step-active', 'step-unlocked');
+      });
+    });
+
+    document.querySelectorAll('#match-length-group .wii-green-choice').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (sum3) sum3.textContent = btn.textContent.trim();
+        step4?.classList.add('step-active', 'step-unlocked');
+      });
+    });
+
+    [step1, step2, step3, step4].forEach((st) => {
+      st?.addEventListener('click', (e) => {
+        if (!e.target.closest('button')) {
+          st.classList.toggle('step-active');
+        }
+        updateStep4Summary();
+      });
+    });
+  }
+
+  _syncModalPauseState() {
+    const rulesOpen = !document.getElementById('squash-rules-modal')?.classList.contains('hidden');
+    const guideOpen = !document.getElementById('controls-guide-modal')?.classList.contains('hidden');
+    const jbOpen = !document.getElementById('jukebox-modal')?.classList.contains('hidden');
+    const titleOpen =
+      this.hud?.elTitleModal &&
+      !this.hud.elTitleModal.classList.contains('hidden') &&
+      this.hud.elTitleModal.style.display !== 'none';
+    this.isPausedForModal = Boolean(!titleOpen && (rulesOpen || guideOpen || jbOpen));
+  }
+
+  openSquashRulesModal() {
+    const modal = document.getElementById('squash-rules-modal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    this._syncModalPauseState();
+    if (this.phase === 'RALLY' || this.phase === 'SERVE_STANCE' || this.phase === 'SERVE_TOSS') {
+      this.hud?.showTimingPopup({
+        grade: '⏸ MATCH PAUSED • SQUASH RULES',
+        detail: 'PRESS K OR ESC TO RESUME PLAY',
+        durationMs: 2200
+      });
+    }
+  }
+
+  closeSquashRulesModal() {
+    const modal = document.getElementById('squash-rules-modal');
+    if (modal) modal.classList.add('hidden');
+    this._syncModalPauseState();
+  }
+
+  toggleSquashRulesModal() {
+    const modal = document.getElementById('squash-rules-modal');
+    if (!modal) return;
+    if (modal.classList.contains('hidden')) {
+      this.openSquashRulesModal();
+    } else {
+      this.closeSquashRulesModal();
+    }
+  }
+
+  toggleControlsGuideModal() {
+    const guideModal = document.getElementById('controls-guide-modal');
+    if (!guideModal) return;
+    guideModal.classList.toggle('hidden');
+    this._syncModalPauseState();
+  }
+
   handleEscapeOrQuitKey(code = 'Escape') {
     const jb = document.getElementById('jukebox-modal');
     const guide = document.getElementById('controls-guide-modal');
+    const rules = document.getElementById('squash-rules-modal');
     const comp = document.getElementById('companion-modal');
     const titleVisible =
       this.hud?.elTitleModal &&
@@ -870,6 +986,10 @@ export class ArgonTennisEngine {
       this.hud.elTitleModal.style.display !== 'none';
 
     let closedSubOverlay = false;
+    if (rules && !rules.classList.contains('hidden')) {
+      rules.classList.add('hidden');
+      closedSubOverlay = true;
+    }
     if (jb && !jb.classList.contains('hidden')) {
       jb.classList.add('hidden');
       closedSubOverlay = true;
@@ -886,10 +1006,11 @@ export class ArgonTennisEngine {
       this.tuningPanel.close?.() || this.tuningPanel.toggle?.();
       closedSubOverlay = true;
     }
+    this._syncModalPauseState();
 
-    // If a sub-modal was open over the Title Menu, just close the sub-modal.
-    // Otherwise (or when pressing Q / Esc during gameplay), exit back to the Main Menu.
-    if (titleVisible && closedSubOverlay) {
+    // If a sub-modal (like Rules, Controls, or Jukebox) was open and Esc was pressed, just close it and resume!
+    // Pressing Q (or pressing Esc when no sub-modal is open) exits back to the Main Menu.
+    if (closedSubOverlay && code === 'Escape') {
       return;
     }
     if (!titleVisible || code === 'KeyQ' || !closedSubOverlay) {
@@ -906,11 +1027,15 @@ export class ArgonTennisEngine {
     if (jb) jb.classList.add('hidden');
     const guide = document.getElementById('controls-guide-modal');
     if (guide) guide.classList.add('hidden');
+    const rules = document.getElementById('squash-rules-modal');
+    if (rules) rules.classList.add('hidden');
     const comp = document.getElementById('companion-modal');
     if (comp) comp.classList.add('hidden');
     if (this.tuningPanel?.isOpen) {
       this.tuningPanel.close?.() || this.tuningPanel.toggle?.();
     }
+    this.isPausedForModal = false;
+    this._updateLetAdvisoryUI(false);
 
     this.hud?.hideVictoryModal();
     this.hud?.hideCenterBanner();
@@ -924,6 +1049,7 @@ export class ArgonTennisEngine {
     this.pendingUserSwing = null;
     this.pendingP2Swing = null;
     this.pendingServeSwing = null;
+    this.spectatorShotNudge = null;
     this._syncSpectatorModeUI();
 
     this._setupMidRallyShowcase();
@@ -1053,6 +1179,40 @@ export class ArgonTennisEngine {
       });
     });
 
+    // Wire up Call Let HUD button
+    const callLetBtn = document.getElementById('btn-call-let');
+    callLetBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.requestLetAppeal('player', { source: 'hud_button', gesture: 'HUD_LET_BTN' });
+    });
+
+    // Wire up Complete Squash Rules modal buttons
+    const openRulesBtns = [
+      document.getElementById('btn-rules-modal'),
+      document.getElementById('btn-setup-rules'),
+      document.getElementById('btn-guide-open-rules')
+    ];
+    openRulesBtns.forEach((b) =>
+      b?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('controls-guide-modal')?.classList.add('hidden');
+        this.openSquashRulesModal();
+      })
+    );
+    document.getElementById('btn-close-squash-rules')?.addEventListener('click', () => {
+      this.closeSquashRulesModal();
+    });
+    document.getElementById('btn-rules-resume')?.addEventListener('click', () => {
+      this.closeSquashRulesModal();
+    });
+    document.getElementById('btn-rules-test-let')?.addEventListener('click', () => {
+      this.audioEngine?.playRefereeWhistle(false);
+      this.audioEngine?.announceScore(
+        'Stop play! Yes, Let. Safety reminder: always call a Let when obstructed instead of striking your opponent.',
+        { forceReferee: true }
+      );
+    });
+
     // Also wire up setup auto-t, pose-cam, and controls guide buttons
     const setupAutoT = document.getElementById('btn-setup-auto-t');
     setupAutoT?.addEventListener('click', () => {
@@ -1077,16 +1237,20 @@ export class ArgonTennisEngine {
       b?.addEventListener('click', (e) => {
         e.stopPropagation();
         guideModal?.classList.remove('hidden');
+        this._syncModalPauseState();
       })
     );
     document.getElementById('btn-close-controls-guide')?.addEventListener('click', () => {
       guideModal?.classList.add('hidden');
+      this._syncModalPauseState();
     });
     document.getElementById('btn-guide-resume')?.addEventListener('click', () => {
       guideModal?.classList.add('hidden');
+      this._syncModalPauseState();
     });
     document.getElementById('btn-guide-toggle-cam')?.addEventListener('click', async () => {
       guideModal?.classList.add('hidden');
+      this._syncModalPauseState();
       await this.hud.callbacks.onToggleWebcam?.();
     });
 
@@ -1979,6 +2143,107 @@ export class ArgonTennisEngine {
     this.ballTrail.pushPoint(this.ball.pos);
   }
 
+  _queueSpectatorShotNudge(evt = {}) {
+    const shotType = String(evt.shotType || this.selectedShotType || 'topspin').toLowerCase();
+    this.spectatorShotNudge = {
+      ...evt,
+      shotType,
+      cutModifier: Boolean(evt.cutModifier || shotType === 'drop' || shotType === 'slice'),
+      expiresAt: this.elapsedTime + 4.0
+    };
+    this.hud?.showTimingPopup({
+      grade: `⚡ AI NUDGE: ${shotType.toUpperCase()}`,
+      detail: 'INFLUENCING NEXT AI SHOT • AUTONOMOUS RALLY CONTINUES',
+      durationMs: 1350
+    });
+  }
+
+  _updateLetAdvisoryUI(isObstructed = false) {
+    const btn = document.getElementById('btn-call-let');
+    const banner = document.getElementById('let-advisory-banner');
+    if (btn) btn.classList.toggle('let-advised-pulse', Boolean(isObstructed));
+    if (banner) banner.classList.toggle('hidden', !isObstructed);
+  }
+
+  requestLetAppeal(appealer = 'player', evt = {}) {
+    if (this.phase !== 'RALLY' || !this.ball.inPlay) {
+      this.audioEngine?.playRefereeWhistle(false);
+      this.hud?.showTimingPopup({
+        grade: '✋ LET APPEAL (BALL NOT IN RALLY)',
+        detail: 'CALL LET (F / L / OPEN HAND ✋ / UPRIGHT PHONE) WHEN OBSTRUCTED IN RALLY',
+        durationMs: 1850
+      });
+      return false;
+    }
+
+    // If appealing in AI vs AI spectator mode, determine which AI is currently receiving
+    const effectiveAppealer =
+      this.spectatorMatchMode && this.ball.lastHitter === 'player' ? 'opponent' : appealer;
+
+    this._updateLetAdvisoryUI(false);
+    this.currentRallyPlayerInterference = null;
+    this.audioEngine?.playRefereeWhistle(false);
+
+    const decision = this.rulesEngine.resolveLetAppeal({
+      appealer: effectiveAppealer,
+      ball: this.ball,
+      playerState: this.player,
+      opponentState: this.opponent
+    });
+
+    const gestureLabel =
+      evt.source === 'webcam_pose' || evt.source === 'webcam_flow'
+        ? '📷 WEBCAM OPEN-HAND LET'
+        : evt.source === 'phone_imu' || evt.source === 'phone'
+        ? '📱 PHONE RACKET LET'
+        : '✋ LET APPEALED!';
+
+    this.hud?.showTimingPopup({
+      grade: `${gestureLabel} • ${decision.decision.replace('_', ', ')}`,
+      detail: decision.explanation,
+      durationMs: 2600
+    });
+
+    if (decision.replaysPoint || decision.decision === 'YES_LET') {
+      this._replayLetRally(decision);
+      return true;
+    }
+
+    // Either STROKE (point to appealer) or NO_LET (point to non-appealer)
+    this._awardPoint(decision.winner, decision.reason, decision);
+    return true;
+  }
+
+  _replayLetRally(letDecision = {}) {
+    this.phase = 'POINT_OVER';
+    this.phaseTimer = 0;
+    this.ball.inPlay = false;
+    this.pendingUserSwing = null;
+    this.pendingP2Swing = null;
+    this.pendingServeSwing = null;
+    this._updateLetAdvisoryUI(false);
+    this.currentRallyPlayerInterference = null;
+
+    const bannerTitle = letDecision.bannerTitle || 'YES, LET! (REPLAY RALLY)';
+    const subText =
+      letDecision.safetyWarningText ||
+      letDecision.explanation ||
+      'Interference on court — replay the point from same service box.';
+    this._recordBannerBroadcast(bannerTitle, 'style-start', subText);
+    this.hud?.showCenterBanner(bannerTitle, {
+      style: 'style-start',
+      subText,
+      durationMs: 2200
+    });
+
+    if (this.audioEngine) {
+      const voiceText = letDecision.safetyWarningText
+        ? `${letDecision.refereeCallout} ${letDecision.safetyWarningText}`
+        : letDecision.refereeCallout || 'Yes, Let! Play a let.';
+      this.audioEngine.announceScore(voiceText, { delayMs: 60, forceReferee: true });
+    }
+  }
+
   _handleUserTossInput() {
     if (this.spectatorMatchMode) return false;
     this.userHasInteracted = true;
@@ -1999,9 +2264,29 @@ export class ArgonTennisEngine {
   }
 
   _handleUserSwingInput(evt = {}) {
-    if (this.spectatorMatchMode) {
+    // If watching AI vs AI (spectatorMatchMode or passive background rally),
+    // accept user keyboard/mouse/swing nudges (1-5, B, Space, Click) to influence the AI rally
+    // WITHOUT deactivating autonomous AI vs AI mode!
+    if (this.spectatorMatchMode || (this.autoPlayMode && !this.userHasInteracted && this.phase === 'RALLY')) {
+      if (evt.shotType && evt.shotType !== 'toss') {
+        const st = String(evt.shotType).toUpperCase();
+        this.selectedShotType = st;
+        this.hud.setActiveShotChip(evt.shotType);
+      }
+      if (this.phase === 'RALLY' && this.ball.inPlay) {
+        if (this.ball.lastHitter === 'opponent' && this._attemptPlayerRallyStrike(evt, true)) {
+          this.spectatorShotNudge = null;
+          return;
+        }
+        if (this.ball.lastHitter === 'player' && this._attemptOpponentManualStrike(evt)) {
+          this.spectatorShotNudge = null;
+          return;
+        }
+        this._queueSpectatorShotNudge(evt);
+      }
       return;
     }
+
     this.userHasInteracted = true;
     if (this.phase === 'TITLE') {
       this.hud.hideTitleModal();
@@ -2139,6 +2424,8 @@ export class ArgonTennisEngine {
 
   _executeServeHit(actor, evt = {}) {
     this.pendingServeSwing = null;
+    this.currentRallyPlayerInterference = null;
+    this._updateLetAdvisoryUI(false);
     const serveExec = this.shotController.computeServeExecution({
       actor,
       serviceSide: this.score.serviceSide || 'right',
@@ -2288,6 +2575,8 @@ export class ArgonTennisEngine {
       shotType: shot.label,
       isDisguised: shot.isDisguised
     });
+    this.currentRallyPlayerInterference = null;
+    this._updateLetAdvisoryUI(false);
 
     this.opponentAI.recordPlayerShot(shot, this.ball, this.tuningStore.params);
     this.currentPredictedTrajectory = BallPhysics.simulateTrajectory(
@@ -2332,7 +2621,11 @@ export class ArgonTennisEngine {
       const detail = isDrop
         ? `OPEN CUT ${Math.round(shot.cutAngleDeg)}° • ${shot.speedKmh} KM/H`
         : `${shot.speedKmh} KM/H • PRONATION ${Math.round(shot.forearmPronationDegPerSec)}°/S`;
-      const prefix = this.spectatorMatchMode ? 'P1 AI • ' : '';
+      const prefix = evt.isSpectatorNudge
+        ? '⚡ NUDGED P1 • '
+        : this.spectatorMatchMode
+        ? 'P1 AI • '
+        : '';
       this.hud.showTimingPopup({
         grade: `${prefix}${shot.label} (${shot.timingGrade})`,
         detail,
@@ -2357,7 +2650,8 @@ export class ArgonTennisEngine {
       dirX: Number(evt.dirX || 0),
       speed: Number(evt.speed || 1.18),
       cutModifier: Boolean(evt.cutModifier || evt.shotType === 'drop'),
-      prepCharge: 0.65
+      prepCharge: 0.65,
+      isSpectatorNudge: Boolean(evt.isSpectatorNudge)
     });
   }
 
@@ -2447,14 +2741,15 @@ export class ArgonTennisEngine {
 
     if (this.spectatorMatchMode) {
       const screenPos = this._projectToScreen(this.opponent.pos.clone().add(new THREE.Vector3(0, 2.15, 0)));
+      const prefix = aiDecision.isSpectatorNudge ? '⚡ NUDGED P2 • ' : 'P2 AI • ';
       this.hud.showTimingPopup({
-        grade: `P2 AI • ${shot.label}`,
+        grade: `${prefix}${shot.label}`,
         detail: `${shot.speedKmh} KM/H`,
         screenPos
       });
       this.hud.updateTimingGauge({
         cursorNormalized: isDrop ? 0.24 : String(shot.shotId || '').includes('BOAST') ? 0.78 : 0.5,
-        modeTitle: `P2 AI • ${shot.label}`,
+        modeTitle: `${prefix}${shot.label}`,
         speedText: `${shot.speedKmh} KM/H`
       });
     }
@@ -2463,6 +2758,12 @@ export class ArgonTennisEngine {
   }
 
   update(dt) {
+    if (this.isPausedForModal) {
+      this._updateCameraRig(dt * 0.15);
+      this._updateProjectedHUD();
+      return;
+    }
+
     this.elapsedTime += dt;
     this.cameraTrauma = Math.max(0, this.cameraTrauma - dt * 1.4);
 
@@ -2665,17 +2966,88 @@ export class ArgonTennisEngine {
           const decision = this._handleCollisionEvent(evt, { checkRules: true });
           if (decision.rallyEnded) {
             pointEnded = true;
-            this._awardPoint(decision.winner, decision.callout || decision.reason);
+            // Check if the player failed to call a clear Let and let the ball bounce twice ("Not Up!")
+            let extraDecisionMeta = null;
+            if (
+              decision.reason === 'NOT_UP' &&
+              decision.winner === 'opponent' &&
+              this.currentRallyPlayerInterference?.blocked
+            ) {
+              this.rulesEngine.uncalledLetWarnings.player =
+                (this.rulesEngine.uncalledLetWarnings.player || 0) + 1;
+              extraDecisionMeta = {
+                uncalledLetWarning: true,
+                bannerTitle: 'NOT UP! (UNCALLED LET WARNING)',
+                safetyWarningText:
+                  '⚠️ REFEREE REMINDER: You were obstructed by your opponent! Call "Let, please!" immediately (Press F / L, raise an open hand ✋, or hold phone upright) instead of letting the ball bounce twice.'
+              };
+            }
+            this._awardPoint(decision.winner, decision.callout || decision.reason, extraDecisionMeta);
           }
         }
       });
 
       if (pointEnded) return;
 
+      // Check WSF Rule 9: Did the ball strike a player's body?
+      const bodyCollision = this.rulesEngine.evaluateBallPlayerBodyCollision({
+        ball: this.ball,
+        playerState: this.player,
+        opponentState: this.opponent
+      });
+      if (bodyCollision && bodyCollision.rallyEnded) {
+        this.audioEngine?.playBodyImpactThud();
+        const hitActor = bodyCollision.hitPlayerRole === 'player' ? this.player : this.opponent;
+        this.facialFX?.setExpression(hitActor, 'shocked_loss', 1.5);
+        this.hud?.showTimingPopup({
+          grade: bodyCollision.bannerTitle || '⚠️ BALL HIT PLAYER! STOP PLAY!',
+          detail: bodyCollision.safetyWarningText,
+          durationMs: 3200
+        });
+        if (bodyCollision.replaysPoint) {
+          this._replayLetRally(bodyCollision);
+        } else {
+          this._awardPoint(bodyCollision.winner, bodyCollision.reason, bodyCollision);
+        }
+        return;
+      }
+
+      // Live Interference Check for Player 1 when ball is rebounding from front wall
+      if (this.ball.lastHitter === 'opponent' && this.ball.hitFrontWallThisShot) {
+        const interf = this.rulesEngine.evaluateInterference({
+          striker: 'player',
+          ball: this.ball,
+          playerState: this.player,
+          opponentState: this.opponent
+        });
+        if (interf.blocked && interf.distToBall < 2.35) {
+          this.currentRallyPlayerInterference = interf;
+          this._updateLetAdvisoryUI(true);
+        } else {
+          this._updateLetAdvisoryUI(false);
+        }
+      } else {
+        this._updateLetAdvisoryUI(false);
+      }
+
       this.ballTrail.pushPoint(this.ball.pos);
+
+      const keysDown = this.motionController?.keysDown;
+      const hasMovementKeyNudge = Boolean(
+        keysDown &&
+          (keysDown.has('KeyW') ||
+            keysDown.has('KeyA') ||
+            keysDown.has('KeyS') ||
+            keysDown.has('KeyD') ||
+            keysDown.has('ArrowUp') ||
+            keysDown.has('ArrowDown') ||
+            keysDown.has('ArrowLeft') ||
+            keysDown.has('ArrowRight'))
+      );
 
       if (aiControlsPlayer) {
         // Full Tactical AI control for Player 1 (both in Watch AI vs AI Spectator Mode and Title Menu Idling)
+        // Accepts temporary shot nudges (1-5, Space, Click) & WASD/Arrow movement nudges without turning off AI!
         this.playerAI.updateAI({
           opponent: this.player,
           player: this.opponent,
@@ -2683,16 +3055,43 @@ export class ArgonTennisEngine {
           dt,
           params: this.tuningStore.params,
           predictedTrajectory: this.currentPredictedTrajectory,
+          rulesEngine: this.rulesEngine,
+          onCallAILet: (role) => this.requestLetAppeal(role, { source: 'ai_referee' }),
           onExecuteAIShot: (choice) => {
-            this._attemptPlayerRallyStrike(choice, true);
+            let finalChoice = choice;
+            if (this.spectatorShotNudge && this.elapsedTime <= this.spectatorShotNudge.expiresAt) {
+              finalChoice = {
+                ...choice,
+                ...this.spectatorShotNudge,
+                aiErrorMode: null,
+                isSpectatorNudge: true
+              };
+              this.spectatorShotNudge = null;
+            }
+            this._attemptPlayerRallyStrike(finalChoice, true);
           }
         });
+
+        if (hasMovementKeyNudge) {
+          let moveX = 0;
+          let moveZ = 0;
+          if (keysDown.has('KeyA') || keysDown.has('ArrowLeft')) moveX -= 1;
+          if (keysDown.has('KeyD') || keysDown.has('ArrowRight')) moveX += 1;
+          if (keysDown.has('KeyW') || keysDown.has('ArrowUp')) moveZ -= 1;
+          if (keysDown.has('KeyS') || keysDown.has('ArrowDown')) moveZ += 1;
+          this.player.targetPos.set(
+            THREE.MathUtils.clamp(this.player.pos.x + moveX * 1.45, -2.8, 2.8),
+            0,
+            THREE.MathUtils.clamp(this.player.pos.z + moveZ * 1.45, -4.1, 4.45)
+          );
+        }
+
         PlayerMovement.stepActorLocomotion(
           this.player,
           this.opponent,
           dt,
           this.tuningStore.params,
-          this.ball.lastHitter === 'player'
+          !hasMovementKeyNudge && this.ball.lastHitter === 'player'
         );
       } else {
         // Human control for Player 1
@@ -2774,8 +3173,24 @@ export class ArgonTennisEngine {
           dt,
           params: this.tuningStore.params,
           predictedTrajectory: this.currentPredictedTrajectory,
+          rulesEngine: this.rulesEngine,
+          onCallAILet: (role) => this.requestLetAppeal(role, { source: 'ai_referee' }),
           onExecuteAIShot: (choice) => {
-            this._executeOpponentSquashStrike(choice);
+            let finalChoice = choice;
+            if (
+              aiControlsPlayer &&
+              this.spectatorShotNudge &&
+              this.elapsedTime <= this.spectatorShotNudge.expiresAt
+            ) {
+              finalChoice = {
+                ...choice,
+                ...this.spectatorShotNudge,
+                aiErrorMode: null,
+                isSpectatorNudge: true
+              };
+              this.spectatorShotNudge = null;
+            }
+            this._executeOpponentSquashStrike(finalChoice);
           }
         });
         PlayerMovement.stepActorLocomotion(
@@ -2812,7 +3227,7 @@ export class ArgonTennisEngine {
     }
   }
 
-  _awardPoint(winnerRole, reason = '') {
+  _awardPoint(winnerRole, reason = '', decisionMeta = null) {
     this.phase = 'POINT_OVER';
     this.phaseTimer = 0;
     this.ball.inPlay = false;
@@ -2820,6 +3235,8 @@ export class ArgonTennisEngine {
     this.pendingUserSwing = null;
     this.pendingP2Swing = null;
     this.pendingServeSwing = null;
+    this._updateLetAdvisoryUI(false);
+    this.currentRallyPlayerInterference = null;
 
     const playerWonPoint = winnerRole === 'player';
     if (this.bodyAnimator) {
@@ -2839,7 +3256,12 @@ export class ArgonTennisEngine {
     this._syncScoreboardHUD();
 
     // Build authentic WSF/PSA deep male referee callout ("Down! Handout, five-four.", etc.)
-    const refereeCallout = this.rulesEngine.formatRefereeCallout(outcome, reason);
+    const baseRefereeCallout = this.rulesEngine.formatRefereeCallout(outcome, reason);
+    const refereeCallout = decisionMeta?.safetyWarningText
+      ? `${decisionMeta.refereeCallout || baseRefereeCallout} ${decisionMeta.safetyWarningText}`
+      : decisionMeta?.refereeCallout
+      ? `${decisionMeta.refereeCallout} ${baseRefereeCallout}`
+      : baseRefereeCallout;
 
     if (outcome.matchWonBy) {
       const pWon = outcome.matchWonBy === 'player';
@@ -2856,7 +3278,7 @@ export class ArgonTennisEngine {
           : pWon
             ? 'YOU WIN!'
             : 'MATCH OVER';
-      const sub = `${refereeCallout} • Final Games: ${this.score.playerGames} - ${this.score.opponentGames}`;
+      const sub = `${baseRefereeCallout} • Final Games: ${this.score.playerGames} - ${this.score.opponentGames}`;
       this._recordBannerBroadcast(banner, 'style-gold', sub);
       this.hud.showCenterBanner(banner, { style: 'style-gold', subText: sub, durationMs: 2800 });
       if (this.audioEngine) {
@@ -2880,7 +3302,7 @@ export class ArgonTennisEngine {
     }
 
     if (outcome.gameWonBy) {
-      const sub = `${refereeCallout} • Games: ${this.score.playerGames} - ${this.score.opponentGames}`;
+      const sub = `${baseRefereeCallout} • Games: ${this.score.playerGames} - ${this.score.opponentGames}`;
       this._recordBannerBroadcast('Game!', 'style-gold', sub);
       this.hud.showCenterBanner('Game!', { style: 'style-gold', subText: sub, durationMs: 1650 });
       this.audioEngine && this.audioEngine.announceScore(refereeCallout);
@@ -2888,14 +3310,21 @@ export class ArgonTennisEngine {
     }
 
     const formatted = this.rulesEngine.formatScoreHUD();
-    const isFault = /Tin|Out|Down|Not Up|Short/i.test(reason);
+    const isFault =
+      Boolean(decisionMeta?.safetyWarningIssued || decisionMeta?.uncalledLetWarning) ||
+      /Tin|Out|Down|Not Up|Short|NO_LET/i.test(reason);
     const style = isFault ? 'style-fault' : 'style-score';
-    const subLabel = refereeCallout || reason;
-    this._recordBannerBroadcast(formatted.bannerScoreText, style, subLabel);
-    this.hud.showCenterBanner(formatted.bannerScoreText, {
+    const bannerMain = decisionMeta?.bannerTitle || formatted.bannerScoreText;
+    const subLabel =
+      decisionMeta?.safetyWarningText ||
+      decisionMeta?.explanation ||
+      baseRefereeCallout ||
+      reason;
+    this._recordBannerBroadcast(bannerMain, style, subLabel);
+    this.hud.showCenterBanner(bannerMain, {
       style,
       subText: subLabel,
-      durationMs: 1550
+      durationMs: decisionMeta?.safetyWarningText ? 3100 : 1650
     });
     if (this.audioEngine && (!this.autoPlayMode || this.userHasInteracted)) {
       this.audioEngine.announceScore(refereeCallout, { delayMs: 80 });

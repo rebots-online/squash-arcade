@@ -16,6 +16,7 @@ export class MotionController {
   constructor(options = {}) {
     this.onSwing = typeof options.onSwing === 'function' ? options.onSwing : null;
     this.onToss = typeof options.onToss === 'function' ? options.onToss : null;
+    this.onCallLet = typeof options.onCallLet === 'function' ? options.onCallLet : null;
     this.onPrepStart = typeof options.onPrepStart === 'function' ? options.onPrepStart : null;
     this.onPrepEnd = typeof options.onPrepEnd === 'function' ? options.onPrepEnd : null;
     this.onP2Swing = typeof options.onP2Swing === 'function' ? options.onP2Swing : null;
@@ -65,6 +66,9 @@ export class MotionController {
     this.p2MotionVector = { vx: 0, vy: 0, mag: 0 };
     this.lastWebcamTriggerMs = 0;
     this.lastP2WebcamTriggerMs = 0;
+    this.lastLetCallMs = 0;
+    this._webcamOpenHandHoldStartMs = 0;
+    this._phoneUprightHoldStartMs = 0;
 
     this.phonePollIntervalMs = options.phonePollIntervalMs || 50;
     this.phonePollTimer = null;
@@ -103,7 +107,7 @@ export class MotionController {
       source: 'ready'
     };
 
-    this._listeners = { swing: [], toss: [], status: [], orientation: [] };
+    this._listeners = { swing: [], toss: [], letCall: [], status: [], orientation: [] };
     this._rafId = null;
     this._disposed = false;
 
@@ -469,7 +473,46 @@ export class MotionController {
     return payload;
   }
 
+  _emitCallLet(evt = {}) {
+    const now = performance.now();
+    this.lastLetCallMs = now;
+    const payload = {
+      type: 'let',
+      role: evt.role || this.role,
+      source: evt.source || 'manual',
+      gesture: evt.gesture || 'CALL_LET',
+      timestamp: evt.timestamp || Date.now()
+    };
+
+    this.lastVisualSwing = {
+      timestamp: now,
+      side: 'let',
+      dirX: 0,
+      dirY: -1,
+      speed: 1.0,
+      shotType: 'LET APPEAL',
+      source: payload.source
+    };
+
+    if (typeof this.onCallLet === 'function') {
+      this.onCallLet(payload);
+    }
+    if (this._listeners.letCall) {
+      for (const cb of this._listeners.letCall) {
+        try {
+          cb(payload);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+    return payload;
+  }
+
   triggerSyntheticSwing(evt = {}) {
+    if ((evt.type || 'swing') === 'let') {
+      return this._emitCallLet(evt);
+    }
     if ((evt.type || 'swing') === 'toss') {
       return this._emitToss({
         source: evt.source || 'synthetic',
@@ -694,6 +737,31 @@ export class MotionController {
       this.smoothedCentroid.x = normX;
       this.smoothedCentroid.y = normY;
 
+      // Check for Raised Open-Palm Stop Gesture ("✋ Let, please!")
+      // Fingers 8 (index), 12 (middle), 16 (ring), 20 (pinky) extended vertically above PIP joints (6, 10, 14, 18)
+      const extIndex = lm[8] && lm[6] && lm[8].y < lm[6].y - 0.02;
+      const extMiddle = lm[12] && lm[10] && lm[12].y < lm[10].y - 0.02;
+      const extRing = lm[16] && lm[14] && lm[16].y < lm[14].y - 0.018;
+      const extPinky = lm[20] && lm[18] && lm[20].y < lm[18].y - 0.015;
+      const extendedCount = (extIndex ? 1 : 0) + (extMiddle ? 1 : 0) + (extRing ? 1 : 0) + (extPinky ? 1 : 0);
+      const isRaisedStopHand = normY < 0.42 && extendedCount >= 3 && this.motionVector.mag < 0.42;
+
+      if (isRaisedStopHand) {
+        if (!this._webcamOpenHandHoldStartMs) {
+          this._webcamOpenHandHoldStartMs = now;
+        } else if (now - this._webcamOpenHandHoldStartMs >= 210 && now - this.lastLetCallMs > 950) {
+          this._webcamOpenHandHoldStartMs = 0;
+          this._emitCallLet({
+            source: 'webcam_open_palm',
+            gesture: 'OPEN_HAND_RAISED',
+            role: this.role
+          });
+          return;
+        }
+      } else {
+        this._webcamOpenHandHoldStartMs = 0;
+      }
+
       // Feed raw sensor landmarks into BiomechStrokeClassifier for player-relative anatomical ingestion
       this.strokeClassifier.ingestFrame({
         timestamp: now,
@@ -841,6 +909,23 @@ export class MotionController {
         const cy = bestClusterY / bestClusterE;
         this.smoothedCentroid.x = this.smoothedCentroid.x * 0.35 + cx * 0.65;
         this.smoothedCentroid.y = this.smoothedCentroid.y * 0.35 + cy * 0.65;
+
+        // Check for Optical-Flow Raised-Hand Stop Hold in top 26% of frame ("✋ Let, please!")
+        if (this.smoothedCentroid.y < 0.26 && this.motionVector.mag < 0.36) {
+          if (!this._webcamOpenHandHoldStartMs) {
+            this._webcamOpenHandHoldStartMs = now;
+          } else if (now - this._webcamOpenHandHoldStartMs >= 240 && now - this.lastLetCallMs > 950) {
+            this._webcamOpenHandHoldStartMs = 0;
+            this._emitCallLet({
+              source: 'webcam_pose',
+              gesture: 'RAISED_HAND_HOLD',
+              role: this.role
+            });
+            return;
+          }
+        } else {
+          this._webcamOpenHandHoldStartMs = 0;
+        }
 
         // Ingest optical-flow frame into BiomechStrokeClassifier
         this.strokeClassifier.ingestFrame({
@@ -1141,6 +1226,29 @@ export class MotionController {
           if (typeof this.onOrientation === 'function') {
             this.onOrientation(this.phoneState.orientation);
           }
+
+          // Phone Inertial / Spatial "Hold Up Racket" Let Gesture:
+          // Holding the phone vertically upright (pitch >= 58°) with low swing acceleration,
+          // OR holding Button B while tilting upright signals "✋ Let, please!"
+          const nowMs = performance.now();
+          const isPhoneUprightStop =
+            activePhone.connected &&
+            ((this.phoneState.orientation.pitch >= 58 && this.phoneState.orientation.accelMag < 4.5) ||
+              (this.phoneState.orientation.buttonB && this.phoneState.orientation.pitch >= 35));
+          if (isPhoneUprightStop) {
+            if (!this._phoneUprightHoldStartMs) {
+              this._phoneUprightHoldStartMs = nowMs;
+            } else if (nowMs - this._phoneUprightHoldStartMs >= 220 && nowMs - this.lastLetCallMs > 950) {
+              this._phoneUprightHoldStartMs = 0;
+              this._emitCallLet({
+                source: 'phone_imu',
+                gesture: 'PHONE_UPRIGHT_STOP',
+                role: this.role
+              });
+            }
+          } else {
+            this._phoneUprightHoldStartMs = 0;
+          }
         }
 
         const anyConnected = this.phoneState.connected || this.p2PhoneState.connected;
@@ -1165,7 +1273,13 @@ export class MotionController {
             this.lastProcessedPhoneSeq = seq;
             this.phoneState.lastSwing = p1.lastSwing;
             const sw = p1.lastSwing;
-            if (sw.type === 'toss') {
+            if (sw.type === 'let') {
+              this._emitCallLet({
+                source: 'phone',
+                role: 'p1',
+                gesture: 'PHONE_LET_BTN'
+              });
+            } else if (sw.type === 'toss') {
               this._emitToss({
                 source: 'phone',
                 role: 'p1',
@@ -1207,7 +1321,13 @@ export class MotionController {
             this.lastProcessedP2PhoneSeq = seq;
             this.p2PhoneState.lastSwing = p2.lastSwing;
             const sw = p2.lastSwing;
-            if (sw.type === 'toss') {
+            if (sw.type === 'let') {
+              this._emitCallLet({
+                source: 'phone',
+                role: 'p2',
+                gesture: 'PHONE_LET_BTN'
+              });
+            } else if (sw.type === 'toss') {
               this._emitP2Toss({
                 source: 'phone',
                 role: 'p2',
@@ -1362,6 +1482,14 @@ export class MotionController {
           speed: 1.15,
           dirX: this.aimBiasX,
           dirY: 0.2
+        });
+      } else if (code === 'KeyF') {
+        e.preventDefault();
+        if (e.repeat) return;
+        this._emitCallLet({
+          source: 'keyboard',
+          gesture: 'KEY_F_LET',
+          role: this.role
         });
       } else if (code === 'Space' || code === 'Enter') {
         e.preventDefault();
@@ -1776,7 +1904,14 @@ export class MotionController {
       : this.phoneState.connected
       ? 'POCKET RACKET LIVE'
       : 'MOTION RADAR';
-    if (isRecent) {
+    const sinceLet = performance.now() - (this.lastLetCallMs || 0);
+    if (sinceLet < 1400) {
+      ctx.fillStyle = '#ffea28';
+      label = '✋ LET APPEALED • STOP PLAY!';
+    } else if (this._webcamOpenHandHoldStartMs > 0 || this._phoneUprightHoldStartMs > 0) {
+      ctx.fillStyle = '#ffea28';
+      label = '✋ HOLDING FOR LET...';
+    } else if (isRecent) {
       const sTag =
         this.lastVisualSwing.side === 'backhand'
           ? 'BACKHAND'

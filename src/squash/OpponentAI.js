@@ -20,12 +20,14 @@ export class OpponentAI {
 
   resetMemory() {
     this.playerShotHistory = []; // Rolling window of opponent shot types & depths
+    this.ownShotHistory = [];    // Rolling window of this AI's own recent shots to prevent ruts
     this.anticipatedBiasZ = 0;   // Positive = leaning deep behind T; Negative = creeping forward
     this.anticipatedBiasX = 0;
     this.reactionTimerSec = 0;   // Split-step delay when caught wrong-footed or disguised
     this.currentIntercept = new THREE.Vector3(0, 0.8, 1.8);
     this.hasValidIntercept = false;
     this.lastObservedStrokeCount = -1;
+    this.lastLetAppealStroke = -1;
   }
 
   /**
@@ -50,15 +52,20 @@ export class OpponentAI {
       shotResult.shotId === SQUASH_SHOT_TYPES.BACK_WALL_BOAST ||
       shotResult.shotId === SQUASH_SHOT_TYPES.VOLLEY_KILL;
 
-    // Check if the AI was lulled into expecting a deep drive and got hit with a disguised short shot!
+    // Check if the AI was lulled into expecting a deep drive and got hit with a disguised or sudden short shot!
     const recentDeepCount = this.playerShotHistory.filter((s) => s.isDeepDrive).length;
-    const wasLulledDeep = recentDeepCount >= 2 && this.anticipatedBiasZ > 0.22;
+    const wasLulledDeep = recentDeepCount >= 2 && (this.anticipatedBiasZ > 0.18 || isShortAttack);
+    const sideSwitched =
+      this.playerShotHistory.length > 0 &&
+      this.playerShotHistory[this.playerShotHistory.length - 1].sideX !== Math.sign(ballState.pos.x || 1);
 
     if (isShortAttack && (shotResult.isDisguised || wasLulledDeep)) {
-      // Caught wrong-footed by disguise or drive rhythm!
-      this.reactionTimerSec = baseDelaySec * (1.35 + antStrength * 0.45);
+      // Caught wrong-footed by disguise or sudden pattern break!
+      this.reactionTimerSec = baseDelaySec * (1.45 + antStrength * 0.55);
+    } else if (isShortAttack && sideSwitched) {
+      this.reactionTimerSec = baseDelaySec * 1.15;
     } else {
-      this.reactionTimerSec = baseDelaySec * 0.55;
+      this.reactionTimerSec = baseDelaySec * 0.52;
     }
 
     this.playerShotHistory.push({
@@ -81,6 +88,7 @@ export class OpponentAI {
 
     const creepScale = Number(ma.aiFrontCourtCreep ?? 0.38);
     this.anticipatedBiasZ = (deepRatio * 0.62 - shortRatio * creepScale) * antStrength;
+    this.anticipatedBiasX = (Math.random() - 0.5) * 0.28;
   }
 
   /**
@@ -114,6 +122,8 @@ export class OpponentAI {
     dt,
     params,
     predictedTrajectory,
+    rulesEngine = null,
+    onCallAILet = null,
     onExecuteAIShot
   }) {
     if (!ball || !ball.inPlay || !opponent) return;
@@ -182,13 +192,10 @@ export class OpponentAI {
     if (!ball.hitFrontWallThisShot || opponent.swingCooldown > 0) return;
 
     // Authentic Squash Off-the-Back-Wall Discipline:
-    // If a deep drive is heading to the back glass wall and is already past mid-court (Z > +0.85m),
-    // let it hit the back glass first and strike it as it returns forward (vel.z < 0) and upwards!
     if (willComeOffBackWall && !ball.hitBackWallThisShot && ball.pos.z > 0.85 && ball.vel.z > 2.2) {
       return;
     }
 
-    // Once it hits the back wall, wait a brief moment for it to pop forward & upward off the glass
     if (
       ball.hitBackWallThisShot &&
       ball.vel.z < 0 &&
@@ -205,7 +212,31 @@ export class OpponentAI {
       isComingOffBackWall || ball.vel.z > -2.5 || ball.bounceCountOnFloor >= 1;
 
     if (distXZ <= 1.72 && reachableY && movingTowardBackOrSlow) {
-      const choice = this.chooseTacticalShot({ opponent, player, ball, params });
+      // Check if AI is obstructed by the other player and should call a Let (WSF Rule 8/9 safety)
+      if (
+        rulesEngine &&
+        typeof onCallAILet === 'function' &&
+        this.lastLetAppealStroke !== ball.rallyStrokeCount
+      ) {
+        const pState = selfRole === 'player' ? opponent : player;
+        const oState = selfRole === 'player' ? player : opponent;
+        const interference = rulesEngine.evaluateInterference({
+          striker: selfRole,
+          ball,
+          playerState: pState,
+          opponentState: oState
+        });
+        if (interference && interference.blocked && interference.distToNonStriker < 0.92) {
+          this.lastLetAppealStroke = ball.rallyStrokeCount;
+          // 78% of the time the AI stops play safely and appeals for Let; 22% it tries to play around
+          if (Math.random() < 0.78) {
+            onCallAILet(selfRole, interference);
+            return;
+          }
+        }
+      }
+
+      const choice = this.chooseTacticalShot({ opponent, player, ball, params, distXZ });
       if (typeof onExecuteAIShot === 'function') {
         onExecuteAIShot(choice);
       }
@@ -213,77 +244,204 @@ export class OpponentAI {
   }
 
   /**
-   * Chooses a tactical squash shot based on court geometry and where the other player is standing.
+   * Chooses a varied, tactical squash shot based on court geometry, opponent position,
+   * recent shot history (preventing repetitive ruts), and realistic pressure/error rates.
    */
-  chooseTacticalShot({ opponent, player, ball, params = {} }) {
-    const aggression = Number(params.movementAndAI?.aiAggression ?? 0.55);
-    const playerDistFromFront = player.pos.z - COURT_SPECS.FRONT_WALL_Z; // > 6.5m means other player is deep!
+  chooseTacticalShot({ opponent, player, ball, params = {}, distXZ = 1.0 }) {
+    const aggression = Number(params.movementAndAI?.aiAggression ?? 0.58);
+    const playerDistFromFront = player.pos.z - COURT_SPECS.FRONT_WALL_Z;
     const playerLateralGap = Math.abs(player.pos.x - opponent.pos.x);
-    const isFrontCourtBall = ball.pos.z < 0.45;
-    const isHighVolley = ball.bounceCountOnFloor === 0 && ball.pos.y > 1.15 && ball.pos.z < 0.9;
+    const isFrontCourtBall = ball.pos.z < 1.05;
+    const isHighVolley = ball.bounceCountOnFloor === 0 && ball.pos.y > 1.08 && ball.pos.z < 1.25;
     const isComingOffBackWall = Boolean(ball.hitBackWallThisShot && ball.vel.z < 0);
+    const rallyStrokes = Number(ball.rallyStrokeCount || 0);
 
-    // 1. If ball is returning forward & upward off the Back Glass Wall -> Classic Off-Back-Wall Drive!
+    // Count consecutive drives by this AI so it never gets stuck in a monotonous rut
+    let consecutiveDrives = 0;
+    for (let i = this.ownShotHistory.length - 1; i >= 0; i--) {
+      const t = this.ownShotHistory[i];
+      if (t === 'topspin' || t === 'cross') consecutiveDrives++;
+      else break;
+    }
+    const lastOwnShot = this.ownShotHistory[this.ownShotHistory.length - 1] || '';
+
+    // Determine pressure / stretch factor for realistic unforced or forced mistakes (Tin or Out)
+    const isUnderStretch = distXZ > 1.32 || ball.pos.y < 0.42 || this.reactionTimerSec > 0.01;
+    const rallyFatigueFactor = Math.min(0.08, Math.max(0, (rallyStrokes - 4) * 0.012));
+    const baseErrorChance = (isUnderStretch ? 0.095 : 0.045) + rallyFatigueFactor;
+
+    let decision = null;
+
+    // 1. Force a pattern-breaker if we've hit 2+ drives in a row or the rally is getting long!
+    const shouldBreakRut =
+      consecutiveDrives >= 2 ||
+      (rallyStrokes >= 4 && Math.random() < 0.52) ||
+      Math.random() < 0.34;
+
     if (isComingOffBackWall) {
-      const playCross = playerLateralGap < 0.9 && Math.random() < 0.35;
-      return {
-        shotType: playCross ? 'cross' : 'topspin',
-        speed: 1.18,
-        dirX: playCross ? (ball.pos.x >= 0 ? -0.55 : 0.55) : (ball.pos.x >= 0 ? 0.35 : -0.35),
-        prepCharge: 0.82
-      };
-    }
-
-    // 2. If other player left a loose high ball in mid-court and is deep -> Volley Kill
-    if (isHighVolley && Math.random() < aggression * 0.85) {
-      return {
-        shotType: 'kill',
-        speed: 1.32,
-        dirX: ball.pos.x >= 0 ? 0.65 : -0.65,
-        prepCharge: 0.35
-      };
-    }
-
-    // 3. If other player is stranded deep behind the T (Z > +1.6m) -> Disguised Drop or Attacking 2-Wall Nick Boast!
-    if (playerDistFromFront > 6.45 && isFrontCourtBall && Math.random() < aggression) {
-      if (Math.abs(ball.pos.x) > 1.35 && Math.random() < 0.42) {
-        return {
+      // Returning off the Back Glass Wall: mix Rising Drives, Counter Drops, Boasts, and Lobs!
+      const roll = Math.random();
+      if (shouldBreakRut && roll < 0.32) {
+        decision = {
+          shotType: 'disguised_drop',
+          cutModifier: true,
+          speed: 0.90,
+          dirX: ball.pos.x >= 0 ? 0.62 : -0.62,
+          prepCharge: 0.85
+        };
+      } else if (shouldBreakRut && roll < 0.58) {
+        decision = {
           shotType: 'boast',
-          speed: 1.16,
-          dirX: ball.pos.x >= 0 ? 0.75 : -0.75,
-          prepCharge: 0.72
+          speed: 1.18,
+          dirX: ball.pos.x >= 0 ? 0.82 : -0.82,
+          prepCharge: 0.76
+        };
+      } else if (roll < 0.72) {
+        decision = {
+          shotType: 'lob',
+          speed: 1.06,
+          dirX: ball.pos.x >= 0 ? -0.58 : 0.58,
+          prepCharge: 0.65
+        };
+      } else {
+        const playCross = lastOwnShot === 'topspin' ? Math.random() < 0.68 : Math.random() < 0.45;
+        decision = {
+          shotType: playCross ? 'cross' : 'topspin',
+          speed: 1.15 + Math.random() * 0.14,
+          dirX: playCross ? (ball.pos.x >= 0 ? -0.62 : 0.62) : (ball.pos.x >= 0 ? 0.38 : -0.38),
+          prepCharge: 0.82
         };
       }
-      return {
-        shotType: 'disguised_drop',
-        cutModifier: true,
-        speed: 0.92,
-        dirX: ball.pos.x >= 0 ? 0.55 : -0.55,
-        prepCharge: 0.85 // Full backswing disguise!
+    } else if (isHighVolley && Math.random() < Math.max(0.48, aggression * 0.88)) {
+      // 2. High loose ball in mid/front court -> Aggressive Volley Kill or Volley Drop!
+      const useVolleyDrop = Math.random() < 0.35;
+      decision = useVolleyDrop
+        ? {
+            shotType: 'disguised_drop',
+            cutModifier: true,
+            speed: 0.86,
+            dirX: ball.pos.x >= 0 ? 0.68 : -0.68,
+            prepCharge: 0.78
+          }
+        : {
+            shotType: 'kill',
+            speed: 1.34 + Math.random() * 0.12,
+            dirX: (Math.random() < 0.4 ? -1 : 1) * (ball.pos.x >= 0 ? 0.72 : -0.72),
+            prepCharge: 0.42
+          };
+    } else if (
+      (playerDistFromFront > 5.15 && isFrontCourtBall) ||
+      (shouldBreakRut && ball.pos.z < 2.2)
+    ) {
+      // 3. Opponent is around/behind the T or we are breaking a drive rhythm -> Attack the front corners!
+      const roll = Math.random();
+      if (roll < 0.44) {
+        decision = {
+          shotType: 'disguised_drop',
+          cutModifier: true,
+          speed: 0.86 + Math.random() * 0.08,
+          dirX: (Math.random() < 0.3 ? -1 : 1) * (ball.pos.x >= 0 ? 0.62 : -0.62),
+          prepCharge: 0.88 // Full backswing disguise!
+        };
+      } else if (roll < 0.76) {
+        decision = {
+          shotType: 'boast',
+          speed: 1.16 + Math.random() * 0.08,
+          dirX: ball.pos.x >= 0 ? 0.78 : -0.78,
+          prepCharge: 0.75
+        };
+      } else if (roll < 0.90) {
+        decision = {
+          shotType: 'kill',
+          speed: 1.32,
+          dirX: ball.pos.x >= 0 ? -0.68 : 0.68,
+          prepCharge: 0.55
+        };
+      } else {
+        decision = {
+          shotType: 'lob',
+          speed: 1.05,
+          dirX: ball.pos.x >= 0 ? -0.65 : 0.65,
+          prepCharge: 0.70
+        };
+      }
+    } else if ((ball.pos.z > 1.55 && Math.abs(ball.pos.x) > 1.45) || shouldBreakRut) {
+      // 4. Rear/mid corners or tactical mixup -> Boasts, Back-Wall Boasts, High Lobs, or Drops
+      const isTrappedAtBack = opponent.pos.z >= 3.15 || ball.pos.z >= 3.05;
+      const roll = Math.random();
+      if (roll < 0.42) {
+        decision = {
+          shotType: isTrappedAtBack ? 'back_wall_boast' : 'boast',
+          speed: 1.16,
+          dirX: ball.pos.x >= 0 ? 0.85 : -0.85,
+          prepCharge: 0.68
+        };
+      } else if (roll < 0.68) {
+        decision = {
+          shotType: 'disguised_drop',
+          cutModifier: true,
+          speed: 0.88,
+          dirX: ball.pos.x >= 0 ? 0.58 : -0.58,
+          prepCharge: 0.84
+        };
+      } else if (roll < 0.85) {
+        decision = {
+          shotType: 'lob',
+          speed: 1.06,
+          dirX: ball.pos.x >= 0 ? -0.62 : 0.62,
+          prepCharge: 0.64
+        };
+      }
+    }
+
+    // 5. Fallback Drive (alternating Cross-Court and Straight Rail so it doesn't repeat the same rail)
+    if (!decision) {
+      const preferCross =
+        lastOwnShot === 'topspin'
+          ? Math.random() < 0.64
+          : playerLateralGap < 0.95 && Math.random() < 0.48;
+      decision = {
+        shotType: preferCross ? 'cross' : 'topspin',
+        speed: 1.12 + Math.random() * 0.16,
+        dirX: preferCross
+          ? (ball.pos.x >= 0 ? -0.58 : 0.58)
+          : (ball.pos.x >= 0 ? 0.35 : -0.35),
+        prepCharge: 0.78
       };
     }
 
-    // 4. If AI is stretched wide in mid/rear corners -> Sidewall-Frontwall-Nick Boast (or Back-Wall Boast if trapped deep) or High Lob
-    if (ball.pos.z > 1.75 && Math.abs(ball.pos.x) > 1.85 && Math.random() < 0.45) {
-      const isTrappedAtBack = opponent.pos.z >= 3.25 || ball.pos.z >= 3.15;
-      const useBoast = Math.random() < 0.65;
-      return {
-        shotType: useBoast ? (isTrappedAtBack ? 'back_wall_boast' : 'boast') : 'lob',
-        speed: 1.15,
-        dirX: ball.pos.x >= 0 ? 0.85 : -0.85,
-        prepCharge: 0.65
-      };
+    // Record in ownShotHistory (keep last 5)
+    this.ownShotHistory.push(decision.shotType);
+    if (this.ownShotHistory.length > 5) {
+      this.ownShotHistory.shift();
     }
 
-    // 5. Default "Physical Chess" foundation: Tight Straight Drive (or Cross-Court if other player is hugging same wall)
-    const playCross = playerLateralGap < 0.85 && Math.random() < 0.42;
-    return {
-      shotType: playCross ? 'cross' : 'topspin',
-      speed: 1.16,
-      dirX: playCross ? (ball.pos.x >= 0 ? -0.55 : 0.55) : (ball.pos.x >= 0 ? 0.35 : -0.35),
-      prepCharge: 0.78
-    };
+    // 6. Occasional Realistic Mistake (Tin or Out) or Razor-Thin Winner Margin!
+    const isAttackingLowShot =
+      decision.shotType === 'disguised_drop' ||
+      decision.shotType === 'drop' ||
+      decision.shotType === 'kill' ||
+      decision.shotType === 'boast';
+    const isHighOrHardShot =
+      decision.shotType === 'lob' ||
+      decision.shotType === 'cross' ||
+      decision.shotType === 'topspin';
+
+    const errorRoll = Math.random();
+    if (isAttackingLowShot && errorRoll < baseErrorChance * 1.15) {
+      // Clips the Tin when going for too thin a margin on a drop/kill/boast!
+      decision.aiErrorMode = 'TIN';
+    } else if (isHighOrHardShot && errorRoll < baseErrorChance * 0.85) {
+      // Overhits above the Front-Wall Out Line (4.57m) or Side-Wall Out Line under pressure!
+      decision.aiErrorMode = 'OUT';
+    } else if (isAttackingLowShot && Math.random() < 0.38) {
+      // Razor-sharp nick/winner target!
+      decision.aiWinnerMargin = true;
+    }
+
+    return decision;
   }
 }
 
 export default OpponentAI;
+

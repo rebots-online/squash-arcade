@@ -36,6 +36,7 @@ export class BallPhysics {
     const subSteps = 4;
     const subDt = dt / subSteps;
     const collisions = [];
+    ball.timeSinceHitSec = Number(ball.timeSinceHitSec || 0) + dt;
 
     for (let s = 0; s < subSteps; s++) {
       const speed = ball.vel.length();
