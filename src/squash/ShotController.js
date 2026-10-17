@@ -264,8 +264,8 @@ export class ShotController {
       forearmPronationDegPerSec = 240;
 
       const targetX = -playerSideSign * 2.35;
-      const targetFrontY = 4.12; // high on the glass so the rebound arcs deep to the back corner
-      const flightSec = THREE.MathUtils.clamp(Math.abs(dzToFront) / 12.8, 0.44, 0.72);
+      const targetFrontY = 4.85; // near-ceiling — the rebound must carry deep past the T to the back corners
+      const flightSec = THREE.MathUtils.clamp(Math.abs(dzToFront) / 11.2, 0.52, 0.88);
       const dx = targetX - contactPos.x;
       const dy = targetFrontY - contactPos.y;
 
@@ -275,7 +275,7 @@ export class ShotController {
         dzToFront / flightSec
       );
       // Light cut only — heavy underspin bites the rebound back and lands it short
-      spin.set(-4 * spinScale, 0, 0);
+      spin.set(-2.5 * spinScale, 0, 0);
     } else if (isKillRequest) {
       // --- AGGRESSIVE VOLLEY KILL (Nick Hunter) ---
       shotId = SQUASH_SHOT_TYPES.VOLLEY_KILL;
