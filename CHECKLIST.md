@@ -89,7 +89,7 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 - **Acceptance Gate**: `npm run build` and `npm run dev` succeed with no Gemini/genai references remaining; `/api/*` middleware still works under `vite preview`.
 
 ### `TASK-19` — surge.sh Static Deploy Verification
-- **Status**: `[ ] PENDING SIGNOFF`
+- **Status**: `[x] COMPLETED`
 - **Owner**: `dist/` (build output)
 - **Architecture Ref**: `§3.16`
 - **Depends On**: `["TASK-18"]`

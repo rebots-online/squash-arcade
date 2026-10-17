@@ -44,7 +44,7 @@ owns_modules:
 Argon Squash transforms the 3D arcade racket engine into a modular, tunable 3D Squash simulation and arcade experience guided by **"Physical Chess, Wonder First"**.
 
 1. **Immediate Playability (< 30s)**: Newcomers can rally within 30 seconds of page load, experiencing authentic 4-wall rebounds without memorizing complex button combinations.
-2. **Wonder First Onboarding** *(see §5.5 — being reworked into a **Skills Demonstration** that enumerates each squash skill by name)*: Demonstrates two contrasting front-corner nick winners—**Demonstration A (The Spectacular Volley Kill)** and **Demonstration B (The Impossible Gentle Drop)**—using the exact same underlying physics engine, showing that placement, geometry, disguise, and touch are as lethal as raw power.
+2. **Skills Demonstration Onboarding** *(implemented via §5.5)*: An enumerated eight-skill walkthrough—Serve, Straight Drive, Cross-Court Drive, Drop/Cut Drop, Boast, Lob, Volley, and Nick finish—each labeled `SKILL n/8 — <NAME>` and resolved through the exact same live physics engine, showing that placement, geometry, disguise, and touch are as lethal as raw power.
 3. **Hypothesis-Driven Tunability**: All non-fixed physical, biomechanical, and AI parameters live in a hot-reloadable configuration store (`TuningConfig`) exposed via a developer-facing **Live Tuning Lab (`TuningPanel`)** with preset management, deterministic Nick Laboratory cannon testing, JSON import/export, and A/B trajectory comparison.
 
 ---
@@ -176,12 +176,12 @@ All modules (`CourtGeometry`, `BallPhysics`, `NickCollisionModel`, `PlayerMoveme
     - `chooseTacticalShot({ opponent, player, ball, params, distXZ })` -> Selects the next shot type/aim.
 
 ### 3.8 `IntroDirector` (`src/squash/IntroDirector.js`)
-- **Responsibility**: Orchestrates the playable, skippable two-part signature onboarding (**Demonstration A: The Spectacular Volley Kill** and **Demonstration B: The Impossible Gentle Drop**), dry coaching commentary banners, and interactive slow-motion corner nick replay inspection.
-- **Roadmap note**: The "wonder demo" naming/framing is being reworked into a general **Skills Demonstration** that enumerates and demonstrates each squash skill — the current mystery-framed nick showcase reads as incongruous next to the rest of the UI. See §5.5.
+- **Responsibility**: Orchestrates the playable, skippable eight-part **Skills Demonstration** onboarding (Serve, Straight Drive, Cross-Court Drive, Drop/Cut Drop, Boast, Lob, Volley, Nick finish — labeled `SKILL n/8`), skill-name banners and tips, and interactive slow-motion corner nick replay inspection on the capstone shot.
+- **Roadmap note**: Implemented — the former "wonder demo" mystery framing is replaced by enumerated skill naming. See §5.5.
 - **Interface**:
   - `class IntroDirector`:
     - `constructor(engine)` -> Bound to the root `ArgonSquashEngine`.
-    - `startIntro(startAt = 'DEMO_A_FEED')` -> Begins the two-part demonstration sequence.
+    - `startIntro(startAt = 'SKILL_1_FEED')` -> Begins the eight-part skills demonstration sequence.
     - `skipToPlayableMatch()` -> Skips straight to live play.
     - `triggerSlowMoReplay()` -> Interactive slow-motion corner nick inspection.
     - `update(dt)` -> Advances the current step state machine.

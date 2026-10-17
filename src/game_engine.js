@@ -515,7 +515,7 @@ export class ArgonTennisEngine {
     this.phaseTimer = 0;
     this.selectedShotType = 'TOPSPIN';
     this.p2SelectedShotType = 'TOPSPIN';
-    this.spectatorMatchMode = !this.isMultiplayer && this.urlState !== 'intro' && this.urlState !== 'wonder';
+    this.spectatorMatchMode = !this.isMultiplayer && this.urlState !== 'intro' && this.urlState !== 'wonder' && this.urlState !== 'skills';
     this.autoPlayMode = this.urlAutoPlay || this.spectatorMatchMode;
     this.userHasInteracted = false;
     this.persistentStateLock = false;
@@ -569,7 +569,7 @@ export class ArgonTennisEngine {
     this._setupEffectsPools();
     this._initHudAndControllers();
 
-    // 6. Initialize Wonder-First IntroDirector & Live Tuning Lab Panel
+    // 6. Initialize Skills-Demo IntroDirector & Live Tuning Lab Panel
     this.introDirector = new IntroDirector(this);
     this.tuningPanel = new TuningPanel(this, this.tuningStore);
 
@@ -811,8 +811,10 @@ export class ArgonTennisEngine {
       },
       onIntroNextAction: (action) => {
         if (!this.introDirector) return;
-        if (action === 'DEMO_B_RHYTHM') {
-          this.introDirector._enterStep('DEMO_B_RHYTHM');
+        // Step names (SKILL_n_FEED / SKILL_n_STRIKE / SKILL_CAPSTONE) jump
+        // directly; everything else exits to the playable match.
+        if (typeof action === 'string' && action.startsWith('SKILL')) {
+          this.introDirector._enterStep(action);
         } else {
           this.introDirector.skipToPlayableMatch();
         }
@@ -837,7 +839,7 @@ export class ArgonTennisEngine {
         this.autoPlayMode = false;
         this.userHasInteracted = true;
         this.persistentStateLock = false;
-        this.startWonderIntro('DEMO_A_FEED');
+        this.startWonderIntro('SKILL_1_FEED');
       },
       onStartMatch: ({ gamesToWin, scoringSystem, courtTheme, inputMode, difficulty }) => {
         if (gamesToWin) this.matchConfig.gamesToWin = gamesToWin;
@@ -1991,11 +1993,11 @@ export class ArgonTennisEngine {
       return;
     }
 
-    if (this.urlState === 'intro' || this.urlState === 'wonder') {
+    if (this.urlState === 'intro' || this.urlState === 'wonder' || this.urlState === 'skills') {
       this.hud.hideTitleModal();
       this.autoPlayMode = false;
       this.userHasInteracted = true;
-      this.startWonderIntro('DEMO_A_FEED');
+      this.startWonderIntro('SKILL_1_FEED');
       this._snapCameraImmediate();
       return;
     }
@@ -2120,7 +2122,7 @@ export class ArgonTennisEngine {
     this.audioEngine && this.audioEngine.playMusicForState('rally');
   }
 
-  startWonderIntro(startAt = 'DEMO_A_FEED') {
+  startWonderIntro(startAt = 'SKILL_1_FEED') {
     this.hud.hideTitleModal();
     this.hud.hideCenterBanner();
     this.hud.setReplayMode(false);

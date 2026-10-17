@@ -199,6 +199,66 @@ export class NickCollisionModel {
           spin: new THREE.Vector3(-14, -8, 0)
         };
 
+      case 'skills_serve':
+        // SKILLS DEMO 1/8 — Lob serve: toss high in the right service box,
+        // arc the ball off the front wall into the opposite left quarter.
+        return {
+          id: 'skills_serve',
+          title: 'Skills — Lob Serve',
+          subtitle: 'Arcing serve off the front wall dropping into the opposite left service quarter',
+          hitter: 'opponent',
+          shotType: 'SERVE',
+          cutAngleDeg: 8,
+          pos: new THREE.Vector3(1.85, 2.05, 1.5),
+          vel: new THREE.Vector3(-6.8, 0.9, -16.5),
+          spin: new THREE.Vector3(6, 0, 0)
+        };
+
+      case 'skills_crosscourt_drive':
+        // SKILLS DEMO 3/8 — Cross-court drive: diagonal from the right side
+        // running the full court width into deep left territory.
+        return {
+          id: 'skills_crosscourt_drive',
+          title: 'Skills — Cross-Court Drive',
+          subtitle: 'Diagonal drive running the full width of the court into deep left territory',
+          hitter: 'opponent',
+          shotType: 'DRIVE',
+          cutAngleDeg: 6,
+          pos: new THREE.Vector3(1.55, 1.05, 1.4),
+          vel: new THREE.Vector3(-12.8, 1.6, -21.0),
+          spin: new THREE.Vector3(4, 0, 0)
+        };
+
+      case 'skills_lob':
+        // SKILLS DEMO 6/8 — Defensive lob: high arc from the back-left corner
+        // sailing over the striker to die in the deep back quarter.
+        return {
+          id: 'skills_lob',
+          title: 'Skills — Defensive Lob',
+          subtitle: 'High-arcing lob over the opponent dying in the deep back quarter',
+          hitter: 'opponent',
+          shotType: 'LOB',
+          cutAngleDeg: 12,
+          pos: new THREE.Vector3(-1.9, 1.25, 2.9),
+          vel: new THREE.Vector3(2.6, 8.2, -12.6),
+          spin: new THREE.Vector3(-16, 0, 0)
+        };
+
+      case 'skills_nick_finish':
+        // SKILLS DEMO 8/8 — Nick finish: low flat kill striking the front wall
+        // low-right and rolling dead into the front-right side-wall/floor nick.
+        return {
+          id: 'skills_nick_finish',
+          title: 'Skills — Nick Finish',
+          subtitle: 'Low flat kill into the front-right side-wall/floor nick junction',
+          hitter: 'opponent',
+          shotType: 'KILL',
+          cutAngleDeg: 4,
+          pos: new THREE.Vector3(0.6, 0.85, 1.0),
+          vel: new THREE.Vector3(5.9, -0.6, -25.0),
+          spin: new THREE.Vector3(2, -4, 0)
+        };
+
       default:
         return this.getNickLabScenario('demo_a_kill');
     }
