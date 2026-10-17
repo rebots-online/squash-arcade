@@ -167,10 +167,10 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 
 **Plan**:
 1. **Contact-time model** — derive `tContact` for the receiver from the predicted trajectory (time until ball reaches the strike point/second-bounce window). Compute actor travel time `dist/(maxSpeed * recoveryScale)`.
-2. **Staged approach** — when `travelTime < tContact - margin`, hold a staging point *behind the ball's line* (between T and intercept) with a small split-step hop timed to opponent contact; only release to final target so the actor is still decelerating/moving through the shot at contact. Back-corner intercepts (z>~3, |x|>~1.5) keep incoming momentum — lunge lean, no stop-then-hit.
+2. **Staged approach** — when `travelTime < tContact - margin`, hold a staging point *behind the ball's line* (between T and intercept); only release to final target so the actor is still decelerating/moving through the shot at contact. Back-corner intercepts (z>~3, |x|>~1.5) keep incoming momentum — lunge lean, no stop-then-hit. (Split-step optional/de-emphasized per operator — the visible point is: never arrive-plant-flap.)
 3. **Hip opening = power** — closed-stance windup (root yaw rotated ~0.3-0.5 rad off front wall + racket back), then yaw snaps open through the front-wall direction AT contact; swing speed/power scale with hip angular velocity. Reuse the existing yaw lerp target + add torso/lean terms; racket arm follows the body, not vice-versa.
 4. **Recovery unchanged** — post-shot T-recovery path (`getTRecoveryPosition`) already exists; ensure arrival staging doesn't break it.
 
-**Acceptance**: in spectate + play, receiver visibly arrives within ~150ms of contact (no waiting stance), split-step on opponent strike, hips visibly open through every groundstroke, back-corner retrievals show momentum carry-through.
+**Acceptance**: in spectate + play, receiver visibly arrives within ~150ms of contact (no waiting stance), hips visibly open through every groundstroke — reads as body-driven power, never arrive-plant-flap; back-corner retrievals show momentum carry-through.
 
 **Not doing**: free-orbit camera (rejected), prerendered audio (shelved).
