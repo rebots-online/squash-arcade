@@ -887,13 +887,11 @@ export class ArgonTennisEngine {
         if (this.motionController && this.motionController.setShotType) {
           this.motionController.setShotType(shotType.toLowerCase());
         }
-        // If watching AI vs AI, clicking a shot chip nudges the next AI shot without turning off AI play!
-        if ((this.spectatorMatchMode || this.autoPlayMode) && this.phase === 'RALLY') {
-          this._queueSpectatorShotNudge({
-            shotType: shotType.toLowerCase(),
-            cutModifier: shotType.toLowerCase() === 'drop',
-            speed: shotType.toLowerCase() === 'smash' ? 1.42 : shotType.toLowerCase() === 'drop' ? 0.88 : 1.2
-          });
+        // Tapping a chip EXECUTES the shot — mobile has no number keys. The swing
+        // path already handles every phase: spectate nudge, serve toss/hit, rally
+        // strike-or-queue. (P2 chips stay select-only for local multiplayer.)
+        if (this.playerRole !== 'p2') {
+          this._handleUserSwingInput({ shotType });
         }
       },
       onToggleAudio: () => {
