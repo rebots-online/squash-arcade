@@ -29,9 +29,11 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
        │           │
        │           ▼
        └──► [TASK-18: Google Dependency Cleanup & Static-Host Boundary]
-                   │
-                   ▼
-           [TASK-19: surge.sh Static Deploy Verification]
+       │           │
+       │           ▼
+       │   [TASK-19: surge.sh Static Deploy Verification]
+       │
+       └──► [TASK-20: Skills Demonstration Onboarding (Wonder-Demo Rework)]
 ```
 
 ---
@@ -97,10 +99,22 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
   - Confirm companion/room flows degrade gracefully (no crash) where `/api/*` is absent.
 - **Acceptance Gate**: Deployed site boots and rallies with zero console errors on a clean browser profile.
 
+### `TASK-20` — Skills Demonstration Onboarding (Wonder-Demo Rework)
+- **Status**: `[ ] PENDING SIGNOFF`
+- **Owner Modules**: `src/squash/IntroDirector.js`, `src/squash/NickCollisionModel.js`, `src/hud_ui.js`, `index.html` (copy)
+- **Architecture Ref**: `§5.5`, `§3.8`, Gate J
+- **Depends On**: `["TASK-17"]`
+- **kstore Key**: `argon.squash.v2.tasks.TASK-20`
+- **Deliverables**:
+  - Reframe the two-part "wonder demo" intro as an enumerated **Skills Demonstration**: Serve, Straight Drive, Cross-Court Drive, Drop/Cut Drop, Boast (2-wall + back-wall), Lob, Volley, Nick finish — each step labeled `SKILL n/8 — <NAME>` with a one-line description.
+  - New `NickCollisionModel.getNickLabScenario` entries for skills not yet scripted; slow-mo replay inspection stays as capstone; `skipToPlayableMatch` unchanged.
+  - Copy sweep: remove "wonder"/mystery framing from HUD banners, intro copy, and menu strings; keep the physical demo shots identical (same physics, new labels).
+- **Acceptance Gate (J)**: Onboarding presents a clearly labeled skills walkthrough; each demonstrated shot is named for its squash skill on screen; skip-to-play still works; no unexplained "wonder" framing remains in user-facing text.
+
 ---
 
 ## Sign-off
 
 - [ ] Architecture alignment approved (v2.2.0)
-- [ ] TASK-15 .. TASK-19 scope + acceptance gates approved
+- [ ] TASK-15 .. TASK-20 scope + acceptance gates approved
 

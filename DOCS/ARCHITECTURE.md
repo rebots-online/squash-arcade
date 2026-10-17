@@ -1,9 +1,9 @@
 ---
 doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
-version: "2.2.0"
+version: "2.2.1"
 status: "ALIGNED_TO_CODEGRAPH (2026-10-17 audit) + PENDING REFINEMENTS"
-updated_at: "2026-10-17T14:45:00-04:00"
+updated_at: "2026-10-17T15:05:00-04:00"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
 kstore_namespace: "argon.squash.v2"
 kstore_schema_version: "1.3"
@@ -44,7 +44,7 @@ owns_modules:
 Argon Squash transforms the 3D arcade racket engine into a modular, tunable 3D Squash simulation and arcade experience guided by **"Physical Chess, Wonder First"**.
 
 1. **Immediate Playability (< 30s)**: Newcomers can rally within 30 seconds of page load, experiencing authentic 4-wall rebounds without memorizing complex button combinations.
-2. **Wonder First Onboarding**: Demonstrates two contrasting front-corner nick winners—**Demonstration A (The Spectacular Volley Kill)** and **Demonstration B (The Impossible Gentle Drop)**—using the exact same underlying physics engine, showing that placement, geometry, disguise, and touch are as lethal as raw power.
+2. **Wonder First Onboarding** *(see §5.5 — being reworked into a **Skills Demonstration** that enumerates each squash skill by name)*: Demonstrates two contrasting front-corner nick winners—**Demonstration A (The Spectacular Volley Kill)** and **Demonstration B (The Impossible Gentle Drop)**—using the exact same underlying physics engine, showing that placement, geometry, disguise, and touch are as lethal as raw power.
 3. **Hypothesis-Driven Tunability**: All non-fixed physical, biomechanical, and AI parameters live in a hot-reloadable configuration store (`TuningConfig`) exposed via a developer-facing **Live Tuning Lab (`TuningPanel`)** with preset management, deterministic Nick Laboratory cannon testing, JSON import/export, and A/B trajectory comparison.
 
 ---
@@ -177,6 +177,7 @@ All modules (`CourtGeometry`, `BallPhysics`, `NickCollisionModel`, `PlayerMoveme
 
 ### 3.8 `IntroDirector` (`src/squash/IntroDirector.js`)
 - **Responsibility**: Orchestrates the playable, skippable two-part signature onboarding (**Demonstration A: The Spectacular Volley Kill** and **Demonstration B: The Impossible Gentle Drop**), dry coaching commentary banners, and interactive slow-motion corner nick replay inspection.
+- **Roadmap note**: The "wonder demo" naming/framing is being reworked into a general **Skills Demonstration** that enumerates and demonstrates each squash skill — the current mystery-framed nick showcase reads as incongruous next to the rest of the UI. See §5.5.
 - **Interface**:
   - `class IntroDirector`:
     - `constructor(engine)` -> Bound to the root `ArgonSquashEngine`.
@@ -326,6 +327,7 @@ Instead of classifying from a single 2-point velocity delta, `BiomechStrokeClass
 7. **Gate G (Serve Errors — planned)**: With `aiServeWrongBoxChance=1` the AI visibly walks to the wrong box; `evaluateServeStanceLegality` returns `WRONG_BOX`/`FOOT_FAULT` deterministically; `Fault!`/`Foot fault!` callouts fire and handout is awarded.
 8. **Gate H (Back-Wall Line — planned)**: Back-wall out line renders at reduced opacity/lighter tint in all three themes while front and side out lines are unchanged.
 9. **Gate I (Front-Wall Cam — planned)**: `C` cycles through all five labels ending in `Front Wall`; in `FRONT_WALL_CAM` the front wall is transparent and the full back court is visible; cycle wraps to `Back Glass`.
+10. **Gate J (Skills Demo — planned)**: Onboarding presents a clearly labeled skills walkthrough; each demonstrated shot is named for its squash skill on screen; skip-to-play still works; no unexplained "wonder" framing remains in user-facing text.
 
 ---
 
@@ -348,4 +350,10 @@ Instead of classifying from a single 2-point velocity delta, `BiomechStrokeClass
 ### 5.4 Google Dependency Cleanup (Cost Zero)
 - Remove `@google/genai` from `package.json` (no imports exist) and the `process.env.GEMINI_API_KEY` define from `vite.config.ts`.
 - Keep `/api/*` relay for dev/multiplayer; document that surge.sh `dist/` hosting covers solo play only (§3.16).
+
+### 5.5 Skills Demonstration Onboarding (reworks the "Wonder-First" Demo)
+- **Why**: The current two-part "wonder demo" is thematically mysterious — an unexplained nick showcase that sits incongruously beside the setup menu, tuning lab, and referee callouts. Reframe onboarding as a general skills tutorial.
+- **`IntroDirector` rework**: step sequence becomes an enumerated **Skills Demonstration** — Serve, Straight Drive, Cross-Court Drive, Drop/Cut Drop, Boast (two-wall + back-wall), Lob, Volley, Nick finish — each step labeled on screen with the skill name (e.g. `SKILL 3/8 — DROP`) and a one-line description. Reuses `NickCollisionModel.getNickLabScenario` for launch vectors plus new scenario entries for skills not yet scripted.
+- **Presentation**: banners/callouts switch from mystery punchlines to skill names + tips; slow-mo replay inspection stays as the capstone on the final kill/drop demo; `skipToPlayableMatch` unchanged.
+- **Copy sweep**: §1 bullet 2 and any HUD/menu strings referencing "wonder"/demo A/B mystery wording are updated to the skills-demo naming.
 
