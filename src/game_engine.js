@@ -248,6 +248,184 @@ function createArenaSkyTexture() {
   return tex;
 }
 
+/**
+ * Draws the Roche hexagonal emblem in one of the two user-specified sample styles:
+ * - variant === 'feathered_white': White background with 3D drop-shadow effect, where the white
+ *   background is softly feathered into transparency around all edges so it blends seamlessly
+ *   into the stadium seating wall background.
+ * - variant === 'transparent': Clean transparent background with crisp Roche hexagon & lettering.
+ */
+function drawRocheHexSampleLogo(ctx, cx, cy, rx, ry, variant = 'transparent') {
+  ctx.save();
+
+  if (variant === 'feathered_white') {
+    // 1. Softly feathered white background blended organically into the stadium background
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(rx * 1.46, ry * 1.48);
+    const featherGrad = ctx.createRadialGradient(0, 0, 0.05, 0, 0, 1.0);
+    featherGrad.addColorStop(0.0, 'rgba(255, 255, 255, 0.97)');
+    featherGrad.addColorStop(0.36, 'rgba(255, 255, 255, 0.92)');
+    featherGrad.addColorStop(0.56, 'rgba(248, 252, 255, 0.72)');
+    featherGrad.addColorStop(0.74, 'rgba(240, 248, 255, 0.38)');
+    featherGrad.addColorStop(0.88, 'rgba(232, 244, 255, 0.12)');
+    featherGrad.addColorStop(1.0, 'rgba(255, 255, 255, 0.0)');
+    ctx.fillStyle = featherGrad;
+    ctx.beginPath();
+    ctx.arc(0, 0, 1.0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  const traceHexagon = (offsetX = 0, offsetY = 0) => {
+    const flatX = rx * 0.56;
+    ctx.beginPath();
+    ctx.moveTo(cx - flatX + offsetX, cy - ry + offsetY);
+    ctx.lineTo(cx + flatX + offsetX, cy - ry + offsetY);
+    ctx.lineTo(cx + rx + offsetX, cy + offsetY);
+    ctx.lineTo(cx + flatX + offsetX, cy + ry + offsetY);
+    ctx.lineTo(cx - flatX + offsetX, cy + ry + offsetY);
+    ctx.lineTo(cx - rx + offsetX, cy + offsetY);
+    ctx.closePath();
+  };
+
+  const strokeW = Math.max(4, ry * 0.125);
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+
+  if (variant === 'feathered_white') {
+    // Soft 3D drop-shadow effect under hexagon & wordmark on the feathered white pillow
+    ctx.save();
+    traceHexagon(5, 7);
+    ctx.strokeStyle = 'rgba(15, 36, 66, 0.34)';
+    ctx.lineWidth = strokeW + 2;
+    ctx.shadowColor = 'rgba(8, 22, 44, 0.45)';
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetX = 4;
+    ctx.shadowOffsetY = 6;
+    ctx.stroke();
+    ctx.restore();
+
+    // Main Roche Cobalt Blue hexagon
+    ctx.save();
+    traceHexagon(0, 0);
+    ctx.strokeStyle = '#0066CC';
+    ctx.lineWidth = strokeW;
+    ctx.stroke();
+    ctx.restore();
+
+    // Wordmark "Roche" with shadow effect
+    const fontSize = Math.round(ry * 0.88);
+    ctx.font = `700 ${fontSize}px "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    ctx.fillStyle = 'rgba(15, 36, 66, 0.30)';
+    ctx.fillText('Roche', cx + 4, cy + 5);
+
+    ctx.save();
+    ctx.shadowColor = 'rgba(10, 28, 54, 0.35)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetX = 2;
+    ctx.shadowOffsetY = 4;
+    ctx.fillStyle = '#0066CC';
+    ctx.fillText('Roche', cx, cy + 1);
+    ctx.restore();
+  } else {
+    // Transparent sample logo variant: crisp transparent background with subtle depth shadow
+    ctx.save();
+    traceHexagon(5, 6);
+    ctx.strokeStyle = 'rgba(7, 22, 16, 0.65)';
+    ctx.lineWidth = strokeW + 3;
+    ctx.stroke();
+    ctx.restore();
+
+    // Outer ice-white clarity rim so the transparent blue hex pops against dark green bleachers
+    ctx.save();
+    traceHexagon(0, 0);
+    ctx.strokeStyle = 'rgba(230, 246, 255, 0.92)';
+    ctx.lineWidth = strokeW + 3.5;
+    ctx.stroke();
+
+    ctx.strokeStyle = '#0a7cff';
+    ctx.lineWidth = strokeW;
+    ctx.stroke();
+    ctx.restore();
+
+    const fontSize = Math.round(ry * 0.88);
+    ctx.font = `700 ${fontSize}px "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    ctx.fillStyle = 'rgba(7, 22, 16, 0.72)';
+    ctx.fillText('Roche', cx + 4, cy + 5);
+
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = 'rgba(235, 248, 255, 0.92)';
+    ctx.strokeText('Roche', cx, cy + 1);
+    ctx.fillStyle = '#0a7cff';
+    ctx.fillText('Roche', cx, cy + 1);
+  }
+
+  ctx.restore();
+}
+
+/**
+ * Generates the high-resolution 2048x512 stadium banner texture replacing "Argon Tennis"
+ * with "ROCHE SQUASH" flanked by both Roche sample logos (feathered-white + shadow on left,
+ * transparent on right). Sets flipY = false to match GLTF UV coordinates in stadium_court.glb.
+ */
+function createRocheSquashStadiumBannerTexture(renderer, { flipY = false } = {}) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 2048;
+  canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // 1. Left Sample Logo: White background softly feathered into background + 3D shadow effect
+  drawRocheHexSampleLogo(ctx, 232, 256, 150, 82, 'feathered_white');
+
+  // 2. Right Sample Logo: Transparent background Roche hexagonal emblem
+  drawRocheHexSampleLogo(ctx, 1816, 256, 150, 82, 'transparent');
+
+  // 3. Center Stadium Wordmark: "ROCHE SQUASH" (replacing "Argon Tennis")
+  const text = 'ROCHE SQUASH';
+  const centerX = 1024;
+  const centerY = 264;
+  const maxTextWidth = 1090;
+
+  ctx.save();
+  ctx.font = 'italic 900 148px "Inter", "Segoe UI", "Arial Black", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineJoin = 'round';
+
+  // Extruded 3D stadium drop-shadow layers matching the classic show-court signage
+  for (let d = 14; d >= 4; d -= 2) {
+    ctx.fillStyle = d > 9 ? 'rgba(22, 42, 30, 0.55)' : '#4e6354';
+    ctx.fillText(text, centerX + d, centerY + d * 0.95, maxTextWidth);
+  }
+
+  // Subtle dark-emerald outline for crisp stadium separation
+  ctx.lineWidth = 7;
+  ctx.strokeStyle = '#3b4f41';
+  ctx.strokeText(text, centerX, centerY, maxTextWidth);
+
+  // Pure luminous white face
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(text, centerX, centerY, maxTextWidth);
+  ctx.restore();
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.flipY = flipY;
+  if (renderer?.capabilities?.getMaxAnisotropy) {
+    tex.anisotropy = Math.min(16, renderer.capabilities.getMaxAnisotropy());
+  }
+  tex.needsUpdate = true;
+  return tex;
+}
+
 export class ArgonTennisEngine {
   constructor() {
     this.params = new URLSearchParams(window.location.search);
@@ -333,15 +511,16 @@ export class ArgonTennisEngine {
     };
 
     this.score = this.rulesEngine.score;
-    this.phase = 'TITLE';
+    this.phase = 'RALLY';
     this.phaseTimer = 0;
     this.selectedShotType = 'TOPSPIN';
     this.p2SelectedShotType = 'TOPSPIN';
-    this.spectatorMatchMode =
-      initialDiff === 'ai_vs_ai' || this.urlMode === 'spectate' || this.urlState === 'spectate';
+    this.spectatorMatchMode = !this.isMultiplayer && this.urlState !== 'intro' && this.urlState !== 'wonder';
     this.autoPlayMode = this.urlAutoPlay || this.spectatorMatchMode;
     this.userHasInteracted = false;
     this.persistentStateLock = false;
+    this.narratorInviteTimerSec = 0;
+    this.narratorFirstInviteDone = false;
     this.pendingUserSwing = null;
     this.pendingP2Swing = null;
     this.pendingServeSwing = null;
@@ -931,11 +1110,25 @@ export class ArgonTennisEngine {
     const rulesOpen = !document.getElementById('squash-rules-modal')?.classList.contains('hidden');
     const guideOpen = !document.getElementById('controls-guide-modal')?.classList.contains('hidden');
     const jbOpen = !document.getElementById('jukebox-modal')?.classList.contains('hidden');
-    const titleOpen =
-      this.hud?.elTitleModal &&
-      !this.hud.elTitleModal.classList.contains('hidden') &&
-      this.hud.elTitleModal.style.display !== 'none';
-    this.isPausedForModal = Boolean(!titleOpen && (rulesOpen || guideOpen || jbOpen));
+    this.isPausedForModal = Boolean(rulesOpen || guideOpen || jbOpen);
+  }
+
+  _isSideMenuExpanded() {
+    const el = this.hud?.elTitleModal;
+    if (!el || el.classList.contains('hidden') || el.style.display === 'none') return false;
+    if (document.documentElement.classList.contains('autoplay-mode')) return false;
+    return !el.classList.contains('menu-collapsed');
+  }
+
+  triggerNarratorUSPInvite({ manual = false } = {}) {
+    if (!this.audioEngine) return;
+    const item = this.audioEngine.playNarratorUSPInvite(manual ? undefined : null);
+    if (!item) return;
+    this.hud?.showTimingPopup({
+      grade: item.title,
+      detail: item.subText,
+      durationMs: 5400
+    });
   }
 
   openSquashRulesModal() {
@@ -1009,7 +1202,7 @@ export class ArgonTennisEngine {
     this._syncModalPauseState();
 
     // If a sub-modal (like Rules, Controls, or Jukebox) was open and Esc was pressed, just close it and resume!
-    // Pressing Q (or pressing Esc when no sub-modal is open) exits back to the Main Menu.
+    // Pressing Q (or pressing Esc when no sub-modal is open) exits back to the Side-Docked Main Menu + AI vs AI showcase.
     if (closedSubOverlay && code === 'Escape') {
       return;
     }
@@ -1041,33 +1234,49 @@ export class ArgonTennisEngine {
     this.hud?.hideCenterBanner();
     this.hud?.setReplayMode(false);
 
-    this.phase = 'TITLE';
-    this.phaseTimer = 0;
-    this.spectatorMatchMode = false;
+    // Keep two Pro AI players competing indefinitely in crystal-clear view while the side menu is open!
+    this.spectatorMatchMode = true;
     this.autoPlayMode = true;
     this.persistentStateLock = false;
     this.pendingUserSwing = null;
     this.pendingP2Swing = null;
     this.pendingServeSwing = null;
     this.spectatorShotNudge = null;
+    this.player.maxSpeed = 7.1;
+    this.opponent.maxSpeed = 7.1;
     this._syncSpectatorModeUI();
 
-    this._setupMidRallyShowcase();
-    this.phase = 'TITLE';
+    if (this.phase !== 'RALLY' || !this.ball.inPlay) {
+      this._setupMidRallyShowcase();
+    }
+    this.hud?.elTitleModal?.classList.remove('menu-collapsed');
+    const collapseLbl = document.getElementById('collapse-side-menu-label');
+    if (collapseLbl) collapseLbl.textContent = '◀ Minimize';
     this.hud?.showTitleModal();
     this.audioEngine?.playMusicForState('title');
   }
 
   _bindJukeboxAndRefereeControls() {
+    const collapseBtn = document.getElementById('btn-collapse-side-menu');
+    collapseBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const modal = this.hud?.elTitleModal;
+      if (!modal) return;
+      const collapsed = modal.classList.toggle('menu-collapsed');
+      const lbl = document.getElementById('collapse-side-menu-label');
+      if (lbl) lbl.textContent = collapsed ? '▶ Setup Menu' : '◀ Minimize';
+    });
+
+    const uspBtn = document.getElementById('btn-narrator-usp-invite');
+    uspBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.triggerNarratorUSPInvite({ manual: true });
+    });
+
     const welcomeBtn = document.getElementById('btn-welcome-callout');
     welcomeBtn?.addEventListener('click', (e) => {
       e.stopPropagation();
-      this.audioEngine?.playWelcomeIntro({ force: true, withLoveAll: false });
-      this.hud?.showCenterBanner('Welcome to Virtual Squash!', {
-        style: 'style-start',
-        subText: 'Deep Male Referee Voice Active • Physical Chess on the Four Walls',
-        durationMs: 2200
-      });
+      this.triggerNarratorUSPInvite({ manual: true });
     });
 
     const refHudBtn = document.getElementById('btn-ref-voice-toggle');
@@ -1171,7 +1380,9 @@ export class ArgonTennisEngine {
     document.querySelectorAll('.jukebox-call-btn[data-callout]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const phrase = btn.dataset.callout || 'Down! Handout, five-four.';
-        if (phrase === 'WELCOME') {
+        if (phrase === 'USP_INVITE') {
+          this.triggerNarratorUSPInvite({ manual: true });
+        } else if (phrase === 'WELCOME') {
           this.audioEngine?.playWelcomeIntro({ force: true, withLoveAll: false });
         } else {
           this.audioEngine?.announceScore(phrase, { forceReferee: true });
@@ -1456,12 +1667,18 @@ export class ArgonTennisEngine {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = `jukebox-track-item${t.active ? ' active' : ''}`;
+        const tagLabel =
+          idx < 7
+            ? `🌟 Original #${idx + 1}`
+            : t.type === 'synth'
+            ? '⚡ Synth'
+            : '🎵 Classic';
         btn.innerHTML = `
           <div class="jukebox-track-left">
             <span class="jukebox-track-name">${t.active ? '▶ ' : `${idx + 1}. `}${t.title}</span>
             <span class="jukebox-track-sub">${t.subtitle}</span>
           </div>
-          <span class="jukebox-track-tag">${t.type === 'synth' ? '⚡ Synth' : '🎵 Lyria 3'}</span>
+          <span class="jukebox-track-tag">${tagLabel}</span>
         `;
         btn.addEventListener('click', () => {
           this.audioEngine.setMuted(false);
@@ -1474,6 +1691,7 @@ export class ArgonTennisEngine {
   }
 
   _handleUserPrepStart(evt = {}) {
+    this.lastHumanInputTime = this.elapsedTime;
     if (this.phase === 'RALLY' || this.phase === 'WONDER_INTRO') {
       this.shotController.beginPreparation('player', this.elapsedTime, {
         faceMode: evt.cutModifier ? 'OPEN_CUT' : 'AUTO'
@@ -1586,16 +1804,79 @@ export class ArgonTennisEngine {
 
   _prepareSurroundingArena(stadiumScene) {
     stadiumScene.position.set(0, -0.22, 0);
+    const gltfBannerTex = createRocheSquashStadiumBannerTexture(this.renderer, { flipY: false });
+
+    const upgradeLogoMat = (mat) => {
+      if (!mat) return mat;
+      const matName = String(mat.name || '');
+      const mapName = String(mat.map?.name || '');
+      if (/LogoArgonBanner|Logo/i.test(matName) || /logo_argon/i.test(mapName)) {
+        const cloned = mat.clone();
+        cloned.name = 'LogoRocheSquashBanner';
+        cloned.map = gltfBannerTex;
+        cloned.transparent = true;
+        cloned.depthWrite = false;
+        cloned.roughness = 0.42;
+        cloned.metalness = 0.04;
+        cloned.needsUpdate = true;
+        return cloned;
+      }
+      return mat;
+    };
+
     stadiumScene.traverse((child) => {
       if (child.isMesh) {
         const name = child.name || '';
+        const posCount = child.geometry?.attributes?.position?.count || 0;
         if (/Net|CourtLines|ServiceLine|Baseline|Court/i.test(name)) {
           child.visible = false;
         } else {
+          if (Array.isArray(child.material)) {
+            child.material = child.material.map((m) => upgradeLogoMat(m));
+          } else if (child.material) {
+            child.material = upgradeLogoMat(child.material);
+            // Fallback match by vertex count (20 vertices = 5 stadium banner quads in StadiumShadows_Mesh_1)
+            if (posCount === 20 && /StadiumShadows/i.test(name) && child.material.name !== 'LogoRocheSquashBanner') {
+              const cloned = child.material.clone();
+              cloned.name = 'LogoRocheSquashBanner';
+              cloned.map = gltfBannerTex;
+              cloned.transparent = true;
+              cloned.depthWrite = false;
+              cloned.needsUpdate = true;
+              child.material = cloned;
+            }
+          }
           child.receiveShadow = true;
         }
       }
     });
+
+    // Add central Left-Hand & Right-Hand Spectator Stadium Seating "ROCHE SQUASH" + Dual Sample Logo Banners
+    const planeBannerTex = createRocheSquashStadiumBannerTexture(this.renderer, { flipY: true });
+    const sideStandBannerMat = new THREE.MeshStandardMaterial({
+      map: planeBannerTex,
+      transparent: true,
+      depthWrite: false,
+      roughness: 0.42,
+      metalness: 0.05,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+      polygonOffsetUnits: -2
+    });
+    const sideStandBannerGeo = new THREE.PlaneGeometry(3.4, 0.85);
+
+    const leftCentralBanner = new THREE.Mesh(sideStandBannerGeo, sideStandBannerMat);
+    leftCentralBanner.position.set(-12.26, 0.72, 0);
+    leftCentralBanner.rotation.y = Math.PI / 2;
+    leftCentralBanner.renderOrder = 3;
+    stadiumScene.add(leftCentralBanner);
+
+    const rightCentralBanner = new THREE.Mesh(sideStandBannerGeo, sideStandBannerMat);
+    rightCentralBanner.position.set(12.26, 0.72, 0);
+    rightCentralBanner.rotation.y = -Math.PI / 2;
+    rightCentralBanner.renderOrder = 3;
+    stadiumScene.add(rightCentralBanner);
+
     this.scene.add(stadiumScene);
   }
 
@@ -1718,21 +1999,32 @@ export class ArgonTennisEngine {
       return;
     }
 
-    if (this.spectatorMatchMode) {
+    if (this.urlMode === 'ai_vs_ai' || this.urlMode === 'spectate' || this.urlState === 'spectate') {
       this.startSpectatorAIMatch({ showStartBanner: true });
       this._snapCameraImmediate();
       return;
     }
 
     if (!this.urlAutoPlay) {
+      // On default load: keep the left-docked side menu visible AND run an indefinite AI vs AI match
+      // with full physics, strategies, serves, nicks, and score calls in crystal-clear view!
+      this.spectatorMatchMode = true;
+      this.autoPlayMode = true;
+      this.persistentStateLock = false;
+      this.player.maxSpeed = 7.1;
+      this.opponent.maxSpeed = 7.1;
       this.rulesEngine.resetMatch({
         gamesToWin: this.matchConfig.gamesToWin,
         scoringMode: this.matchConfig.scoringSystem
       });
       this.score = this.rulesEngine.score;
+      this.playerAI.resetMemory();
+      this.opponentAI.resetMemory();
       this._syncScoreboardHUD();
+      this._syncSpectatorModeUI();
       this._setupMidRallyShowcase();
-      this.autoPlayMode = true;
+      this.hud.showTitleModal();
+      this._snapCameraImmediate();
       this.audioEngine && this.audioEngine.playMusicForState('title');
       return;
     }
@@ -2245,15 +2537,17 @@ export class ArgonTennisEngine {
   }
 
   _handleUserTossInput() {
-    if (this.spectatorMatchMode) return false;
-    this.userHasInteracted = true;
-    if (this.phase === 'TITLE') {
-      this.hud.hideTitleModal();
-      this.autoPlayMode = false;
-      this.persistentStateLock = false;
-      this.startNewMatch({ showStartBanner: true });
-      return true;
+    this.lastHumanInputTime = this.elapsedTime;
+    if (this.spectatorMatchMode || this.autoPlayMode) {
+      if (this.phase === 'SERVE_STANCE') {
+        const srv = this.score.server === 'player' ? this.player : this.opponent;
+        this.hud.hideCenterBanner();
+        this._startServeToss(srv);
+        return true;
+      }
+      return false;
     }
+    this.userHasInteracted = true;
     if (this.phase === 'SERVE_STANCE' && this.score.server === 'player') {
       this.persistentStateLock = false;
       this.hud.hideCenterBanner();
@@ -2264,38 +2558,59 @@ export class ArgonTennisEngine {
   }
 
   _handleUserSwingInput(evt = {}) {
-    // If watching AI vs AI (spectatorMatchMode or passive background rally),
-    // accept user keyboard/mouse/swing nudges (1-5, B, Space, Click) to influence the AI rally
-    // WITHOUT deactivating autonomous AI vs AI mode!
-    if (this.spectatorMatchMode || (this.autoPlayMode && !this.userHasInteracted && this.phase === 'RALLY')) {
+    this.lastHumanInputTime = this.elapsedTime;
+
+    // When "barging in" during automated AI demo / spectator play (in ANY phase),
+    // execute the passer-by's shot or serve immediately (or queue it for the next contact)
+    // and continue automated AI play seamlessly without ever leaving the players idling!
+    if (this.spectatorMatchMode || this.autoPlayMode) {
       if (evt.shotType && evt.shotType !== 'toss') {
         const st = String(evt.shotType).toUpperCase();
         this.selectedShotType = st;
         this.hud.setActiveShotChip(evt.shotType);
       }
+      if (this.phase === 'SERVE_STANCE') {
+        const srv = this.score.server === 'player' ? this.player : this.opponent;
+        this.hud.hideCenterBanner();
+        this._startServeToss(srv);
+        this.pendingServeSwing = { actor: srv, evt };
+        return;
+      }
+      if (this.phase === 'SERVE_TOSS') {
+        const srv = this.score.server === 'player' ? this.player : this.opponent;
+        this._executeServeHit(srv, evt);
+        return;
+      }
       if (this.phase === 'RALLY' && this.ball.inPlay) {
-        if (this.ball.lastHitter === 'opponent' && this._attemptPlayerRallyStrike(evt, true)) {
+        if (this.ball.lastHitter === 'opponent' && this._attemptPlayerRallyStrike({ ...evt, isSpectatorNudge: true }, true)) {
           this.spectatorShotNudge = null;
           return;
         }
-        if (this.ball.lastHitter === 'player' && this._attemptOpponentManualStrike(evt)) {
+        if (this.ball.lastHitter === 'player' && this._attemptOpponentManualStrike({ ...evt, isSpectatorNudge: true })) {
           this.spectatorShotNudge = null;
           return;
         }
+        // Even if the ball is still in flight toward the wall, give immediate visual swing feedback
+        // on Player 1 and queue the shot so the AI executes it on contact!
+        const side =
+          evt.side === 'backhand' || (Number(evt.dirX || 0) < -0.12 && evt.side !== 'forehand')
+            ? 'backhand'
+            : 'forehand';
+        const shotType = String(evt.shotType || this.selectedShotType || 'topspin').toLowerCase();
+        this.racketKinematics?.triggerSwing(this.player, {
+          shotType,
+          side,
+          speed: Number(evt.speed || 1.2),
+          timing: 'sweet',
+          dirX: Number(evt.dirX || 0)
+        });
+        this.audioEngine?.playSwingWhoosh(Number(evt.speed || 1.15));
         this._queueSpectatorShotNudge(evt);
       }
       return;
     }
 
     this.userHasInteracted = true;
-    if (this.phase === 'TITLE') {
-      this.hud.hideTitleModal();
-      this.autoPlayMode = false;
-      this.persistentStateLock = false;
-      this.startNewMatch({ showStartBanner: true });
-      return;
-    }
-
     if (this.phase === 'WONDER_INTRO') {
       if (this.introDirector && this.introDirector.step === 'DEMO_B_REVELATION') {
         this.introDirector.skipToPlayableMatch();
@@ -2767,6 +3082,22 @@ export class ArgonTennisEngine {
     this.elapsedTime += dt;
     this.cameraTrauma = Math.max(0, this.cameraTrauma - dt * 1.4);
 
+    // Periodic Narrator Invitation & USP Showcase (every ~95s during AI vs AI / Side-Menu Showcase)
+    if (this.spectatorMatchMode || this.autoPlayMode) {
+      this.narratorInviteTimerSec += dt;
+      const thresholdSec = this.narratorFirstInviteDone ? 95 : 18;
+      if (
+        this.narratorInviteTimerSec >= thresholdSec &&
+        (this.phase === 'SERVE_STANCE' ||
+          this.phase === 'POINT_OVER' ||
+          (this.phase === 'RALLY' && this.phaseTimer > 2.5))
+      ) {
+        this.narratorInviteTimerSec = 0;
+        this.narratorFirstInviteDone = true;
+        this.triggerNarratorUSPInvite({ manual: false });
+      }
+    }
+
     // Update 3D Court Geometry overlays (wall impact rings & T-Zone guide)
     const ma = this.tuningStore.params.movementAndAI;
     this.courtGeometry.update(dt);
@@ -2889,13 +3220,22 @@ export class ArgonTennisEngine {
       return;
     }
 
+    // Seamless AI continuity: even if a passer-by started a human match, sampled a shot or two,
+    // and then stopped touching controls for >3.2s, the AI automatically steps in to keep the
+    // petits bonhommes rallying and serving continuously without ever idling!
+    const humanIdleSec = this.elapsedTime - (this.lastHumanInputTime || 0);
     const aiControlsPlayer =
-      this.spectatorMatchMode || (this.autoPlayMode && !this.userHasInteracted);
+      this.spectatorMatchMode ||
+      this.autoPlayMode ||
+      (!this.isMultiplayer && humanIdleSec > 3.2);
 
     if (this.phase === 'SERVE_STANCE' && !this.persistentStateLock) {
       if (this.score.server === 'opponent' && !this.isMultiplayer && this.phaseTimer > 0.95) {
         this._startServeToss(this.opponent);
-      } else if (aiControlsPlayer && this.score.server === 'player' && this.phaseTimer > 0.95) {
+      } else if (
+        this.score.server === 'player' &&
+        ((aiControlsPlayer && this.phaseTimer > 0.95) || (!this.isMultiplayer && this.phaseTimer > 3.2))
+      ) {
         this._startServeToss(this.player);
       }
     }
@@ -3044,6 +3384,9 @@ export class ArgonTennisEngine {
             keysDown.has('ArrowLeft') ||
             keysDown.has('ArrowRight'))
       );
+      if (hasMovementKeyNudge) {
+        this.lastHumanInputTime = this.elapsedTime;
+      }
 
       if (aiControlsPlayer) {
         // Full Tactical AI control for Player 1 (both in Watch AI vs AI Spectator Mode and Title Menu Idling)
@@ -3549,6 +3892,13 @@ export class ArgonTennisEngine {
     } else {
       targetPos.set(this.player.pos.x * 0.24, 3.22, 9.38);
       targetLook.set(this.ball.pos.x * 0.2, 1.12, -1.65);
+    }
+
+    // When the main menu is docked on the left side, gently frame the camera slightly left
+    // so the 3D Glass Show-Court projects into the open center-right viewport area!
+    if (this._isSideMenuExpanded() && window.innerWidth > 900 && mode !== 'INTRO_PAN') {
+      targetPos.x -= 0.52;
+      targetLook.x -= 0.92;
     }
     return { targetPos, targetLook };
   }

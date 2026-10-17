@@ -153,7 +153,29 @@ kbd{display:inline-block;padding:1px 6px;border-radius:5px;background:#1e293b;bo
 .rules-ext-link{color:#fde047;font-weight:800;text-decoration:underline;transition:color .12s ease}
 .rules-ext-link:hover{color:#fff}
 .squash-rules-scroll-grid{max-height:58vh;overflow-y:auto;padding-right:4px}
-.wii-timing-popup{position:fixed!important;left:18px!important;top:78px!important;right:auto!important;transform:none!important;align-items:flex-start!important;text-align:left!important;max-width:min(285px,40vw);padding:6px 13px!important;border-radius:10px!important;background:rgba(10,16,26,.84)!important;border:1.5px solid rgba(148,163,184,.45)!important;border-left:4px solid #ffea28!important;box-shadow:0 4px 14px rgba(0,0,0,.55)!important;backdrop-filter:blur(6px);animation:sideToastSlide .16s ease-out!important;pointer-events:none!important}
-@keyframes sideToastSlide{0%{opacity:0;transform:translateX(-10px)}100%{opacity:1;transform:translateX(0)}}
-@media (max-width: 768px){.wii-timing-popup{left:10px!important;top:62px!important;max-width:min(230px,58vw);padding:4px 10px!important}.wii-timing-popup .timing-grade{font-size:12.5px}.wii-timing-popup .timing-detail{font-size:9.5px}}
+.wii-timing-popup{position:fixed!important;right:18px!important;left:auto!important;top:78px!important;transform:none!important;align-items:flex-end!important;text-align:right!important;max-width:min(300px,42vw);padding:6px 13px!important;border-radius:10px!important;background:rgba(10,16,26,.86)!important;border:1.5px solid rgba(148,163,184,.45)!important;border-right:4px solid #ffea28!important;box-shadow:0 4px 14px rgba(0,0,0,.55)!important;backdrop-filter:blur(6px);animation:sideToastSlide .16s ease-out!important;pointer-events:none!important}
+@keyframes sideToastSlide{0%{opacity:0;transform:translateX(10px)}100%{opacity:1;transform:translateX(0)}}
+@media (max-width: 768px){.wii-timing-popup{right:10px!important;left:auto!important;top:62px!important;max-width:min(230px,58vw);padding:4px 10px!important}.wii-timing-popup .timing-grade{font-size:12.5px}.wii-timing-popup .timing-detail{font-size:9.5px}}
+#title-modal.side-docked-menu{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;pointer-events:none!important;justify-content:flex-start!important;align-items:flex-start!important;padding:72px 14px 48px 14px!important;z-index:28!important}
+.side-docked-card{pointer-events:auto!important;width:min(368px,90vw)!important;max-width:min(368px,90vw)!important;max-height:calc(100vh - 122px)!important;padding:11px 14px!important;gap:6px!important;border-radius:20px!important;background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(240,248,255,.92) 78%,rgba(224,240,255,.93))!important;border:3px solid rgba(99,191,255,.92)!important;box-shadow:0 14px 36px rgba(0,16,38,.55),inset 0 1px #fff!important;transition:all .22s ease}
+.side-docked-card .argon-logo-title{font-size:clamp(24px,2.8vw,31px)!important}
+.side-docked-card .squash-subtitle-tag{font-size:11px!important;line-height:1.28!important;margin-top:2px!important}
+.side-docked-card .welcome-announcer-row{gap:5px!important;margin-top:5px!important}
+.side-docked-card .welcome-callout-pill{padding:4px 9px!important;font-size:10.5px!important}
+.side-docked-card .compact-preview-diagram{max-height:76px!important;padding:6px 10px!important}
+.side-docked-card .mini-squash-court{height:62px!important;padding:5px 10px!important}
+.side-docked-card .court-slot-marker canvas{width:28px!important;height:28px!important}
+.side-docked-card .slot-tag{font-size:11px!important}
+.side-docked-card .choice-main{font-size:12px!important}
+.side-docked-card .wii-green-choice{padding:7px 5px!important;border-radius:10px!important}
+.side-docked-card .squash-modal-actions{gap:6px!important;margin-top:2px!important}
+.side-docked-card .squash-modal-actions .wii-ok-btn{min-width:102px!important;flex:1 1 auto;padding:8px 10px!important;font-size:12.5px!important}
+.side-menu-top-bar{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px}
+.live-ai-showcase-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;background:rgba(15,23,42,.9);border:1.5px solid #38bdf8;color:#e0f2fe;font-size:9.5px;font-weight:900;letter-spacing:.04em}
+.live-ai-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:presenceWaitPulse 1.2s infinite ease-in-out}
+.side-menu-collapse-btn{padding:3px 9px;border-radius:999px;background:rgba(15,23,42,.85);border:1.5px solid rgba(56,189,248,.65);color:#ffea28;font-family:var(--wii-font);font-size:10px;font-weight:900;cursor:pointer;transition:all .14s ease}
+.side-menu-collapse-btn:hover{background:#0284c7;color:#fff;border-color:#fff}
+#title-modal.side-docked-menu.menu-collapsed .side-docked-card{width:min(265px,78vw)!important;padding:9px 12px!important}
+#title-modal.side-docked-menu.menu-collapsed .court-preview-diagram,#title-modal.side-docked-menu.menu-collapsed .setup-step-hint,#title-modal.side-docked-menu.menu-collapsed .setup-step,#title-modal.side-docked-menu.menu-collapsed .welcome-announcer-row{display:none!important}
+
 

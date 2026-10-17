@@ -9,53 +9,93 @@
 // ============================================================================
 
 export const LYRIA_TRACKS = {
-  match_rally: {
-    id: 'match_rally',
-    title: 'Physical Chess Rally (Lyria 3)',
-    shortTitle: 'Physical Chess Rally',
-    subtitle: 'Active Squash Atmosphere • 124 BPM',
-    genre: 'Lyria 3 Soundtrack',
-    type: 'audio',
-    src: 'https://www.gstatic.com/aistudio/starter-apps/tennis/audio/match_rally.mp3',
+  // ==========================================================================
+  // TRACKS 1–7: NOVEL ORIGINAL ARGON SQUASH DEFAULT SOUNDTRACK
+  // ==========================================================================
+  argon_glass_overture: {
+    id: 'argon_glass_overture',
+    title: 'Argon Glass Overture (Original #1)',
+    shortTitle: 'Argon Glass Overture',
+    subtitle: 'Original Showcourt Menu & AI Rally Theme • 118 BPM',
+    genre: 'Argon Original Soundtrack',
+    type: 'synth',
+    bpm: 118,
     loop: true,
-    baseVolume: 0.36
+    baseVolume: 0.46
   },
-  menu_theme: {
-    id: 'menu_theme',
-    title: 'Glass Showcourt Prelude (Lyria 3)',
-    shortTitle: 'Showcourt Prelude',
-    subtitle: 'Title & Club Select Theme • 108 BPM',
-    genre: 'Lyria 3 Soundtrack',
-    type: 'audio',
-    src: 'https://www.gstatic.com/aistudio/starter-apps/tennis/audio/menu_theme.mp3',
+  physical_chess_protocol: {
+    id: 'physical_chess_protocol',
+    title: 'Physical Chess Protocol (Original #2)',
+    shortTitle: 'Physical Chess Protocol',
+    subtitle: 'Original Four-Wall Tactical Rally Mix • 128 BPM',
+    genre: 'Argon Original Soundtrack',
+    type: 'synth',
+    bpm: 128,
     loop: true,
-    baseVolume: 0.42
+    baseVolume: 0.46
   },
-  court_intro: {
-    id: 'court_intro',
-    title: 'PSA Glass Arena Flyover (Lyria 3)',
-    shortTitle: 'Arena Flyover',
-    subtitle: 'Showcourt Intro Fanfare • 120 BPM',
-    genre: 'Lyria 3 Soundtrack',
-    type: 'audio',
-    src: 'https://www.gstatic.com/aistudio/starter-apps/tennis/audio/court_intro.mp3',
-    loop: false,
+  crimson_tin_fanfare: {
+    id: 'crimson_tin_fanfare',
+    title: 'Crimson Tin & Glass Walls (Original #3)',
+    shortTitle: 'Crimson Tin Fanfare',
+    subtitle: 'Original Showcourt Arena Intro & Serve • 124 BPM',
+    genre: 'Argon Original Soundtrack',
+    type: 'synth',
+    bpm: 124,
+    loop: true,
     baseVolume: 0.48
   },
-  victory_fanfare: {
-    id: 'victory_fanfare',
-    title: 'Championship Glass Trophy (Lyria 3)',
-    shortTitle: 'Championship Trophy',
-    subtitle: 'Match Victory Celebration • 126 BPM',
-    genre: 'Lyria 3 Soundtrack',
-    type: 'audio',
-    src: 'https://www.gstatic.com/aistudio/starter-apps/tennis/audio/victory_fanfare.mp3',
-    loop: false,
-    baseVolume: 0.50
+  nick_roller_overdrive: {
+    id: 'nick_roller_overdrive',
+    title: 'Nick Roller Overdrive (Original #4)',
+    shortTitle: 'Nick Roller Overdrive',
+    subtitle: 'Original Match Ball & Corner Nick Tension • 136 BPM',
+    genre: 'Argon Original Soundtrack',
+    type: 'synth',
+    bpm: 136,
+    loop: true,
+    baseVolume: 0.46
   },
+  alexandria_showcourt_nights: {
+    id: 'alexandria_showcourt_nights',
+    title: 'Alexandria Showcourt Nights (Original #5)',
+    shortTitle: 'Alexandria Nights',
+    subtitle: 'Original Hijaz Glass Marimba & Deep Sub • 120 BPM',
+    genre: 'Argon Original Soundtrack',
+    type: 'synth',
+    bpm: 120,
+    loop: true,
+    baseVolume: 0.45
+  },
+  forearm_cut_funk: {
+    id: 'forearm_cut_funk',
+    title: 'Forearm Cut & Boast Funk (Original #6)',
+    shortTitle: 'Forearm Cut Funk',
+    subtitle: 'Original Clavinet, Slap Bass & Ghost Groove • 116 BPM',
+    genre: 'Argon Original Soundtrack',
+    type: 'synth',
+    bpm: 116,
+    loop: true,
+    baseVolume: 0.45
+  },
+  psa_championship_crown: {
+    id: 'psa_championship_crown',
+    title: 'Four-Wall Championship Crown (Original #7)',
+    shortTitle: 'Championship Crown',
+    subtitle: 'Original Trophy & Victory Anthem • 126 BPM',
+    genre: 'Argon Original Soundtrack',
+    type: 'synth',
+    bpm: 126,
+    loop: true,
+    baseVolume: 0.48
+  },
+
+  // ==========================================================================
+  // TRACKS 8–14: BONUS & CLASSIC LEGACY TRACKS
+  // ==========================================================================
   virtua_arcade_95: {
     id: 'virtua_arcade_95',
-    title: "Virtual Squash '95 (Arcade Synth)",
+    title: "Virtual Squash '95 (Arcade Synth #8)",
     shortTitle: "Virtual Squash '95",
     subtitle: '90s Virtua Arcade FM Brass & Bass • 132 BPM',
     genre: 'Arcade FM Synth',
@@ -66,7 +106,7 @@ export const LYRIA_TRACKS = {
   },
   t_zone_cyber: {
     id: 't_zone_cyber',
-    title: 'T-Zone Cyber Pulse (128 BPM)',
+    title: 'T-Zone Cyber Pulse (Electro #9)',
     shortTitle: 'T-Zone Cyber Pulse',
     subtitle: 'Driving Electro-Squash Mid-Court Arp • 128 BPM',
     genre: 'Cyber Electro',
@@ -77,7 +117,7 @@ export const LYRIA_TRACKS = {
   },
   cairo_glass_finals: {
     id: 'cairo_glass_finals',
-    title: 'Cairo Glass Finals (Deep Groove)',
+    title: 'Cairo Glass Finals (Breakbeat #10)',
     shortTitle: 'Cairo Glass Finals',
     subtitle: 'Championship Sub-Bass & Glass Percussion • 118 BPM',
     genre: 'Deep Breakbeat',
@@ -85,33 +125,94 @@ export const LYRIA_TRACKS = {
     bpm: 118,
     loop: true,
     baseVolume: 0.44
+  },
+  match_rally: {
+    id: 'match_rally',
+    title: 'Classic Lyria Rally (Legacy #11)',
+    shortTitle: 'Classic Lyria Rally',
+    subtitle: 'Legacy Studio Rally Track • 124 BPM',
+    genre: 'Lyria 3 Legacy',
+    type: 'audio',
+    src: 'https://www.gstatic.com/aistudio/starter-apps/tennis/audio/match_rally.mp3',
+    loop: true,
+    baseVolume: 0.36
+  },
+  menu_theme: {
+    id: 'menu_theme',
+    title: 'Classic Showcourt Prelude (Legacy #12)',
+    shortTitle: 'Classic Prelude',
+    subtitle: 'Legacy Club Select Theme • 108 BPM',
+    genre: 'Lyria 3 Legacy',
+    type: 'audio',
+    src: 'https://www.gstatic.com/aistudio/starter-apps/tennis/audio/menu_theme.mp3',
+    loop: true,
+    baseVolume: 0.42
+  },
+  court_intro: {
+    id: 'court_intro',
+    title: 'Classic Arena Flyover (Legacy #13)',
+    shortTitle: 'Classic Flyover',
+    subtitle: 'Legacy Showcourt Intro Fanfare • 120 BPM',
+    genre: 'Lyria 3 Legacy',
+    type: 'audio',
+    src: 'https://www.gstatic.com/aistudio/starter-apps/tennis/audio/court_intro.mp3',
+    loop: false,
+    baseVolume: 0.48
+  },
+  victory_fanfare: {
+    id: 'victory_fanfare',
+    title: 'Classic Trophy Fanfare (Legacy #14)',
+    shortTitle: 'Classic Trophy',
+    subtitle: 'Legacy Match Victory Celebration • 126 BPM',
+    genre: 'Lyria 3 Legacy',
+    type: 'audio',
+    src: 'https://www.gstatic.com/aistudio/starter-apps/tennis/audio/victory_fanfare.mp3',
+    loop: false,
+    baseVolume: 0.50
   }
 };
+
+export const ORIGINAL_DEFAULT_TRACK_IDS = [
+  'argon_glass_overture',
+  'physical_chess_protocol',
+  'crimson_tin_fanfare',
+  'nick_roller_overdrive',
+  'alexandria_showcourt_nights',
+  'forearm_cut_funk',
+  'psa_championship_crown'
+];
 
 export const JUKEBOX_TRACK_LIST = Object.values(LYRIA_TRACKS);
 
 const STATE_TO_TRACK = {
-  title: 'menu_theme',
-  menu: 'menu_theme',
-  select: 'menu_theme',
-  intro: 'court_intro',
-  court_intro: 'court_intro',
-  flyover: 'court_intro',
-  start: 'court_intro',
-  serve: 'match_rally',
-  serve_wait: 'match_rally',
-  serve_toss: 'match_rally',
-  rally: 'match_rally',
-  playing: 'match_rally',
-  match: 'match_rally',
-  point: 'match_rally',
-  gamepoint: 'match_rally',
-  replay: 'match_rally',
-  victory: 'victory_fanfare',
-  win: 'victory_fanfare',
-  game_won: 'victory_fanfare',
-  match_over: 'victory_fanfare',
-  celebration: 'victory_fanfare',
+  title: 'argon_glass_overture',
+  menu: 'argon_glass_overture',
+  select: 'argon_glass_overture',
+  intro: 'crimson_tin_fanfare',
+  court_intro: 'crimson_tin_fanfare',
+  flyover: 'crimson_tin_fanfare',
+  start: 'crimson_tin_fanfare',
+  serve: 'physical_chess_protocol',
+  serve_wait: 'physical_chess_protocol',
+  serve_toss: 'physical_chess_protocol',
+  rally: 'physical_chess_protocol',
+  playing: 'physical_chess_protocol',
+  match: 'physical_chess_protocol',
+  point: 'physical_chess_protocol',
+  gamepoint: 'nick_roller_overdrive',
+  replay: 'alexandria_showcourt_nights',
+  victory: 'psa_championship_crown',
+  win: 'psa_championship_crown',
+  game_won: 'forearm_cut_funk',
+  match_over: 'psa_championship_crown',
+  celebration: 'psa_championship_crown',
+  argon_glass_overture: 'argon_glass_overture',
+  physical_chess_protocol: 'physical_chess_protocol',
+  crimson_tin_fanfare: 'crimson_tin_fanfare',
+  nick_roller_overdrive: 'nick_roller_overdrive',
+  alexandria_showcourt_nights: 'alexandria_showcourt_nights',
+  forearm_cut_funk: 'forearm_cut_funk',
+  psa_championship_crown: 'psa_championship_crown',
   menu_theme: 'menu_theme',
   match_rally: 'match_rally',
   victory_fanfare: 'victory_fanfare',
@@ -119,6 +220,27 @@ const STATE_TO_TRACK = {
   t_zone_cyber: 't_zone_cyber',
   cairo_glass_finals: 'cairo_glass_finals'
 };
+
+export const NARRATOR_USP_INVITES = [
+  {
+    title: '🎙️ WELCOME TO ARGON SQUASH • CHOOSE YOUR WAY TO PLAY',
+    subText: '1P vs AI or 2-Human 1v1 • Webcam Kinect-Style, Phone Wii-Racket, or Mouse/Keys • Press K for Complete Rules',
+    speech:
+      'Welcome to Argon Squash! You are watching two autonomous A.I. players battle live on the glass showcourt. Ready to jump in? Use the menu on the left to play One Player against Club or Pro A.I., or start a Two-Human-Player One-v-One match! Play with Webcam Kinect-style body pose and arm swings, pair your smartphone as a Wii-style inertial racket, or use Keyboard and Mouse. Press K at any time to review the complete rules of squash!'
+  },
+  {
+    title: '📷 KINECT-STYLE WEBCAM POSE & 📱 WII-STYLE PHONE RACKET',
+    subText: 'Step 4: Enable Pose Cam (Front/Back TV) • Bottom Right: Pair Phone Racket • Press K for Squash Rules',
+    speech:
+      'Experience Physical Chess with full motion controls! For Kinect-style webcam play, click Enable Pose Cam in Step 4 to lunge and swing naturally in front of your camera—even using a back camera with a big-screen T.V.! For Wii-style motion play, scan the Pocket Racket QR code with your phone to swing and slice in 3D space. Or play immediately with mouse swipes and keys 1 through 5. Press K anytime to pause and view the complete rules of squash!'
+  },
+  {
+    title: '🎾 1P VS AI, 2-PLAYER 1V1 & LIVE AI NUDGES',
+    subText: 'Click Play Match Now on the Left Menu • Or Nudge the Live AI Right Now with Keys 1–5 & WASD • Key K: Rules',
+    speech:
+      'Ready to step on court? In Step 1 on the left menu, pick Club A.I. or Pro Chess A.I. for a solo match, or select One-v-One Match to invite a second human player! Even while watching this live A.I. exhibition, you can nudge their next shot with keys 1 through 5, or steer footwork with W, A, S, D. To review the official rules of squash, including Lets and Strokes, press K at any time!'
+  }
+];
 
 export const GEMINI_TTS_CLIPS = {};
 
@@ -140,6 +262,7 @@ export class AudioEngine {
     this.refereeVoiceRate = Number(options.refereeVoiceRate ?? 0.95);
     this._cachedMaleVoice = null;
     this._welcomePlayed = false;
+    this._uspInviteIndex = 0;
     this.lastRefereeCallout = 'Welcome to Virtual Squash!';
 
     // Jukebox State
@@ -149,7 +272,7 @@ export class AudioEngine {
     this._activeVoiceAudio = null;
     this._voiceTimers = [];
     this.currentTrackId = null;
-    this.desiredTrackId = 'menu_theme';
+    this.desiredTrackId = 'argon_glass_overture';
     this.unlocked = false;
 
     // Procedural Synth Sequencer State
@@ -391,6 +514,39 @@ export class AudioEngine {
     this.playVoiceCallout(phrase, { delayMs: 90, clearQueue: true, forceReferee: true });
   }
 
+  /**
+   * Plays a periodic or on-demand Narrator Invitation showcasing Argon Squash's USPs:
+   * - 1P vs AI or 2-Human 1v1
+   * - Webcam Kinect-style body pose & swing play (Front or Back Cam)
+   * - Wii-style Smartphone Pocket Racket inertial play
+   * - Keyboard & Mouse play + Press K for Complete Rules of Squash
+   */
+  playNarratorUSPInvite(customIndex = null) {
+    const idx =
+      typeof customIndex === 'number'
+        ? Math.abs(customIndex) % NARRATOR_USP_INVITES.length
+        : this._uspInviteIndex % NARRATOR_USP_INVITES.length;
+    this._uspInviteIndex = (idx + 1) % NARRATOR_USP_INVITES.length;
+    const item = NARRATOR_USP_INVITES[idx];
+    if (!this.muted && this.refereeVoiceEnabled) {
+      // Avoid interrupting an active speech utterance if one is currently mid-sentence
+      if (
+        typeof window !== 'undefined' &&
+        'speechSynthesis' in window &&
+        window.speechSynthesis.speaking &&
+        customIndex === null
+      ) {
+        return null;
+      }
+      this.playVoiceCallout(item.speech, {
+        delayMs: 120,
+        clearQueue: Boolean(customIndex !== null),
+        forceReferee: true
+      });
+    }
+    return item;
+  }
+
   // ==========================================================================
   // MUSIC JUKEBOX & STATE SOUNDTRACK CONTROLLER
   // ==========================================================================
@@ -420,13 +576,16 @@ export class AudioEngine {
     return this.getCurrentTrackInfo();
   }
 
-  nextJukeboxTrack({ fromShuffle = false } = {}) {
-    const ids = Object.keys(LYRIA_TRACKS);
-    const curIdx = Math.max(0, ids.indexOf(this.currentTrackId || this.desiredTrackId || 'match_rally'));
+  nextJukeboxTrack({ fromShuffle = false, onlyOriginalSeven = false } = {}) {
+    const ids = onlyOriginalSeven ? ORIGINAL_DEFAULT_TRACK_IDS : Object.keys(LYRIA_TRACKS);
+    const curIdx = Math.max(
+      0,
+      ids.indexOf(this.currentTrackId || this.desiredTrackId || 'argon_glass_overture')
+    );
     let nextIdx = (curIdx + 1) % ids.length;
     if (fromShuffle || this.jukeboxMode === 'shuffle') {
       nextIdx = (curIdx + 1 + Math.floor(Math.random() * (ids.length - 1))) % ids.length;
-    } else if (this.jukeboxMode === 'auto') {
+    } else if (this.jukeboxMode === 'auto' && !onlyOriginalSeven) {
       this.jukeboxMode = 'locked';
     }
     const nextId = ids[nextIdx];
@@ -437,7 +596,10 @@ export class AudioEngine {
 
   prevJukeboxTrack() {
     const ids = Object.keys(LYRIA_TRACKS);
-    const curIdx = Math.max(0, ids.indexOf(this.currentTrackId || this.desiredTrackId || 'match_rally'));
+    const curIdx = Math.max(
+      0,
+      ids.indexOf(this.currentTrackId || this.desiredTrackId || 'argon_glass_overture')
+    );
     const prevIdx = (curIdx - 1 + ids.length) % ids.length;
     if (this.jukeboxMode === 'auto') {
       this.jukeboxMode = 'locked';
@@ -453,7 +615,7 @@ export class AudioEngine {
       return this.getCurrentTrackInfo();
     }
     const key = String(stateName || 'rally').toLowerCase().trim();
-    const trackId = STATE_TO_TRACK[key] || 'match_rally';
+    const trackId = STATE_TO_TRACK[key] || 'physical_chess_protocol';
     this.desiredTrackId = trackId;
     if (this.currentTrackId === trackId) {
       const track = LYRIA_TRACKS[trackId];
@@ -462,6 +624,8 @@ export class AudioEngine {
         if (el && el.paused && !this.muted) {
           el.play().catch(() => {});
         }
+      } else if (track?.type === 'synth' && !this._synthTimer && !this.muted && this.unlocked) {
+        this._startSynthSequencer(trackId);
       }
       return this.getCurrentTrackInfo();
     }
@@ -535,8 +699,8 @@ export class AudioEngine {
     const ctx = this._ensureContext();
     if (!ctx) return;
 
-    const track = LYRIA_TRACKS[trackId] || LYRIA_TRACKS.virtua_arcade_95;
-    const bpm = track.bpm || 128;
+    const track = LYRIA_TRACKS[trackId] || LYRIA_TRACKS.argon_glass_overture;
+    const bpm = track.bpm || 124;
     const stepMs = Math.round((60 / bpm / 4) * 1000); // 16th-note step interval
     this._synthStep = 0;
 
@@ -550,14 +714,59 @@ export class AudioEngine {
     this._synthTimer = setInterval(() => {
       if (this.muted || !this.ctx || this.currentTrackId !== trackId) return;
       this._playSynthStep(trackId, this._synthStep);
-      this._synthStep = (this._synthStep + 1) % 64;
-      if (this._synthStep === 0 && this.jukeboxMode === 'shuffle') {
-        // Every 4 bars in shuffle mode, 25% chance to advance
-        if (Math.random() < 0.25) {
+      this._synthStep = (this._synthStep + 1) % 256;
+      if (this._synthStep === 0) {
+        if (this.jukeboxMode === 'shuffle') {
           this.nextJukeboxTrack({ fromShuffle: true });
+        } else if (this.jukeboxMode === 'auto' && ORIGINAL_DEFAULT_TRACK_IDS.includes(trackId)) {
+          // Rotate cleanly through the 7 original default Argon Squash tracks every 16 bars
+          this.nextJukeboxTrack({ onlyOriginalSeven: true });
         }
       }
     }, stepMs);
+  }
+
+  _triggerSynthVoice({
+    freq = 440,
+    type = 'sawtooth',
+    filterType = 'lowpass',
+    filterFreq = 1800,
+    filterEndFreq = null,
+    q = 1.2,
+    gainVal = 0.08,
+    attack = 0.008,
+    duration = 0.16,
+    detune = 0,
+    sendReverb = false
+  }) {
+    const ctx = this.ctx;
+    if (!ctx || !this.musicSynthGain || !freq) return;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const flt = ctx.createBiquadFilter();
+    const gain = ctx.createGain();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    if (detune) osc.detune.setValueAtTime(detune, now);
+
+    flt.type = filterType;
+    flt.Q.setValueAtTime(q, now);
+    flt.frequency.setValueAtTime(filterFreq, now);
+    if (filterEndFreq) {
+      flt.frequency.exponentialRampToValueAtTime(Math.max(40, filterEndFreq), now + duration * 0.85);
+    }
+
+    gain.gain.setValueAtTime(0.0008, now);
+    gain.gain.linearRampToValueAtTime(gainVal, now + attack);
+    gain.gain.exponentialRampToValueAtTime(0.0008, now + duration);
+
+    osc.connect(flt).connect(gain).connect(this.musicSynthGain);
+    if (sendReverb && this.reverbSend) {
+      gain.connect(this.reverbSend);
+    }
+    osc.start(now);
+    osc.stop(now + duration + 0.015);
   }
 
   _playSynthStep(trackId, step) {
@@ -565,10 +774,21 @@ export class AudioEngine {
     if (!ctx || !this.musicSynthGain) return;
     const now = ctx.currentTime;
     const s16 = step % 16;
+    const bar = Math.floor(step / 16) % 4;
 
-    // 1. Kick Drum on beats 0, 4, 8, 12 (or breakbeat pattern for Cairo Glass)
-    const isBreakbeat = trackId === 'cairo_glass_finals';
-    const kickHit = isBreakbeat
+    // 1. Custom Drum Groove per Track
+    const isBreakbeat =
+      trackId === 'cairo_glass_finals' ||
+      trackId === 'nick_roller_overdrive' ||
+      trackId === 'alexandria_showcourt_nights';
+    const isFunk = trackId === 'forearm_cut_funk';
+    const isHalftime = trackId === 'argon_glass_overture';
+
+    const kickHit = isHalftime
+      ? s16 === 0 || s16 === 6 || s16 === 10
+      : isFunk
+      ? s16 === 0 || s16 === 3 || s16 === 8 || s16 === 14
+      : isBreakbeat
       ? s16 === 0 || s16 === 6 || s16 === 10
       : s16 % 4 === 0;
 
@@ -576,48 +796,277 @@ export class AudioEngine {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(135, now);
-      osc.frequency.exponentialRampToValueAtTime(42, now + 0.11);
-      gain.gain.setValueAtTime(0.32, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+      osc.frequency.setValueAtTime(isHalftime ? 122 : 138, now);
+      osc.frequency.exponentialRampToValueAtTime(38, now + 0.12);
+      gain.gain.setValueAtTime(0.30, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
       osc.connect(gain).connect(this.musicSynthGain);
       osc.start(now);
-      osc.stop(now + 0.15);
+      osc.stop(now + 0.16);
     }
 
-    // 2. Snare / Rimshot on 4 and 12
-    if (s16 === 4 || s16 === 12) {
-      if (this._noiseBuffer) {
-        const src = ctx.createBufferSource();
-        src.buffer = this._noiseBuffer;
-        const bp = ctx.createBiquadFilter();
-        bp.type = 'bandpass';
-        bp.frequency.setValueAtTime(isBreakbeat ? 1850 : 1350, now);
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.14, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
-        src.connect(bp).connect(gain).connect(this.musicSynthGain);
-        src.start(now, 0.1, 0.1);
-      }
+    // 2. Snare / Glass Rimshot + Funk Ghost Notes
+    const snareHit = isHalftime ? s16 === 8 : s16 === 4 || s16 === 12;
+    const ghostSnare = isFunk && (s16 === 7 || s16 === 9 || s16 === 15);
+    if ((snareHit || ghostSnare) && this._noiseBuffer) {
+      const src = ctx.createBufferSource();
+      src.buffer = this._noiseBuffer;
+      const bp = ctx.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.setValueAtTime(isBreakbeat ? 1900 : isHalftime ? 1600 : 1420, now);
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(ghostSnare ? 0.05 : 0.135, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + (ghostSnare ? 0.045 : 0.095));
+      src.connect(bp).connect(gain).connect(this.musicSynthGain);
+      if (snareHit && this.reverbSend) gain.connect(this.reverbSend);
+      src.start(now, 0.1, 0.1);
     }
 
-    // 3. Hi-Hat on 16th notes
-    if (this._noiseBuffer && (s16 % 2 === 1 || trackId === 't_zone_cyber')) {
+    // 3. Crisp Hi-Hat / Shaker Pattern
+    if (this._noiseBuffer && (s16 % 2 === 1 || trackId === 't_zone_cyber' || trackId === 'nick_roller_overdrive')) {
       const src = ctx.createBufferSource();
       src.buffer = this._noiseBuffer;
       const hp = ctx.createBiquadFilter();
       hp.type = 'highpass';
-      hp.frequency.setValueAtTime(6500, now);
+      hp.frequency.setValueAtTime(7000, now);
       const gain = ctx.createGain();
-      const accent = s16 % 4 === 2 ? 0.065 : 0.028;
+      const accent = s16 % 4 === 2 ? 0.058 : 0.024;
       gain.gain.setValueAtTime(accent, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.032);
       src.connect(hp).connect(gain).connect(this.musicSynthGain);
       src.start(now, 0.2, 0.04);
     }
 
-    // 4. Bassline + Lead Arpeggio by track identity
-    if (trackId === 'virtua_arcade_95') {
+    // ========================================================================
+    // 4. TRACK-SPECIFIC ORIGINAL MULTI-VOICE COMPOSITIONS
+    // ========================================================================
+    if (trackId === 'argon_glass_overture') {
+      // Track #1: Argon Glass Overture — C minor9 -> Ab maj7 -> Fm9 -> G7alt
+      const roots = [130.81, 103.83, 87.31, 98.0];
+      const root = roots[bar];
+      // Warm sustained chord pad on beat 0 of each bar
+      if (s16 === 0) {
+        [root * 2, root * 2.4, root * 3.0, root * 3.75].forEach((cf, idx) => {
+          this._triggerSynthVoice({
+            freq: cf,
+            type: 'triangle',
+            filterFreq: 1350,
+            gainVal: 0.042,
+            attack: 0.06,
+            duration: 0.85,
+            detune: idx * 5 - 7,
+            sendReverb: true
+          });
+        });
+      }
+      // Deep warm sub-bass
+      if (s16 === 0 || s16 === 6 || s16 === 10 || s16 === 14) {
+        const subMult = s16 === 14 ? 1.5 : 1.0;
+        this._triggerSynthVoice({
+          freq: root * subMult,
+          type: 'sawtooth',
+          filterFreq: 680,
+          filterEndFreq: 180,
+          gainVal: 0.15,
+          duration: 0.22
+        });
+      }
+      // Crystalline Glass Marimba arpeggio
+      const arpRatios = [2, 3, 4, 4.5, 3, 4, 6, 4.5, 2, 2.4, 3, 4, 4.5, 4, 3, 2.4];
+      if (s16 % 2 === 0 || s16 === 11 || s16 === 15) {
+        const bellFreq = root * arpRatios[s16];
+        this._triggerSynthVoice({
+          freq: bellFreq,
+          type: 'sine',
+          filterFreq: 3600,
+          gainVal: 0.065,
+          attack: 0.004,
+          duration: 0.20,
+          sendReverb: true
+        });
+      }
+    } else if (trackId === 'physical_chess_protocol') {
+      // Track #2: Physical Chess Protocol — Driving E Dorian (Em7 -> A7 -> F#m7 -> Bm7)
+      const bassRoots = [82.41, 110.0, 92.5, 123.47];
+      const bRoot = bassRoots[bar];
+      const oct = s16 % 2 === 1 ? 2 : 1;
+      this._triggerSynthVoice({
+        freq: bRoot * oct,
+        type: 'sawtooth',
+        filterFreq: 1150,
+        filterEndFreq: 260,
+        q: 2.2,
+        gainVal: 0.13,
+        duration: 0.11
+      });
+      // Tactical syncopated lead hook
+      const melody = [
+        329.63, 0, 392.0, 440.0, 493.88, 0, 587.33, 493.88,
+        659.25, 587.33, 493.88, 0, 440.0, 392.0, 369.99, 329.63
+      ];
+      const mFreq = melody[s16];
+      if (mFreq > 0) {
+        this._triggerSynthVoice({
+          freq: mFreq * (bar === 2 ? 1.122 : 1),
+          type: 'square',
+          filterFreq: 2200,
+          filterEndFreq: 900,
+          gainVal: 0.062,
+          duration: 0.15,
+          sendReverb: true
+        });
+      }
+    } else if (trackId === 'crimson_tin_fanfare') {
+      // Track #3: Crimson Tin & Glass Walls — Fmaj9 -> Gm9 -> Am7 -> Bbmaj7 heroic arena fanfare
+      const roots = [87.31, 98.0, 110.0, 116.54];
+      const r = roots[bar];
+      if (s16 === 0 || s16 === 6 || s16 === 12) {
+        [r * 2, r * 2.5, r * 3, r * 3.75].forEach((f, idx) => {
+          this._triggerSynthVoice({
+            freq: f,
+            type: 'sawtooth',
+            filterFreq: 2400,
+            filterEndFreq: 950,
+            gainVal: 0.042,
+            attack: 0.015,
+            duration: 0.28,
+            detune: idx * 6 - 9,
+            sendReverb: true
+          });
+        });
+      }
+      if (s16 % 2 === 0) {
+        const arp = [2, 2.5, 3, 4, 3, 4, 5, 4];
+        this._triggerSynthVoice({
+          freq: r * arp[(s16 / 2) % arp.length],
+          type: 'triangle',
+          filterFreq: 2900,
+          gainVal: 0.075,
+          duration: 0.14,
+          sendReverb: true
+        });
+      }
+    } else if (trackId === 'nick_roller_overdrive') {
+      // Track #4: Nick Roller Overdrive — 136 BPM High-Tension G minor Acid Arp
+      const acidNotes = [
+        98.0, 196.0, 233.08, 196.0, 293.66, 196.0, 311.13, 293.66,
+        98.0, 196.0, 349.23, 293.66, 233.08, 196.0, 174.61, 146.83
+      ];
+      const f = acidNotes[s16] * (bar === 3 ? 1.122 : 1);
+      this._triggerSynthVoice({
+        freq: f,
+        type: 'sawtooth',
+        filterType: 'lowpass',
+        filterFreq: 550 + ((step % 32) * 75),
+        filterEndFreq: 210,
+        q: 5.2,
+        gainVal: 0.135,
+        duration: 0.10
+      });
+      if (s16 === 0 || s16 === 8) {
+        this._triggerSynthVoice({
+          freq: 392.0 * (bar % 2 === 0 ? 1 : 1.189),
+          type: 'sine',
+          filterFreq: 3200,
+          gainVal: 0.06,
+          duration: 0.35,
+          sendReverb: true
+        });
+      }
+    } else if (trackId === 'alexandria_showcourt_nights') {
+      // Track #5: Alexandria Showcourt Nights — D Hijaz (Phrygian Dominant: D Eb F# G A Bb C)
+      const hijaz = [146.83, 155.56, 185.0, 196.0, 220.0, 233.08, 261.63, 293.66];
+      if (s16 === 0 || s16 === 6 || s16 === 10) {
+        const subF = bar % 2 === 0 ? 73.42 : 77.78;
+        this._triggerSynthVoice({
+          freq: subF,
+          type: 'triangle',
+          filterFreq: 420,
+          gainVal: 0.21,
+          duration: 0.24
+        });
+      }
+      const melIdx = [0, 2, 3, 4, 3, 2, 1, 0, 4, 5, 4, 3, 2, 3, 1, 0][s16];
+      if (s16 % 2 === 0 || s16 === 7 || s16 === 13) {
+        const note = hijaz[melIdx] * 2;
+        this._triggerSynthVoice({
+          freq: note,
+          type: 'sine',
+          filterFreq: 3400,
+          gainVal: 0.072,
+          attack: 0.004,
+          duration: 0.18,
+          sendReverb: true
+        });
+        this._triggerSynthVoice({
+          freq: note * 2,
+          type: 'triangle',
+          filterFreq: 2800,
+          gainVal: 0.032,
+          attack: 0.004,
+          duration: 0.14,
+          sendReverb: true
+        });
+      }
+    } else if (trackId === 'forearm_cut_funk') {
+      // Track #6: Forearm Cut & Boast Funk — A Dorian Clavinet & Slap Bass
+      const funkBass = [110, 0, 220, 110, 0, 130.81, 146.83, 0, 110, 220, 0, 196, 164.81, 0, 146.83, 130.81];
+      const bf = funkBass[s16];
+      if (bf > 0) {
+        this._triggerSynthVoice({
+          freq: bf,
+          type: 'sawtooth',
+          filterType: 'bandpass',
+          filterFreq: 980,
+          q: 2.8,
+          gainVal: 0.15,
+          duration: 0.095
+        });
+      }
+      if (s16 === 2 || s16 === 6 || s16 === 11 || s16 === 14) {
+        const chordBase = bar % 2 === 0 ? 220.0 : 196.0;
+        [chordBase * 1.5, chordBase * 1.8, chordBase * 2.25].forEach((cf) => {
+          this._triggerSynthVoice({
+            freq: cf,
+            type: 'square',
+            filterFreq: 2100,
+            filterEndFreq: 650,
+            gainVal: 0.042,
+            duration: 0.11,
+            sendReverb: true
+          });
+        });
+      }
+    } else if (trackId === 'psa_championship_crown') {
+      // Track #7: Four-Wall Championship Crown — Uplifting C -> G -> Am -> F anthem
+      const prog = [130.81, 98.0, 110.0, 87.31];
+      const root = prog[bar];
+      if (s16 % 4 === 0) {
+        this._triggerSynthVoice({
+          freq: root,
+          type: 'sawtooth',
+          filterFreq: 860,
+          gainVal: 0.15,
+          duration: 0.18
+        });
+      }
+      const anthemLead = [
+        523.25, 659.25, 783.99, 659.25, 880.0, 783.99, 659.25, 587.33,
+        523.25, 587.33, 659.25, 783.99, 1046.5, 880.0, 783.99, 659.25
+      ];
+      if (s16 % 2 === 0 || s16 === 3 || s16 === 11) {
+        this._triggerSynthVoice({
+          freq: anthemLead[s16],
+          type: 'sawtooth',
+          filterFreq: 2800,
+          filterEndFreq: 1200,
+          gainVal: 0.068,
+          detune: 6,
+          duration: 0.17,
+          sendReverb: true
+        });
+      }
+    } else if (trackId === 'virtua_arcade_95') {
       // Virtua Squash '95: energetic A-minor -> F -> G -> E7 arcade bass & brass lead
       const bassProg = [110, 110, 220, 110, 87.31, 87.31, 174.61, 87.31, 98.0, 98.0, 196.0, 98.0, 82.41, 98.0, 110.0, 123.47];
       const leadProg = [440, 523.25, 659.25, 587.33, 523.25, 659.25, 783.99, 659.25, 587.33, 659.25, 783.99, 880.0, 659.25, 587.33, 523.25, 493.88];
@@ -722,8 +1171,8 @@ export class AudioEngine {
   }
 
   getCurrentTrackInfo() {
-    const id = this.currentTrackId || this.desiredTrackId || 'menu_theme';
-    const track = LYRIA_TRACKS[id] || LYRIA_TRACKS.menu_theme;
+    const id = this.currentTrackId || this.desiredTrackId || 'argon_glass_overture';
+    const track = LYRIA_TRACKS[id] || LYRIA_TRACKS.argon_glass_overture;
     return {
       ...track,
       muted: this.muted,

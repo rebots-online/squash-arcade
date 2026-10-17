@@ -70,6 +70,14 @@
       </div>
 
       <div class="top-hud-right-group">
+        <button id="btn-top-camera-cycle" class="hud-tactical-pill camera-pill" type="button" title="Cycle Camera Angle (Back Glass, PSA Front Wall, High Gallery, Corner Nick, Overhead T) (Key: C)">
+          <span class="pill-icon">🎥</span>
+          <span class="camera-pill-label">Cam: <strong class="camera-mode-label" id="camera-mode-label-top">Back Glass</strong></span>
+        </button>
+        <button id="btn-top-replay-trigger" class="hud-tactical-pill replay-pill btn-replay-pill" type="button" title="Toggle Slow-Mo Nick Replay (Key: R)">
+          <span class="pill-icon">⏪</span>
+          <span>Replay</span>
+        </button>
         <button id="btn-wonder-intro" class="hud-tactical-pill wonder-pill" type="button" title="Play the 2-Part 'Wonder First' Front-Corner Nick Demonstration">
           <span>✨ Wonder Demo</span>
         </button>
@@ -199,12 +207,12 @@
             <div class="dock-pill-row">
               <button id="btn-audio-toggle" class="hud-mini-btn" type="button" title="Mute / Unmute Music &amp; Squash SFX (Key: M)">
                 <span class="btn-dot music-on" id="audio-status-dot"></span>
-                <span id="audio-track-label">♪ Physical Chess Rally</span>
+                <span id="audio-track-label">♪ Argon Glass Overture</span>
               </button>
               <button id="btn-jukebox-next" class="hud-mini-btn" type="button" title="Next Music Track in Jukebox (Key: N)">
                 <span>⏭</span>
               </button>
-              <button id="btn-jukebox-open" class="hud-mini-btn jukebox-pill-btn" type="button" title="Open 7-Track Music Jukebox &amp; Referee Voice Mixer (Key: J)">
+              <button id="btn-jukebox-open" class="hud-mini-btn jukebox-pill-btn" type="button" title="Open 14-Track Music Jukebox (7 Original Default + 7 Classic) &amp; Referee Voice Mixer (Key: J)">
                 <span>🎵 Jukebox</span>
               </button>
               <button id="btn-ref-voice-toggle" class="hud-mini-btn active" type="button" title="Toggle Deep Male Squash Referee Voice ('Down! Handout, five-four') (Key: V)">
@@ -232,10 +240,19 @@
     </div>
   </div>
 
-  <!-- TITLE MODAL -->
-  <div id="title-modal" class="wii-modal-backdrop">
-    <div class="wii-title-card progressive-menu-card">
+  <!-- TITLE MODAL (DOCKED OFF TO THE LEFT SIDE SO CRYSTAL-CLEAR AI VS AI PLAY IS FEATURED) -->
+  <div id="title-modal" class="wii-modal-backdrop side-docked-menu">
+    <div class="wii-title-card progressive-menu-card side-docked-card">
       <div class="wii-logo-header">
+        <div class="side-menu-top-bar">
+          <span class="live-ai-showcase-pill" title="Two Pro AI players are playing an automated squash match with full physics on court right now">
+            <span class="live-ai-dot"></span>
+            <span>LIVE AI vs AI SHOWCASE</span>
+          </span>
+          <button type="button" id="btn-collapse-side-menu" class="side-menu-collapse-btn" title="Minimize or Expand Side Menu to watch full-screen AI vs AI">
+            <span id="collapse-side-menu-label">◀ Minimize</span>
+          </button>
+        </div>
         <h1 class="argon-logo-title">
           <span class="logo-word-argon">Virtual</span>
           <span class="logo-word-tennis">Squash</span>
@@ -245,14 +262,14 @@
           <span class="squash-copyright-notice">Copyright (C)2026 Robin L. M. Cheung. All rights reserved.</span>
         </p>
         <div class="welcome-announcer-row">
-          <button type="button" id="btn-welcome-callout" class="welcome-callout-pill" title="Hear the Deep Male Announcer Intro">
-            <span>🔊 "Welcome to Virtual Squash!"</span>
+          <button type="button" id="btn-narrator-usp-invite" class="welcome-callout-pill" title="Hear the Narrator explain 1P vs AI, 2P 1v1, Webcam Kinect-Style, Phone Wii-Racket &amp; Mouse/Keyboard Play">
+            <span>🎙️ Modes &amp; USPs</span>
           </button>
-          <button type="button" id="btn-setup-jukebox" class="welcome-callout-pill jukebox-tag-pill" title="Open 7-Track Music Jukebox &amp; Audio Mixer (Key: J)">
+          <button type="button" id="btn-setup-jukebox" class="welcome-callout-pill jukebox-tag-pill" title="Open 14-Track Music Jukebox (7 Original Default Tracks + 7 Classic) (Key: J)">
             <span>🎵 Jukebox (J)</span>
           </button>
           <button type="button" id="btn-setup-rules" class="welcome-callout-pill rules-tag-pill" title="View Complete Official Rules of Squash &amp; WSF Reference (Key: K)">
-            <span>📜 Squash Rules (K)</span>
+            <span>📜 Rules (K)</span>
           </button>
         </div>
       </div>
@@ -557,8 +574,8 @@
     <div class="wii-title-card controls-guide-card jukebox-modal-card">
       <div class="controls-guide-header">
         <div>
-          <div class="tuning-lab-kicker">LYRIA 3 &amp; SYNTHWAVE SEQUENCER • WSF REFEREE PA</div>
-          <h2 id="jukebox-modal-title" class="controls-guide-heading">🎵 Music Jukebox &amp; Deep Referee Voice</h2>
+          <div class="tuning-lab-kicker">7 NOVEL ORIGINAL SQUASH TRACKS (DEFAULT) + 7 LEGACY TRACKS • WSF REFEREE PA</div>
+          <h2 id="jukebox-modal-title" class="controls-guide-heading">🎵 14-Track Music Jukebox &amp; Deep Referee Voice</h2>
         </div>
         <button type="button" id="btn-close-jukebox" class="tuning-lab-close-btn" title="Close Jukebox (J or Esc)">✕</button>
       </div>
@@ -568,9 +585,9 @@
           <span></span><span></span><span></span><span></span><span></span>
         </div>
         <div class="jukebox-now-meta">
-          <div class="jukebox-now-kicker" id="jukebox-now-genre">NOW PLAYING • LYRIA 3 SOUNDTRACK</div>
-          <div class="jukebox-now-title" id="jukebox-now-title">Physical Chess Rally (Lyria 3)</div>
-          <div class="jukebox-now-sub" id="jukebox-now-sub">Active Squash Atmosphere • 124 BPM</div>
+          <div class="jukebox-now-kicker" id="jukebox-now-genre">NOW PLAYING • ARGON ORIGINAL SOUNDTRACK</div>
+          <div class="jukebox-now-title" id="jukebox-now-title">Argon Glass Overture (Original #1)</div>
+          <div class="jukebox-now-sub" id="jukebox-now-sub">Original Showcourt Menu &amp; AI Rally Theme • 118 BPM</div>
         </div>
         <div class="jukebox-transport-btns">
           <button type="button" id="btn-jukebox-prev-modal" class="jukebox-ctrl-btn" title="Previous Track">⏮</button>
@@ -582,23 +599,22 @@
       <div class="jukebox-mode-row">
         <span class="jukebox-mode-label">Playback Mode:</span>
         <div class="jukebox-mode-pills">
-          <button type="button" class="jukebox-mode-chip active" data-jmode="auto">Auto (Match State)</button>
+          <button type="button" class="jukebox-mode-chip active" data-jmode="auto">Auto (Original 7 Default)</button>
           <button type="button" class="jukebox-mode-chip" data-jmode="locked">Lock Selected Track</button>
-          <button type="button" class="jukebox-mode-chip" data-jmode="shuffle">🔀 Shuffle All 7 Tracks</button>
+          <button type="button" class="jukebox-mode-chip" data-jmode="shuffle">🔀 Shuffle All 14 Tracks</button>
         </div>
       </div>
 
       <div class="jukebox-layout-grid">
         <div class="jukebox-tracklist-box">
-          <div class="jukebox-section-title">Select Track to Play Immediately</div>
+          <div class="jukebox-section-title">Tracks 1–7: Original Argon Squash Default • 8–14: Classic</div>
           <div id="jukebox-tracks-container" class="jukebox-tracks-list"></div>
         </div>
 
         <div class="jukebox-referee-box">
-          <div class="jukebox-section-title">🎙️ Deep Male Squash Referee Voice</div>
+          <div class="jukebox-section-title">🎙️ Deep Male Squash Referee &amp; Narrator</div>
           <p class="jukebox-ref-desc">
-            Calls out official WSF/PSA squash decisions in a deep baritone voice:
-            <em>"Down! Handout, five-four"</em>, <em>"Not up!"</em>, <em>"Out!"</em>, and <em>"Welcome to Virtual Squash!"</em>
+            Calls out official WSF/PSA squash decisions and periodic narrator invitations explaining Webcam Kinect-style, Phone Wii-Racket, and 1P/2P modes.
           </p>
 
           <button type="button" id="btn-jukebox-ref-toggle" class="jukebox-ref-toggle-btn active">
@@ -614,11 +630,11 @@
             <input type="range" id="jukebox-pitch-slider" class="tuning-range-input" min="0.55" max="1.05" step="0.02" value="0.72" />
           </div>
 
-          <div class="jukebox-test-calls-title">Test Live Referee Callouts:</div>
+          <div class="jukebox-test-calls-title">Test Live Referee &amp; Narrator Callouts:</div>
           <div class="jukebox-test-calls-grid">
+            <button type="button" class="jukebox-call-btn" data-callout="USP_INVITE">🎙️ Hear Narrator USPs &amp; Modes</button>
             <button type="button" class="jukebox-call-btn" data-callout="WELCOME">🔊 "Welcome to Virtual Squash!"</button>
             <button type="button" class="jukebox-call-btn" data-callout="Down! Handout, five-four.">🔊 "Down! Handout, five-four"</button>
-            <button type="button" class="jukebox-call-btn" data-callout="Not up! Handout, eight-seven.">🔊 "Not up! Handout, eight-seven"</button>
             <button type="button" class="jukebox-call-btn" data-callout="Nick! Ten-eight, match ball!">🔊 "Nick! Ten-eight, match ball!"</button>
           </div>
 

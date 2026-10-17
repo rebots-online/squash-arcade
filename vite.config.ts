@@ -1,1 +1,386 @@
-import C from"path";import{defineConfig as D,loadEnv as P}from"vite";import v from"@vitejs/plugin-react";function N(t){return{role:t,seq:0,lastSeenTs:0,connected:!1,orientation:{pitch:0,roll:0,yaw:0,accelMag:0,buttonB:!1,connected:!1},lastSwing:null,swingHistory:[],feedbackSeq:0,lastFeedback:null}}function R(t,r="Player 1",a="Player 2",c=2){return{roomId:t,hostName:r,guestName:a,gamesToWin:c,rackets:{p1:N("p1"),p2:N("p2")},stateSeq:0,matchSnapshot:null,p1DesktopSeenTs:0,p2DesktopSeenTs:0}}function T(t){const r=Date.now(),a=t.lastSeenTs>0?Math.max(0,r-t.lastSeenTs):-1,c=t.connected&&a>=0&&a<12e3;return{role:t.role,connected:c,lastSeenMs:a,orientation:{...t.orientation,connected:c},lastSwing:t.lastSwing?{...t.lastSwing}:null,lastFeedback:t.lastFeedback?{...t.lastFeedback}:null,swingHistory:t.swingHistory.slice(-15)}}function H(t){return new Promise(r=>{const a=[];t.on("data",c=>a.push(String(c))),t.on("end",()=>{try{const c=a.join("");r(c?JSON.parse(c):{})}catch{r({})}}),t.on("error",()=>r({}))})}function d(t,r,a){const c=JSON.stringify(a);t.statusCode=r,t.setHeader("Content-Type","application/json; charset=utf-8"),t.setHeader("Access-Control-Allow-Origin","*"),t.setHeader("Cache-Control","no-cache, no-store, must-revalidate"),t.end(c)}const assetCache=new Map,assetInFlight=new Map,mimeForPath=p=>p.endsWith(".glb")?"model/gltf-binary":p.endsWith(".mp3")?"audio/mpeg":p.endsWith(".png")?"image/png":p.endsWith(".wasm")?"application/wasm":p.endsWith(".json")?"application/json; charset=utf-8":"application/octet-stream";function q(){const t=new Map;t.set("default",R("default"));const r="https://argon-tennis-sandbox-170440.uc.r.appspot.com",a=u=>{const p=(u||"default").replace(/[^A-Za-z0-9_-]/g,"").toUpperCase()||"default",n=p==="DEFAULT"?"default":p;let g=t.get(n);return g||(g=R(n),t.set(n,g)),g},c=u=>{u.use(async(p,n,g)=>{const I=p.url||"/",w=new URL(I,"http://localhost:3000"),l=w.pathname;if(l==="/___rPc_sWiTcH___"){n.statusCode=200,n.setHeader("Content-Type","text/plain; charset=utf-8"),n.end("OK");return}if(l.startsWith("/assets/models/")||l.startsWith("/assets/audio/")||l.startsWith("/assets/textures/")||l.startsWith("/assets/mediapipe/")){const targetUrl=`https://www.gstatic.com/aistudio/starter-apps/tennis/${l.slice(8)}${w.search}`;try{let entry=assetCache.get(targetUrl);if(!entry){let pending=assetInFlight.get(targetUrl);if(!pending){pending=fetch(targetUrl).then(async resp=>{if(!resp.ok)throw new Error(`Upstream ${resp.status}`);const buf=Buffer.from(await resp.arrayBuffer());const item={contentType:mimeForPath(l),body:buf};assetCache.set(targetUrl,item);return item}).finally(()=>assetInFlight.delete(targetUrl));assetInFlight.set(targetUrl,pending)}entry=await pending}n.statusCode=200,n.setHeader("Content-Type",entry.contentType),n.setHeader("Content-Length",entry.body.length),n.setHeader("Access-Control-Allow-Origin","*"),n.setHeader("Cache-Control","public, max-age=86400"),n.end(entry.body)}catch{n.statusCode=502,n.setHeader("Access-Control-Allow-Origin","*"),n.end("Upstream asset fetch failed")}return}if(!l.startsWith("/api/")){g();return}if(p.method==="OPTIONS"){n.statusCode=204,n.setHeader("Access-Control-Allow-Origin","*"),n.setHeader("Access-Control-Allow-Methods","GET, POST, OPTIONS"),n.setHeader("Access-Control-Allow-Headers","Content-Type"),n.end();return}const b=w.searchParams.get("room")||"default",y=(w.searchParams.get("role")||"p1").toLowerCase(),f=y==="p2"||y==="2"||y==="opponent"?"p2":"p1";if(p.method==="GET"&&l==="/api/racket/state"){const e=a(b),m=e.rackets[f];d(n,200,{...T(m),roomId:e.roomId,tunnelUrl:r});return}if(p.method==="GET"&&l==="/api/tunnel/status"){const e=a(b),m=e.roomId!=="default"?`room=${e.roomId}&`:"";d(n,200,{ok:!0,active:!0,tunnelUrl:r,companionUrl:`${r}/companion.html?${m}role=${f}`,joinUrl:`${r}/join.html?room=${e.roomId}&role=${f}`});return}if(p.method==="GET"&&l==="/api/match/state"){const e=a(b),m=w.searchParams.get("touch");(m==="p1"||m==="p2")&&(m==="p2"?e.p2DesktopSeenTs=Date.now():e.p1DesktopSeenTs=Date.now());const h=Date.now(),k=T(e.rackets.p1),i=T(e.rackets.p2),o=e.p1DesktopSeenTs>0&&h-e.p1DesktopSeenTs<8e3,s=e.p2DesktopSeenTs>0&&h-e.p2DesktopSeenTs<8e3;d(n,200,{ok:!0,roomId:e.roomId,hostName:e.hostName,guestName:e.guestName,gamesToWin:e.gamesToWin,p1Online:o,p2Online:s,p1DesktopOnline:o,p2DesktopOnline:s,p1PhoneConnected:k.connected,p2PhoneConnected:i.connected,p1:k,p2:i,rackets:{p1:k,p2:i},snapshotSeq:e.stateSeq,snapshot:e.matchSnapshot,tunnelUrl:r});return}if(p.method==="POST"){const e=await H(p),m=String(e.room||b||"default"),h=String(e.role||f||"p1").toLowerCase(),k=h==="p2"||h==="2"||h==="opponent"?"p2":"p1",i=a(m),o=i.rackets[k];if(l==="/api/racket/swing"){const s=Date.now();o.seq+=1,o.lastSeenTs=s,o.connected=!0;const rawType=String(e.type||"swing").toLowerCase(),S={seq:o.seq,role:o.role,type:rawType==="toss"?"toss":rawType==="let"?"let":"swing",shotType:String(e.shotType||"topspin").toLowerCase(),speed:Number(e.speed??1),angleX:Number(e.angleX??e.dirX??0),dirX:Number(e.angleX??e.dirX??0),dirY:Number(e.dirY??0),pitch:Number(e.pitch??o.orientation.pitch??0),roll:Number(e.roll??o.orientation.roll??0),yaw:Number(e.yaw??o.orientation.yaw??0),timestamp:Number(e.timestamp??s),serverTimeMs:s,source:String(e.source||"phone")};o.lastSwing=S,o.swingHistory.push(S),o.swingHistory.length>50&&o.swingHistory.shift(),d(n,200,{ok:!0,roomId:i.roomId,role:o.role,swing:S});return}if(l==="/api/racket/telemetry"){o.lastSeenTs=Date.now(),o.connected=!!(e.connected??!0),o.orientation={pitch:Number(e.pitch??o.orientation.pitch??0),roll:Number(e.roll??o.orientation.roll??0),yaw:Number(e.yaw??o.orientation.yaw??0),accelMag:Number(e.accelMag??0),buttonB:!!(e.buttonB??!1),connected:o.connected},d(n,200,{ok:!0,roomId:i.roomId,role:o.role,orientation:o.orientation,lastFeedback:o.lastFeedback});return}if(l==="/api/racket/feedback"){o.feedbackSeq+=1,o.lastFeedback={seq:o.feedbackSeq,role:o.role,kind:String(e.kind||"hit"),grade:String(e.grade||"PERFECT"),shotType:String(e.shotType||"TOPSPIN"),speedKmh:Number(e.speedKmh??160),intensity:Number(e.intensity??1),serverTimeMs:Date.now()},d(n,200,{ok:!0,roomId:i.roomId,feedback:o.lastFeedback});return}if(l==="/api/match/sync"){i.stateSeq+=1,i.p1DesktopSeenTs=Date.now();const s=e.snapshot&&typeof e.snapshot=="object"?e.snapshot:e;i.matchSnapshot={...s,seq:i.stateSeq,serverTimeMs:Date.now()},d(n,200,{ok:!0,roomId:i.roomId,seq:i.stateSeq,p2Racket:T(i.rackets.p2)});return}if(l==="/api/match/create"){const s="AT-"+Math.random().toString(36).substring(2,6).toUpperCase(),S=R(s,String(e.hostName||"Ammaar"),String(e.guestName||"Challenger"),Number(e.gamesToWin||2));t.set(s,S),d(n,200,{ok:!0,roomId:s,hostDesktopUrl:`${r}/?room=${s}&role=p1`,guestDesktopUrl:`${r}/?room=${s}&role=p2`,p1PhoneUrl:`${r}/companion.html?room=${s}&role=p1`,p2PhoneUrl:`${r}/companion.html?room=${s}&role=p2`,guestJoinHubUrl:`${r}/join.html?room=${s}&role=p2`});return}}g()})};return{name:"argon-tennis-relay",configureServer(u){c(u.middlewares)},configurePreviewServer(u){c(u.middlewares)}}}export default D(({mode:t})=>{const r=P(t,".","");return{server:{port:3e3,host:"0.0.0.0",hmr:process.env.DISABLE_HMR!=="true"},plugins:[v(),q()],define:{"process.env.GEMINI_API_KEY":JSON.stringify(r.GEMINI_API_KEY||"")},resolve:{alias:{"../assets/vendor/GLTFLoader.js":"three/examples/jsm/loaders/GLTFLoader.js","@":C.resolve(".")}}}});
+import path from 'path';
+import fs from 'fs';
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
+
+function createRacketSlot(role: string) {
+  return {
+    role,
+    seq: 0,
+    lastSeenTs: 0,
+    connected: false,
+    orientation: { pitch: 0, roll: 0, yaw: 0, accelMag: 0, buttonB: false, connected: false },
+    lastSwing: null,
+    swingHistory: [] as any[],
+    feedbackSeq: 0,
+    lastFeedback: null
+  };
+}
+
+function createRoomState(roomId: string, hostName = 'Player 1', guestName = 'Player 2', gamesToWin = 2) {
+  return {
+    roomId,
+    hostName,
+    guestName,
+    gamesToWin,
+    rackets: { p1: createRacketSlot('p1'), p2: createRacketSlot('p2') },
+    stateSeq: 0,
+    matchSnapshot: null,
+    p1DesktopSeenTs: 0,
+    p2DesktopSeenTs: 0
+  };
+}
+
+function serializeRacket(slot: any) {
+  const now = Date.now();
+  const lastSeenMs = slot.lastSeenTs > 0 ? Math.max(0, now - slot.lastSeenTs) : -1;
+  const connected = Boolean(slot.connected && lastSeenMs >= 0 && lastSeenMs < 12000);
+  return {
+    role: slot.role,
+    connected,
+    lastSeenMs,
+    orientation: { ...slot.orientation, connected },
+    lastSwing: slot.lastSwing ? { ...slot.lastSwing } : null,
+    lastFeedback: slot.lastFeedback ? { ...slot.lastFeedback } : null,
+    swingHistory: slot.swingHistory.slice(-15)
+  };
+}
+
+function readJsonBody(req: any): Promise<any> {
+  return new Promise((resolve) => {
+    const chunks: string[] = [];
+    req.on('data', (c: any) => chunks.push(String(c)));
+    req.on('end', () => {
+      try {
+        const raw = chunks.join('');
+        resolve(raw ? JSON.parse(raw) : {});
+      } catch {
+        resolve({});
+      }
+    });
+    req.on('error', () => resolve({}));
+  });
+}
+
+function sendJson(res: any, status: number, payload: any) {
+  const body = JSON.stringify(payload);
+  res.statusCode = status;
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.end(body);
+}
+
+function getRequestOrigin(req: any): string {
+  const protoHeader = req.headers?.['x-forwarded-proto'];
+  const hostHeader = req.headers?.['x-forwarded-host'] || req.headers?.host;
+  const proto = (Array.isArray(protoHeader) ? protoHeader[0] : protoHeader || 'https').split(',')[0].trim();
+  const host = (Array.isArray(hostHeader) ? hostHeader[0] : hostHeader || '').split(',')[0].trim();
+  if (!host || host.startsWith('localhost:')) return '';
+  return `${proto}://${host}`;
+}
+
+const assetCache = new Map<string, { contentType: string; body: Buffer }>();
+const assetInFlight = new Map<string, Promise<{ contentType: string; body: Buffer }>>();
+
+const mimeForPath = (p: string) =>
+  p.endsWith('.glb')
+    ? 'model/gltf-binary'
+    : p.endsWith('.mp3')
+    ? 'audio/mpeg'
+    : p.endsWith('.png')
+    ? 'image/png'
+    : p.endsWith('.wasm')
+    ? 'application/wasm'
+    : p.endsWith('.json')
+    ? 'application/json; charset=utf-8'
+    : 'application/octet-stream';
+
+function argonSquashRelayPlugin() {
+  const rooms = new Map<string, any>();
+  rooms.set('default', createRoomState('default'));
+
+  const getOrCreateRoom = (rawId?: string) => {
+    const cleaned = (rawId || 'default').replace(/[^A-Za-z0-9_-]/g, '').toUpperCase() || 'default';
+    const key = cleaned === 'DEFAULT' ? 'default' : cleaned;
+    let room = rooms.get(key);
+    if (!room) {
+      room = createRoomState(key);
+      rooms.set(key, room);
+    }
+    return room;
+  };
+
+  const attachMiddleware = (server: any) => {
+    server.middlewares.use(async (req: any, res: any, next: any) => {
+      const rawUrl = req.url || '/';
+      const parsed = new URL(rawUrl, 'http://localhost:3000');
+      const pathname = parsed.pathname;
+
+      if (pathname === '/___rPc_sWiTcH___') {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.end('OK');
+        return;
+      }
+
+      if (
+        pathname.startsWith('/assets/models/') ||
+        pathname.startsWith('/assets/audio/') ||
+        pathname.startsWith('/assets/textures/') ||
+        pathname.startsWith('/assets/mediapipe/')
+      ) {
+        // Check if file exists locally in public/assets first
+        const localFile = path.resolve('public', pathname.slice(1));
+        if (fs.existsSync(localFile) && fs.statSync(localFile).isFile()) {
+          next();
+          return;
+        }
+
+        const targetUrl = `https://www.gstatic.com/aistudio/starter-apps/tennis/${pathname.slice(8)}${parsed.search}`;
+        try {
+          let entry = assetCache.get(targetUrl);
+          if (!entry) {
+            let pending = assetInFlight.get(targetUrl);
+            if (!pending) {
+              pending = fetch(targetUrl)
+                .then(async (resp) => {
+                  if (!resp.ok) throw new Error(`Upstream ${resp.status}`);
+                  const buf = Buffer.from(await resp.arrayBuffer());
+                  const item = { contentType: mimeForPath(pathname), body: buf };
+                  assetCache.set(targetUrl, item);
+                  return item;
+                })
+                .finally(() => assetInFlight.delete(targetUrl));
+              assetInFlight.set(targetUrl, pending);
+            }
+            entry = await pending;
+          }
+          res.statusCode = 200;
+          res.setHeader('Content-Type', entry.contentType);
+          res.setHeader('Content-Length', entry.body.length);
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.setHeader('Cache-Control', 'public, max-age=86400');
+          res.end(entry.body);
+        } catch {
+          res.statusCode = 502;
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.end('Upstream asset fetch failed');
+        }
+        return;
+      }
+
+      if (!pathname.startsWith('/api/')) {
+        next();
+        return;
+      }
+
+      if (req.method === 'OPTIONS') {
+        res.statusCode = 204;
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        res.end();
+        return;
+      }
+
+      const tunnelUrl = getRequestOrigin(req);
+      const roomParam = parsed.searchParams.get('room') || 'default';
+      const roleParam = (parsed.searchParams.get('role') || 'p1').toLowerCase();
+      const roleKey = roleParam === 'p2' || roleParam === '2' || roleParam === 'opponent' ? 'p2' : 'p1';
+
+      if (req.method === 'GET' && pathname === '/api/racket/state') {
+        const room = getOrCreateRoom(roomParam);
+        const slot = room.rackets[roleKey];
+        sendJson(res, 200, { ...serializeRacket(slot), roomId: room.roomId, tunnelUrl });
+        return;
+      }
+
+      if (req.method === 'GET' && pathname === '/api/tunnel/status') {
+        const room = getOrCreateRoom(roomParam);
+        const qPrefix = room.roomId !== 'default' ? `room=${room.roomId}&` : '';
+        sendJson(res, 200, {
+          ok: true,
+          active: true,
+          tunnelUrl,
+          companionUrl: `${tunnelUrl}/companion.html?${qPrefix}role=${roleKey}`,
+          joinUrl: `${tunnelUrl}/?room=${room.roomId}&role=${roleKey}`
+        });
+        return;
+      }
+
+      if (req.method === 'GET' && pathname === '/api/match/state') {
+        const room = getOrCreateRoom(roomParam);
+        const touch = parsed.searchParams.get('touch');
+        if (touch === 'p1' || touch === 'p2') {
+          if (touch === 'p2') room.p2DesktopSeenTs = Date.now();
+          else room.p1DesktopSeenTs = Date.now();
+        }
+        const now = Date.now();
+        const p1 = serializeRacket(room.rackets.p1);
+        const p2 = serializeRacket(room.rackets.p2);
+        const p1Online = room.p1DesktopSeenTs > 0 && now - room.p1DesktopSeenTs < 8000;
+        const p2Online = room.p2DesktopSeenTs > 0 && now - room.p2DesktopSeenTs < 8000;
+        sendJson(res, 200, {
+          ok: true,
+          roomId: room.roomId,
+          hostName: room.hostName,
+          guestName: room.guestName,
+          gamesToWin: room.gamesToWin,
+          p1Online,
+          p2Online,
+          p1DesktopOnline: p1Online,
+          p2DesktopOnline: p2Online,
+          p1PhoneConnected: p1.connected,
+          p2PhoneConnected: p2.connected,
+          p1,
+          p2,
+          rackets: { p1, p2 },
+          snapshotSeq: room.stateSeq,
+          snapshot: room.matchSnapshot,
+          tunnelUrl
+        });
+        return;
+      }
+
+      if (req.method === 'POST') {
+        const body = await readJsonBody(req);
+        const targetRoomId = String(body.room || roomParam || 'default');
+        const targetRoleRaw = String(body.role || roleKey || 'p1').toLowerCase();
+        const targetRole = targetRoleRaw === 'p2' || targetRoleRaw === '2' || targetRoleRaw === 'opponent' ? 'p2' : 'p1';
+        const room = getOrCreateRoom(targetRoomId);
+        const slot = room.rackets[targetRole];
+
+        if (pathname === '/api/racket/swing') {
+          const now = Date.now();
+          slot.seq += 1;
+          slot.lastSeenTs = now;
+          slot.connected = true;
+          const rawType = String(body.type || 'swing').toLowerCase();
+          const swing = {
+            seq: slot.seq,
+            role: slot.role,
+            type: rawType === 'toss' ? 'toss' : rawType === 'let' ? 'let' : 'swing',
+            shotType: String(body.shotType || 'topspin').toLowerCase(),
+            speed: Number(body.speed ?? 1),
+            angleX: Number(body.angleX ?? body.dirX ?? 0),
+            dirX: Number(body.angleX ?? body.dirX ?? 0),
+            dirY: Number(body.dirY ?? 0),
+            pitch: Number(body.pitch ?? slot.orientation.pitch ?? 0),
+            roll: Number(body.roll ?? slot.orientation.roll ?? 0),
+            yaw: Number(body.yaw ?? slot.orientation.yaw ?? 0),
+            timestamp: Number(body.timestamp ?? now),
+            serverTimeMs: now,
+            source: String(body.source || 'phone')
+          };
+          slot.lastSwing = swing;
+          slot.swingHistory.push(swing);
+          if (slot.swingHistory.length > 50) slot.swingHistory.shift();
+          sendJson(res, 200, { ok: true, roomId: room.roomId, role: slot.role, swing });
+          return;
+        }
+
+        if (pathname === '/api/racket/telemetry') {
+          slot.lastSeenTs = Date.now();
+          slot.connected = Boolean(body.connected ?? true);
+          slot.orientation = {
+            pitch: Number(body.pitch ?? slot.orientation.pitch ?? 0),
+            roll: Number(body.roll ?? slot.orientation.roll ?? 0),
+            yaw: Number(body.yaw ?? slot.orientation.yaw ?? 0),
+            accelMag: Number(body.accelMag ?? 0),
+            buttonB: Boolean(body.buttonB ?? false),
+            connected: slot.connected
+          };
+          sendJson(res, 200, {
+            ok: true,
+            roomId: room.roomId,
+            role: slot.role,
+            orientation: slot.orientation,
+            lastFeedback: slot.lastFeedback
+          });
+          return;
+        }
+
+        if (pathname === '/api/racket/feedback') {
+          slot.feedbackSeq += 1;
+          slot.lastFeedback = {
+            seq: slot.feedbackSeq,
+            role: slot.role,
+            kind: String(body.kind || 'hit'),
+            grade: String(body.grade || 'PERFECT'),
+            shotType: String(body.shotType || 'TOPSPIN'),
+            speedKmh: Number(body.speedKmh ?? 160),
+            intensity: Number(body.intensity ?? 1),
+            serverTimeMs: Date.now()
+          };
+          sendJson(res, 200, { ok: true, roomId: room.roomId, feedback: slot.lastFeedback });
+          return;
+        }
+
+        if (pathname === '/api/match/sync') {
+          room.stateSeq += 1;
+          room.p1DesktopSeenTs = Date.now();
+          const snap = body.snapshot && typeof body.snapshot === 'object' ? body.snapshot : body;
+          room.matchSnapshot = { ...snap, seq: room.stateSeq, serverTimeMs: Date.now() };
+          sendJson(res, 200, { ok: true, roomId: room.roomId, seq: room.stateSeq, p2Racket: serializeRacket(room.rackets.p2) });
+          return;
+        }
+
+        if (pathname === '/api/match/create') {
+          const newId = 'SQ-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+          const created = createRoomState(
+            newId,
+            String(body.hostName || 'Player 1'),
+            String(body.guestName || 'Challenger'),
+            Number(body.gamesToWin || 2)
+          );
+          rooms.set(newId, created);
+          sendJson(res, 200, {
+            ok: true,
+            roomId: newId,
+            tunnelUrl,
+            hostDesktopUrl: `${tunnelUrl}/?room=${newId}&role=p1`,
+            guestDesktopUrl: `${tunnelUrl}/?room=${newId}&role=p2`,
+            p1PhoneUrl: `${tunnelUrl}/companion.html?room=${newId}&role=p1`,
+            p2PhoneUrl: `${tunnelUrl}/companion.html?room=${newId}&role=p2`,
+            guestJoinHubUrl: `${tunnelUrl}/?room=${newId}&role=p2`
+          });
+          return;
+        }
+      }
+
+      next();
+    });
+  };
+
+  return {
+    name: 'argon-squash-relay',
+    configureServer(server: any) {
+      attachMiddleware(server);
+    },
+    configurePreviewServer(server: any) {
+      attachMiddleware(server);
+    }
+  };
+}
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, '.', '');
+  return {
+    server: {
+      port: 3000,
+      host: '0.0.0.0',
+      hmr: process.env.DISABLE_HMR !== 'true'
+    },
+    plugins: [react(), argonSquashRelayPlugin()],
+    define: {
+      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY || '')
+    },
+    resolve: {
+      alias: {
+        '../assets/vendor/GLTFLoader.js': 'three/examples/jsm/loaders/GLTFLoader.js',
+        '@': path.resolve('.')
+      }
+    }
+  };
+});

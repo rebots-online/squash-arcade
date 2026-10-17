@@ -231,6 +231,7 @@ export class CourtGeometry {
     frontWall.position.set(0, frontH * 0.5, COURT_SPECS.FRONT_WALL_Z - 0.07);
     frontWall.receiveShadow = true;
     frontWall.castShadow = true;
+    this.frontWallMesh = frontWall;
     this.root.add(frontWall);
 
     // 2. Tin Plate on Front Wall (Y in [0, tinHeight])
@@ -439,6 +440,27 @@ export class CourtGeometry {
     }
     if (this.tinBorderLine) {
       this.tinBorderLine.position.y = this.tinHeight;
+    }
+  }
+
+  setFrontWallTransparency(transparent = false) {
+    if (!this.materials.frontWall) return;
+    if (transparent) {
+      this.materials.frontWall.transparent = true;
+      this.materials.frontWall.opacity = 0.16;
+      this.materials.frontWall.depthWrite = false;
+      this.materials.frontWall.roughness = 0.12;
+      this.materials.frontWall.clearcoat = 0.6;
+      this.materials.frontWall.needsUpdate = true;
+    } else {
+      const isNeon = this.theme === 'neon_studio';
+      const isClub = this.theme === 'hardwood_club';
+      this.materials.frontWall.transparent = false;
+      this.materials.frontWall.opacity = 1.0;
+      this.materials.frontWall.depthWrite = true;
+      this.materials.frontWall.roughness = isClub ? 0.45 : isNeon ? 0.35 : 0.25;
+      this.materials.frontWall.clearcoat = 0.35;
+      this.materials.frontWall.needsUpdate = true;
     }
   }
 
