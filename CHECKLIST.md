@@ -176,3 +176,16 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 **Acceptance**: in spectate + play, receiver visibly arrives within ~150ms of contact (no waiting stance), hips visibly open through every groundstroke — reads as body-driven power, never arrive-plant-flap; back-corner retrievals show momentum carry-through.
 
 **Not doing**: free-orbit camera (rejected), prerendered audio (shelved).
+
+---
+
+## TASK-24 (IMPLEMENTED — deployed) — Match ceremony, Shot-Select onboarding & identity
+
+**Shipped** (see ARCHITECTURE.md §5.7–§5.8):
+- Racket-spin "who serves first" ceremony: `RACKET_SPIN` phase gates the first `_setupPointServe` of a fresh real-play match; call UP/DOWN, winner elects serve, AI always takes serve. Spoken + visual explainer teaches Shot-Select Mode mid-ceremony.
+- Shot-Select Mode branded as the default everywhere (HUD pill `SHOT-SELECT: ON`, setup step-4, Guide §1); WASD framed as advanced.
+- `onStartMatch` invariant: Play Match Now can never route to `ai_vs_ai` (coerces stale selection to `pro`).
+- AI back-glass strike quality: sit-up/descend pocket gate (`y ≤ 0.72` or `y < 1.15 && vy < -0.35`), corner-cycling mix (55% same-corner counter-drive + cross/lob/boast/drop), deep lob physics (front wall `y≈4.12`, `spin.x=-4` — no mid-court floaters).
+- YOU-ARE-RED identity cues: red/blue score digits, YOU chip, red-ringed avatar, red nameplate + setup tag.
+
+Commits: `775a340`, `fff35d8`, `c97d67e`, `7cc02ae`, `457d739`, `2f50cae` — all deployed.
