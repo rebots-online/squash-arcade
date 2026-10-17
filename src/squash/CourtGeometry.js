@@ -194,6 +194,17 @@ export class CourtGeometry {
       polygonOffsetUnits: -2
     });
 
+    // Back-wall out line gets its own lighter material so the red marker
+    // doesn't visually obscure the back court (TASK-15 / Gate H).
+    this.materials.backOutLine = new THREE.MeshBasicMaterial({
+      color: 0xf87171,
+      transparent: true,
+      opacity: 0.38,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+      polygonOffsetUnits: -2
+    });
+
     this.materials.structuralFrame = new THREE.MeshStandardMaterial({
       color: 0x0f172a,
       roughness: 0.4,
@@ -357,7 +368,7 @@ export class CourtGeometry {
 
     // 5. Back Wall Out Line (Y = 2.13m, Z = +4.875m)
     const backOutGeo = new THREE.BoxGeometry(W, lw, 0.025);
-    const backOut = new THREE.Mesh(backOutGeo, this.materials.outLine);
+    const backOut = new THREE.Mesh(backOutGeo, this.materials.backOutLine);
     backOut.position.set(0, COURT_SPECS.BACK_WALL_OUT_Y, COURT_SPECS.BACK_WALL_Z);
     this.root.add(backOut);
 
@@ -476,6 +487,7 @@ export class CourtGeometry {
       this.materials.sideWall.opacity = 0.52;
       this.materials.courtLine.color.setHex(0xdc2626);
       this.materials.outLine.color.setHex(0xb91c1c);
+      this.materials.backOutLine.color.setHex(0xef4444);
       this.materials.arenaFloor.color.setHex(0x1e1b18);
     } else if (themeId === 'neon_studio') {
       this.materials.frontWall.color.setHex(0x091326);
@@ -483,6 +495,7 @@ export class CourtGeometry {
       this.materials.sideWall.opacity = 0.24;
       this.materials.courtLine.color.setHex(0x38bdf8);
       this.materials.outLine.color.setHex(0xf43f5e);
+      this.materials.backOutLine.color.setHex(0xfb7185);
       this.materials.arenaFloor.color.setHex(0x050811);
     } else {
       // psa_glass
@@ -491,6 +504,7 @@ export class CourtGeometry {
       this.materials.sideWall.opacity = 0.34;
       this.materials.courtLine.color.setHex(0xffffff);
       this.materials.outLine.color.setHex(0xef4444);
+      this.materials.backOutLine.color.setHex(0xf87171);
       this.materials.arenaFloor.color.setHex(0x09101c);
     }
   }

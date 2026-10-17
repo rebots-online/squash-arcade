@@ -41,7 +41,7 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 ## Ordered Tasks & Acceptance Gates
 
 ### `TASK-15` — Lighter Back-Wall Out Line
-- **Status**: `[ ] PENDING SIGNOFF`
+- **Status**: `[x] COMPLETED`
 - **Owner Module**: `src/squash/CourtGeometry.js`
 - **Architecture Ref**: `§5.2`, Gate H
 - **Depends On**: `[]`
