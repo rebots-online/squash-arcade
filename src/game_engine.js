@@ -2884,10 +2884,14 @@ export class ArgonTennisEngine {
   _startServeToss(actor) {
     // TASK-17: WSF service-stance legality at toss — wrong service box or
     // foot fault loses the rally outright (handout to the receiver).
-    const serveFault = this.rulesEngine.evaluateServeStanceLegality(
-      actor.pos,
-      this.score.serviceSide
-    );
+    // Judge the stance the server is actually standing in — but only once
+    // they've ARRIVED in the box. A mid-walk server crossing the center line
+    // reads as a phantom wrong-side/foot fault otherwise.
+    const stanceArrived =
+      !actor.targetPos || actor.pos.distanceTo(actor.targetPos) < 0.4;
+    const serveFault = stanceArrived
+      ? this.rulesEngine.evaluateServeStanceLegality(actor.pos, this.score.serviceSide)
+      : null;
     if (serveFault) {
       this.serveError = null;
       const receiverRole = actor.role === 'player' ? 'opponent' : 'player';
