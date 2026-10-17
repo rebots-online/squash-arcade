@@ -13,7 +13,6 @@
     "prelint": "[ -d node_modules/.bin ] || bun install || npm install"
   },
   "dependencies": {
-    "@google/genai": "^2.8.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "three": "0.160.0"

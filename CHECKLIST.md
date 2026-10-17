@@ -65,7 +65,7 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 - **Acceptance Gate (I)**: `C` cycles through all five labels ending in `Front Wall`; front wall is transparent and full back court visible; wrap-around returns to `Back Glass`.
 
 ### `TASK-17` — Two-Tier AI Serve Errors (Wrong Box + Foot Fault)
-- **Status**: `[ ] PENDING SIGNOFF`
+- **Status**: `[x] COMPLETED`
 - **Owner Modules**: `src/squash/RulesEngine.js`, `src/game_engine.js`, `src/squash/TuningConfig.js`, `src/squash/TuningPanel.js`, `src/mii_facial_fx.js` (flavor only)
 - **Architecture Ref**: `§5.1`, Gate G
 - **Depends On**: `["TASK-16"]`

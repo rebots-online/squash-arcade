@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 function createRacketSlot(role: string) {
@@ -364,8 +364,7 @@ function argonSquashRelayPlugin() {
   };
 }
 
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, '.', '');
+export default defineConfig(() => {
   return {
     server: {
       port: 3000,
@@ -373,9 +372,6 @@ export default defineConfig(({ mode }) => {
       hmr: process.env.DISABLE_HMR !== 'true'
     },
     plugins: [react(), argonSquashRelayPlugin()],
-    define: {
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY || '')
-    },
     resolve: {
       alias: {
         '../assets/vendor/GLTFLoader.js': 'three/examples/jsm/loaders/GLTFLoader.js',

@@ -30,7 +30,7 @@ status: source-reviewed; deployment-and-device-verification-pending
 | Two phone controllers / 1v1 rooms | Development/preview backend scaffolding | Room/telemetry handlers currently reside in `vite.config.ts`, not production `dist/` |
 | TV casting / Chromecast receiver | Not established | Screen mirroring or external display may work; dedicated Cast integration isn't provided |
 | Tauri 2 Android, Windows, Linux packaging | Not present | Requires a new `src-tauri/` project and platform validation |
-| Hosted/paid LLM inference | **No active inference call identified in reviewed gameplay paths** | `@google/genai` is declared as a dependency and Vite defines a Gemini key; see the audit below |
+| Hosted/paid LLM inference | **None — no inference path exists** | Unused `@google/genai` dependency and `GEMINI_API_KEY` define removed (TASK-18); see the audit below |
 
 ## What it is
 
@@ -119,6 +119,8 @@ npx surge ./dist squash-arcade.surge.sh
 
 Authenticate with Surge when prompted; replace the domain if unavailable or if using your own domain. Re-run to update. If history-based SPA routes are added, copy `dist/index.html` to `dist/200.html` before publication.
 
+Surge hosts **solo play only**: `/api/racket/*` and `/api/match/*` middleware live in `vite.config.ts` and are absent from `dist/`, so companion-phone and room features do nothing on a static host (see "Why static hosting does not enable phone multiplayer").
+
 ### B. Netlify
 
 Connect this repository in Netlify, with:
@@ -187,7 +189,7 @@ A TV-connected PC running the game is the easiest proof-of-concept shared displa
 
 **Nonetheless, review these dependencies before publishing commercially:**
 
-- `package.json` declares `@google/genai`; `vite.config.ts` defines `process.env.GEMINI_API_KEY` for client-side substitution. A dependency or build-time key definition is **not** proof of paid inference being used. No secret Gemini key should be embedded into the public browser bundle. Remove unused exposure or place actual future inference behind a secure backend.
+- ~~`package.json` declares `@google/genai`; `vite.config.ts` defines `process.env.GEMINI_API_KEY`~~ — **removed in TASK-18** (the dependency was never imported and the key was never read). No secret key exists in the public bundle. Any future inference must be placed behind a secure backend.
 - The jukebox labels several tracks as **Lyria 3**, but `src/audio_engine.js` points at prerecorded `.mp3` files on `www.gstatic.com`. Playing those hosted files is **not live Lyria generation/inference**. Confirm the licensing and redistribution rights of third-party material before a commercial launch.
 - MediaPipe Hands/Pose uses browser-side inference, with some scripts/models loaded from public CDN/Google-hosted assets. This involves network downloads and third-party availability, not necessarily a pay-per-inference API.
 - The build downloader fetches models from `www.gstatic.com`. Some GLB asset identifiers retain tennis-starter names; provenance, licensing, and squash-specific visuals require review.
