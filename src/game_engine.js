@@ -889,10 +889,8 @@ export class ArgonTennisEngine {
         }
         // Tapping a chip EXECUTES the shot — mobile has no number keys. The swing
         // path already handles every phase: spectate nudge, serve toss/hit, rally
-        // strike-or-queue. (P2 chips stay select-only for local multiplayer.)
-        if (this.playerRole !== 'p2') {
-          this._handleUserSwingInput({ shotType });
-        }
+        // strike-or-queue.
+        this._handleUserSwingInput({ shotType });
       },
       onToggleAudio: () => {
         if (this.audioEngine) {
