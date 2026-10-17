@@ -5,7 +5,7 @@ version: "2.2.1"
 status: "ALIGNED_TO_CODEGRAPH (2026-10-17 audit) + PENDING REFINEMENTS"
 updated_at: "2026-10-17T15:05:00-04:00"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
-kstore_namespace: "argon.squash.v2"
+kstore_namespace: "mba.robin.squasharcade"
 kstore_schema_version: "1.3"
 governing_principle: "Build -> Play -> Observe -> Adjust -> Compare -> Keep or Revert"
 depends_on: []

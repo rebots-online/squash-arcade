@@ -185,27 +185,30 @@ export const ORIGINAL_DEFAULT_TRACK_IDS = [
 export const JUKEBOX_TRACK_LIST = Object.values(LYRIA_TRACKS);
 
 const STATE_TO_TRACK = {
-  title: 'argon_glass_overture',
-  menu: 'argon_glass_overture',
-  select: 'argon_glass_overture',
-  intro: 'crimson_tin_fanfare',
-  court_intro: 'crimson_tin_fanfare',
-  flyover: 'crimson_tin_fanfare',
-  start: 'crimson_tin_fanfare',
-  serve: 'physical_chess_protocol',
-  serve_wait: 'physical_chess_protocol',
-  serve_toss: 'physical_chess_protocol',
-  rally: 'physical_chess_protocol',
-  playing: 'physical_chess_protocol',
-  match: 'physical_chess_protocol',
-  point: 'physical_chess_protocol',
-  gamepoint: 'nick_roller_overdrive',
-  replay: 'alexandria_showcourt_nights',
-  victory: 'psa_championship_crown',
-  win: 'psa_championship_crown',
-  game_won: 'forearm_cut_funk',
-  match_over: 'psa_championship_crown',
-  celebration: 'psa_championship_crown',
+  // Boot-visible states map to 'audio' (HTMLAudio) tracks: volume-0/muted elements
+  // are exempt from the autoplay policy, so music is audible on load with no gesture.
+  // 'synth' tracks run on AudioContext and can never start pre-gesture — jukebox only.
+  title: 'menu_theme',
+  menu: 'menu_theme',
+  select: 'menu_theme',
+  intro: 'court_intro',
+  court_intro: 'court_intro',
+  flyover: 'court_intro',
+  start: 'court_intro',
+  serve: 'match_rally',
+  serve_wait: 'match_rally',
+  serve_toss: 'match_rally',
+  rally: 'match_rally',
+  playing: 'match_rally',
+  match: 'match_rally',
+  point: 'match_rally',
+  gamepoint: 'match_rally',
+  replay: 'match_rally',
+  victory: 'victory_fanfare',
+  win: 'victory_fanfare',
+  game_won: 'victory_fanfare',
+  match_over: 'victory_fanfare',
+  celebration: 'victory_fanfare',
   argon_glass_overture: 'argon_glass_overture',
   physical_chess_protocol: 'physical_chess_protocol',
   crimson_tin_fanfare: 'crimson_tin_fanfare',
@@ -300,20 +303,24 @@ export class AudioEngine {
       el.preload = 'auto';
       el.volume = 0;
       el.crossOrigin = 'anonymous';
-      if (id === 'court_intro' || id === 'victory_fanfare') {
-        el.addEventListener('ended', () => {
-          if (this.currentTrackId === id) {
-            if (this.jukeboxMode === 'shuffle') {
-              this.nextJukeboxTrack({ fromShuffle: true });
-            } else if (this.jukeboxMode === 'locked') {
-              el.currentTime = 0;
-              el.play().catch(() => {});
-            } else if (id === 'court_intro') {
-              this.playMusicForState('rally');
-            }
-          }
-        });
-      }
+      el.addEventListener('ended', () => {
+        if (this.currentTrackId !== id) return;
+        if (this.jukeboxMode === 'shuffle') {
+          this.nextJukeboxTrack({ fromShuffle: true });
+        } else if (this.jukeboxMode === 'locked') {
+          el.currentTime = 0;
+          el.play().catch(() => {});
+        } else if (id === 'court_intro') {
+          this.playMusicForState('rally');
+        } else {
+          this.nextJukeboxTrack();
+        }
+      });
+      // Muted start: a muted element is exempt from the autoplay policy, so play()
+      // can resolve before any user gesture; unmute once playback actually starts.
+      el.addEventListener('playing', () => {
+        if (!this.muted) el.muted = false;
+      });
       this.audioElements.set(id, el);
     }
   }
@@ -470,10 +477,10 @@ export class AudioEngine {
    */
   playWelcomeIntro({ force = false, withLoveAll = false } = {}) {
     if (this._welcomePlayed && !force) return;
-    this._welcomePlayed = true;
     if (this.muted) return;
 
     const ctx = this._ensureContext();
+    this._welcomePlayed = true;
     if (ctx) {
       // Warm Virtua Arcade brass fanfare chord (D9 -> Gmaj7)
       const now = ctx.currentTime;
@@ -561,6 +568,12 @@ export class AudioEngine {
   setJukeboxMode(mode = 'auto') {
     if (['auto', 'locked', 'shuffle'].includes(mode)) {
       this.jukeboxMode = mode;
+      // Re-apply loop semantics to the currently playing audio track.
+      const curTrack = LYRIA_TRACKS[this.currentTrackId];
+      const curEl = this.audioElements.get(this.currentTrackId);
+      if (curTrack?.type === 'audio' && curEl) {
+        curEl.loop = curTrack.loop && mode === 'locked';
+      }
     }
     this._notifyTrackChange();
     return this.jukeboxMode;
@@ -585,9 +598,8 @@ export class AudioEngine {
     let nextIdx = (curIdx + 1) % ids.length;
     if (fromShuffle || this.jukeboxMode === 'shuffle') {
       nextIdx = (curIdx + 1 + Math.floor(Math.random() * (ids.length - 1))) % ids.length;
-    } else if (this.jukeboxMode === 'auto' && !onlyOriginalSeven) {
-      this.jukeboxMode = 'locked';
     }
+    // Manual skip in 'auto' mode is a skip, not a lock — rotation stays alive.
     const nextId = ids[nextIdx];
     this.desiredTrackId = nextId;
     this._crossfadeToTrack(nextId);
@@ -601,9 +613,6 @@ export class AudioEngine {
       ids.indexOf(this.currentTrackId || this.desiredTrackId || 'argon_glass_overture')
     );
     const prevIdx = (curIdx - 1 + ids.length) % ids.length;
-    if (this.jukeboxMode === 'auto') {
-      this.jukeboxMode = 'locked';
-    }
     const prevId = ids[prevIdx];
     this.desiredTrackId = prevId;
     this._crossfadeToTrack(prevId);
@@ -621,7 +630,8 @@ export class AudioEngine {
       const track = LYRIA_TRACKS[trackId];
       if (track?.type === 'audio') {
         const el = this.audioElements.get(trackId);
-        if (el && el.paused && !this.muted) {
+        if (el && el.paused) {
+          el.muted = true;
           el.play().catch(() => {});
         }
       } else if (track?.type === 'synth' && !this._synthTimer && !this.muted && this.unlocked) {
@@ -659,11 +669,15 @@ export class AudioEngine {
       const el = this.audioElements.get(targetTrackId);
       if (el) {
         const targetVol = this.muted ? 0 : Math.min(1, targetTrack.baseVolume * this.musicVolume);
-        if (!targetTrack.loop) {
+        // Locked mode repeats seamlessly via the element loop; auto/shuffle let
+        // the track end so the 'ended' handler can advance rotation.
+        el.loop = targetTrack.loop && this.jukeboxMode === 'locked';
+        if (!el.loop) {
           try {
             el.currentTime = 0;
           } catch {}
         }
+        el.muted = true;
         el.play()
           .then(() => {
             this._fadeAudio(el, targetVol, 440, false);

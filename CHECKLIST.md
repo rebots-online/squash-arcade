@@ -116,7 +116,7 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 - **Owner Modules**: `src/audio_engine.js`
 - **Architecture Ref**: `§5.6`, `§3.12` (runtime invariants)
 - **Depends On**: `["TASK-19"]`
-- **kstore Key**: `argon.squash.v2.tasks.TASK-21`
+- **kstore Key**: `mba.robin.squasharcade.tasks.TASK-21`
 - **Deliverables**:
   - Muted-start autoplay: `el.muted=true` before `el.play()`, unmute on `'playing'` — audible music on load for `'audio'` tracks without a gesture.
   - `STATE_TO_TRACK` restore: boot-visible states back to the 4 legacy mp3s (`title/menu/select→menu_theme`, `serve*/rally/playing/match/point→match_rally`, `intro/start/flyover→court_intro`, `victory/win/match_over/celebration→victory_fanfare`, `replay/gamepoint/game_won→match_rally`/`victory_fanfare`); 7 synth originals remain jukebox-only.
