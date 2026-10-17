@@ -1,0 +1,48 @@
+{
+  "reviewDate": "2026-10-17",
+  "host": "DESKTOP-CN0GDTR",
+  "repository": "E:\\devProjects\\squash-arcade",
+  "remote": "https://github.com/rebots-online/squash-arcade.git",
+  "sourceCommit": "deeea2ed59da55bc5aa30b33ed9984d68709eac7",
+  "requestedModel": "gpt-6-astra",
+  "execution": "OpenDesign MCP / Local Codex",
+  "appUrl": "http://127.0.0.1:47528/",
+  "portRule": "Global I-16: high non-patterned 30000-60000",
+  "codegraph": {
+    "files": 24,
+    "nodes": 621,
+    "edges": 1824,
+    "integrity": "ok"
+  },
+  "assetProvisioning": "node scripts/download-assets.mjs completed: 13 files",
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "cb597795931bda868a3a435270480e2852905263eb5b67735dda9382266e3a99"
+    },
+    {
+      "path": "styles.css",
+      "sha256": "4a0eae04b5b48ad148183f1c2e5af9729e8d20f410c44db910f6fa8deddf647d"
+    },
+    {
+      "path": "src/game_engine.js",
+      "sha256": "e5952743e381c1d153df01e0b9839afbda9c2460bcd58bbbaa2d4ce9a7d5c3e4"
+    },
+    {
+      "path": "src/audio_engine.js",
+      "sha256": "29a0537129106551b5c06cacc31bad68969a0d121fbab169ad8f0a32ab1a6b22"
+    },
+    {
+      "path": "src/squash/CourtGeometry.js",
+      "sha256": "cb04f9b79db9717fccd24b7ae1cf2e2a7302a825799a6dde84248156f56e2b95"
+    },
+    {
+      "path": "vite.config.ts",
+      "sha256": "c291163b2a408b0f40981c414c69c04bcb3950a490b9e149b743cdd94d21814e"
+    },
+    {
+      "path": "public/companion.html",
+      "sha256": "3fb6cc452a92a34ca2a099e47d1a2fe0bd8c015b15f6b93b84d6104b28bf4efb"
+    }
+  ]
+}
