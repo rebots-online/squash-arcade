@@ -86,7 +86,7 @@ export const DEFAULT_TUNING_PARAMS = {
     aiFrontCourtCreep: 0.38,        // How far AI creeps up when expecting a short ball
     aiServeWrongBoxChance: 0.04,    // Low-frequency accidental wrong service box (TASK-17)
     aiServeSelfCorrectChance: 0.55, // Chance the AI notices and walks to the correct box mid-stance
-    aiServeFootFaultChance: 0.007   // Even lower-frequency foot fault (line contact / short of short line)
+    aiServeFootFaultChance: 0.001   // Rare foot fault (~1 in 1000 serves — not even once a day)
   },
 
   // --- 4. Court & Rules Configuration ---
