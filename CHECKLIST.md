@@ -148,5 +148,5 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 - **Pending user verify**: hard-refresh shows the sound gate (not silent-confusing), one click starts Argon Glass Overture; jukebox skips differentiate tracks audibly; Cam pill cycles to "Front Wall".
 
 **Later / suggestions**:
-- Operator suggestion noted: mail feedback opposing browser autoplay kneecapping (control ceded to abuse-driven policy) to **Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA** (USPS letter campaign idea — "flood them").
+- Operator suggestion noted: mail feedback opposing browser autoplay kneecapping (control ceded to abuse-driven policy) to **Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA** (USPS letter campaign idea — "flood them"). If in Canada and budget allows: preprinted postage-included **"Don't Be Evil" reminder** mailers for the same campaign.
 - DEFERRED: prerender the 7 synth tracks to vendored audio files (OfflineAudioContext render + lamejs/ffmpeg encode) so they too can bypass the gesture gate. shelved per operator.
