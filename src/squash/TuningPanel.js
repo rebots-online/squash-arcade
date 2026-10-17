@@ -55,7 +55,10 @@ const SLIDER_SCHEMA = {
       { key: 'aiAnticipationStrength', label: 'AI Anticipation Strength', min: 0.0, max: 1.0, step: 0.05 },
       { key: 'aiReactionDelayMs', label: 'AI Disguise Split-Step Lag (ms)', min: 60, max: 380, step: 10 },
       { key: 'aiPatternMemoryLength', label: 'AI Pattern Memory (shots)', min: 2, max: 8, step: 1 },
-      { key: 'aiAggression', label: 'AI Attacking Tendency', min: 0.1, max: 0.95, step: 0.05 }
+      { key: 'aiAggression', label: 'AI Attacking Tendency', min: 0.1, max: 0.95, step: 0.05 },
+      { key: 'aiServeWrongBoxChance', label: 'AI Wrong Service Box Chance', min: 0.0, max: 0.4, step: 0.01 },
+      { key: 'aiServeSelfCorrectChance', label: 'AI Serve Self-Correct Chance', min: 0.0, max: 1.0, step: 0.05 },
+      { key: 'aiServeFootFaultChance', label: 'AI Foot Fault Chance', min: 0.0, max: 0.15, step: 0.005 }
     ]
   }
 };

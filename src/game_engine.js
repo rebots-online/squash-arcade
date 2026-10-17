@@ -2278,17 +2278,44 @@ export class ArgonTennisEngine {
     const server = this.score.server || 'player';
     const isRightBox = this.score.serviceSide !== 'left';
     const boxX = isRightBox ? 1.85 : -1.85;
-    const serverZ = COURT_SPECS.SHORT_LINE_Z + 0.95; // ~1.515m
     const receiverX = isRightBox ? -1.45 : 1.45;
     const receiverZ = COURT_SPECS.SHORT_LINE_Z + 1.35; // ~1.915m
 
+    // TASK-17: two-tier AI serve errors. Low-frequency wrong-box roll may send
+    // the AI server to the opposite box; an even rarer foot-fault roll puts a
+    // foot on the half-court line or short of the short line. Self-correct roll
+    // schedules a visible mid-stance walk to the legal box instead.
+    let serverBoxX = boxX;
+    let serverBoxZ = COURT_SPECS.SHORT_LINE_Z + 0.95; // ~1.515m
+    this.serveError = null;
+    if (server === 'opponent') {
+      const ma = this.tuningStore?.params?.movementAndAI || {};
+      const wrongBoxChance = ma.aiServeWrongBoxChance ?? 0;
+      const footFaultChance = ma.aiServeFootFaultChance ?? 0;
+      const roll = Math.random();
+      if (roll < wrongBoxChance) {
+        serverBoxX = -boxX;
+        this.serveError = { type: 'WRONG_BOX' };
+        if (Math.random() < (ma.aiServeSelfCorrectChance ?? 0.55)) {
+          this.serveError.selfCorrect = { x: boxX, z: serverBoxZ };
+        }
+      } else if (roll < wrongBoxChance + footFaultChance) {
+        this.serveError = { type: 'FOOT_FAULT' };
+        if (Math.random() < 0.5) {
+          serverBoxX = Math.sign(boxX) * 0.12; // standing on the half-court line
+        } else {
+          serverBoxZ = COURT_SPECS.SHORT_LINE_Z - 0.02; // short of the short line
+        }
+      }
+    }
+
     const playerPos =
       server === 'player'
-        ? new THREE.Vector3(boxX, 0, serverZ)
+        ? new THREE.Vector3(boxX, 0, serverBoxZ)
         : new THREE.Vector3(receiverX, 0, receiverZ);
     const opponentPos =
       server === 'opponent'
-        ? new THREE.Vector3(boxX, 0, serverZ)
+        ? new THREE.Vector3(serverBoxX, 0, serverBoxZ)
         : new THREE.Vector3(receiverX, 0, receiverZ);
     const ballStart =
       server === 'player'
@@ -2342,6 +2369,19 @@ export class ArgonTennisEngine {
     if (this.facialFX) {
       this.facialFX.setExpression(this.player, 'neutral', 2);
       this.facialFX.setExpression(this.opponent, 'neutral', 2);
+    }
+
+    // TASK-17: AI wrong-box self-correction — the AI 'notices' mid-stance and
+    // visibly walks to the legal service box with a confused expression.
+    if (this.serveError?.selfCorrect && (this.score.server || 'player') === 'opponent') {
+      const sc = this.serveError.selfCorrect;
+      setTimeout(() => {
+        if (this.phase === 'SERVE_STANCE' && this.serveError?.type === 'WRONG_BOX') {
+          this.opponent.targetPos.set(sc.x, 0, sc.z);
+          this.facialFX && this.facialFX.setExpression(this.opponent, 'wide_eyed_panic', 1.4);
+          this.serveError = null;
+        }
+      }, 650);
     }
 
     let finalBanner = bannerText;
@@ -2728,6 +2768,26 @@ export class ArgonTennisEngine {
   }
 
   _startServeToss(actor) {
+    // TASK-17: WSF service-stance legality at toss — wrong service box or
+    // foot fault loses the rally outright (handout to the receiver).
+    const serveFault = this.rulesEngine.evaluateServeStanceLegality(
+      actor.pos,
+      this.score.serviceSide
+    );
+    if (serveFault) {
+      this.serveError = null;
+      const receiverRole = actor.role === 'player' ? 'opponent' : 'player';
+      const reason = serveFault === 'FOOT_FAULT' ? 'foot fault' : 'wrong box';
+      this._awardPoint(receiverRole, reason, {
+        bannerTitle: serveFault === 'FOOT_FAULT' ? 'Foot fault!' : 'Fault!',
+        explanation:
+          serveFault === 'FOOT_FAULT'
+            ? 'Server touched the half-court line / stood short of the short line.'
+            : 'Server stood in the wrong service box.'
+      });
+      return;
+    }
+
     this.phase = 'SERVE_TOSS';
     this.phaseTimer = 0;
     const xOffset = this.score.serviceSide === 'left' ? -0.25 : 0.25;

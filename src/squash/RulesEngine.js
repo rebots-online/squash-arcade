@@ -319,6 +319,24 @@ export class RulesEngine {
   }
 
   /**
+   * WSF service-stance legality check, evaluated at the moment of serve toss.
+   * Returns 'WRONG_BOX' | 'FOOT_FAULT' | null.
+   *  - WRONG_BOX: server standing in the wrong service box for `serviceSide`.
+   *  - FOOT_FAULT: foot touching the half-court line (|x| < 0.22) or on/short
+   *    of the short line (z < SHORT_LINE_Z + 0.02).
+   */
+  evaluateServeStanceLegality(serverPos, serviceSide = 'right') {
+    if (!serverPos) return null;
+    if (Math.abs(serverPos.x) < 0.22) return 'FOOT_FAULT';
+    if (serverPos.z < COURT_SPECS.SHORT_LINE_Z + 0.02) return 'FOOT_FAULT';
+    const expectedSign = serviceSide === 'left' ? -1 : 1;
+    if (Math.sign(serverPos.x) !== expectedSign && Math.abs(serverPos.x) <= COURT_SPECS.HALF_WIDTH) {
+      return 'WRONG_BOX';
+    }
+    return null;
+  }
+
+  /**
    * Resolves an explicit "Let, please!" call made by `callerRole` (via Key F/L, HUD button,
    * Webcam raised open hand, or Phone Racket hold-up).
    */
@@ -506,7 +524,11 @@ export class RulesEngine {
     const r = String(reason || '').toLowerCase();
 
     // 1. Fault / Winner Call Prefix
-    if (r.includes('tin') || r.includes('down')) {
+    if (r.includes('foot fault')) {
+      parts.push('Foot fault!');
+    } else if (r.includes('wrong box') || r.includes('serve fault') || r.includes('fault')) {
+      parts.push('Fault!');
+    } else if (r.includes('tin') || r.includes('down')) {
       parts.push('Down!');
     } else if (r.includes('out')) {
       parts.push('Out!');

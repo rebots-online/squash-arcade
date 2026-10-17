@@ -53,7 +53,7 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 - **Acceptance Gate (H)**: Back-wall out line renders at reduced opacity/lighter tint in all three themes; front and side out lines unchanged.
 
 ### `TASK-16` — `FRONT_WALL_CAM` Viewpoint in Camera Cycle
-- **Status**: `[ ] PENDING SIGNOFF`
+- **Status**: `[x] COMPLETED`
 - **Owner Modules**: `src/game_engine.js`, `src/squash/CourtGeometry.js`
 - **Architecture Ref**: `§5.3`, Gate I
 - **Depends On**: `["TASK-15"]`
