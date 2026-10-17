@@ -223,6 +223,20 @@ export class OpponentAI {
     const movingTowardBackOrSlow =
       isComingOffBackWall || ball.vel.z > -2.5 || ball.bounceCountOnFloor >= 1;
 
+    // TASK-23b position-relative patience: a high, fresh ball reached early is
+    // a suboptimal contact point — wait for it to drop/sit up into the strike
+    // pocket where the left-to-right angles open up. A volley is still correct
+    // ONLY when it deliberately applies time pressure: hitter stranded deep.
+    const poachVolleyAppliesPressure =
+      ball.bounceCountOnFloor === 0 &&
+      ball.pos.y > 1.02 &&
+      ball.pos.y <= 1.9 &&
+      ball.pos.z < 1.4 &&
+      (player?.pos?.z ?? 0) > 1.6;
+    const suboptimalContact =
+      ball.bounceCountOnFloor === 0 && ball.pos.y > 1.02 && !poachVolleyAppliesPressure;
+    if (suboptimalContact) return;
+
     if (distXZ <= 1.72 && reachableY && movingTowardBackOrSlow) {
       // Check if AI is obstructed by the other player and should call a Let (WSF Rule 8/9 safety)
       if (
@@ -230,15 +244,10 @@ export class OpponentAI {
         typeof onCallAILet === 'function' &&
         this.lastLetAppealStroke !== ball.rallyStrokeCount
       ) {
-        const pState = selfRole === 'player' ? opponent : player;
-        const oState = selfRole === 'player' ? player : opponent;
-        const interference = rulesEngine.evaluateInterference({
-          striker: selfRole,
-          ball,
-          playerState: pState,
-          opponentState: oState
-        });
-        if (interference && interference.blocked && interference.distToNonStriker < 0.92) {
+        // Positional signature: evaluateInterference(receiverActor, hitterActor, ball)
+        // — receiver is this AI actor, hitter is the other actor.
+        const interference = rulesEngine.evaluateInterference(opponent, player, ball);
+        if (interference && interference.interference) {
           this.lastLetAppealStroke = ball.rallyStrokeCount;
           // 78% of the time the AI stops play safely and appeals for Let; 22% it tries to play around
           if (Math.random() < 0.78) {

@@ -2535,17 +2535,17 @@ export class ArgonTennisEngine {
 
     this.hud?.showTimingPopup({
       grade: `${gestureLabel} • ${decision.decision.replace('_', ', ')}`,
-      detail: decision.explanation,
+      detail: decision.callout || decision.explanation,
       durationMs: 2600
     });
 
     if (decision.replaysPoint || decision.decision === 'YES_LET') {
-      this._replayLetRally(decision);
+      this._replayLetRally({ ...decision, explanation: decision.callout || decision.explanation });
       return true;
     }
 
     // Either STROKE (point to appealer) or NO_LET (point to non-appealer)
-    this._awardPoint(decision.winner, decision.reason, decision);
+    this._awardPoint(decision.winner, decision.reason || decision.callout, decision);
     return true;
   }
 

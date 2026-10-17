@@ -68,7 +68,20 @@ export class PlayerMovement {
     const pace = lead > 0 ? travelTime / lead : 1;
     if (pace < 1) {
       const f = Math.max(0.16, pace);
-      actor.targetPos.set(actor.pos.x + dx * f, 0, actor.pos.z + dz * f);
+      // Arc the entry: bias the staged step toward the T line so the runner
+      // cycles behind the ball (T -> corner -> T) instead of beelining.
+      const pull = (1 - f) * 0.35;
+      const tx = COURT_SPECS.T_POS.x - actor.pos.x;
+      const tz = COURT_SPECS.T_POS.z - actor.pos.z;
+      const tl = Math.hypot(tx, tz) || 1;
+      actor.targetPos.set(
+        actor.pos.x + dx * f + (tx / tl) * pull,
+        0,
+        actor.pos.z + dz * f + (tz / tl) * pull
+      );
+      actor._stagedApproach = true;
+    } else {
+      actor._stagedApproach = false;
     }
     // Closed-stance windup ramps in over the last ~0.55s before contact.
     // rotation.y > 0 faces -x, < 0 faces +x; righty winds chest toward +x side.
