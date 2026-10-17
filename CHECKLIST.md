@@ -150,3 +150,27 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 **Later / suggestions**:
 - Operator suggestion noted: mail feedback opposing browser autoplay kneecapping (control ceded to abuse-driven policy) to **Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA** (USPS letter campaign idea — "flood them"). If in Canada and budget allows: preprinted postage-included **"Don't Be Evil" reminder** mailers for the same campaign.
 - DEFERRED: prerender the 7 synth tracks to vendored audio files (OfflineAudioContext render + lamejs/ffmpeg encode) so they too can bypass the gesture gate. shelved per operator.
+
+---
+
+## TASK-23 (PLANNED — NOT IMPLEMENTED) — Retrieval Mechanics: timed arrival + hip-drive swing
+
+**Bug**: Actors lerp straight to the intercept and stand flat-footed waiting for the ball — the #1 real-squash bad habit. Worst in back corners where it reads as silver-platter retrieval. Swing is arm-flap, no body drive.
+
+**Requirement** (operator): arrive *just before* contact; power comes from hips OPENING UP toward the front wall — not arms.
+
+**Grounded anchors**:
+- `PlayerMovement.updatePlayerRallyTarget` (`src/squash/PlayerMovement.js` ~L31-116): sets `targetPos` = intercept (firstFloorBouncePos) + 0.42m lateral spacing — no time awareness.
+- `PlayerMovement.stepActorLocomotion` (~L125): accel/inertia + arrivalRamp → decelerates to full stop at target; yaw lerp at ~L194 already faces front wall with subtle ball-turn — natural hook for hip rotation.
+- Intercept source: `currentPredictedTrajectory?.firstFloorBouncePos` (`game_engine.js` ~L3521); ball flight gives contact time.
+- Swing trigger: `pendingUserSwing` / `_attemptPlayerRallyStrike` / `shotController.updatePreparation`.
+
+**Plan**:
+1. **Contact-time model** — derive `tContact` for the receiver from the predicted trajectory (time until ball reaches the strike point/second-bounce window). Compute actor travel time `dist/(maxSpeed * recoveryScale)`.
+2. **Staged approach** — when `travelTime < tContact - margin`, hold a staging point *behind the ball's line* (between T and intercept) with a small split-step hop timed to opponent contact; only release to final target so the actor is still decelerating/moving through the shot at contact. Back-corner intercepts (z>~3, |x|>~1.5) keep incoming momentum — lunge lean, no stop-then-hit.
+3. **Hip opening = power** — closed-stance windup (root yaw rotated ~0.3-0.5 rad off front wall + racket back), then yaw snaps open through the front-wall direction AT contact; swing speed/power scale with hip angular velocity. Reuse the existing yaw lerp target + add torso/lean terms; racket arm follows the body, not vice-versa.
+4. **Recovery unchanged** — post-shot T-recovery path (`getTRecoveryPosition`) already exists; ensure arrival staging doesn't break it.
+
+**Acceptance**: in spectate + play, receiver visibly arrives within ~150ms of contact (no waiting stance), split-step on opponent strike, hips visibly open through every groundstroke, back-corner retrievals show momentum carry-through.
+
+**Not doing**: free-orbit camera (rejected), prerendered audio (shelved).
