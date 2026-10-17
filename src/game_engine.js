@@ -3961,10 +3961,14 @@ export class ArgonTennisEngine {
       targetPos.set(sideX, 1.05, -1.15);
       targetLook.set(this.ball.pos.x * 0.75, 0.32, -4.35);
     } else if (mode === 'FRONT_WALL_CAM') {
-      // Broadcast-style view from behind the front wall looking down-court
-      // toward the back glass — near eye level so the far court reads face-on.
-      targetPos.set(0, 1.7, -4.4);
-      targetLook.set(0, 1.05, 3.5);
+      // PSA broadcast-style cam embedded INSIDE the front-wall glass
+      // (slab spans z -4.875..-5.015, wall transparent for this mode), at low
+      // waist height. Slides along the wall tracking the ball so a corner
+      // lunge reads face-on; still frames the whole court floor→back glass.
+      const bx = Math.max(-2.6, Math.min(2.6, this.ball.pos.x));
+      const by = Math.max(0.35, Math.min(1.8, this.ball.pos.y));
+      targetPos.set(bx * 0.6, 1.35, -4.94);
+      targetLook.set(bx, by, this.ball.pos.z * 0.6 + 1.9);
     } else {
       targetPos.set(this.player.pos.x * 0.24, 3.22, 9.38);
       targetLook.set(this.ball.pos.x * 0.2, 1.12, -1.65);
