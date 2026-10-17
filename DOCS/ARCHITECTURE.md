@@ -335,7 +335,7 @@ Instead of classifying from a single 2-point velocity delta, `BiomechStrokeClass
 6. **Gate F (Biomechanical Forehand/Backhand Stroke Classification)**: `BiomechStrokeClassifier` passes 100% of reproducible stroke suites across right-handed, left-handed, mirrored front-cam, unmirrored rear-cam, vertical drops/lobs, cross-body follow-throughs, late deceptive wrist changes, partial occlusion (`uncertain` degradation), and strokes whose horizontal `vx` sign contradicts naive screen-direction rules.
 7. **Gate G (Serve Errors — planned)**: With `aiServeWrongBoxChance=1` the AI visibly walks to the wrong box; `evaluateServeStanceLegality` returns `WRONG_BOX`/`FOOT_FAULT` deterministically; `Fault!`/`Foot fault!` callouts fire and handout is awarded.
 8. **Gate H (Back-Wall Line — planned)**: Back-wall out line renders at reduced opacity/lighter tint in all three themes while front and side out lines are unchanged.
-9. **Gate I (Front-Wall Cam — planned)**: `C` cycles through all five labels ending in `Front Wall`; in `FRONT_WALL_CAM` the front wall is transparent and the full back court is visible; cycle wraps to `Back Glass`.
+9. **Gate I (Front-Wall Cam)**: `C` / both camera pills cycle six labels ending in `Front Wall`; in `FRONT_WALL_CAM` the camera is embedded inside the front-wall glass (transparent) and tracks the ball horizontally — full back court visible, corner lunges framed face-on; cycle wraps to `Back Glass`.
 10. **Gate J (Skills Demo — planned)**: Onboarding presents a clearly labeled skills walkthrough; each demonstrated shot is named for its squash skill on screen; skip-to-play still works; no unexplained "wonder" framing remains in user-facing text.
 
 ---
@@ -351,10 +351,10 @@ Instead of classifying from a single 2-point velocity delta, `BiomechStrokeClass
 ### 5.2 Lighter Back-Wall Out Line (`CourtGeometry`)
 - `_createMaterials`: add `materials.backOutLine` (`MeshBasicMaterial`, `transparent: true`, `opacity ≈ 0.38`, lighter red `0xf87171`); back-wall out mesh in `_buildCourtMarkings` uses it; `applyTheme` gains a per-theme `backOutLine` entry so `psa_glass`/`hardwood_club`/`neon_studio` stay consistent. Front/side out lines keep shared `materials.outLine`.
 
-### 5.3 Front-Wall Viewpoint in Camera Cycle (`ArgonSquashEngine` + `CourtGeometry`)
-- Existing cycle (`KeyC` / camera pills -> `onCycleCamera`, `game_engine.js`): `[null, 'RALLY_CAM', 'SERVE_CAM', 'CORNER_NICK_CAM', 'INTRO_PAN']`; poses resolve in `_computeTargetCameraPose`.
-- Add `'FRONT_WALL_CAM'` to `modes` + `labels` (`'Front Wall'`) and a `_computeTargetCameraPose` branch: `targetPos ≈ (0, 2.8, -4.4)` looking `+Z` toward the back glass (`targetLook ≈ (0, 1.0, +3.5)`).
-- When `FRONT_WALL_CAM` is the effective mode, call `CourtGeometry.setFrontWallTransparency(true)`; restore `false` on exit. HUD projections already go through `_projectToScreen` — unchanged.
+### 5.3 Front-Wall Viewpoint in Camera Cycle (`ArgonSquashEngine` + `CourtGeometry`) — IMPLEMENTED
+- Cycle (`KeyC` / `btn-camera-cycle` / `btn-top-camera-cycle` -> `onCycleCamera`, `game_engine.js`): `[null, 'RALLY_CAM', 'SERVE_CAM', 'CORNER_NICK_CAM', 'INTRO_PAN', 'FRONT_WALL_CAM']`; both pill labels (`camera-mode-label`, `camera-mode-label-top`) update via `updateCameraLabel`.
+- `_computeTargetCameraPose` branch embeds the cam INSIDE the front-wall slab (z ≈ -4.94, wall span -4.875..-5.015) at waist height (y=1.35), slides `x` with `ball.x * 0.6` (clamped ±2.6) and looks at the ball toward the back glass — PSA-broadcast-style face-on corner lunges over the whole court.
+- When `FRONT_WALL_CAM` is the effective mode, `CourtGeometry.setFrontWallTransparency(true)`; restored on exit. HUD projections go through `_projectToScreen` — unchanged.
 
 ### 5.4 Google Dependency Cleanup (Cost Zero)
 - Remove `@google/genai` from `package.json` (no imports exist) and the `process.env.GEMINI_API_KEY` define from `vite.config.ts`.
@@ -369,7 +369,16 @@ Instead of classifying from a single 2-point velocity delta, `BiomechStrokeClass
 ### 5.6 Audio Autoplay & Jukebox Rotation Fix (`AudioEngine`)
 - **Why**: `deeea2e` remapped all `STATE_TO_TRACK` states to `'synth'` tracks, which can never sound before a gesture — deployed pages play total silence until a click. Manual jukebox ⏭/⏮ silently sets `jukeboxMode='locked'`, permanently disabling rotation and all state music; and `loop:true` audio tracks can never advance.
 - **Muted-start autoplay**: preload/`_crossfadeToTrack` sets `el.muted=true` before `el.play()`, unmuting on `'playing'` — restores audible-on-load for any `'audio'` track, gesture or not.
-- **State map restore**: boot-visible states back to the 4 legacy mp3s (`title/menu/select→menu_theme`, `serve*/rally/playing/match/point→match_rally`, `intro/start/flyover→court_intro`, `victory/win/match_over/celebration→victory_fanfare`, `replay/gamepoint/game_won→match_rally`/`victory_fanfare`); the 7 synth originals remain jukebox-selectable only.
+- **State map (as shipped)**: boot-visible states map to the 7 original Argon Squash synths (`title/menu/select→argon_glass_overture`, `intro/start/flyover→crimson_tin_fanfare`, `serve*/rally/point/match→physical_chess_protocol`, `gamepoint→nick_roller_overdrive`, `replay→alexandria_showcourt_nights`, `victory/win/match_over/celebration→psa_championship_crown`, `game_won→forearm_cut_funk`) — the game opens on track #1, never the tennis classics; legacy mp3s stay jukebox-selectable only.
+- **Sound-gate**: `#btn-sound-gate` prominent "CLICK HERE FOR SOUND" CTA since synths can't self-start pre-gesture; hides via `AudioContext statechange` — never renders in native WebView builds (`mediaPlaybackRequiresUserGesture=false` starts ctx `running`).
+- **Track timbre**: `TRACK_DRUM_KIT` per-track kick/snare/hat personalities; `drive` waveshaper param on `_triggerSynthVoice`; per-track signature voices (pad swell, chess-clock tock, brass+timpani, driven acid+sub, Hijaz sweep+drone, slap pops, crowd crash+supersaw).
 - **Stop silent lock**: remove the auto-`'locked'` assignment in `nextJukeboxTrack`/`prevJukeboxTrack` — skip is not a lock; `setJukeboxMode`/`selectJukeboxTrack(lock)` remain the explicit lock paths.
 - **Audio-track rotation**: `ended` → shuffle→random next, auto→sequential next, locked→replay; `el.loop` toggled `track.loop && mode==='locked'` on start/mode change.
 - **`_welcomePlayed`**: set only after `_ensureContext()` succeeds.
+
+### 5.7 Retrieval Timing & Hip-Drive Stroke Mechanics (`PlayerMovement` + `ArgonSquashEngine`) — approved target
+- **Target state**: receivers never arrive-plant-flap. Contact time `tContact` is derived from `currentPredictedTrajectory` (ball reaching the strike window); actor travel time = `dist/(maxSpeed * recoveryScale)`. When `travelTime < tContact - margin`, the actor holds a staging point *behind the ball's line* (on the T→intercept path) and releases to the final target so arrival coincides with the contact window (~150ms lead, still moving through the shot). `updatePlayerRallyTarget`/`stepActorLocomotion` remain the implementation hooks (`game_engine.js` intercept source ~L3521).
+- **Back corners** (`z > ~3`, `|x| > ~1.5`): incoming momentum carries through the strike — visible lunge lean, no full stop before contact; no silver-platter flat-footed retrieval.
+- **Hip opening = power**: closed-stance windup (root yaw ~0.3-0.5 rad off the front-wall direction + racket back), then yaw snaps open toward the front wall *at* contact; swing speed/shot power scale with hip angular velocity — the arm follows the body, never leads it. Reuses the actor yaw lerp in `stepActorLocomotion` (~L194) plus torso/lean terms; racket animation in `RacketKinematicsController`.
+- **Split-step**: optional garnish, de-emphasized — the required visible truth is movement-through-contact and body-driven strokes.
+- Post-shot T-recovery (`getTRecoveryPosition`, `isRecoveringToT` scaling) is unchanged.
