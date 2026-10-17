@@ -218,3 +218,18 @@ kbd{display:inline-block;padding:1px 6px;border-radius:5px;background:#1e293b;bo
 .rs-note b{color:#ffb4a8;letter-spacing:.04em}
 .rs-note kbd{background:#0d1117;border:1px solid #4a5570;border-radius:4px;padding:0 4px;font-size:11px;color:#eaf0ff}
 .rs-note small{color:#8b95b3}
+
+/* === Mobile: completely roll up the setup menu to a slim handle === */
+@media (max-width: 768px){
+  #title-modal.side-docked-menu.menu-collapsed{pointer-events:none}
+  #title-modal.side-docked-menu.menu-collapsed .side-docked-card{width:auto!important;max-width:80vw!important;padding:6px 10px!important;pointer-events:auto}
+  #title-modal.side-docked-menu.menu-collapsed .wii-logo-header .argon-logo-title,
+  #title-modal.side-docked-menu.menu-collapsed .squash-subtitle-tag,
+  #title-modal.side-docked-menu.menu-collapsed .welcome-announcer-row,
+  #title-modal.side-docked-menu.menu-collapsed .live-ai-showcase-pill,
+  #title-modal.side-docked-menu.menu-collapsed .court-preview-diagram,
+  #title-modal.side-docked-menu.menu-collapsed .setup-step,
+  #title-modal.side-docked-menu.menu-collapsed .setup-step-hint,
+  #title-modal.side-docked-menu.menu-collapsed .squash-modal-actions,
+  #title-modal.side-docked-menu.menu-collapsed .wii-footer-row{display:none!important}
+}

@@ -1256,9 +1256,11 @@ export class ArgonTennisEngine {
     if (this.phase !== 'RALLY' || !this.ball.inPlay) {
       this._setupMidRallyShowcase();
     }
-    this.hud?.elTitleModal?.classList.remove('menu-collapsed');
+    // Mobile starts rolled up to a slim handle; desktop stays expanded.
+    const mobileRolled = window.matchMedia?.('(max-width: 768px)')?.matches === true;
+    this.hud?.elTitleModal?.classList.toggle('menu-collapsed', mobileRolled);
     const collapseLbl = document.getElementById('collapse-side-menu-label');
-    if (collapseLbl) collapseLbl.textContent = '◀ Minimize';
+    if (collapseLbl) collapseLbl.textContent = mobileRolled ? '▶ Setup Menu' : '◀ Minimize';
     this.hud?.showTitleModal();
     this.audioEngine?.playMusicForState('title');
   }
