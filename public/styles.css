@@ -185,3 +185,16 @@ kbd{display:inline-block;padding:1px 6px;border-radius:5px;background:#1e293b;bo
 #btn-sound-gate:hover{filter:brightness(1.1);transform:translateX(-50%) scale(1.04)}
 #btn-sound-gate.hidden{display:none!important}
 @keyframes soundGatePulse{0%,100%{box-shadow:0 0 16px rgba(63,255,150,.4),0 10px 24px rgba(0,0,0,.5)}50%{box-shadow:0 0 44px rgba(63,255,150,.95),0 10px 24px rgba(0,0,0,.5)}}
+
+/* === YOU-ARE-RED identity cues === */
+#score-player-text{color:#ff4a33}
+#score-opponent-text{color:#58a2ff}
+.score-dash{color:#9aa2b8}
+.mii-avatar-badge{position:relative}
+.mii-avatar-badge.player-tint{box-shadow:0 0 0 2px #ff4a3390,0 0 12px #ff4a3355}
+.mii-avatar-badge.opponent-tint{box-shadow:0 0 0 2px #3f7dff70,0 0 12px #3f7dff44}
+.you-chip{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);background:#e5341c;color:#fff;font:900 8px/1 "Rounded Mplus 1c","Trebuchet MS",sans-serif;letter-spacing:.09em;padding:3px 7px;border-radius:999px;box-shadow:0 1px 4px rgba(0,0,0,.55);pointer-events:none}
+.wii-court-nameplate.player-plate{border:2px solid #ff4a33;box-shadow:0 0 14px #ff4a3355}
+.plate-you{color:#ffb4a8;font-weight:900;font-size:10px;letter-spacing:.06em}
+.slot-tag.you-tag{background:#e5341c;color:#fff}
+.slot-tag.cpu-tag{background:#2b5cff;color:#fff}
