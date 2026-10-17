@@ -1,9 +1,9 @@
 ---
 doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
-version: "2.1.0"
-status: "COMPLETED"
-updated_at: "2026-10-15T16:06:00-07:00"
+version: "2.2.0"
+status: "ALIGNED_TO_CODEGRAPH (2026-10-17 audit) + PENDING REFINEMENTS"
+updated_at: "2026-10-17T14:45:00-04:00"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
 kstore_namespace: "argon.squash.v2"
 kstore_schema_version: "1.3"
@@ -22,6 +22,21 @@ owns_modules:
   - "src/squash/IntroDirector.js"
   - "src/squash/TuningPanel.js"
   - "src/squash/TestHarness.js"
+  - "src/game_engine.js"
+  - "src/audio_engine.js"
+  - "src/hud_ui.js"
+  - "src/motion_controls.js"
+  - "src/mii_avatars.js"
+  - "src/mii_body_animation.js"
+  - "src/mii_facial_fx.js"
+  - "src/mii_model_overhaul.js"
+  - "src/racket_kinematics.js"
+  - "src/swing_vfx.js"
+  - "public/companion.html"
+  - "vite.config.ts"
+  - "scripts/download-assets.mjs"
+  - "src/voice_lines.js (planned)"
+  - "scripts/generate-voice-pack.mjs (planned)"
 ---
 
 # ARGON SQUASH — AUTHORITATIVE ARCHITECTURE (`DOCS/ARCHITECTURE.md`)
@@ -94,17 +109,21 @@ All modules (`CourtGeometry`, `BallPhysics`, `NickCollisionModel`, `PlayerMoveme
   - `class CourtGeometry`:
     - `constructor(scene, renderer, options)`
     - `build()` -> `THREE.Group`
-    - `setTheme(themeId)` -> Updates materials in-place (`psa_glass`, `hardwood_club`, `neon_studio`).
-    - `setTZoneGuideVisible(visible, playerPos, autoTEnabled)` -> Updates the floor T-recovery vector and coverage ring.
-    - `flashWallImpact(wallId, pos, isFault)` -> Triggers subtle ripple/glow on wall/tin hit.
-    - `sideWallOutHeightAtZ(z)` -> Linearly interpolates side wall out-line height between `Z = -4.875 (4.57m)` and `Z = +4.875 (2.13m)`.
+    - `applyTheme(themeId)` -> Updates materials in-place (`psa_glass`, `hardwood_club`, `neon_studio`). UI-facing theme ids (`glass_showcourt`, `classic_hardwood`, `neon_cyber`) are normalized by `normalizeCourtThemeId()` in `game_engine.js`.
+    - `updateTZoneGuide(playerPos, { visible, autoTEnabled, tTarget })` -> Updates the floor T-recovery vector and coverage ring.
+    - `spawnSurfaceImpact(surface, pos, { isNick, isFault })` -> Impact indicator on wall/floor hits.
+    - `setTinHeight(meters)` -> Repositions the tin mesh + border strip (0.48m club / 0.43m PSA).
+    - `setFrontWallTransparency(transparent)` -> Toggles front-wall occlusion for rear viewpoints.
+    - `update(dt)` -> Animates impact indicators.
+  - `getSideWallOutHeightAtZ(z)` (module-level export) -> Linearly interpolates side wall out-line height between `Z = -4.875 (4.57m)` and `Z = +4.875 (2.13m)`.
+  - Shared `materials.outLine` (red `0xef4444`) currently drives the front, back, and both side out lines — see §5.3 for the planned dedicated back-wall material.
 
 ### 3.2 `NickCollisionModel` (`src/squash/NickCollisionModel.js`)
 - **Responsibility**: Evaluates experimental wall-floor nick junctions, front-wall/side-wall vertical corner glancing interactions, and deterministic Nick Laboratory ball launches.
-- **Interface**:
+- **Interface** (all methods `static`):
   - `evaluateWallFloorNick(ball, params)` -> `{ triggered: boolean, quality: 'ROLLOUT_NICK' | 'CLING_NICK' | 'NONE', normalImpulse, lateralRollVel }`
   - `evaluateFrontCornerJunction(ball, params)` -> Handles tight sequential front-wall/side-wall bevel interactions.
-  - `getNickLabScenario(scenarioId, params)` -> Returns deterministic initial state `{ pos, vel, spin, description }` for:
+  - `getNickLabScenario(scenarioId)` -> Returns deterministic initial state `{ pos, vel, spin, description }` for:
     - `'demo_a_kill'` (High volley aggressive kill into front-left nick)
     - `'demo_b_soft_drop'` (Floating open-face cut drop into front-left nick)
     - `'tight_rail'` (Clinging straight drive along left wall)
@@ -113,52 +132,60 @@ All modules (`CourtGeometry`, `BallPhysics`, `NickCollisionModel`, `PlayerMoveme
 
 ### 3.3 `BallPhysics` (`src/squash/BallPhysics.js`)
 - **Responsibility**: Fixed-timestep (`120Hz` with 4x CCD sub-stepping) 3D ball integration, aerodynamic drag, Magnus spin coupling, squash-ball temperature/bounciness scaling, wall/floor restitution, and collision event emission.
-- **Interface**:
-  - `stepBallPhysics(ball, dt, params, courtSpecs, nickModel, callbacks)`
-  - Emits structured collision events: `{ surface: 'front_wall' | 'side_wall_left' | 'side_wall_right' | 'back_wall' | 'floor' | 'tin', pos, speed, isNick, isOut }`.
-  - `predictBallTrajectory(initialState, params, maxTimeSec, stepDt)` -> Returns array of `{ t, pos, vel, surfaceHit, bounceCount }` for AI interception and A/B Tuning Lab comparison.
+- **Interface** (all methods `static`):
+  - `stepBallPhysics(ball, dt, params, tuningStoreRef, callbacks)` -> Returns collision events `[{ surface: 'front_wall' | 'side_wall_left' | 'side_wall_right' | 'back_wall' | 'floor' | 'tin', pos, speed, isNick, isOut }]`; each is also delivered via `callbacks.onCollision`.
+  - `simulateTrajectory(initialBall, params, tuningStoreRef, { maxTimeSec = 2.8, dt = 1/120 })` -> Deterministic predictor returning `{ samples, events, firstFloorBouncePos, secondFloorBouncePos, backWallImpactPos, willHitBackWallBeforeSecondBounce, optimalBackWallStrikePos, nickTriggered, nickInfo }` for `OpponentAI` interception and A/B Tuning Lab comparison.
 
 ### 3.4 `RulesEngine` (`src/squash/RulesEngine.js`)
 - **Responsibility**: Enforces squash rally rules, service box legality, front-wall requirement before second floor bounce, Tin faults (`Y <= tinHeight`), Out lines (front, side sloped, back wall), double-bounce winners, and scoring systems (`PAR_11`, `ARCADE_5`, `HIHO_9`), plus optional Let/Stroke interference checks.
 - **Interface**:
   - `class RulesEngine`:
-    - `onStrokeHit(hitterRole, isServe, ballState)`
-    - `onSurfaceCollision(collisionEvt, ballState)` -> `{ rallyEnded: boolean, winner: 'player' | 'opponent' | null, reason: string, callout: string }`
-    - `awardPoint(winnerRole, reason)` -> Updates points, games, hand-in/hand-out server state, and service box side (`left` / `right`).
+    - `constructor(options)`, `resetMatch({ gamesToWin, scoringMode })`, `getTargetPointsToWinGame()`
+    - `onStrokeHit(ball, hitterRole, { isServe, shotType, isDisguised })` -> Resets per-shot tracking flags on the ball.
+    - `evaluateCollision(evt, ball)` -> Surface-collision outcome `{ rallyEnded, winner, reason, ... }` (tin/out/not-up/double-bounce).
+    - `evaluateBallPlayerBodyCollision(ball, playerActor, opponentActor)` -> WSF Rule-9 ball-hits-player decisions with escalating safety warnings (`STROKE_WITH_SAFETY_WARNING`, `LET_WITH_SAFETY_WARNING`, `REBOUND_HIT_RECEIVER`).
+    - `evaluateInterference(receiverActor, hitterActor, ball)` / `resolveLetAppeal({ callerRole, activeInterference, ball, receiverActor, hitterActor })` -> Let/stroke appeal outcomes.
+    - `awardPoint(winnerRole)` -> Updates points, games, hand-in/hand-out server state, and service box side (`left` / `right`).
+    - `formatScoreHUD()` -> Display score string; `formatRefereeCallout(outcome, reason)` -> WSF-style spoken callout ("Down! Handout, five-four."); `getHighStakesLabel()` -> `'Game Ball' | 'Match Ball' | null`.
 
 ### 3.5 `ShotController` (`src/squash/ShotController.js`)
 - **Responsibility**: Decouples **Preparation (Windup & Hold)** from **Execution (Racket-Face Cut Angle, Forearm Pronation, Swing Speed, and Directional Aim)**.
 - **Key Invariant**: Preparation duration does NOT force high power or prevent soft drops. A player can hold a full backswing preparation (`prepCharge = 1.0`) and execute either a `185 km/h` flat drive OR a `44 km/h` `+36°` open-face disguised drop.
 - **Interface**:
+  - `SQUASH_SHOT_TYPES`: Frozen enum (`STRAIGHT_DRIVE`, `CROSS_DRIVE`, `OFF_BACK_WALL_DRIVE`, `DROP`, `BOAST`, `LOB`, `VOLLEY_KILL`, `SERVE`, ...).
   - `class ShotController`:
-    - `beginPreparation(actor, inputMeta)` -> Enters coiled backswing hold state.
-    - `updatePreparation(actor, dt, inputMeta)` -> Updates visual windup hold & disguise posture.
+    - `beginPreparation(role, nowSec, options)` -> Enters coiled backswing hold state for a role (`'player'`/`'opponent'`).
+    - `updatePreparation(role, dt, params)` -> Updates visual windup hold & disguise posture.
+    - `clearPreparation(role)`, `getPrepState(role)` -> Prep-state lifecycle.
+    - `computeServeExecution({ actor, serviceSide, inputEvent, params })` -> Serve trajectory targeting the opposite rear quarter court.
     - `computeShotExecution({ actor, ball, opponent, inputEvent, prepState, params })` -> Returns `{ shotId, label, vel, spin, cutAngleDeg, forearmPronationDegPerSec, isDisguised, targetLanding, timingGrade }`.
 
 ### 3.6 `PlayerMovement` (`src/squash/PlayerMovement.js`)
 - **Responsibility**: Handles shared-court locomotion for both actors with acceleration, inertia, court boundary clamping, subtle body-clearing around the opponent, manual movement (`WASD` / Arrows / Pose Lunges), and the prominent **AUTO-T-RETURN: ON / OFF** toggle.
-- **Interface**:
-  - `class PlayerMovement`:
-    - `updateActorMovement(actor, otherActor, dt, context)`
-    - `setAutoTReturn(enabled)`
-    - `computeTRecoveryTarget(actor, ball, params)` -> Returns tactical recovery point near `COURT_SPECS.T_POS` (`(0, 0, +0.92m)`).
+- **Interface** (all methods `static`):
+  - `getTRecoveryPosition(params, offsetRole)` -> Returns tactical recovery point near `COURT_SPECS.T_POS` (`(0, 0, +0.92m)`) with a small per-role stagger.
+  - `updatePlayerRallyTarget({ player, opponent, ball, keysDown, poseLungeOffset, params, interceptPoint, predictedTrajectory })` -> Sets `targetPos` for receiver interception or T-recovery each rally tick.
+  - `stepActorLocomotion(actor, otherActor, dt, params, isRecoveringToT)` -> Integrates velocity toward `targetPos` with court bounds and opponent body-clearing.
 
 ### 3.7 `OpponentAI` (`src/squash/OpponentAI.js`)
 - **Responsibility**: Implements the "Physical Chess" opponent AI with pattern-memory tracking (detecting repeated straight drives vs drops), preparation reading (reacting to player's windup disguise with configurable `reactionDelayMs` and `anticipationStrength`), T-recovery discipline, and tactical shot selection.
 - **Interface**:
   - `class OpponentAI`:
-    - `recordPlayerShot(shotDescriptor)` -> Updates pattern memory window.
-    - `observePlayerPreparation(playerActor, prepState)` -> May bias AI deeper when player shows full drive windup.
-    - `updateAI(opponentActor, playerActor, ball, dt, params, callbacks)`
+    - `resetMemory()` -> Clears the pattern-memory window.
+    - `recordPlayerShot(shotResult, ballState, params)` -> Updates pattern memory window.
+    - `observePlayerPreparation(opponentActor, playerActor, prepState, params)` -> May bias AI deeper when player shows full drive windup.
+    - `updateAI({ opponent, player, ball, dt, params, ... })` -> Per-tick tactical update (destructured object args).
+    - `chooseTacticalShot({ opponent, player, ball, params, distXZ })` -> Selects the next shot type/aim.
 
 ### 3.8 `IntroDirector` (`src/squash/IntroDirector.js`)
 - **Responsibility**: Orchestrates the playable, skippable two-part signature onboarding (**Demonstration A: The Spectacular Volley Kill** and **Demonstration B: The Impossible Gentle Drop**), dry coaching commentary banners, and interactive slow-motion corner nick replay inspection.
 - **Interface**:
   - `class IntroDirector`:
-    - `startIntroSequence(mode = 'full')` (`'demo_a'`, `'demo_b'`, `'full'`)
-    - `skipIntro()`
-    - `triggerSlowMoInspection()`
-    - `update(dt)`
+    - `constructor(engine)` -> Bound to the root `ArgonSquashEngine`.
+    - `startIntro(startAt = 'DEMO_A_FEED')` -> Begins the two-part demonstration sequence.
+    - `skipToPlayableMatch()` -> Skips straight to live play.
+    - `triggerSlowMoReplay()` -> Interactive slow-motion corner nick inspection.
+    - `update(dt)` -> Advances the current step state machine.
 
 ### 3.9 `TuningPanel` & `TestHarness` (`src/squash/TuningPanel.js`, `src/squash/TestHarness.js`)
 - **Responsibility**: Renders the toggleable **Live Tuning Lab** (`Lab / Tune` button or `L` key) with:
@@ -166,18 +193,50 @@ All modules (`CourtGeometry`, `BallPhysics`, `NickCollisionModel`, `PlayerMoveme
   2. **Preset Manager**: Save named preset, Duplicate preset, Switch preset, Reset module/all, JSON Export/Import.
   3. **Nick Laboratory & Deterministic A/B Comparator**: Launch repeatable shots (`Demo A Kill`, `Demo B Floating Drop`, `Tight Rail`, `Boast`, `Off-Back-Wall Drive`) and compare Preset A vs Preset B trajectories side-by-side with identical seeds.
   4. **Automated Invariant Test Runner**: Runs and displays pass/fail status for court bounds, wall/tin rules, nick physics, Auto-T-Return, decoupled shot disguise, and biomechanical Forehand/Backhand classification.
+- **Interface**: `new TuningPanel(engine, store = tuningStore)`; `TestHarness.runAll(liveEngine)` (static); `TuningConfig.js` exports `SIM_VERSION`, `DEFAULT_TUNING_PARAMS` (groups: `ballPhysics`, `shotMechanics`, `movementAndAI`, `rulesAndView`), `BUILTIN_PRESETS`, `createSeededRNG`, `TuningConfigStore`, and the `tuningStore` singleton.
+
+### 3.11 `ArgonSquashEngine` — Root Orchestrator (`src/game_engine.js`)
+- **Responsibility**: Top-level game state machine and composition root. Owns the Three.js scene/renderer, both actor objects (`player`, `opponent`), the ball, camera rig, HUD wiring, intro/replay/spectator modes, multiplayer room sync against `/api/match/*`, and the `DOMContentLoaded` bootstrap. Exported as `ArgonTennisEngine` and aliased `ArgonSquashEngine`.
+- **Phase state machine**: `SETUP -> SERVE_STANCE -> SERVE_TOSS -> RALLY -> POINT_OVER` (+ `REPLAY`, intro/spectator states). `_setupPointServe()` positions actors via `_getServeStandingPositions()` (which derives both box positions from `score.serviceSide`); `_startServeToss(actor)` begins the serve.
+- **Camera**: `cameraMode` (`'RALLY_CAM' | 'SERVE_CAM' | 'CORNER_NICK_CAM' | 'INTRO_PAN' | 'SHOWCASE_CAM' | 'REPLAY_CAM'`), `manualCameraOverride`, `_computeTargetCameraPose()` per-mode poses, `onCycleCamera` bound to `KeyC` and HUD camera pills.
+- **Also owns**: `normalizeCourtThemeId()` UI-theme mapping, `_updateProjectedHUD()` server tag projection, `_projectToScreen()`.
+
+### 3.12 `AudioEngine` (`src/audio_engine.js`)
+- **Responsibility**: All audio output through one WebAudio graph (`ctx` -> `masterGain` -> `sfxGain` / `musicSynthGain` / `reverbSend`).
+- **Exports**: `LYRIA_TRACKS` (12 jukebox tracks incl. Lyria-sourced remixes), `JUKEBOX_TRACK_LIST`, `ORIGINAL_DEFAULT_TRACK_IDS`, `STATE_TO_TRACK` (game-state -> track map), `NARRATOR_USP_INVITES` (scripted narrator lines), `GEMINI_TTS_CLIPS = {}` (**empty placeholder — the designated population point for the §5.1 pre-rendered voice pack**), `AudioEngine`.
+- **Referee voice today**: `playVoiceCallout` -> `SpeechSynthesisUtterance` with `_selectDeepMaleVoice()` (prefers `Google UK English Male`/system male voice, `en-GB`), `refereeVoicePitch`/`refereeVoiceRate` tunables, and `_playRefereeBaritonePA` (oscillator formant bed behind speech). `announceScore(outcome)` composes callout text + chime.
+
+### 3.13 `HudUI` (`src/hud_ui.js`)
+- **Responsibility**: Wii-styled DOM HUD facade — scoreboard, center banners, timing gauge & grade popups, server-position tag, let/stroke advisory, modals (rules/controls/companion), jukebox panel, camera label pills. Renders Mii avatars via `mii_avatars.js`.
+
+### 3.14 `MotionController` (`src/motion_controls.js`)
+- **Responsibility**: Input abstraction for swing generation — keyboard/mouse, MediaPipe Pose + Hands webcam tracking (with optical-flow fallback), and phone-relay polling against `/api/match/state` + `/api/racket/*`. Emits `onSwing`, `onToss`, `onRoomState` callbacks consumed by `ArgonSquashEngine`. Roles `p1`/`p2` support 2-player split.
+
+### 3.15 Mii Presentation Stack
+- **`src/mii_avatars.js`**: `MII_PROFILES` (player1 Ammaar, player2 Maya, opponent1 Matt, opponent2 Akira), `resolveMiiProfile`, `getMiiAvatarSVG`, `renderAllHudMiiAvatars` — 2D SVG badge avatars for HUD/menus.
+- **`src/mii_body_animation.js`**: `MII_RIG_PIVOTS` and pose helpers driving the 3D Mii rigs (idle, swing, locomotion).
+- **`src/mii_facial_fx.js`**: `FACIAL_STATES` (`NEUTRAL`, `BLINK`, `FOCUSED_SQUINT`, ...) and facial expression animation.
+- **`src/mii_model_overhaul.js`**: `upgradeMiiCharacterMaterials`, `upgradeRacketMaterials`, `upgradeCharacterShadowBlob`, `updateCharacterContactShadow`, `createDoubleRingShadowTexture` — Wii rim-lighting shader injection and contact shadows.
+- **`src/racket_kinematics.js`**: Racket mount/pose kinematics per actor (rim/throat world points consumed by `swing_vfx`).
+- **`src/swing_vfx.js`**: `SHOT_VFX_PALETTES`, `getShotPalette`, `sampleActorRacketRimWorldPoints`, `RacketRibbonTrail` — swing ribbon trails and shot-colored particle FX.
+
+### 3.16 Deployment Edge (`vite.config.ts`, `public/companion.html`, `scripts/download-assets.mjs`)
+- **`argonSquashRelayPlugin`** (dev/preview middleware only — **absent from `dist/`**): in-memory room state, `/api/racket/*` (phone state/swing/telemetry/feedback), `/api/match/*` (create/state/sync), `/api/tunnel/status`, `/assets/*` -> `www.gstatic.com` fallback proxy. `GEMINI_API_KEY` is defined via `loadEnv` but `@google/genai` is declared in `package.json` and **never imported** — see §5.5 cleanup.
+- **`public/companion.html`**: Static phone-racket client posting to `/api/racket/*`; works only behind the relay middleware (dev/preview or an equivalent host).
+- **`scripts/download-assets.mjs`**: Build-time fetcher for GLB/MediaPipe assets into `public/assets/` — one-time vendoring, not a runtime dependency.
+- **Static hosting boundary**: `npm run build` -> `dist/` is fully servable on surge.sh for solo play; multiplayer rooms and phone controllers need the relay layer (§5.5).
 
 ---
 
-### 3.10 `BiomechStrokeClassifier` (`src/squash/BiomechStrokeClassifier.js`) — Player-Relative Temporal Forehand/Backhand Classification
+### 3.17 `BiomechStrokeClassifier` (`src/squash/BiomechStrokeClassifier.js`) — Player-Relative Temporal Forehand/Backhand Classification
 
-#### 3.10.1 Legacy Classifier Audit (Actual Implementation Deficiencies)
+#### 3.17.1 Legacy Classifier Audit (Actual Implementation Deficiencies)
 The legacy classifier inside `MotionController._evaluateHandTrail` relied on three fragile heuristics:
 1. **Horizontal Swing Velocity Sign (`vx < -0.14` = Forehand; `vx > +0.14` = Backhand)**: Conflated finishing swing vector with anatomical stroke identity. Legitimate forehand inside-out drives, forehand open-faced cut drops carving outward, and left-handed cross-body strokes violate this rule; conversely, cross-body follow-throughs or late wrist snaps reversed stroke identity mid-swing.
 2. **2D Index/Pinky MCP Horizontal Ordering (`idxX < pnkX`)**: Treated 2D screen projection of `lm[5].x` vs `lm[17].x` as definitive evidence of pronation/supination without accounting for forearm elevation, wrist flexion, camera perspective foreshortening, or handedness.
 3. **Static Screen Centerline Fallback (`first.x < bodyCenterX`)**: Ignored torso rotation, hitting-shoulder/elbow lever geometry, temporal preparation history, and confidence degradation under partial occlusion.
 
-#### 3.10.2 Approved Biomechanical Architecture & Separation of Concerns
+#### 3.17.2 Approved Biomechanical Architecture & Separation of Concerns
 `BiomechStrokeClassifier` is a standalone, zero-DOM-coupled biomechanical classifier module (reusable across both **Argon Squash** and **VirtuaSquash**) that strictly separates **Stroke Identity** from **Shot Mechanics**:
 
 - **Independent Output Contract (`StrokeClassificationResult`)**:
@@ -226,7 +285,7 @@ The legacy classifier inside `MotionController._evaluateHandTrail` relied on thr
   }
   ```
 
-#### 3.10.3 Canonical Player-Centric Coordinate Transformation
+#### 3.17.3 Canonical Player-Centric Coordinate Transformation
 Before any biomechanical calculation, raw camera landmarks `(u, v, z)` are transformed into the **True Player Anatomical Frame**:
 1. **Camera Perspective Normalization**:
    - Let `u_raw ∈ [0, 1]` be raw image horizontal coordinate.
@@ -243,7 +302,7 @@ Before any biomechanical calculation, raw camera landmarks `(u, v, z)` are trans
      - **$s_{dom}(t) > 0$**: Hitting hand is on the player's **Dominant / Open (Forehand) side** of their torso centerline.
      - **$s_{dom}(t) < 0$**: Hitting hand is across the midline on the player's **Non-Dominant (Backhand) side** of their torso centerline.
 
-#### 3.10.4 Temporal Sequence Classification (`Preparation → Backswing → Forward Swing → Contact → Follow-Through`)
+#### 3.17.4 Temporal Sequence Classification (`Preparation → Backswing → Forward Swing → Contact → Follow-Through`)
 Instead of classifying from a single 2-point velocity delta, `BiomechStrokeClassifier` maintains a sliding temporal buffer (`600ms` window) and segments each stroke into phases:
 1. **`PREPARATION` & `BACKSWING_APEX`** (Primary Weight: `0.55`):
    - Records where the racket/hand is loaded (`sDomPrep`) and reaches peak coil (`sDomApex`) before forward acceleration begins.
@@ -266,4 +325,37 @@ Instead of classifying from a single 2-point velocity delta, `BiomechStrokeClass
 4. **Gate D (Physical Nick Emergence)**: Both Demonstration A (fast volley kill) and Demonstration B (slow open-face drop) achieve a wall-floor nick rollout (`max rebound height < 0.06m`) through `NickCollisionModel` + `BallPhysics` without scripted teleportation.
 5. **Gate E (Live Tuning Lab & Determinism)**: Adjusting any parameter in `TuningPanel` updates the running game immediately; running the same Nick Lab seed twice produces identical trajectories (`Δpos < 1e-6m`).
 6. **Gate F (Biomechanical Forehand/Backhand Stroke Classification)**: `BiomechStrokeClassifier` passes 100% of reproducible stroke suites across right-handed, left-handed, mirrored front-cam, unmirrored rear-cam, vertical drops/lobs, cross-body follow-throughs, late deceptive wrist changes, partial occlusion (`uncertain` degradation), and strokes whose horizontal `vx` sign contradicts naive screen-direction rules.
+7. **Gate G (Voice Pack — planned)**: `manifest.json` covers every `FIXED_LINES` + `TOKEN_KIT` id; referee calls play end-to-end from decoded `AudioBuffer`s with `SpeechSynthesis` disabled; total pack < ~1.5MB.
+8. **Gate H (Serve Errors — planned)**: With `aiServeWrongBoxChance=1` the AI visibly walks to the wrong box; `evaluateServeStanceLegality` returns `WRONG_BOX`/`FOOT_FAULT` deterministically; `Fault!`/`Foot fault!` callouts fire and handout is awarded.
+9. **Gate I (Back-Wall Line — planned)**: Back-wall out line renders at reduced opacity/lighter tint in all three themes while front and side out lines are unchanged.
+10. **Gate J (Front-Wall Cam — planned)**: `C` cycles through all five labels ending in `Front Wall`; in `FRONT_WALL_CAM` the front wall is transparent and the full back court is visible; cycle wraps to `Back Glass`.
+
+---
+
+## 5. Planned Refinements (Approved for Implementation)
+
+### 5.1 Pre-Rendered Referee/Narrator Voice Pack
+- **New `src/voice_lines.js`**: `{ FIXED_LINES: [{ id, text }], TOKEN_KIT: [{ id, text, slot }] }` — ~40 fixed phrases + ~80 slot-indexed tokens (numbers 0–20 in server-slot linking and receiver-slot terminal variants, fault words, `handout`, `all`, `Game Ball!`, `Match Ball!`, `Fault!`, `Foot fault!`).
+- **New `scripts/generate-voice-pack.mjs`** (dev-time, not part of `vite build`): TTS provider -> `public/assets/voice/<id>.ogg` + `manifest.json` (clip durations, optional sprite offsets).
+- **`AudioEngine`**: populate `GEMINI_TTS_CLIPS` from the manifest; `_playVoiceClip(text)` schedules `AudioBuffer` sources through `sfxGain`/`reverbSend` (keeps chime + baritone bed); score calls assembled from token buffers with tuned 40–80ms gaps; unmapped text falls back to `SpeechSynthesisUtterance`; pitch slider -> `playbackRate`.
+- Static `.ogg` assets deploy free on surge.sh; eliminates per-OS `speechSynthesis` voice variance.
+
+### 5.2 Two-Tier AI Serve Errors (`OpponentAI` + `RulesEngine` + `ArgonSquashEngine`)
+- New `movementAndAI` tuning params: `aiServeWrongBoxChance` (default ~0.06), `aiServeSelfCorrectChance` (~0.55), `aiServeFootFaultChance` (~0.015).
+- `_getServeStandingPositions` (`game_engine.js`): when the AI serves and the wrong-box roll hits, flip `isRightBox` for the **server's** `targetPos` only. Self-correct roll success -> visible mid-stance walk to the correct box + confused Mii face (`FACIAL_STATES`); failure -> serve proceeds and `evaluateServeStanceLegality` reports `WRONG_BOX` -> `Fault!` + handout.
+- New `RulesEngine.evaluateServeStanceLegality(serverPos, serviceSide)` -> `'WRONG_BOX'` on box-sign mismatch; `'FOOT_FAULT'` when `|pos.x| < 0.22` (on the half-court line) or `pos.z < SHORT_LINE_Z + 0.02` (on/short of the short line) at toss. `formatRefereeCallout` gains `'foot fault'` -> `Foot fault!` and `'wrong box'` -> `Fault!` prefixes. Both faults lose the rally per WSF rules.
+- The legality check is role-agnostic (auto-detects human serves too once manual serve movement exists); probability rolls apply to AI only.
+
+### 5.3 Lighter Back-Wall Out Line (`CourtGeometry`)
+- `_createMaterials`: add `materials.backOutLine` (`MeshBasicMaterial`, `transparent: true`, `opacity ≈ 0.38`, lighter red `0xf87171`); back-wall out mesh in `_buildCourtMarkings` uses it; `applyTheme` gains a per-theme `backOutLine` entry so `psa_glass`/`hardwood_club`/`neon_studio` stay consistent. Front/side out lines keep shared `materials.outLine`.
+
+### 5.4 Front-Wall Viewpoint in Camera Cycle (`ArgonSquashEngine` + `CourtGeometry`)
+- Existing cycle (`KeyC` / camera pills -> `onCycleCamera`, `game_engine.js`): `[null, 'RALLY_CAM', 'SERVE_CAM', 'CORNER_NICK_CAM', 'INTRO_PAN']`; poses resolve in `_computeTargetCameraPose`.
+- Add `'FRONT_WALL_CAM'` to `modes` + `labels` (`'Front Wall'`) and a `_computeTargetCameraPose` branch: `targetPos ≈ (0, 2.8, -4.4)` looking `+Z` toward the back glass (`targetLook ≈ (0, 1.0, +3.5)`).
+- When `FRONT_WALL_CAM` is the effective mode, call `CourtGeometry.setFrontWallTransparency(true)`; restore `false` on exit. HUD projections already go through `_projectToScreen` — unchanged.
+
+### 5.5 Google Dependency Cleanup (Cost Zero)
+- Remove `@google/genai` from `package.json` (no imports exist) and the `process.env.GEMINI_API_KEY` define from `vite.config.ts`.
+- Keep `/api/*` relay for dev/multiplayer; document that surge.sh `dist/` hosting covers solo play only (§3.16).
+- Rename `GEMINI_TTS_CLIPS` -> `VOICE_PACK_CLIPS` when §5.1 lands (name is already provider-agnostic debt).
 
