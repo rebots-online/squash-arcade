@@ -233,8 +233,14 @@ export class OpponentAI {
       ball.pos.y <= 1.9 &&
       ball.pos.z < 1.4 &&
       (player?.pos?.z ?? 0) > 1.6;
+    const highBall = ball.pos.y > 1.02;
+    const comingOffBackGlass = ball.hitBackWallThisShot && ball.vel.z < 0;
+    const droppingIntoPocket = ball.pos.y < 1.35 && ball.vel.y < -0.5;
     const suboptimalContact =
-      ball.bounceCountOnFloor === 0 && ball.pos.y > 1.02 && !poachVolleyAppliesPressure;
+      (ball.bounceCountOnFloor === 0 && highBall && !poachVolleyAppliesPressure) ||
+      // Off the back glass: never cut it off early — let it travel out and
+      // sit up into the pocket (dropping through ~1.35m or already low).
+      (comingOffBackGlass && highBall && !droppingIntoPocket);
     if (suboptimalContact) return;
 
     if (distXZ <= 1.72 && reachableY && movingTowardBackOrSlow) {
