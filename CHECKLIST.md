@@ -111,10 +111,24 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
   - Copy sweep: remove "wonder"/mystery framing from HUD banners, intro copy, and menu strings; keep the physical demo shots identical (same physics, new labels).
 - **Acceptance Gate (J)**: Onboarding presents a clearly labeled skills walkthrough; each demonstrated shot is named for its squash skill on screen; skip-to-play still works; no unexplained "wonder" framing remains in user-facing text.
 
+### `TASK-21` — Audio Autoplay & Jukebox Rotation Restoration
+- **Status**: `[ ] PENDING REVIEW`
+- **Owner Modules**: `src/audio_engine.js`
+- **Architecture Ref**: `§5.6`, `§3.12` (runtime invariants)
+- **Depends On**: `["TASK-19"]`
+- **kstore Key**: `argon.squash.v2.tasks.TASK-21`
+- **Deliverables**:
+  - Muted-start autoplay: `el.muted=true` before `el.play()`, unmute on `'playing'` — audible music on load for `'audio'` tracks without a gesture.
+  - `STATE_TO_TRACK` restore: boot-visible states back to the 4 legacy mp3s (`title/menu/select→menu_theme`, `serve*/rally/playing/match/point→match_rally`, `intro/start/flyover→court_intro`, `victory/win/match_over/celebration→victory_fanfare`, `replay/gamepoint/game_won→match_rally`/`victory_fanfare`); 7 synth originals remain jukebox-only.
+  - Remove silent auto-`'locked'` in `nextJukeboxTrack`/`prevJukeboxTrack` — manual skip is not a lock.
+  - Audio-track rotation: `ended` → shuffle→random next / auto→sequential next / locked→replay; `el.loop` toggled `track.loop && mode==='locked'`.
+  - `_welcomePlayed` set only after `_ensureContext()` succeeds.
+- **Acceptance Gate**: Hard-reload of deployed site produces audible title music with zero clicks; jukebox ⏭/⏮ skips without disabling rotation; auto mode advances across mp3 tracks on `ended`; no console errors.
+
 ---
 
 ## Sign-off
 
 - [ ] Architecture alignment approved (v2.2.0)
-- [ ] TASK-15 .. TASK-20 scope + acceptance gates approved
+- [ ] TASK-15 .. TASK-21 scope + acceptance gates approved
 
