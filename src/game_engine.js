@@ -2374,6 +2374,7 @@ export class ArgonTennisEngine {
     };
 
     const resolveSpin = (call) => {
+      if (callBtns?.classList.contains('hidden')) return; // already called
       callBtns?.classList.add('hidden');
       if (prompt) prompt.textContent = '…';
       const landedUp = Math.random() < 0.5;
@@ -2403,6 +2404,26 @@ export class ArgonTennisEngine {
     document.getElementById('rs-call-down')?.addEventListener('click', () => resolveSpin('down'));
     document.getElementById('rs-serve')?.addEventListener('click', () => finish('player'));
     document.getElementById('rs-receive')?.addEventListener('click', () => finish('opponent'));
+
+    // Keyboard path: arrows call the spin, then pick serve/receive.
+    window.addEventListener('keydown', (e) => {
+      if (this.phase !== 'RACKET_SPIN' || ov.classList.contains('hidden')) return;
+      if (e.code === 'ArrowUp') {
+        e.preventDefault();
+        resolveSpin('up');
+      } else if (e.code === 'ArrowDown') {
+        e.preventDefault();
+        resolveSpin('down');
+      } else if (choice && !choice.classList.contains('hidden')) {
+        if (e.code === 'ArrowLeft') {
+          e.preventDefault();
+          finish('player');
+        } else if (e.code === 'ArrowRight') {
+          e.preventDefault();
+          finish('opponent');
+        }
+      }
+    });
   }
 
   _setupPointServe({

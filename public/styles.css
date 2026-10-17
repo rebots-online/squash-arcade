@@ -200,7 +200,7 @@ kbd{display:inline-block;padding:1px 6px;border-radius:5px;background:#1e293b;bo
 .slot-tag.cpu-tag{background:#2b5cff;color:#fff}
 
 /* === RACKET SPIN ceremony (who serves first) === */
-.racket-spin-overlay{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(8,10,18,.55);backdrop-filter:blur(4px)}
+.racket-spin-overlay{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(8,10,18,.55);backdrop-filter:blur(4px);pointer-events:auto}
 .racket-spin-overlay.hidden{display:none}
 .rs-card{background:linear-gradient(180deg,#232a38,#12161f);border:2px solid #3a4459;border-radius:18px;padding:26px 34px;text-align:center;box-shadow:0 18px 60px rgba(0,0,0,.6);font-family:var(--wii-font,inherit)}
 .rs-title{font-size:15px;font-weight:900;letter-spacing:.06em;color:#eaf0ff;margin-bottom:10px}
