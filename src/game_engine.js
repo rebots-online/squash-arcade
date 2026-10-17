@@ -2327,12 +2327,94 @@ export class ArgonTennisEngine {
     return { playerPos, opponentPos, ballStart };
   }
 
+  // Racket-spin ceremony — player calls UP/DOWN while the racket twirls;
+  // winner chooses serve or receive (AI always elects to serve).
+  _runRacketSpinCeremony(serveOpts = {}) {
+    this.phase = 'RACKET_SPIN';
+    this._pendingServeOpts = serveOpts;
+
+    const ov = document.getElementById('racket-spin-overlay');
+    if (!ov) {
+      this._setupPointServe(serveOpts);
+      return;
+    }
+    const racket = document.getElementById('rs-racket');
+    const prompt = document.getElementById('rs-prompt');
+    const callBtns = document.getElementById('rs-call-btns');
+    const choice = document.getElementById('rs-choice');
+
+    ov.classList.remove('hidden');
+    if (prompt) prompt.textContent = 'Call it in the air —';
+    callBtns?.classList.remove('hidden');
+    choice?.classList.add('hidden');
+    racket?.classList.add('spinning');
+    if (racket) racket.style.transform = '';
+
+    if (this._racketSpinWired) return;
+    this._racketSpinWired = true;
+
+    const finish = (serverRole) => {
+      this.score.server = serverRole;
+      ov.classList.add('hidden');
+      racket?.classList.remove('spinning');
+      const opts = this._pendingServeOpts || {};
+      this._pendingServeOpts = null;
+      this._setupPointServe(opts);
+    };
+
+    const resolveSpin = (call) => {
+      callBtns?.classList.add('hidden');
+      if (prompt) prompt.textContent = '…';
+      const landedUp = Math.random() < 0.5;
+      const playerWon = (call === 'up') === landedUp;
+      setTimeout(() => {
+        racket?.classList.remove('spinning');
+        if (racket) racket.style.transform = landedUp ? 'rotateX(0deg)' : 'rotateX(180deg)';
+        const landedLabel = landedUp ? 'UP' : 'DOWN';
+        if (playerWon) {
+          if (prompt) {
+            prompt.innerHTML =
+              `It lands <b>${landedLabel}</b> — you win the spin!<br>` +
+              '<small>take the only shot you control completely…</small>';
+          }
+          choice?.classList.remove('hidden');
+        } else {
+          if (prompt) {
+            prompt.innerHTML =
+              `It lands <b>${landedLabel}</b> — AI wins the spin and elects to serve.`;
+          }
+          setTimeout(() => finish('opponent'), 1500);
+        }
+      }, 1200);
+    };
+
+    document.getElementById('rs-call-up')?.addEventListener('click', () => resolveSpin('up'));
+    document.getElementById('rs-call-down')?.addEventListener('click', () => resolveSpin('down'));
+    document.getElementById('rs-serve')?.addEventListener('click', () => finish('player'));
+    document.getElementById('rs-receive')?.addEventListener('click', () => finish('opponent'));
+  }
+
   _setupPointServe({
     showBanner = true,
     bannerText = null,
     bannerStyle = 'style-gold',
     persistentBanner = false
   } = {}) {
+    // Racket-spin ceremony: first point of a fresh match in real play mode only
+    if (
+      !this.spectatorMatchMode &&
+      !this.autoPlayMode &&
+      !this.isMultiplayer &&
+      this.phase !== 'RACKET_SPIN' &&
+      this.score.playerPoints === 0 &&
+      this.score.opponentPoints === 0 &&
+      this.score.playerGames === 0 &&
+      this.score.opponentGames === 0
+    ) {
+      this._runRacketSpinCeremony({ showBanner, bannerText, bannerStyle, persistentBanner });
+      return;
+    }
+
     this.phase = 'SERVE_STANCE';
     this.phaseTimer = 0;
     this.cameraMode = 'RALLY_CAM';
