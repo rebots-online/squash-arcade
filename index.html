@@ -126,8 +126,19 @@
 
     <div id="racket-spin-overlay" class="racket-spin-overlay hidden">
       <div class="rs-card">
-        <div class="rs-title">🏸 RACKET SPIN — WHO SERVES FIRST?</div>
-        <div id="rs-racket" class="rs-racket">🏸</div>
+        <div class="rs-title">RACKET SPIN — WHO SERVES FIRST?</div>
+        <div id="rs-racket" class="rs-racket">
+          <svg viewBox="0 0 60 100" width="62" height="104" aria-hidden="true">
+            <defs><clipPath id="rs-head-clip"><ellipse cx="30" cy="30" rx="19" ry="25"/></clipPath></defs>
+            <ellipse cx="30" cy="30" rx="19" ry="25" fill="none" stroke="#eaf0ff" stroke-width="4"/>
+            <g clip-path="url(#rs-head-clip)" stroke="#5a6a8f" stroke-width="1.5" opacity=".85">
+              <path d="M30 4 v52" fill="none"/><path d="M22 6 v48" fill="none"/><path d="M38 6 v48" fill="none"/><path d="M14 10 v40" fill="none"/><path d="M46 10 v40" fill="none"/>
+              <path d="M8 18 h44" fill="none"/><path d="M8 26 h44" fill="none"/><path d="M8 34 h44" fill="none"/><path d="M8 42 h44" fill="none"/>
+            </g>
+            <path d="M21 51 L28 70 M39 51 L32 70" stroke="#eaf0ff" stroke-width="3" fill="none"/>
+            <rect x="27" y="68" width="6" height="26" rx="3" fill="#eaf0ff"/>
+          </svg>
+        </div>
         <div id="rs-prompt" class="rs-prompt">Call it in the air —</div>
         <div id="rs-call-btns" class="rs-btns">
           <button id="rs-call-up" class="rs-btn" type="button">CALL: UP ⬆</button>
