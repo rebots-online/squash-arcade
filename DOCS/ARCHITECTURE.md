@@ -35,8 +35,6 @@ owns_modules:
   - "public/companion.html"
   - "vite.config.ts"
   - "scripts/download-assets.mjs"
-  - "src/voice_lines.js (planned)"
-  - "scripts/generate-voice-pack.mjs (planned)"
 ---
 
 # ARGON SQUASH — AUTHORITATIVE ARCHITECTURE (`DOCS/ARCHITECTURE.md`)
@@ -116,7 +114,7 @@ All modules (`CourtGeometry`, `BallPhysics`, `NickCollisionModel`, `PlayerMoveme
     - `setFrontWallTransparency(transparent)` -> Toggles front-wall occlusion for rear viewpoints.
     - `update(dt)` -> Animates impact indicators.
   - `getSideWallOutHeightAtZ(z)` (module-level export) -> Linearly interpolates side wall out-line height between `Z = -4.875 (4.57m)` and `Z = +4.875 (2.13m)`.
-  - Shared `materials.outLine` (red `0xef4444`) currently drives the front, back, and both side out lines — see §5.3 for the planned dedicated back-wall material.
+  - Shared `materials.outLine` (red `0xef4444`) currently drives the front, back, and both side out lines — see §5.2 for the planned dedicated back-wall material.
 
 ### 3.2 `NickCollisionModel` (`src/squash/NickCollisionModel.js`)
 - **Responsibility**: Evaluates experimental wall-floor nick junctions, front-wall/side-wall vertical corner glancing interactions, and deterministic Nick Laboratory ball launches.
@@ -203,7 +201,7 @@ All modules (`CourtGeometry`, `BallPhysics`, `NickCollisionModel`, `PlayerMoveme
 
 ### 3.12 `AudioEngine` (`src/audio_engine.js`)
 - **Responsibility**: All audio output through one WebAudio graph (`ctx` -> `masterGain` -> `sfxGain` / `musicSynthGain` / `reverbSend`).
-- **Exports**: `LYRIA_TRACKS` (12 jukebox tracks incl. Lyria-sourced remixes), `JUKEBOX_TRACK_LIST`, `ORIGINAL_DEFAULT_TRACK_IDS`, `STATE_TO_TRACK` (game-state -> track map), `NARRATOR_USP_INVITES` (scripted narrator lines), `GEMINI_TTS_CLIPS = {}` (**empty placeholder — the designated population point for the §5.1 pre-rendered voice pack**), `AudioEngine`.
+- **Exports**: `LYRIA_TRACKS` (12 jukebox tracks incl. Lyria-sourced remixes), `JUKEBOX_TRACK_LIST`, `ORIGINAL_DEFAULT_TRACK_IDS`, `STATE_TO_TRACK` (game-state -> track map), `NARRATOR_USP_INVITES` (scripted narrator lines), `GEMINI_TTS_CLIPS = {}` (empty clip map, currently unused), `AudioEngine`.
 - **Referee voice today**: `playVoiceCallout` -> `SpeechSynthesisUtterance` with `_selectDeepMaleVoice()` (prefers `Google UK English Male`/system male voice, `en-GB`), `refereeVoicePitch`/`refereeVoiceRate` tunables, and `_playRefereeBaritonePA` (oscillator formant bed behind speech). `announceScore(outcome)` composes callout text + chime.
 
 ### 3.13 `HudUI` (`src/hud_ui.js`)
@@ -221,10 +219,10 @@ All modules (`CourtGeometry`, `BallPhysics`, `NickCollisionModel`, `PlayerMoveme
 - **`src/swing_vfx.js`**: `SHOT_VFX_PALETTES`, `getShotPalette`, `sampleActorRacketRimWorldPoints`, `RacketRibbonTrail` — swing ribbon trails and shot-colored particle FX.
 
 ### 3.16 Deployment Edge (`vite.config.ts`, `public/companion.html`, `scripts/download-assets.mjs`)
-- **`argonSquashRelayPlugin`** (dev/preview middleware only — **absent from `dist/`**): in-memory room state, `/api/racket/*` (phone state/swing/telemetry/feedback), `/api/match/*` (create/state/sync), `/api/tunnel/status`, `/assets/*` -> `www.gstatic.com` fallback proxy. `GEMINI_API_KEY` is defined via `loadEnv` but `@google/genai` is declared in `package.json` and **never imported** — see §5.5 cleanup.
+- **`argonSquashRelayPlugin`** (dev/preview middleware only — **absent from `dist/`**): in-memory room state, `/api/racket/*` (phone state/swing/telemetry/feedback), `/api/match/*` (create/state/sync), `/api/tunnel/status`, `/assets/*` -> `www.gstatic.com` fallback proxy. `GEMINI_API_KEY` is defined via `loadEnv` but `@google/genai` is declared in `package.json` and **never imported** — see §5.4 cleanup.
 - **`public/companion.html`**: Static phone-racket client posting to `/api/racket/*`; works only behind the relay middleware (dev/preview or an equivalent host).
 - **`scripts/download-assets.mjs`**: Build-time fetcher for GLB/MediaPipe assets into `public/assets/` — one-time vendoring, not a runtime dependency.
-- **Static hosting boundary**: `npm run build` -> `dist/` is fully servable on surge.sh for solo play; multiplayer rooms and phone controllers need the relay layer (§5.5).
+- **Static hosting boundary**: `npm run build` -> `dist/` is fully servable on surge.sh for solo play; multiplayer rooms and phone controllers need the relay layer (§5.4).
 
 ---
 
@@ -325,37 +323,29 @@ Instead of classifying from a single 2-point velocity delta, `BiomechStrokeClass
 4. **Gate D (Physical Nick Emergence)**: Both Demonstration A (fast volley kill) and Demonstration B (slow open-face drop) achieve a wall-floor nick rollout (`max rebound height < 0.06m`) through `NickCollisionModel` + `BallPhysics` without scripted teleportation.
 5. **Gate E (Live Tuning Lab & Determinism)**: Adjusting any parameter in `TuningPanel` updates the running game immediately; running the same Nick Lab seed twice produces identical trajectories (`Δpos < 1e-6m`).
 6. **Gate F (Biomechanical Forehand/Backhand Stroke Classification)**: `BiomechStrokeClassifier` passes 100% of reproducible stroke suites across right-handed, left-handed, mirrored front-cam, unmirrored rear-cam, vertical drops/lobs, cross-body follow-throughs, late deceptive wrist changes, partial occlusion (`uncertain` degradation), and strokes whose horizontal `vx` sign contradicts naive screen-direction rules.
-7. **Gate G (Voice Pack — planned)**: `manifest.json` covers every `FIXED_LINES` + `TOKEN_KIT` id; referee calls play end-to-end from decoded `AudioBuffer`s with `SpeechSynthesis` disabled; total pack < ~1.5MB.
-8. **Gate H (Serve Errors — planned)**: With `aiServeWrongBoxChance=1` the AI visibly walks to the wrong box; `evaluateServeStanceLegality` returns `WRONG_BOX`/`FOOT_FAULT` deterministically; `Fault!`/`Foot fault!` callouts fire and handout is awarded.
-9. **Gate I (Back-Wall Line — planned)**: Back-wall out line renders at reduced opacity/lighter tint in all three themes while front and side out lines are unchanged.
-10. **Gate J (Front-Wall Cam — planned)**: `C` cycles through all five labels ending in `Front Wall`; in `FRONT_WALL_CAM` the front wall is transparent and the full back court is visible; cycle wraps to `Back Glass`.
+7. **Gate G (Serve Errors — planned)**: With `aiServeWrongBoxChance=1` the AI visibly walks to the wrong box; `evaluateServeStanceLegality` returns `WRONG_BOX`/`FOOT_FAULT` deterministically; `Fault!`/`Foot fault!` callouts fire and handout is awarded.
+8. **Gate H (Back-Wall Line — planned)**: Back-wall out line renders at reduced opacity/lighter tint in all three themes while front and side out lines are unchanged.
+9. **Gate I (Front-Wall Cam — planned)**: `C` cycles through all five labels ending in `Front Wall`; in `FRONT_WALL_CAM` the front wall is transparent and the full back court is visible; cycle wraps to `Back Glass`.
 
 ---
 
 ## 5. Planned Refinements (Approved for Implementation)
 
-### 5.1 Pre-Rendered Referee/Narrator Voice Pack
-- **New `src/voice_lines.js`**: `{ FIXED_LINES: [{ id, text }], TOKEN_KIT: [{ id, text, slot }] }` — ~40 fixed phrases + ~80 slot-indexed tokens (numbers 0–20 in server-slot linking and receiver-slot terminal variants, fault words, `handout`, `all`, `Game Ball!`, `Match Ball!`, `Fault!`, `Foot fault!`).
-- **New `scripts/generate-voice-pack.mjs`** (dev-time, not part of `vite build`): TTS provider -> `public/assets/voice/<id>.ogg` + `manifest.json` (clip durations, optional sprite offsets).
-- **`AudioEngine`**: populate `GEMINI_TTS_CLIPS` from the manifest; `_playVoiceClip(text)` schedules `AudioBuffer` sources through `sfxGain`/`reverbSend` (keeps chime + baritone bed); score calls assembled from token buffers with tuned 40–80ms gaps; unmapped text falls back to `SpeechSynthesisUtterance`; pitch slider -> `playbackRate`.
-- Static `.ogg` assets deploy free on surge.sh; eliminates per-OS `speechSynthesis` voice variance.
-
-### 5.2 Two-Tier AI Serve Errors (`OpponentAI` + `RulesEngine` + `ArgonSquashEngine`)
+### 5.1 Two-Tier AI Serve Errors (`OpponentAI` + `RulesEngine` + `ArgonSquashEngine`)
 - New `movementAndAI` tuning params: `aiServeWrongBoxChance` (default ~0.06), `aiServeSelfCorrectChance` (~0.55), `aiServeFootFaultChance` (~0.015).
 - `_getServeStandingPositions` (`game_engine.js`): when the AI serves and the wrong-box roll hits, flip `isRightBox` for the **server's** `targetPos` only. Self-correct roll success -> visible mid-stance walk to the correct box + confused Mii face (`FACIAL_STATES`); failure -> serve proceeds and `evaluateServeStanceLegality` reports `WRONG_BOX` -> `Fault!` + handout.
 - New `RulesEngine.evaluateServeStanceLegality(serverPos, serviceSide)` -> `'WRONG_BOX'` on box-sign mismatch; `'FOOT_FAULT'` when `|pos.x| < 0.22` (on the half-court line) or `pos.z < SHORT_LINE_Z + 0.02` (on/short of the short line) at toss. `formatRefereeCallout` gains `'foot fault'` -> `Foot fault!` and `'wrong box'` -> `Fault!` prefixes. Both faults lose the rally per WSF rules.
 - The legality check is role-agnostic (auto-detects human serves too once manual serve movement exists); probability rolls apply to AI only.
 
-### 5.3 Lighter Back-Wall Out Line (`CourtGeometry`)
+### 5.2 Lighter Back-Wall Out Line (`CourtGeometry`)
 - `_createMaterials`: add `materials.backOutLine` (`MeshBasicMaterial`, `transparent: true`, `opacity ≈ 0.38`, lighter red `0xf87171`); back-wall out mesh in `_buildCourtMarkings` uses it; `applyTheme` gains a per-theme `backOutLine` entry so `psa_glass`/`hardwood_club`/`neon_studio` stay consistent. Front/side out lines keep shared `materials.outLine`.
 
-### 5.4 Front-Wall Viewpoint in Camera Cycle (`ArgonSquashEngine` + `CourtGeometry`)
+### 5.3 Front-Wall Viewpoint in Camera Cycle (`ArgonSquashEngine` + `CourtGeometry`)
 - Existing cycle (`KeyC` / camera pills -> `onCycleCamera`, `game_engine.js`): `[null, 'RALLY_CAM', 'SERVE_CAM', 'CORNER_NICK_CAM', 'INTRO_PAN']`; poses resolve in `_computeTargetCameraPose`.
 - Add `'FRONT_WALL_CAM'` to `modes` + `labels` (`'Front Wall'`) and a `_computeTargetCameraPose` branch: `targetPos ≈ (0, 2.8, -4.4)` looking `+Z` toward the back glass (`targetLook ≈ (0, 1.0, +3.5)`).
 - When `FRONT_WALL_CAM` is the effective mode, call `CourtGeometry.setFrontWallTransparency(true)`; restore `false` on exit. HUD projections already go through `_projectToScreen` — unchanged.
 
-### 5.5 Google Dependency Cleanup (Cost Zero)
+### 5.4 Google Dependency Cleanup (Cost Zero)
 - Remove `@google/genai` from `package.json` (no imports exist) and the `process.env.GEMINI_API_KEY` define from `vite.config.ts`.
 - Keep `/api/*` relay for dev/multiplayer; document that surge.sh `dist/` hosting covers solo play only (§3.16).
-- Rename `GEMINI_TTS_CLIPS` -> `VOICE_PACK_CLIPS` when §5.1 lands (name is already provider-agnostic debt).
 
