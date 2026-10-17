@@ -3962,9 +3962,9 @@ export class ArgonTennisEngine {
       targetLook.set(this.ball.pos.x * 0.75, 0.32, -4.35);
     } else if (mode === 'FRONT_WALL_CAM') {
       // Broadcast-style view from behind the front wall looking down-court
-      // toward the back glass.
-      targetPos.set(0, 2.8, -4.4);
-      targetLook.set(0, 1.0, 3.5);
+      // toward the back glass — near eye level so the far court reads face-on.
+      targetPos.set(0, 1.7, -4.4);
+      targetLook.set(0, 1.05, 3.5);
     } else {
       targetPos.set(this.player.pos.x * 0.24, 3.22, 9.38);
       targetLook.set(this.ball.pos.x * 0.2, 1.12, -1.65);
