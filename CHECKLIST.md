@@ -153,7 +153,9 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 
 ---
 
-## TASK-23 (PLANNED — NOT IMPLEMENTED) — Retrieval Mechanics: timed arrival + hip-drive swing
+## TASK-23 (IMPLEMENTED — deployed) — Retrieval Mechanics: timed arrival + hip-drive swing
+
+**Shipped**: `PlayerMovement._estimateContactTimeSec` (nearest trajectory-sample `t`; distance/speed fallback post-back-wall), `_applyTimedArrival` (paces `targetPos` to a fraction of remaining distance that fits inside contact lead — arrive ~100ms early still stepping; drives `strokeWindupYaw` closed-stance ramp last 0.55s), hip-snap yaw override in `stepActorLocomotion` (closed→open smoothstep 0.3→0.82 of swing progress, follow-through over-rotate). Wired for both human receiver (`updatePlayerRallyTarget`) and AI receiver (`OpponentAI.updateAI` + windup reset on recovery). Live bundle `index-B3-_Hh1S.js`.
 
 **Bug**: Actors lerp straight to the intercept and stand flat-footed waiting for the ball — the #1 real-squash bad habit. Worst in back corners where it reads as silver-platter retrieval. Swing is arm-flap, no body drive.
 

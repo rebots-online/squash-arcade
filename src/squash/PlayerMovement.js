@@ -24,6 +24,60 @@ export class PlayerMovement {
   }
 
   /**
+   * TASK-23: Estimated seconds until the ball reaches `strikePos` — the nearest
+   * predicted-trajectory sample's timestamp. For live off-back-wall rebounds
+   * (past the prediction horizon) falls back to distance/horizontal speed.
+   */
+  static _estimateContactTimeSec(predictedTrajectory, strikePos, ball) {
+    if (ball?.hitBackWallThisShot && ball.vel?.z < 0) {
+      const dist = Math.hypot(strikePos.x - ball.pos.x, strikePos.z - ball.pos.z);
+      const sp = Math.max(0.6, Math.hypot(ball.vel.x, ball.vel.z));
+      return dist / sp;
+    }
+    const samples = predictedTrajectory?.samples;
+    if (samples?.length) {
+      let bestT = samples[samples.length - 1].t;
+      let bestD = Infinity;
+      for (const s of samples) {
+        const d = Math.hypot(s.pos.x - strikePos.x, s.pos.z - strikePos.z);
+        if (d < bestD) {
+          bestD = d;
+          bestT = s.t;
+        }
+      }
+      return bestT;
+    }
+    return 9e9; // unknown -> never stage (commit fully)
+  }
+
+  /**
+   * TASK-23 staged arrival: re-issue the actor's targetPos as only the fraction
+   * of remaining distance coverable before contact (arrive ~100ms early, still
+   * stepping through the shot) so receivers never plant-and-wait at intercept.
+   * Call AFTER targetPos has been set to the strike position for this frame.
+   */
+  static _applyTimedArrival(actor, strikePos, tContact, params = {}) {
+    const ma = params.movementAndAI || {};
+    const maxSpeed = Math.min(Number(ma.playerMaxSpeedMps ?? 6.8), actor.maxSpeed || Infinity);
+    const dx = actor.targetPos.x - actor.pos.x;
+    const dz = actor.targetPos.z - actor.pos.z;
+    const dist = Math.hypot(dx, dz);
+    if (dist < 0.02) return;
+    const travelTime = dist / Math.max(1, maxSpeed);
+    const lead = tContact - 0.1;
+    const pace = lead > 0 ? travelTime / lead : 1;
+    if (pace < 1) {
+      const f = Math.max(0.16, pace);
+      actor.targetPos.set(actor.pos.x + dx * f, 0, actor.pos.z + dz * f);
+    }
+    // Closed-stance windup ramps in over the last ~0.55s before contact.
+    // rotation.y > 0 faces -x, < 0 faces +x; righty winds chest toward +x side.
+    const w = THREE.MathUtils.clamp(1 - tContact / 0.55, 0, 1);
+    const sign = actor.handedness === 'left' ? 1 : -1;
+    actor.strokeWindupYaw = 0.42 * w * w * sign;
+  }
+
+  /**
    * Updates an actor's target position during a rally based on whether they are:
    * - The Receiver (moving to intercept the incoming ball after front-wall rebound), OR
    * - The Hitter (recovering toward the T if AUTO-T-RETURN is ON, or holding position if OFF).
@@ -40,6 +94,7 @@ export class PlayerMovement {
   }) {
     const ma = params.movementAndAI || {};
     const autoT = ma.autoTReturn !== false;
+    player.strokeWindupYaw = 0;
 
     // 1. Check for manual keyboard locomotion (WASD / Arrow keys)
     let manualX = 0;
@@ -102,6 +157,15 @@ export class PlayerMovement {
           0,
           THREE.MathUtils.clamp(targetBallPos.z + zOffset, -4.1, 4.46)
         );
+
+        // TASK-23: pace the approach so arrival coincides with contact —
+        // staged target behind the ball's line, never arrive-plant-wait.
+        const tContact = PlayerMovement._estimateContactTimeSec(
+          predictedTrajectory,
+          targetBallPos,
+          ball
+        );
+        PlayerMovement._applyTimedArrival(player, targetBallPos, tContact, params);
       }
       return;
     }
@@ -192,8 +256,28 @@ export class PlayerMovement {
     }
 
     // Both actors face the Front Wall (-Z => rotation.y = 0) with subtle turn toward ball/movement
-    const targetYaw = THREE.MathUtils.clamp(-actor.vel.x * 0.06, -0.35, 0.35);
-    actor.root.rotation.y = THREE.MathUtils.lerp(actor.root.rotation.y, targetYaw, 1 - Math.exp(-10 * dt));
+    let targetYaw = THREE.MathUtils.clamp(-actor.vel.x * 0.06, -0.35, 0.35);
+    let yawRate = 1 - Math.exp(-10 * dt);
+
+    // TASK-23 hip-driven stroke: windup holds a closed stance, hips snap open
+    // toward the front wall through contact, with a slight over-rotate on the
+    // follow-through. Power reads as body rotation, never arm-flap.
+    if (actor.swingTimer > 0 && actor.swingDuration > 0) {
+      const p = 1 - actor.swingTimer / actor.swingDuration;
+      const closedYaw =
+        actor.swingType === 'backhand'
+          ? 0.45
+          : actor.swingType === 'smash'
+            ? 0.3
+            : -0.45; // righty forehand closed chest faces +x side wall
+      const open = THREE.MathUtils.smoothstep(p, 0.3, 0.82);
+      targetYaw = closedYaw * (1 - open) + -closedYaw * 0.18 * open;
+      yawRate = 1 - Math.exp(-(10 + 30 * open) * dt);
+    } else if (actor.strokeWindupYaw) {
+      targetYaw += actor.strokeWindupYaw;
+      yawRate = 1 - Math.exp(-7 * dt);
+    }
+    actor.root.rotation.y = THREE.MathUtils.lerp(actor.root.rotation.y, targetYaw, yawRate);
     actor.root.position.copy(actor.pos);
   }
 }

@@ -131,6 +131,7 @@ export class OpponentAI {
 
     // 1. If this AI actor just hit the ball -> Recover toward the T (with pattern-memory bias)
     if (ball.lastHitter === selfRole) {
+      opponent.strokeWindupYaw = 0;
       const tPos = PlayerMovement.getTRecoveryPosition(params, selfRole);
       opponent.targetPos.set(
         THREE.MathUtils.clamp(tPos.x + this.anticipatedBiasX, -1.8, 1.8),
@@ -186,6 +187,17 @@ export class OpponentAI {
           THREE.MathUtils.clamp(this.currentIntercept.z + 0.15, -3.9, 4.45)
         );
       }
+    }
+
+    // TASK-23: pace the approach so arrival coincides with contact — staged
+    // target behind the ball's line, never arrive-plant-wait at intercept.
+    {
+      const tContact = PlayerMovement._estimateContactTimeSec(
+        predictedTrajectory,
+        this.currentIntercept,
+        ball
+      );
+      PlayerMovement._applyTimedArrival(opponent, this.currentIntercept, tContact, params);
     }
 
     // 3. Check if ball has already struck the front wall and is within physical strike reach
