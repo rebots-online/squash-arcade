@@ -1434,7 +1434,7 @@ export class ArgonTennisEngine {
       const on = this.tuningStore.params.movementAndAI.autoTReturn !== false;
       setupAutoT.classList.toggle('selected', on);
       const txt = document.getElementById('setup-auto-t-text');
-      if (txt) txt.textContent = on ? 'Auto-Move & T: ON' : 'Auto-Move & T: OFF (WASD)';
+      if (txt) txt.textContent = on ? 'Shot-Select Mode: ON (we move you)' : 'Shot-Select: OFF — WASD footwork';
     });
 
     const setupPoseCam = document.getElementById('btn-setup-pose-cam');
@@ -2349,6 +2349,13 @@ export class ArgonTennisEngine {
     choice?.classList.add('hidden');
     racket?.classList.add('spinning');
     if (racket) racket.style.transform = '';
+
+    // Nobody reads — say it: shot-select mode means no footwork needed.
+    this.audioEngine?.announceScore(
+      "Quick note — you don't run to the ball in this game; your player does that. " +
+        'Your only job is shot selection: keys one to five, a click, or spacebar. Call the spin!',
+      { delayMs: 400, playChime: false }
+    );
 
     if (this._racketSpinWired) return;
     this._racketSpinWired = true;

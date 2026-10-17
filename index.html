@@ -35,9 +35,9 @@
           <span class="game-bubble" data-slot="1"></span>
           <span class="game-bubble extra-slot hidden" data-slot="2"></span>
         </div>
-        <button id="btn-auto-t-toggle" class="hud-tactical-pill active" type="button" title="Toggle Automatic T-Zone Recovery after each shot (Key: G)">
+        <button id="btn-auto-t-toggle" class="hud-tactical-pill active" type="button" title="Shot-Select Mode: we move you to the ball &amp; back to the T — you just pick shots. OFF = manual WASD footwork (advanced). (Key: G)">
           <span class="tactical-dot" id="auto-t-dot"></span>
-          <span id="auto-t-label">AUTO-T-RETURN: ON</span>
+          <span id="auto-t-label">SHOT-SELECT: ON</span>
         </button>
         <button id="btn-spectator-toggle" class="hud-tactical-pill spectator-pill" type="button" title="Watch Continuous AI vs AI Match with Real Physics — or Click/Press P to Take Control (Key: P)">
           <span class="tactical-dot" id="spectator-dot"></span>
@@ -136,6 +136,11 @@
         <div id="rs-choice" class="rs-btns hidden">
           <button id="rs-serve" class="rs-btn rs-serve" type="button" title="Why give up the only shot you control completely?">I'LL SERVE</button>
           <button id="rs-receive" class="rs-btn" type="button">I'LL RECEIVE</button>
+        </div>
+        <div class="rs-note">
+          <b>YOU DON'T RUN — YOU PICK SHOTS.</b><br />
+          Your Mii chases the ball &amp; recovers to the T on its own. Your only job: choose the shot — <kbd>1</kbd>–<kbd>5</kbd>, click, or <kbd>Space</kbd>.<br />
+          <small>(<kbd>WASD</kbd> footwork exists for advanced play — ignore it for now.)</small>
         </div>
       </div>
     </div>
@@ -380,12 +385,12 @@
       <div class="setup-section setup-step" id="setup-step-4" data-step="4">
         <div class="setup-label-row">
           <span class="step-title-text"><span class="step-badge">4</span> Footwork, Referee, Pose Cam &amp; Rules</span>
-          <span class="step-summary-pill" id="step-summary-4">Auto-T: ON • Ref: ON</span>
+          <span class="step-summary-pill" id="step-summary-4">Shot-Select: ON • Ref: ON</span>
         </div>
         <div class="setup-step-body">
           <div class="wii-green-btn-row" style="grid-template-columns: repeat(2, 1fr);">
-            <button type="button" id="btn-setup-auto-t" class="wii-green-choice selected" title="ON = Player moves to ball &amp; recovers to T automatically so you can focus on shot selection!">
-              <span class="choice-main" id="setup-auto-t-text">Auto-Move &amp; T: ON</span>
+            <button type="button" id="btn-setup-auto-t" class="wii-green-choice selected" title="DEFAULT &amp; RECOMMENDED: Your Mii moves to the ball &amp; recovers to the T automatically — you only pick the shot and its timing. OFF = manual WASD footwork (advanced).">
+              <span class="choice-main" id="setup-auto-t-text">Shot-Select Mode: ON (we move you)</span>
             </button>
             <button type="button" id="btn-setup-ref-voice" class="wii-green-choice selected" title="Toggle Deep Male Referee Voice calling out 'Down! Handout, five-four', 'Not Up!', etc.">
               <span class="choice-main" id="setup-ref-voice-text">🎙️ Referee Voice: ON (Deep)</span>
@@ -436,10 +441,10 @@
       <div class="controls-guide-grid">
         <div class="guide-box">
           <h3>1. Do I Have to Move My Player?</h3>
-          <p><strong>Your choice! Toggle <code>AUTO-T-RETURN</code> in the top-left bar (or press <kbd>G</kbd>):</strong></p>
+          <p><strong>No — and that's the point.</strong> Squash's appeal is shot selection &amp; timing, not keyboard gymnastics. The default is <strong>Shot-Select Mode</strong> (toggle with <kbd>G</kbd> or the top-left pill):</p>
           <ul>
-            <li><strong>AUTO-T-RETURN: ON (Default — Focus on Shots &amp; Timing):</strong> Your Mii automatically moves to intercept the ball (including stepping into the back pocket to let deep drives come <em>off the back glass wall</em>) and automatically recovers to the <strong>T-Position</strong> after each shot.</li>
-            <li><strong>AUTO-T-RETURN: OFF (Manual Footwork):</strong> You control every step using <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or <kbd>Arrow Keys</kbd> (or Webcam Body Lunges).</li>
+            <li><strong>SHOT-SELECT MODE (Default — everyone starts here):</strong> You never run. Your Mii automatically moves to intercept the ball (including stepping into the back pocket to let deep drives come <em>off the back glass wall</em>) and recovers to the <strong>T-Position</strong> after each shot. Your entire job is choosing the shot and its timing.</li>
+            <li><strong>MANUAL FOOTWORK (Advanced):</strong> Turn it off to control every step yourself with <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or <kbd>Arrow Keys</kbd> (or Webcam Body Lunges) — adding footwork on top of shot selection is a steep curve, so come here once the shots feel natural.</li>
             <li><strong>AI vs AI Spectator Nudges:</strong> While watching AI vs AI, pressing <kbd>1</kbd>–<kbd>5</kbd> or <kbd>WASD</kbd>/<kbd>Arrows</kbd> nudges the next shot or footwork step without turning off autonomous AI play!</li>
           </ul>
         </div>
