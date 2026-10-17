@@ -100,7 +100,7 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 - **Acceptance Gate**: Deployed site boots and rallies with zero console errors on a clean browser profile.
 
 ### `TASK-20` — Skills Demonstration Onboarding (Wonder-Demo Rework)
-- **Status**: `[ ] PENDING SIGNOFF`
+- **Status**: `[x] COMPLETED`
 - **Owner Modules**: `src/squash/IntroDirector.js`, `src/squash/NickCollisionModel.js`, `src/hud_ui.js`, `index.html` (copy)
 - **Architecture Ref**: `§5.5`, `§3.8`, Gate J
 - **Depends On**: `["TASK-17"]`
