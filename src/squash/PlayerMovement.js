@@ -187,7 +187,15 @@ export class PlayerMovement {
     if (ball && ball.inPlay && ball.lastHitter === 'player') {
       if (autoT) {
         const tPos = this.getTRecoveryPosition(params, 'player');
-        player.targetPos.copy(tPos);
+        // Yield clearance: recover on the far side of the ball's lane and hang
+        // slightly deep — dead-center T-homing parks the body on the receiver's
+        // run line and spams lets.
+        const yieldSide = ball.pos.x >= 0 ? -1 : 1;
+        player.targetPos.set(
+          THREE.MathUtils.clamp(tPos.x + yieldSide * 0.55, -2.4, 2.4),
+          0,
+          THREE.MathUtils.clamp(tPos.z + 0.22, -4.1, 4.46)
+        );
       } else {
         // AUTO-T-RETURN: OFF -> Player remains where they played the shot unless manually moved!
         player.targetPos.copy(player.pos);

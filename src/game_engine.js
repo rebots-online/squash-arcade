@@ -3399,21 +3399,15 @@ export class ArgonTennisEngine {
       return;
     }
 
-    // Seamless AI continuity: even if a passer-by started a human match, sampled a shot or two,
-    // and then stopped touching controls for >3.2s, the AI automatically steps in to keep the
-    // petits bonhommes rallying and serving continuously without ever idling!
-    const humanIdleSec = this.elapsedTime - (this.lastHumanInputTime || 0);
-    const aiControlsPlayer =
-      this.spectatorMatchMode ||
-      this.autoPlayMode ||
-      (!this.isMultiplayer && humanIdleSec > 3.2);
+    // AI controls the human player ONLY via the explicit spectator/showcase flags —
+    // never silently on input idle (waiting for the ball is normal play).
+    const aiControlsPlayer = this.spectatorMatchMode || this.autoPlayMode;
 
     if (this.phase === 'SERVE_STANCE' && !this.persistentStateLock) {
       if (this.score.server === 'opponent' && !this.isMultiplayer && this.phaseTimer > 0.95) {
         this._startServeToss(this.opponent);
       } else if (
-        this.score.server === 'player' &&
-        ((aiControlsPlayer && this.phaseTimer > 0.95) || (!this.isMultiplayer && this.phaseTimer > 3.2))
+        this.score.server === 'player' && aiControlsPlayer && this.phaseTimer > 0.95
       ) {
         this._startServeToss(this.player);
       }

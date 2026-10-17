@@ -133,10 +133,14 @@ export class OpponentAI {
     if (ball.lastHitter === selfRole) {
       opponent.strokeWindupYaw = 0;
       const tPos = PlayerMovement.getTRecoveryPosition(params, selfRole);
+      // Yield clearance: recover on the far side of the ball's lane and hang
+      // slightly deep — dead-center T-homing parks the body on the receiver's
+      // run line and spams lets.
+      const yieldSide = ball.pos.x >= 0 ? -1 : 1;
       opponent.targetPos.set(
-        THREE.MathUtils.clamp(tPos.x + this.anticipatedBiasX, -1.8, 1.8),
+        THREE.MathUtils.clamp(tPos.x + this.anticipatedBiasX + yieldSide * 0.55, -1.8, 1.8),
         0,
-        THREE.MathUtils.clamp(tPos.z + this.anticipatedBiasZ, -1.2, 2.8)
+        THREE.MathUtils.clamp(tPos.z + this.anticipatedBiasZ + 0.22, -1.2, 3.1)
       );
       return;
     }

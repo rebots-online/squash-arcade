@@ -84,9 +84,9 @@ export const DEFAULT_TUNING_PARAMS = {
     aiPatternMemoryLength: 4,       // Number of recent player shots tracked for rhythm/trance
     aiAggression: 0.55,             // Likelihood of AI playing attacking boasts/drops/kills vs length
     aiFrontCourtCreep: 0.38,        // How far AI creeps up when expecting a short ball
-    aiServeWrongBoxChance: 0.06,    // Low-frequency accidental wrong service box (TASK-17)
+    aiServeWrongBoxChance: 0.04,    // Low-frequency accidental wrong service box (TASK-17)
     aiServeSelfCorrectChance: 0.55, // Chance the AI notices and walks to the correct box mid-stance
-    aiServeFootFaultChance: 0.015   // Even lower-frequency foot fault (line contact / short of short line)
+    aiServeFootFaultChance: 0.007   // Even lower-frequency foot fault (line contact / short of short line)
   },
 
   // --- 4. Court & Rules Configuration ---
