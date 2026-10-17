@@ -6,6 +6,21 @@
 export const SIM_VERSION = '2.0.0-physical-chess';
 
 /**
+ * Operator-level tuning via Vite env vars (.env) — NOT a player preference.
+ * e.g. VITE_SA_AI_SERVE_FOOT_FAULT_CHANCE=0.001  (see .env.example)
+ */
+const _envNum = (key, fallback) => {
+  try {
+    const raw = import.meta?.env?.[key];
+    if (raw === undefined || raw === null || raw === '') return fallback;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+/**
  * Seeded Mulberry32 deterministic PRNG so A/B experiments and Nick Laboratory
  * launches are 100% reproducible.
  */
@@ -79,14 +94,14 @@ export const DEFAULT_TUNING_PARAMS = {
     tRecoverySpeedScale: 0.86,      // Recovery pace multiplier toward the T (never instantaneous)
     tTargetZ: 0.92,                 // Z coordinate of tactical T recovery (just behind +0.565m short line)
     tTargetX: 0.0,                  // X coordinate of tactical T recovery
-    aiAnticipationStrength: 0.68,   // How strongly AI leans based on pattern memory & windup disguise
-    aiReactionDelayMs: 195,         // Split-step lag when player disguises a shot (ms)
+    aiAnticipationStrength: _envNum('VITE_SA_AI_ANTICIPATION', 0.68),   // How strongly AI leans based on pattern memory & windup disguise
+    aiReactionDelayMs: _envNum('VITE_SA_AI_REACTION_DELAY_MS', 195),    // Split-step lag when player disguises a shot (ms)
     aiPatternMemoryLength: 4,       // Number of recent player shots tracked for rhythm/trance
-    aiAggression: 0.55,             // Likelihood of AI playing attacking boasts/drops/kills vs length
-    aiFrontCourtCreep: 0.38,        // How far AI creeps up when expecting a short ball
-    aiServeWrongBoxChance: 0.04,    // Low-frequency accidental wrong service box (TASK-17)
-    aiServeSelfCorrectChance: 0.55, // Chance the AI notices and walks to the correct box mid-stance
-    aiServeFootFaultChance: 0.001   // Rare foot fault (~1 in 1000 serves — not even once a day)
+    aiAggression: _envNum('VITE_SA_AI_AGGRESSION', 0.55),               // Likelihood of AI playing attacking boasts/drops/kills vs length
+    aiFrontCourtCreep: _envNum('VITE_SA_AI_FRONT_COURT_CREEP', 0.38),   // How far AI creeps up when expecting a short ball
+    aiServeWrongBoxChance: _envNum('VITE_SA_AI_SERVE_WRONG_BOX_CHANCE', 0.04),    // Low-frequency accidental wrong service box (TASK-17)
+    aiServeSelfCorrectChance: _envNum('VITE_SA_AI_SERVE_SELF_CORRECT_CHANCE', 0.55), // Chance the AI notices and walks to the correct box mid-stance
+    aiServeFootFaultChance: _envNum('VITE_SA_AI_SERVE_FOOT_FAULT_CHANCE', 0.001)   // Rare foot fault (~1 in 1000 serves — not even once a day)
   },
 
   // --- 4. Court & Rules Configuration ---
