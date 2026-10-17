@@ -898,7 +898,7 @@ export class ArgonTennisEngine {
         }
       },
       onCycleCamera: () => {
-        const modes = [null, 'RALLY_CAM', 'SERVE_CAM', 'CORNER_NICK_CAM', 'INTRO_PAN'];
+        const modes = [null, 'RALLY_CAM', 'SERVE_CAM', 'CORNER_NICK_CAM', 'INTRO_PAN', 'FRONT_WALL_CAM'];
         const idx = modes.indexOf(this.manualCameraOverride);
         this.manualCameraOverride = modes[(idx + 1) % modes.length];
         const labels = {
@@ -906,7 +906,8 @@ export class ArgonTennisEngine {
           RALLY_CAM: 'Back Glass',
           SERVE_CAM: 'High Gallery',
           CORNER_NICK_CAM: 'Front Nick',
-          INTRO_PAN: 'Overhead T'
+          INTRO_PAN: 'Overhead T',
+          FRONT_WALL_CAM: 'Front Wall'
         };
         this.hud.updateCameraLabel(labels[this.manualCameraOverride] || 'Back Glass');
         this.hud.setReplayMode(this.manualCameraOverride === 'CORNER_NICK_CAM');
@@ -3876,6 +3877,14 @@ export class ArgonTennisEngine {
     const targetPos = new THREE.Vector3();
     const targetLook = new THREE.Vector3();
 
+    // TASK-16 / Gate I: front-wall viewpoint keeps the front wall transparent
+    // so it doesn't occlude the back court; restore on exit.
+    const frontCamActive = mode === 'FRONT_WALL_CAM';
+    if (frontCamActive !== this._frontWallTransparent) {
+      this._frontWallTransparent = frontCamActive;
+      this.courtGeometry?.setFrontWallTransparency(frontCamActive);
+    }
+
     if (mode === 'INTRO_PAN') {
       targetPos.set(0, 11.4, 2.2);
       targetLook.set(0, 0, -0.65);
@@ -3889,6 +3898,11 @@ export class ArgonTennisEngine {
       const sideX = this.ball.pos.x >= 0 ? -1.45 : 1.45;
       targetPos.set(sideX, 1.05, -1.15);
       targetLook.set(this.ball.pos.x * 0.75, 0.32, -4.35);
+    } else if (mode === 'FRONT_WALL_CAM') {
+      // Broadcast-style view from behind the front wall looking down-court
+      // toward the back glass.
+      targetPos.set(0, 2.8, -4.4);
+      targetLook.set(0, 1.0, 3.5);
     } else {
       targetPos.set(this.player.pos.x * 0.24, 3.22, 9.38);
       targetLook.set(this.ball.pos.x * 0.2, 1.12, -1.65);
