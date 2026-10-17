@@ -24,7 +24,6 @@ owns_modules:
   - "src/squash/TestHarness.js"
   - "src/game_engine.js"
   - "index.html"
-  - "index.css"
   - "public/styles.css"
   - "src/audio_engine.js"
   - "src/hud_ui.js"
