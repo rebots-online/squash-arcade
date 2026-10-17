@@ -112,7 +112,7 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 - **Acceptance Gate (J)**: Onboarding presents a clearly labeled skills walkthrough; each demonstrated shot is named for its squash skill on screen; skip-to-play still works; no unexplained "wonder" framing remains in user-facing text.
 
 ### `TASK-21` — Audio Autoplay & Jukebox Rotation Restoration
-- **Status**: `[ ] PENDING REVIEW`
+- **Status**: `[x] COMPLETED`
 - **Owner Modules**: `src/audio_engine.js`
 - **Architecture Ref**: `§5.6`, `§3.12` (runtime invariants)
 - **Depends On**: `["TASK-19"]`
