@@ -184,31 +184,43 @@ export const ORIGINAL_DEFAULT_TRACK_IDS = [
 
 export const JUKEBOX_TRACK_LIST = Object.values(LYRIA_TRACKS);
 
+// Per-track drum kit personalities — kick pitch/decay, snare body, hat density.
+const TRACK_DRUM_KIT = {
+  argon_glass_overture: { kick: 122, kickEnd: 34, kickDecay: 0.15, snareBp: 1600, hat: 'sparse' },
+  physical_chess_protocol: { kick: 150, kickEnd: 42, kickDecay: 0.10, snareBp: 1750, hat: 'eighth' },
+  crimson_tin_fanfare: { kick: 96, kickEnd: 30, kickDecay: 0.22, snareBp: 2050, hat: 'sparse' },
+  nick_roller_overdrive: { kick: 132, kickEnd: 36, kickDecay: 0.09, snareBp: 1950, hat: 'sixteenth' },
+  alexandria_showcourt_nights: { kick: 84, kickEnd: 28, kickDecay: 0.26, snareBp: 1250, hat: 'sparse' },
+  forearm_cut_funk: { kick: 142, kickEnd: 40, kickDecay: 0.11, snareBp: 1550, hat: 'eighth' },
+  psa_championship_crown: { kick: 128, kickEnd: 34, kickDecay: 0.16, snareBp: 2100, hat: 'eighth' }
+};
+
 const STATE_TO_TRACK = {
-  // Boot-visible states map to 'audio' (HTMLAudio) tracks: volume-0/muted elements
-  // are exempt from the autoplay policy, so music is audible on load with no gesture.
-  // 'synth' tracks run on AudioContext and can never start pre-gesture — jukebox only.
-  title: 'menu_theme',
-  menu: 'menu_theme',
-  select: 'menu_theme',
-  intro: 'court_intro',
-  court_intro: 'court_intro',
-  flyover: 'court_intro',
-  start: 'court_intro',
-  serve: 'match_rally',
-  serve_wait: 'match_rally',
-  serve_toss: 'match_rally',
-  rally: 'match_rally',
-  playing: 'match_rally',
-  match: 'match_rally',
-  point: 'match_rally',
-  gamepoint: 'match_rally',
-  replay: 'match_rally',
-  victory: 'victory_fanfare',
-  win: 'victory_fanfare',
-  game_won: 'victory_fanfare',
-  match_over: 'victory_fanfare',
-  celebration: 'victory_fanfare',
+  // Boot-visible states map to the 7 original Argon Squash soundtrack synths —
+  // deliberately NOT the legacy argon-tennis MP3s. (Synth = AudioContext, so
+  // pre-gesture start is muted; audio-element muted-start stays for jukebox
+  // 'audio' tracks which CAN start pre-gesture.)
+  title: 'argon_glass_overture',
+  menu: 'argon_glass_overture',
+  select: 'argon_glass_overture',
+  intro: 'crimson_tin_fanfare',
+  court_intro: 'crimson_tin_fanfare',
+  flyover: 'crimson_tin_fanfare',
+  start: 'crimson_tin_fanfare',
+  serve: 'physical_chess_protocol',
+  serve_wait: 'physical_chess_protocol',
+  serve_toss: 'physical_chess_protocol',
+  rally: 'physical_chess_protocol',
+  playing: 'physical_chess_protocol',
+  match: 'physical_chess_protocol',
+  point: 'physical_chess_protocol',
+  gamepoint: 'nick_roller_overdrive',
+  replay: 'alexandria_showcourt_nights',
+  victory: 'psa_championship_crown',
+  win: 'psa_championship_crown',
+  game_won: 'forearm_cut_funk',
+  match_over: 'psa_championship_crown',
+  celebration: 'psa_championship_crown',
   argon_glass_overture: 'argon_glass_overture',
   physical_chess_protocol: 'physical_chess_protocol',
   crimson_tin_fanfare: 'crimson_tin_fanfare',
@@ -428,6 +440,20 @@ export class AudioEngine {
       lp.connect(this.masterGain);
 
       this._buildNoiseBuffers();
+
+      // Sound-gate: hide the unlock button the moment audio can actually run.
+      // In a native WebView without the gesture policy the ctx starts 'running'
+      // at boot, so the gate never renders; in browsers it hides on first gesture.
+      if (!this._gateHideBound) {
+        this._gateHideBound = true;
+        const hideGate = () => {
+          if (this.ctx.state === 'running') {
+            document.getElementById('btn-sound-gate')?.classList.add('hidden');
+          }
+        };
+        this.ctx.addEventListener('statechange', hideGate);
+        hideGate();
+      }
     }
     if (this.ctx.state === 'suspended') {
       this.ctx.resume().catch(() => {});
@@ -757,7 +783,8 @@ export class AudioEngine {
     attack = 0.008,
     duration = 0.16,
     detune = 0,
-    sendReverb = false
+    sendReverb = false,
+    drive = 0
   }) {
     const ctx = this.ctx;
     if (!ctx || !this.musicSynthGain || !freq) return;
@@ -781,7 +808,19 @@ export class AudioEngine {
     gain.gain.linearRampToValueAtTime(gainVal, now + attack);
     gain.gain.exponentialRampToValueAtTime(0.0008, now + duration);
 
-    osc.connect(flt).connect(gain).connect(this.musicSynthGain);
+    if (drive > 0) {
+      const sh = ctx.createWaveShaper();
+      const curve = new Float32Array(64);
+      for (let i = 0; i < 64; i++) {
+        const x = (i / 63) * 2 - 1;
+        curve[i] = Math.tanh(drive * x);
+      }
+      sh.curve = curve;
+      osc.connect(sh).connect(flt);
+    } else {
+      osc.connect(flt);
+    }
+    flt.connect(gain).connect(this.musicSynthGain);
     if (sendReverb && this.reverbSend) {
       gain.connect(this.reverbSend);
     }
@@ -795,6 +834,7 @@ export class AudioEngine {
     const now = ctx.currentTime;
     const s16 = step % 16;
     const bar = Math.floor(step / 16) % 4;
+    const kit = TRACK_DRUM_KIT[trackId] || {};
 
     // 1. Custom Drum Groove per Track
     const isBreakbeat =
@@ -816,13 +856,13 @@ export class AudioEngine {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(isHalftime ? 122 : 138, now);
-      osc.frequency.exponentialRampToValueAtTime(38, now + 0.12);
+      osc.frequency.setValueAtTime(kit.kick || (isHalftime ? 122 : 138), now);
+      osc.frequency.exponentialRampToValueAtTime(kit.kickEnd || 38, now + (kit.kickDecay || 0.12));
       gain.gain.setValueAtTime(0.30, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + (kit.kickDecay || 0.12) + 0.03);
       osc.connect(gain).connect(this.musicSynthGain);
       osc.start(now);
-      osc.stop(now + 0.16);
+      osc.stop(now + (kit.kickDecay || 0.12) + 0.04);
     }
 
     // 2. Snare / Glass Rimshot + Funk Ghost Notes
@@ -833,7 +873,7 @@ export class AudioEngine {
       src.buffer = this._noiseBuffer;
       const bp = ctx.createBiquadFilter();
       bp.type = 'bandpass';
-      bp.frequency.setValueAtTime(isBreakbeat ? 1900 : isHalftime ? 1600 : 1420, now);
+      bp.frequency.setValueAtTime(kit.snareBp || (isBreakbeat ? 1900 : isHalftime ? 1600 : 1420), now);
       const gain = ctx.createGain();
       gain.gain.setValueAtTime(ghostSnare ? 0.05 : 0.135, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + (ghostSnare ? 0.045 : 0.095));
@@ -842,8 +882,10 @@ export class AudioEngine {
       src.start(now, 0.1, 0.1);
     }
 
-    // 3. Crisp Hi-Hat / Shaker Pattern
-    if (this._noiseBuffer && (s16 % 2 === 1 || trackId === 't_zone_cyber' || trackId === 'nick_roller_overdrive')) {
+    // 3. Crisp Hi-Hat / Shaker Pattern — density is per-track ('sixteenth' every
+    // step, 'sparse' on off-8ths, default off-16ths) so each kit grooves differently
+    const hatHit = kit.hat === 'sixteenth' ? true : kit.hat === 'sparse' ? (s16 === 3 || s16 === 11) : s16 % 2 === 1;
+    if (this._noiseBuffer && hatHit) {
       const src = ctx.createBufferSource();
       src.buffer = this._noiseBuffer;
       const hp = ctx.createBiquadFilter();
@@ -905,6 +947,18 @@ export class AudioEngine {
           sendReverb: true
         });
       }
+      // Rolling fifth swell — mid-bar pad answer so the overture breathes
+      if (s16 === 8) {
+        this._triggerSynthVoice({
+          freq: root * 4.5,
+          type: 'sine',
+          filterFreq: 2400,
+          gainVal: 0.05,
+          attack: 0.14,
+          duration: 0.7,
+          sendReverb: true
+        });
+      }
     } else if (trackId === 'physical_chess_protocol') {
       // Track #2: Physical Chess Protocol — Driving E Dorian (Em7 -> A7 -> F#m7 -> Bm7)
       const bassRoots = [82.41, 110.0, 92.5, 123.47];
@@ -934,6 +988,18 @@ export class AudioEngine {
           gainVal: 0.062,
           duration: 0.15,
           sendReverb: true
+        });
+      }
+      // Clockwork "tock" — chess-clock tick on the off-beats
+      if (s16 === 4 || s16 === 12) {
+        this._triggerSynthVoice({
+          freq: 1567.98,
+          type: 'sine',
+          filterType: 'highpass',
+          filterFreq: 2000,
+          gainVal: 0.05,
+          attack: 0.002,
+          duration: 0.045
         });
       }
     } else if (trackId === 'crimson_tin_fanfare') {
@@ -966,6 +1032,29 @@ export class AudioEngine {
           sendReverb: true
         });
       }
+      // Heroic unison brass stab + deep timpani boom on bar starts
+      if (s16 === 0) {
+        [r * 2, r * 2.5, r * 3].forEach((bf, idx) => {
+          this._triggerSynthVoice({
+            freq: bf,
+            type: 'square',
+            filterFreq: 1650,
+            gainVal: 0.05,
+            attack: 0.035,
+            duration: 0.32,
+            detune: idx * 10 - 10,
+            sendReverb: true
+          });
+        });
+        this._triggerSynthVoice({
+          freq: 65.41,
+          type: 'sine',
+          filterFreq: 260,
+          gainVal: 0.19,
+          duration: 0.5,
+          sendReverb: true
+        });
+      }
     } else if (trackId === 'nick_roller_overdrive') {
       // Track #4: Nick Roller Overdrive — 136 BPM High-Tension G minor Acid Arp
       const acidNotes = [
@@ -981,7 +1070,8 @@ export class AudioEngine {
         filterEndFreq: 210,
         q: 5.2,
         gainVal: 0.135,
-        duration: 0.10
+        duration: 0.10,
+        drive: 3.2
       });
       if (s16 === 0 || s16 === 8) {
         this._triggerSynthVoice({
@@ -991,6 +1081,16 @@ export class AudioEngine {
           gainVal: 0.06,
           duration: 0.35,
           sendReverb: true
+        });
+      }
+      // 49Hz sub-thump under the acid drive on bar starts
+      if (s16 === 0) {
+        this._triggerSynthVoice({
+          freq: 49.0,
+          type: 'sine',
+          filterFreq: 300,
+          gainVal: 0.17,
+          duration: 0.3
         });
       }
     } else if (trackId === 'alexandria_showcourt_nights') {
@@ -1012,7 +1112,8 @@ export class AudioEngine {
         this._triggerSynthVoice({
           freq: note,
           type: 'sine',
-          filterFreq: 3400,
+          filterFreq: 1500,
+          filterEndFreq: 3400,
           gainVal: 0.072,
           attack: 0.004,
           duration: 0.18,
@@ -1026,6 +1127,20 @@ export class AudioEngine {
           attack: 0.004,
           duration: 0.14,
           sendReverb: true
+        });
+      }
+      // Ney-like drone pad — bar-length bed so the night theme breathes
+      if (s16 === 0) {
+        [hijaz[0] * 2, hijaz[4] * 2].forEach((df) => {
+          this._triggerSynthVoice({
+            freq: df,
+            type: 'sawtooth',
+            filterFreq: 900,
+            gainVal: 0.032,
+            attack: 0.22,
+            duration: 1.05,
+            sendReverb: true
+          });
         });
       }
     } else if (trackId === 'forearm_cut_funk') {
@@ -1057,6 +1172,27 @@ export class AudioEngine {
           });
         });
       }
+      // Slap-bass pop on the off-16ths + palm-muted chick stab
+      if (s16 === 5 || s16 === 13) {
+        this._triggerSynthVoice({
+          freq: (bar % 2 === 0 ? 220.0 : 196.0) * 2,
+          type: 'square',
+          filterFreq: 2600,
+          filterEndFreq: 500,
+          gainVal: 0.07,
+          duration: 0.06
+        });
+      }
+      if (s16 === 9) {
+        this._triggerSynthVoice({
+          freq: 660,
+          type: 'sawtooth',
+          filterType: 'highpass',
+          filterFreq: 1100,
+          gainVal: 0.045,
+          duration: 0.05
+        });
+      }
     } else if (trackId === 'psa_championship_crown') {
       // Track #7: Four-Wall Championship Crown — Uplifting C -> G -> Am -> F anthem
       const prog = [130.81, 98.0, 110.0, 87.31];
@@ -1074,16 +1210,31 @@ export class AudioEngine {
         523.25, 659.25, 783.99, 659.25, 880.0, 783.99, 659.25, 587.33,
         523.25, 587.33, 659.25, 783.99, 1046.5, 880.0, 783.99, 659.25
       ];
+      // Crowd-noise crash on each new chord + supersaw anthem stack (3 detuned saws)
+      if (s16 === 0 && this._noiseBuffer) {
+        const src = ctx.createBufferSource();
+        src.buffer = this._noiseBuffer;
+        const hp2 = ctx.createBiquadFilter();
+        hp2.type = 'highpass';
+        hp2.frequency.setValueAtTime(5200, now);
+        const cg = ctx.createGain();
+        cg.gain.setValueAtTime(0.11, now);
+        cg.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+        src.connect(hp2).connect(cg).connect(this.musicSynthGain);
+        src.start(now, 0.3, 0.9);
+      }
       if (s16 % 2 === 0 || s16 === 3 || s16 === 11) {
-        this._triggerSynthVoice({
-          freq: anthemLead[s16],
-          type: 'sawtooth',
-          filterFreq: 2800,
-          filterEndFreq: 1200,
-          gainVal: 0.068,
-          detune: 6,
-          duration: 0.17,
-          sendReverb: true
+        [0, -9, 9].forEach((dt) => {
+          this._triggerSynthVoice({
+            freq: anthemLead[s16],
+            type: 'sawtooth',
+            filterFreq: 2800,
+            filterEndFreq: 1200,
+            gainVal: 0.024,
+            detune: dt,
+            duration: 0.17,
+            sendReverb: true
+          });
         });
       }
     } else if (trackId === 'virtua_arcade_95') {

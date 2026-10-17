@@ -179,3 +179,9 @@ kbd{display:inline-block;padding:1px 6px;border-radius:5px;background:#1e293b;bo
 #title-modal.side-docked-menu.menu-collapsed .court-preview-diagram,#title-modal.side-docked-menu.menu-collapsed .setup-step-hint,#title-modal.side-docked-menu.menu-collapsed .setup-step,#title-modal.side-docked-menu.menu-collapsed .welcome-announcer-row{display:none!important}
 
 
+
+/* Sound gate: prominent pre-gesture unlock button (autoplay policy workaround) */
+#btn-sound-gate{position:fixed;left:50%;bottom:16vh;transform:translateX(-50%);z-index:9000;padding:18px 40px;font-size:20px;font-weight:800;letter-spacing:.08em;font-family:inherit;color:#06210f;background:linear-gradient(180deg,#8dffb8,#2fd47c);border:2px solid #baffd8;border-radius:14px;cursor:pointer;box-shadow:0 0 26px rgba(63,255,150,.55),0 10px 24px rgba(0,0,0,.5);animation:soundGatePulse 1.5s ease-in-out infinite}
+#btn-sound-gate:hover{filter:brightness(1.1);transform:translateX(-50%) scale(1.04)}
+#btn-sound-gate.hidden{display:none!important}
+@keyframes soundGatePulse{0%,100%{box-shadow:0 0 16px rgba(63,255,150,.4),0 10px 24px rgba(0,0,0,.5)}50%{box-shadow:0 0 44px rgba(63,255,150,.95),0 10px 24px rgba(0,0,0,.5)}}

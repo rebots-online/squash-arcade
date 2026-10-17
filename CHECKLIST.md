@@ -132,3 +132,21 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 - [ ] Architecture alignment approved (v2.2.0)
 - [ ] TASK-15 .. TASK-21 scope + acceptance gates approved
 
+
+---
+
+## TASK-22 — Original-7 first: state map revert, sound-gate, per-track timbre, camera pill
+
+**Why**: TASK-21's mp3 remap made the game open on legacy Argon Tennis tracks (jukebox #12 "CLASSIC"). Operator directive: begin on track #1 of the NEW 7 Argon Squash originals; the 7 originals must sound distinct (they read as variants of #8); browsers still gate AudioContext behind a gesture — addressed with an explicit, prominent unlock control instead of mp3 fallback.
+
+- **Deliverables**:
+  - `STATE_TO_TRACK` reverted to the 7 original synths (`title/menu/select->argon_glass_overture`, `intro/start/flyover->crimson_tin_fanfare`, `serve*/rally/point/match->physical_chess_protocol`, `gamepoint->nick_roller_overdrive`, `replay->alexandria_showcourt_nights`, `victory/win/match_over/celebration->psa_championship_crown`, `game_won->forearm_cut_funk`). Tennis mp3s stay jukebox-only. (Muted-start/`ended`/no-auto-lock fixes retained for 'audio' tracks.)
+  - **Sound-gate**: `#btn-sound-gate` "CLICK HERE FOR SOUND" — fixed pulsing CTA in `index.html`/`styles.css`; hides via `AudioContext statechange` the instant audio runs, so it NEVER renders in native builds (WebView `mediaPlaybackRequiresUserGesture=false` starts ctx 'running') and vanishes on first gesture in browsers.
+  - **Timbre differentiation** (`_playSynthStep`): `TRACK_DRUM_KIT` per-track kick pitch/decay, snare BP, hat density (sparse/eighth/sixteenth); `drive` waveshaper (tanh) param on `_triggerSynthVoice`; signature voices — #1 fifth-swell pad, #2 chess-clock "tock", #3 unison brass stab + 65Hz timpani, #4 acid arp now driven (drive 3.2) + 49Hz sub-thump, #5 Hijaz marimba filter-sweep + ney-like drone pad, #6 slap-bass pops + palm-muted chick, #7 crowd crash + 3-voice supersaw lead.
+  - **Camera**: `btn-top-camera-cycle` was never bound (dead pill) — now bound alongside `btn-camera-cycle`; `updateCameraLabel` drives both `camera-mode-label` and `camera-mode-label-top`. Cycle reaches FRONT_WALL_CAM.
+- **Verification**: `node --check` both edited files pass; `vite build` clean; deployed `index-DGvXiZp4.js` live — bundle contains sound-gate, TRACK_DRUM_KIT, top-pill binding, original-7 map.
+- **Pending user verify**: hard-refresh shows the sound gate (not silent-confusing), one click starts Argon Glass Overture; jukebox skips differentiate tracks audibly; Cam pill cycles to "Front Wall".
+
+**Later / suggestions**:
+- Operator suggestion noted: mail feedback opposing browser autoplay kneecapping (control ceded to abuse-driven policy) to **Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA** (USPS letter campaign idea — "flood them").
+- DEFERRED: prerender the 7 synth tracks to vendored audio files (OfflineAudioContext render + lamejs/ffmpeg encode) so they too can bypass the gesture gate. shelved per operator.

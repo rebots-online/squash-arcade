@@ -715,6 +715,12 @@
     </div>
   </div>
 
+  <!-- Gesture gate: browsers block AudioContext until a user gesture, so the
+       soundtrack can't self-start. This button IS the gesture — one click
+       unlocks audio and starts the current track. Native Android builds don't
+       need it (WebView mediaPlaybackRequiresUserGesture=false). -->
+  <button id="btn-sound-gate" type="button" aria-label="Enable sound">🔊 CLICK HERE FOR SOUND</button>
+
   <script type="module">
     import { renderAllHudMiiAvatars } from './src/mii_avatars.js';
     renderAllHudMiiAvatars();
