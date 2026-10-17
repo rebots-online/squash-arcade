@@ -320,6 +320,10 @@ export class AudioEngine {
       // can resolve before any user gesture; unmute once playback actually starts.
       el.addEventListener('playing', () => {
         if (!this.muted) el.muted = false;
+        console.log('[audio] playing:', id, '| muted:', el.muted, '| vol:', el.volume.toFixed(2));
+      });
+      el.addEventListener('error', () => {
+        console.warn('[audio] element error:', id, el.error?.code, el.error?.message);
       });
       this.audioElements.set(id, el);
     }
@@ -682,7 +686,9 @@ export class AudioEngine {
           .then(() => {
             this._fadeAudio(el, targetVol, 440, false);
           })
-          .catch(() => {});
+          .catch((err) => {
+            console.warn('[audio] play() rejected for', targetTrackId, '-', err?.name, err?.message);
+          });
       }
     }
 
