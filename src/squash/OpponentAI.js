@@ -235,12 +235,14 @@ export class OpponentAI {
       (player?.pos?.z ?? 0) > 1.6;
     const highBall = ball.pos.y > 1.02;
     const comingOffBackGlass = ball.hitBackWallThisShot && ball.vel.z < 0;
-    const droppingIntoPocket = ball.pos.y < 1.35 && ball.vel.y < -0.5;
+    // Off the back glass: wait for it to sit up and start coming down, then
+    // strike on the upswing — that's what drives it back deep for the
+    // T -> back-corner -> T cycling pattern.
+    const sittingUpLowOrDropping =
+      ball.pos.y <= 0.72 || (ball.pos.y < 1.15 && ball.vel.y < -0.35);
     const suboptimalContact =
       (ball.bounceCountOnFloor === 0 && highBall && !poachVolleyAppliesPressure) ||
-      // Off the back glass: never cut it off early — let it travel out and
-      // sit up into the pocket (dropping through ~1.35m or already low).
-      (comingOffBackGlass && highBall && !droppingIntoPocket);
+      (comingOffBackGlass && !sittingUpLowOrDropping);
     if (suboptimalContact) return;
 
     if (distXZ <= 1.72 && reachableY && movingTowardBackOrSlow) {
@@ -304,39 +306,49 @@ export class OpponentAI {
       consecutiveDrives >= 2 ||
       (rallyStrokes >= 4 && Math.random() < 0.52) ||
       Math.random() < 0.34;
-
     if (isComingOffBackWall) {
-      // Returning off the Back Glass Wall: mix Rising Drives, Counter Drops, Boasts, and Lobs!
+      // Corner-cycling: off the back glass the deep counter-drive back into
+      // the same corner is the backbone (~55%), with cross drives, lobs,
+      // boasts and disguised drops mixing it up — legible but not invariant.
       const roll = Math.random();
-      if (shouldBreakRut && roll < 0.32) {
+      const sameCornerDir = ball.pos.x >= 0 ? 0.34 : -0.34;
+      if (roll < 0.55) {
+        // Deep counter-drive back into the SAME back corner — the cycling backbone
         decision = {
-          shotType: 'disguised_drop',
-          cutModifier: true,
-          speed: 0.90,
-          dirX: ball.pos.x >= 0 ? 0.62 : -0.62,
+          shotType: 'topspin',
+          speed: 1.18 + Math.random() * 0.16,
+          dirX: sameCornerDir,
           prepCharge: 0.85
         };
-      } else if (shouldBreakRut && roll < 0.58) {
+      } else if (roll < 0.7) {
+        // Cross-court drive — still deep, flips the corner
         decision = {
-          shotType: 'boast',
-          speed: 1.18,
-          dirX: ball.pos.x >= 0 ? 0.82 : -0.82,
-          prepCharge: 0.76
+          shotType: 'cross',
+          speed: 1.15 + Math.random() * 0.14,
+          dirX: -sameCornerDir * 1.85,
+          prepCharge: 0.82
         };
-      } else if (roll < 0.72) {
+      } else if (roll < 0.82) {
         decision = {
           shotType: 'lob',
           speed: 1.06,
           dirX: ball.pos.x >= 0 ? -0.58 : 0.58,
           prepCharge: 0.65
         };
-      } else {
-        const playCross = lastOwnShot === 'topspin' ? Math.random() < 0.68 : Math.random() < 0.45;
+      } else if (roll < 0.91) {
         decision = {
-          shotType: playCross ? 'cross' : 'topspin',
-          speed: 1.15 + Math.random() * 0.14,
-          dirX: playCross ? (ball.pos.x >= 0 ? -0.62 : 0.62) : (ball.pos.x >= 0 ? 0.38 : -0.38),
-          prepCharge: 0.82
+          shotType: 'boast',
+          speed: 1.18,
+          dirX: ball.pos.x >= 0 ? 0.82 : -0.82,
+          prepCharge: 0.76
+        };
+      } else {
+        decision = {
+          shotType: 'disguised_drop',
+          cutModifier: true,
+          speed: 0.92,
+          dirX: -sameCornerDir * 1.8,
+          prepCharge: 0.85
         };
       }
     } else if (isHighVolley && Math.random() < Math.max(0.48, aggression * 0.88)) {
