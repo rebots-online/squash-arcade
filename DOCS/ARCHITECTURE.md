@@ -206,6 +206,11 @@ All modules (`CourtGeometry`, `BallPhysics`, `NickCollisionModel`, `PlayerMoveme
 - **Responsibility**: All audio output through one WebAudio graph (`ctx` -> `masterGain` -> `sfxGain` / `musicSynthGain` / `reverbSend`).
 - **Exports**: `LYRIA_TRACKS` (12 jukebox tracks incl. Lyria-sourced remixes), `JUKEBOX_TRACK_LIST`, `ORIGINAL_DEFAULT_TRACK_IDS`, `STATE_TO_TRACK` (game-state -> track map), `NARRATOR_USP_INVITES` (scripted narrator lines), `GEMINI_TTS_CLIPS = {}` (empty clip map, currently unused), `AudioEngine`.
 - **Referee voice today**: `playVoiceCallout` -> `SpeechSynthesisUtterance` with `_selectDeepMaleVoice()` (prefers `Google UK English Male`/system male voice, `en-GB`), `refereeVoicePitch`/`refereeVoiceRate` tunables, and `_playRefereeBaritonePA` (oscillator formant bed behind speech). `announceScore(outcome)` composes callout text + chime.
+- **Runtime invariants (invisible to codegraph — document-only)**:
+  - Two track types in `LYRIA_TRACKS`: `'audio'` = HTMLAudioElement streaming remote `www.gstatic.com` mp3s (4 legacy tracks, no local audio files ship in `dist/`); `'synth'` = 7 original Web Audio sequencer tracks.
+  - **Autoplay gate**: `'audio'` elements at `volume=0`/`muted` count as muted for the browser autoplay policy → `el.play()` CAN resolve before any gesture, then `_fadeAudio` raises volume → audible music on load. `'synth'` tracks run on `AudioContext`, which **cannot** resume pre-gesture under any code path → silent until first click. Therefore `STATE_TO_TRACK` state→type mapping decides whether music is audible on page load. `deeea2e` remapped every state to synth tracks, regressing audible autoplay — see §5.6.
+  - **`jukeboxMode`** (`'auto' | 'locked' | 'shuffle'`): rotation advances only via the `_synthTimer` 256-step boundary (synth) or the element `ended` event (audio). `loop:true` mp3s never `ended` → audio tracks cannot self-advance; only `court_intro`/`victory_fanfare` (`loop:false`) even fire `ended`, and those handlers ignore `'auto'` mode. Manual `next/prevJukeboxTrack` currently sets `jukeboxMode='locked'` — one skip silently kills all rotation and `playMusicForState`.
+  - `playWelcomeIntro` sets `_welcomePlayed` before verifying the context; a pre-gesture call permanently swallows the one-shot welcome.
 
 ### 3.13 `HudUI` (`src/hud_ui.js`)
 - **Responsibility**: Wii-styled DOM HUD facade — scoreboard, center banners, timing gauge & grade popups, server-position tag, let/stroke advisory, modals (rules/controls/companion), jukebox panel, camera label pills. Renders Mii avatars via `mii_avatars.js`.
@@ -226,7 +231,7 @@ All modules (`CourtGeometry`, `BallPhysics`, `NickCollisionModel`, `PlayerMoveme
 - **`public/companion.html`**: Static phone-racket client posting to `/api/racket/*`; works only behind the relay middleware (dev/preview or an equivalent host).
 - **`public/` deploy rule**: Any static asset referenced by a relative root path in `index.html` (e.g. `<link href="./styles.css">`) MUST live under `public/` — Vite copies `public/` verbatim into `dist/`; root-level files are dev-only and silently 404 on static hosts. (2026-10-17: `styles.css` moved root → `public/` after the side-docked menu rendered centered on surge.)
 - **`scripts/download-assets.mjs`**: Build-time fetcher for GLB models and MediaPipe assets into `public/assets/` — one-time vendoring, not a runtime dependency.
-- **Static hosting boundary**: `npm run build` -> `dist/` is fully servable on surge.sh for solo play; multiplayer rooms and phone controllers need the relay layer (§5.4).
+- **Static hosting boundary**: `npm run build` -> `dist/` is fully servable on surge.sh for solo play; multiplayer rooms and phone controllers need the relay layer (§5.4). Remote media URLs (e.g. `gstatic.com` audio) are fetched at runtime and unaffected by `dist/` completeness — but their reachability and the track-type autoplay semantics (§3.12) are runtime-only facts no static check covers.
 
 ---
 
@@ -360,3 +365,10 @@ Instead of classifying from a single 2-point velocity delta, `BiomechStrokeClass
 - **Presentation**: banners/callouts switch from mystery punchlines to skill names + tips; slow-mo replay inspection stays as the capstone on the final kill/drop demo; `skipToPlayableMatch` unchanged.
 - **Copy sweep**: §1 bullet 2 and any HUD/menu strings referencing "wonder"/demo A/B mystery wording are updated to the skills-demo naming.
 
+### 5.6 Audio Autoplay & Jukebox Rotation Fix (`AudioEngine`)
+- **Why**: `deeea2e` remapped all `STATE_TO_TRACK` states to `'synth'` tracks, which can never sound before a gesture — deployed pages play total silence until a click. Manual jukebox ⏭/⏮ silently sets `jukeboxMode='locked'`, permanently disabling rotation and all state music; and `loop:true` audio tracks can never advance.
+- **Muted-start autoplay**: preload/`_crossfadeToTrack` sets `el.muted=true` before `el.play()`, unmuting on `'playing'` — restores audible-on-load for any `'audio'` track, gesture or not.
+- **State map restore**: boot-visible states back to the 4 legacy mp3s (`title/menu/select→menu_theme`, `serve*/rally/playing/match/point→match_rally`, `intro/start/flyover→court_intro`, `victory/win/match_over/celebration→victory_fanfare`, `replay/gamepoint/game_won→match_rally`/`victory_fanfare`); the 7 synth originals remain jukebox-selectable only.
+- **Stop silent lock**: remove the auto-`'locked'` assignment in `nextJukeboxTrack`/`prevJukeboxTrack` — skip is not a lock; `setJukeboxMode`/`selectJukeboxTrack(lock)` remain the explicit lock paths.
+- **Audio-track rotation**: `ended` → shuffle→random next, auto→sequential next, locked→replay; `el.loop` toggled `track.loop && mode==='locked'` on start/mode change.
+- **`_welcomePlayed`**: set only after `_ensureContext()` succeeds.
