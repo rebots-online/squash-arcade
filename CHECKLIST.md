@@ -78,7 +78,7 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 - **Acceptance Gate (G)**: `aiServeWrongBoxChance=1` forces a visible wrong-box approach; legality check returns fault kinds deterministically; `Fault!`/`Foot fault!` callouts fire and handout is awarded.
 
 ### `TASK-18` — Google Dependency Cleanup & Static-Host Boundary
-- **Status**: `[ ] PENDING SIGNOFF`
+- **Status**: `[x] COMPLETED`
 - **Owner Modules**: `package.json`, `vite.config.ts`, `README.md`
 - **Architecture Ref**: `§5.4`, `§3.16`
 - **Depends On**: `["TASK-17"]`
