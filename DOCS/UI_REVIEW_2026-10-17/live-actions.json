@@ -1,0 +1,18 @@
+{
+  "baseline": "deeea2ed59da55bc5aa30b33ed9984d68709eac7",
+  "observed": [
+    "Play Match Now entered gameplay after initialization",
+    "Controls opened",
+    "Controls to Rules replaced panel",
+    "Rules resume returned to court",
+    "Tune Lab opened",
+    "Nick Lab and Diagnostics opened",
+    "Diagnostics displayed 15/15 passed; not physical-device validation",
+    "Jukebox displayed 14 updated tracks",
+    "Wonder Demo launched and progressed to Physical Chess revelation; Try It Yourself returned to game",
+    "Court camera button clicked; immediate label remained Back Glass, no successful cycle claimed",
+    "Companion showed Connected before sensor grant"
+  ],
+  "superseded": "Early pre-initialization no-response observations are not final persistent gameplay failures",
+  "permissions": "No camera, microphone or motion grants"
+}

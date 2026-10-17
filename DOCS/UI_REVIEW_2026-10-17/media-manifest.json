@@ -1,0 +1,212 @@
+[
+  {
+    "file": "media/after-audio-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "e8628522cfcb1cfd1c1021bf5e947399ae0ae2cf47d89c3d84c5c895846d09ac",
+    "modified_utc": "2026-10-17T18:21:02.992073+00:00"
+  },
+  {
+    "file": "media/after-camera-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "a7c242d469ac56c2c4b04e30bb5086edef50e0b3c6c5beb72d35fcd750e84b2c",
+    "modified_utc": "2026-10-17T18:21:04.781950+00:00"
+  },
+  {
+    "file": "media/after-companion-portrait.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "c178681ba4629634aa2e7cfd7baab1b5c76e10d5a8e43881504ac5110234fd02",
+    "modified_utc": "2026-10-17T18:26:42.388986+00:00"
+  },
+  {
+    "file": "media/after-controls-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "f1c626e498823d645e6f1ceced6ac865319224f847c3d92fb007e5cdb99216d3",
+    "modified_utc": "2026-10-17T18:20:57.055729+00:00"
+  },
+  {
+    "file": "media/after-game-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "44f75b48a202efe4d223c20139d8e6176030d6283065941df7cf129fa103f2b1",
+    "modified_utc": "2026-10-17T18:20:55.252524+00:00"
+  },
+  {
+    "file": "media/after-game-landscape.png",
+    "width": 844,
+    "height": 390,
+    "sha256": "f1d3176f377270280c0089f2c3bf146fbf2bd8f32f3ee8257b547cac9f5f7ec6",
+    "modified_utc": "2026-10-17T18:22:24.646307+00:00"
+  },
+  {
+    "file": "media/after-game-portrait.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "9f2a4ebea865338a88f030f363e3ab3ad70515ad60eb8f3cb43a9cda55eff76e",
+    "modified_utc": "2026-10-17T18:22:22.972076+00:00"
+  },
+  {
+    "file": "media/after-rules-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "a758f0b6ad9fb96b6ee1d5371ac2097b9eb582573e7491d6514e02fde1f1e1ff",
+    "modified_utc": "2026-10-17T18:20:58.848168+00:00"
+  },
+  {
+    "file": "media/after-setup-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "e3b1a5e7aa7aec65f285b9fab51a808d2f8d5f5d0a4fec56d1c9c92acd97b3d1",
+    "modified_utc": "2026-10-17T18:20:53.027530+00:00"
+  },
+  {
+    "file": "media/after-setup-landscape.png",
+    "width": 844,
+    "height": 390,
+    "sha256": "53731f39a5b0a7e877b37b63dfe6bd9e951231bb150b3c57702a9acf0506f5c5",
+    "modified_utc": "2026-10-17T18:21:18.396909+00:00"
+  },
+  {
+    "file": "media/after-setup-portrait.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "33e2598187f43bf489ea1d04588c2b26a6279534e370355ec29e5d45e1f6b5c2",
+    "modified_utc": "2026-10-17T18:21:14.851749+00:00"
+  },
+  {
+    "file": "media/after-tuning-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "bc8af928166b3a9d01b95ddf4848e7b72cd41515e4c5b8ddf013c1e671215f52",
+    "modified_utc": "2026-10-17T18:21:00.554682+00:00"
+  },
+  {
+    "file": "media/after-wonder-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "a5582b313f9fd0b4e78a950843948b6665731e628db56add25777dd289201440",
+    "modified_utc": "2026-10-17T18:21:01.279603+00:00"
+  },
+  {
+    "file": "media/before-audio-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "2b1f39de1a78c754796f7eeb3be3915b7e904daf1d7f5a1512bb35c74a543916",
+    "modified_utc": "2026-10-17T18:12:41.335539+00:00"
+  },
+  {
+    "file": "media/before-camera-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "7f4ac2b4ace181c412a4af88b24819547ec14a284fa518297be176b75e7f2b98",
+    "modified_utc": "2026-10-17T18:13:13.738562+00:00"
+  },
+  {
+    "file": "media/before-companion-portrait.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "d03758f29f419a49289a794ab364ff393e7b30c3e85f4ca83e17afb3809e3e5a",
+    "modified_utc": "2026-10-17T18:13:15.655726+00:00"
+  },
+  {
+    "file": "media/before-controls-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "cef76dfeceddf4c52cb90108131853ab61e5ceb1f8df9f658c97c186bd6bf170",
+    "modified_utc": "2026-10-17T18:11:52.055584+00:00"
+  },
+  {
+    "file": "media/before-diagnostics-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "f22578098d8b46f58b98be7014b60a14cb50285018397944f8a93d92b338c3d4",
+    "modified_utc": "2026-10-17T18:12:10.605827+00:00"
+  },
+  {
+    "file": "media/before-game-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "b0b2a1e1236ca559e1c7c75bfbd5e2145306b1c7eb4da96248218f0e1180bf62",
+    "modified_utc": "2026-10-17T18:12:24.072094+00:00"
+  },
+  {
+    "file": "media/before-game-landscape.png",
+    "width": 844,
+    "height": 390,
+    "sha256": "09757f6540780fe7e7ce8941b4830b31007838de385c162ca74d1704b6ffbc83",
+    "modified_utc": "2026-10-17T18:13:55.575742+00:00"
+  },
+  {
+    "file": "media/before-game-portrait.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "f9cc79553d0f8bd3edc6c4930936f7bba1cbd23aebee3f43134adf8f0b1cff01",
+    "modified_utc": "2026-10-17T18:13:45.139709+00:00"
+  },
+  {
+    "file": "media/before-nicklab-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "87b31893b0b1261c910569ea02dc76569c26154b7d8813e2a52a8ddd887836ee",
+    "modified_utc": "2026-10-17T18:12:09.649739+00:00"
+  },
+  {
+    "file": "media/before-rules-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "04de5e9d6c91ff83e67bd90b985c267d645dd8a19bd6add408db4ccf5ed27934",
+    "modified_utc": "2026-10-17T18:11:57.471303+00:00"
+  },
+  {
+    "file": "media/before-setup-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "926383e916c2947f9fdf48e6e82bec9a7f65e59a32f5188a8e8681055e0d50cb",
+    "modified_utc": "2026-10-17T18:13:56.530126+00:00"
+  },
+  {
+    "file": "media/before-setup-landscape.png",
+    "width": 844,
+    "height": 390,
+    "sha256": "a1cbfbb2bcfb21b0139a0dc837400f2db4856fe7c03d1a36956cbdcfe023803b",
+    "modified_utc": "2026-10-17T18:13:58.075469+00:00"
+  },
+  {
+    "file": "media/before-setup-portrait.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "1aba9c9e09982b985d7c560cd5ecc7a7e435c97baa3f1a8c7f07e1d15cf8b04f",
+    "modified_utc": "2026-10-17T18:13:56.870360+00:00"
+  },
+  {
+    "file": "media/before-tuning-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "1093800e28f6e3841c5b083e1c9a6563c4725227ce299db13120c9c2545c5e14",
+    "modified_utc": "2026-10-17T18:12:02.572026+00:00"
+  },
+  {
+    "file": "media/before-wonder-desktop.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "56d2d4d1fb0b3ddf6f3b3080ebf88e55ea4e317118991c29a4ebf45bfc199f19",
+    "modified_utc": "2026-10-17T18:12:49.014724+00:00"
+  },
+  {
+    "file": "media/live-court.png",
+    "width": 1440,
+    "height": 570,
+    "sha256": "e8fd3646c06f3405f790b5b13b33f0e3697071dfa61cc492437802ff422b50ff",
+    "modified_utc": "2026-10-17T18:20:19.890485+00:00"
+  },
+  {
+    "file": "media/operator-comparison.png",
+    "width": 1440,
+    "height": 900,
+    "sha256": "c9253c2f45781230eedf8318572db9bab3e86c5733300919973301300800e62e",
+    "modified_utc": "2026-10-17T18:27:19.869097+00:00"
+  }
+]

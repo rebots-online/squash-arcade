@@ -1,0 +1,22 @@
+{
+  "png_count": 30,
+  "required_pairs": "pass",
+  "palette_literals": [
+    "#111111",
+    "#1677ff",
+    "#6b7280",
+    "#d9dee7",
+    "#f7f8fa",
+    "#ffffff"
+  ],
+  "duplicate_operator_ids": false,
+  "external_image_sources": false,
+  "script_tags_balanced": true,
+  "contrast": {
+    "fg_on_bg": 18.88,
+    "fg_on_surface": 17.77,
+    "muted_on_surface": 4.55,
+    "accent_on_bg_nontext": 4.1
+  },
+  "scope": "Static artifact validation, not application/device acceptance"
+}
