@@ -853,15 +853,19 @@ export class ArgonTennisEngine {
           this.tuningStore.setParam('rulesAndView', 'courtTheme', theme);
         }
         this.matchConfig.inputMode = inputMode || 'mouse';
-        if (difficulty) this._applyDifficultyTuning(difficulty);
+        // "Play Match Now" ALWAYS launches real play — AI vs AI is reached via
+        // the spectator pill/showcase, never through this button. If ai_vs_ai
+        // is still selected, coerce to a playable difficulty.
+        let startDifficulty = difficulty;
+        if (startDifficulty === 'ai_vs_ai') {
+          startDifficulty = 'pro';
+          this.hud._setDifficultySelection?.('pro', { notify: false });
+        }
+        if (startDifficulty) this._applyDifficultyTuning(startDifficulty);
 
         if (this.introDirector) {
           this.introDirector.active = false;
           this.hud.hideIntroOverlay();
-        }
-        if (difficulty === 'ai_vs_ai') {
-          this.startSpectatorAIMatch({ showStartBanner: true });
-          return;
         }
         this.spectatorMatchMode = false;
         this.autoPlayMode = false;
