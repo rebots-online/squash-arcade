@@ -224,7 +224,7 @@ Commits: `775a340`, `fff35d8`, `c97d67e`, `7cc02ae`, `457d739`, `2f50cae` — al
 Source of truth: `DOCS/ARCHITECTURE.md` v2.3.0 §5.9 (entity rows are cited verbatim below so a coder need not open the architecture doc). Bounded brownfield contract: touch ONLY the files named in your task; do not restructure neighboring modules; work additively with timestamped backups beside every file you edit.
 
 ### `TASK-25` — Front-Wall Viscoelastic COR
-- **Status**: `[ ]`
+- **Status**: `[X]`
 - **Owner Module**: `src/squash/BallPhysics.js`
 - **Architecture Ref**: §5.9 entity row "Front-wall viscoelastic COR"
 - **Depends On**: `[]`
