@@ -1,0 +1,449 @@
+{
+  "startedAt": "2026-10-21T22:48:39.112Z",
+  "startElapsed": 11.30359999990464,
+  "commits": [
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 12.280399999976165,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.2574383846668784,
+        0.2580633185732773,
+        -1.443020937628484
+      ],
+      "stroke": 10
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 18.27739999985691,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.334457094989769,
+        0.41665536283246507,
+        3.193489433672237
+      ],
+      "stroke": 2
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 20.060499999880722,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.908768844117861,
+        0.6944430394096689,
+        4.0710334094815845
+      ],
+      "stroke": 3
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 21.793799999833002,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.7745763192600754,
+        0.6541329476903947,
+        4.043342688208799
+      ],
+      "stroke": 4
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 23.581099999785284,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.8060280761424288,
+        0.677814672978538,
+        4.047495357979318
+      ],
+      "stroke": 5
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 25.367899999737563,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.7985820607145215,
+        0.6605277017104815,
+        4.041047026397866
+      ],
+      "stroke": 6
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 27.08549999976137,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.8003353477075326,
+        0.6742666447165305,
+        4.043231281466525
+      ],
+      "stroke": 7
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 28.845499999761333,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.7999211268708852,
+        0.6602587093815186,
+        4.041118966011365
+      ],
+      "stroke": 8
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 34.22859999966586,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        -2.334457094989769,
+        0.41665536283246507,
+        3.193489433672237
+      ],
+      "stroke": 2
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 36.00559999978504,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.6417099441281082,
+        0.5308346394484718,
+        4.253508934072669
+      ],
+      "stroke": 3
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 37.78599999976117,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        -2.613315361142727,
+        0.5191943605251266,
+        4.240457606609983
+      ],
+      "stroke": 4
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 39.56139999973729,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        -2.843589552882872,
+        0.6724466290287492,
+        4.042614873815677
+      ],
+      "stroke": 5
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 42.279999999641866,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        -2.1269323008322103,
+        0.8968439114350842,
+        4.162596886227458
+      ],
+      "stroke": 6
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 44.045699999808726,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        -2.9618728372949925,
+        0.661892667610426,
+        4.03077575768511
+      ],
+      "stroke": 7
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 49.834099999784776,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.334457094989769,
+        0.41665536283246507,
+        3.193489433672237
+      ],
+      "stroke": 2
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 51.620299999832426,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.908768844117861,
+        0.6944430394096689,
+        4.0710334094815845
+      ],
+      "stroke": 3
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 57.461499999879976,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        -2.334457094989769,
+        0.41665536283246507,
+        3.193489433672237
+      ],
+      "stroke": 2
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 59.28109999990379,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.6531252187028667,
+        0.5444405835225956,
+        4.2657923389145305
+      ],
+      "stroke": 3
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 60.801099999903755,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        -1.3769607417560807,
+        0.16216659727316038,
+        0.6773872586009161
+      ],
+      "stroke": 4
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 66.89349999987978,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.334457094989769,
+        0.41665536283246507,
+        3.193489433672237
+      ],
+      "stroke": 2
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 68.71529999983204,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.908768844117861,
+        0.6944430394096689,
+        4.0710334094815845
+      ],
+      "stroke": 3
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 70.46939999997505,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.7745763192600754,
+        0.6541329476903947,
+        4.043342688208799
+      ],
+      "stroke": 4
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 72.19769999992734,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.8060280761424288,
+        0.677814672978538,
+        4.047495357979318
+      ],
+      "stroke": 5
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 73.92760000002266,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.7985820607145215,
+        0.6605277017104815,
+        4.041047026397866
+      ],
+      "stroke": 6
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 75.63470000004646,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        -2.5925573533348687,
+        0.5226824557987199,
+        4.267013335287266
+      ],
+      "stroke": 7
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 77.39280000007027,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.6346445258703004,
+        0.5346223541676999,
+        4.262680479938872
+      ],
+      "stroke": 8
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 79.22240000009408,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        2.8383278674774415,
+        0.6663047351028657,
+        4.045160180419941
+      ],
+      "stroke": 9
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 80.90590000009405,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        -2.596944328351423,
+        0.5381268097022516,
+        4.274007257602047
+      ],
+      "stroke": 10
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 82.74540000009401,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        -2.8478890244408332,
+        0.6694028160293151,
+        4.037355083637302
+      ],
+      "stroke": 11
+    },
+    {
+      "name": "_commitOpponentSquashStrike",
+      "time": 88.5509000000939,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        -2.334457094989769,
+        0.41665536283246507,
+        3.193489433672237
+      ],
+      "stroke": 2
+    },
+    {
+      "name": "_commitPlayerRallyStrike",
+      "time": 90.39600000011771,
+      "ok": true,
+      "phase": "RALLY",
+      "ball": [
+        -2.908768844117861,
+        0.6944430394096689,
+        4.0710334094815845
+      ],
+      "stroke": 3
+    }
+  ],
+  "requests": [],
+  "points": [
+    {
+      "time": 13.678399999976167,
+      "phase": "RALLY",
+      "stroke": 10,
+      "args": [
+        "opponent",
+        "Not Up! (Two Bounces)"
+      ]
+    },
+    {
+      "time": 29.645499999761316,
+      "phase": "RALLY",
+      "stroke": 8,
+      "args": [
+        "opponent",
+        "Out!"
+      ]
+    },
+    {
+      "time": 45.20029999983255,
+      "phase": "RALLY",
+      "stroke": 7,
+      "args": [
+        "opponent",
+        "NICK! Rolled Dead!"
+      ]
+    },
+    {
+      "time": 52.86109999978471,
+      "phase": "RALLY",
+      "stroke": 3,
+      "args": [
+        "opponent",
+        "NICK! Rolled Dead!"
+      ]
+    },
+    {
+      "time": 62.32109999990372,
+      "phase": "RALLY",
+      "stroke": 4,
+      "args": [
+        "player",
+        "Not Up! (Two Bounces)"
+      ]
+    },
+    {
+      "time": 83.9107000000463,
+      "phase": "RALLY",
+      "stroke": 11,
+      "args": [
+        "player",
+        "NICK! Rolled Dead!"
+      ]
+    }
+  ],
+  "endedAt": "2026-10-21T22:50:52.446Z",
+  "source": "39d98444fc65db9aa973d832ad287f53a5d7818d",
+  "endElapsed": 91.65460000014153,
+  "endPhase": "RALLY",
+  "score": {
+    "playerPoints": 2,
+    "opponentPoints": 4,
+    "playerGames": 0,
+    "opponentGames": 0,
+    "server": "player",
+    "serviceSide": "right",
+    "handOutJustOccurred": false
+  },
+  "successfulCommits": 31
+}

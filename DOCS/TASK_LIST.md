@@ -2,7 +2,7 @@
 title: Squash Arcade shot and swing corrections
 conversation_id: 01a15e0e-0b4c-7153-a123-1887270a7760
 created_at_utc: 2026-10-21T22:23:18Z
-updated_at_utc: 2026-10-21T22:23:18Z
+updated_at_utc: 2026-10-21T23:02:00Z
 file_computer: msi4090
 file_absolute_path: /home/robin/Desktop/DevProjects/squash-arcade/DOCS/TASK_LIST.md
 authority_revision: 64a77201a3edfc3f8f6d13e89caf32b5978087b75231ed5c5f7f7d075b4f136a
@@ -13,11 +13,9 @@ scope_locations:
 # TASK LIST
 
 ⚪ Squash Arcade — original repository only
-  🟣 Revise the shot and stroke contracts against the synced code
-  🟠 Give the drive softer pace and a higher front-wall contact, with a rear-quarter drop
-  🟠 Give the side-wall boast a softer side-wall/nick finish
-  🟠 Show side-on preparation, opposite-leg loading, body rotation and a continuous step through contact
-  🟢 Inspect complete live approach, swing, contact, follow-through and ball-flight sequences
+  🟢 Robin to judge revised shot feel and the clarity of the conventional side-on step-through
+
+Implementation tasks35–38 and controlled runtime observations are recorded in CHECKLIST.md and DOCS/VERIFICATION/shot-shape-step-20261021/OBSERVED-RUN.md. The29 regression tests, lint, repeated15/15 diagnostic and four inspected live stroke recordings passed. This is INCOMPLETE—pending-operator, with no public deployment or native acceptance claimed. Central Postgres ledger writes failed with No route to host; Git checkpoints/evidence are published separately.
 
 ## Decisions and constraints
 
