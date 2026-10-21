@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { StrokeMotion } from '../src/squash/StrokeMotion.js';
 import { PlayerMovement } from '../src/squash/PlayerMovement.js';
 import { BallPhysics } from '../src/squash/BallPhysics.js';
-import { getRacketRimWorldPoints } from '../src/racket_kinematics.js';
+import { getRacketRimWorldPoints, RacketKinematicsController } from '../src/racket_kinematics.js';
 
 function fixture({ handedness = 'right', ballX = 0.45 } = {}) {
   const root = new THREE.Group();
@@ -277,6 +277,70 @@ test('contact alignment moves only reachable racket pose, keeps hand attached an
   assert.deepEqual(actor.pos, actorPos);
   assert.deepEqual(ball.pos, ballPos);
   assert.deepEqual(ball.vel, ballVel);
+});
+
+test('the first committed low-ball frame aligns the production racket path despite fixed-step overshoot', () => {
+  const { actor, ball } = fixture();
+  actor.pos.set(2.5502, 0, 4.50995);
+  actor.root.position.copy(actor.pos);
+  actor.model.scale.setScalar(1.06);
+  actor.racketMesh = new THREE.Group();
+  actor.racketMesh.scale.set(1.02, 1.22, 1.02);
+  actor.racketPivot.add(actor.racketMesh);
+  ball.pos.set(2.8, 0.397, 4.4);
+  ball.vel.set(0, -2.3, -5);
+  prepare(actor, ball);
+  const controller = new RacketKinematicsController();
+  const k = controller.triggerSwing(actor, { side: 'forehand', shotType: 'topspin', speed: 1.2 });
+  StrokeMotion.request(actor, { ball, inputEvent: { side: k.swingSide } });
+  let emitted = null;
+  while (!emitted) {
+    BallPhysics.stepBallPhysics(ball, 1 / 120, { ballPhysics: {} });
+    emitted = StrokeMotion.update(actor, 1 / 120, { ball, phase: 'RALLY' });
+    assert.ok(actor.strokeMotion.elapsedSec < 0.11);
+  }
+  assert.ok(actor.strokeMotion.progress > 0.34 && actor.strokeMotion.progress < 0.38);
+  assert.ok(Math.hypot(ball.pos.x - actor.pos.x, ball.pos.z - actor.pos.z) < 1.15);
+  const actorPos = actor.pos.clone(), ballPos = ball.pos.clone(), ballVel = ball.vel.clone();
+  const frame = () => {
+    ordinaryPose(actor);
+    actor.root.rotation.y = actor.strokeMotion.yawRad;
+    k.swingDuration = actor.strokeMotion.racketDurationSec;
+    k.swingElapsed = actor.strokeMotion.progress * k.swingDuration - 1 / 60;
+    k.swingActive = true;
+    controller.update(actor, 1 / 60, { phase: 'RALLY', ball });
+    actor.root.updateMatrixWorld(true);
+    const rawCenter = getRacketRimWorldPoints(actor).centerWorld.clone();
+    StrokeMotion.applyPose(actor, ball);
+    return rawCenter;
+  };
+  const uncorrected = frame();
+  assert.ok(uncorrected.distanceTo(ballPos) > 1.15,
+    'regression must require more pose correction than the former 1.15m cap');
+  assert.ok(uncorrected.distanceTo(ballPos) < 2.5);
+  assert.ok(getRacketRimWorldPoints(actor).centerWorld.distanceTo(ballPos) < 1e-6);
+  const grip = actor.racketMesh.localToWorld(new THREE.Vector3(0, 0.08, 0));
+  assert.ok(actor.rig.handRPivot.getWorldPosition(new THREE.Vector3()).distanceTo(grip) < 1e-6);
+  assert.deepEqual(actor.pos, actorPos);
+  assert.deepEqual(ball.pos, ballPos);
+  assert.deepEqual(ball.vel, ballVel);
+
+  // The saved contact point remains fixed while the correction eases away. The
+  // real racket animation continues to supply the underlying follow-through.
+  const residuals = [];
+  for (const progress of [0.38, 0.40, 0.48, 0.58, 0.68]) {
+    const advance = (progress - actor.strokeMotion.progress) * 0.24 / 0.66;
+    StrokeMotion.update(actor, advance, { ball, phase: 'RALLY' });
+    const rawCenter = frame();
+    const correctedCenter = getRacketRimWorldPoints(actor).centerWorld.clone();
+    const rawDelta = actor.strokeMotion.contactPos.clone().sub(rawCenter);
+    const applied = correctedCenter.sub(rawCenter);
+    residuals.push(applied.dot(rawDelta) / rawDelta.lengthSq());
+  }
+  near(residuals[0], 1);
+  assert.ok(residuals[1] > 0.98 && residuals[1] < residuals[0]);
+  for (let i = 1; i < residuals.length; i++) assert.ok(residuals[i] <= residuals[i - 1]);
+  near(residuals.at(-1), 0);
 });
 
 test('overhead preserves forward overhead mechanics while using the same contact schedule', () => {

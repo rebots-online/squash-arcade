@@ -220,8 +220,15 @@ export class StrokeMotion {
       actor.root.updateMatrixWorld(true);
       const center = getRacketRimWorldPoints(actor).centerWorld.clone();
       const delta = contactTarget.clone().sub(center);
-      const weight = Math.exp(-(((motion.progress - CONTACT_PROGRESS) / 0.12) ** 2)) * (1 - recovery);
-      if (delta.length() > 1.15) delta.setLength(1.15);
+      // A physics step can cross contact at progress .34 and render at about .363.
+      // Hold full alignment across that interval, then ease back into the carry.
+      const contactWeight = motion.progress < CONTACT_PROGRESS
+        ? smooth((motion.progress - 0.08) / (CONTACT_PROGRESS - 0.08))
+        : 1 - smooth((motion.progress - 0.38) / 0.30);
+      const weight = contactWeight * (1 - recovery);
+      // This bounds correction of the legacy local pose, not game-body reach.
+      // The engine separately enforces a 1.15m actor-to-ball horizontal reach.
+      if (delta.length() > 2.5) delta.setLength(2.5);
       const pivotWorld = actor.racketPivot.getWorldPosition(new THREE.Vector3());
       plantPivot(actor.racketPivot, pivotWorld.addScaledVector(delta, weight));
     }
