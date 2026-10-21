@@ -234,7 +234,7 @@ Source of truth: `DOCS/ARCHITECTURE.md` v2.3.0 §5.9 (entity rows are cited verb
 - **Accept (AP-1)**: `grep -c "lerp(0.88, 0.66" src/squash/BallPhysics.js` reports exactly 1; `grep -c "bp.frontWallRestitution" src/squash/BallPhysics.js` reports 0; `npm run lint` exits 0. (Semantic: 7–13 m/s lob contacts respond 0.88, 15 → 0.853, ≥20 m/s drives ≤ 0.677 — full numeric attestation lands in TASK-32.)
 
 ### `TASK-26` — Charge Envelopes, Skill Scalar & Error/Fatigue Params
-- **Status**: `[ ]`
+- **Status**: `[X]`
 - **Owner Module**: `src/squash/TuningConfig.js`
 - **Architecture Ref**: §5.9 entity rows "`SHOT_CHARGE_ENVELOPES`", "AI error params", "Fatigue error multiplier"
 - **Depends On**: `[]`
