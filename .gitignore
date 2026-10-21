@@ -7,3 +7,9 @@ package-lock.json
 .surge
 .DS_Store
 !.env.example
+
+# local tool state and scratch
+.anchor/
+.codegraph/
+.playwright-mcp/
+STAGING_*/
