@@ -234,3 +234,22 @@ kbd{display:inline-block;padding:1px 6px;border-radius:5px;background:#1e293b;bo
   #title-modal.side-docked-menu.menu-collapsed .wii-footer-row{display:none!important}
 }
 .skill-rating-caption{font-size:9px;font-weight:900;letter-spacing:.12em;color:#8b95b3;margin-top:2px}
+
+/* Keep build identity visible above menus and clear of gameplay controls. */
+#build-version {
+  position: fixed;
+  right: max(8px, env(safe-area-inset-right));
+  bottom: max(4px, env(safe-area-inset-bottom));
+  z-index: 10000;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: rgba(8, 12, 20, 0.92);
+  color: #f1f5f9;
+  font: 11px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+#bottom-right-dock {
+  bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+}

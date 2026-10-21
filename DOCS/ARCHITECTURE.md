@@ -503,3 +503,20 @@ The existing six-second exchange diagnostic varies tactical selection, anticipat
 | `ShotController.constructor` / `randomSource` | optional dependency | `src/squash/ShotController.js:40` | `(randomSource=Math.random)`; existing no-argument callers remain valid. Three intentional-error random draws use callback. |
 | `rallyRandomState` / `rallyRandom` / `rallyShotCtrl` | diagnostic-local entities | `src/squash/TestHarness.js:363` | Recreate state1 for each runAll. LCG state=(imul(state,1664525)+1013904223)>>>0; value=state/4294967296. Both fixture AIs and separate rally ShotController share this stream. No global replacement. |
 | `diagnostic-randomness.test.mjs` | regression suite | `tests/diagnostic-randomness.test.mjs:1` (new) | Repeated whole diagnostic results identical excluding timestamp; original six-second exchange passes, global random identity unchanged. Injected tactical/error streams are reproducible and ordinary callers retain random draws. |
+
+### §5.15 Build identity and Surge evaluation deployment
+
+Robin explicitly requested deployment to squash-arcade.surge.sh and a bottom-right version/build display. CC7 requires exactly vMAJOR.MINOR.BUILD. Preserve existing private-package major1; stamp a new minor iteration and epoch-minutes-mod100000 BUILD once at the start of each production build. This remains a manual web evaluation deployment, with no CI/native/Tauri work. Existing project deploy wrapper is absent; installed authenticated Surge CLI supplies deployment. Root dist is the tracked deploy artifact; back up existing dist before Vite replaces it.
+
+| Entity | Kind | Anchor | Role / signature |
+| :--- | :--- | :--- | :--- |
+| `stamp-build.mjs` | build script | `scripts/stamp-build.mjs:1` (new) | Read canonical version.txt or existing package.version, increment MINOR, derive BUILD=floor(Date.now()/60000)%100000 padded5, write version.txt/package.version and public/deployment.json. Fail on malformed canonical state; no secrets in metadata. |
+| `version.txt` | canonical version | root new file | Exact MAJOR.MINOR.BUILD, initialized from the existing package version; build script advances it. |
+| `deployment.json` | generated public metadata | `public/deployment.json:1` (generated) | Fields version, sourceCommit, builtAt; sourceCommit is pre-stamp source HEAD, timestamp ISO UTC. It is copied into dist by Vite. |
+| `build_version.js` | UI module | `src/build_version.js:1` (new) | Import package.json version at bundle time; set #build-version textContent to v+version. No runtime clock or network version lookup. |
+| `#build-version` | output element | `index.html:before body closing scripts` | Application version label, visible at bottom right on menu/game/modal/mobile. No filler version or extra versionCode; text comes from bundled source. |
+| `#build-version` / `#bottom-right-dock` | CSS | `public/styles.css:append` | Readable fixed lower-right badge, pointer-events none, safe-area insets; reserve badge space so existing controls do not overlap. |
+| `package.scripts.build/deploy` | command contracts | `package.json:8/11` | build: stamp then existing download-assets then vite build; deploy: surge ./dist squash-arcade.surge.sh. Existing prebuild dependency setup retained. |
+| root dist exception | artifact tracking | `.gitignore:dist rule` | Replace root-dist exclusion with tracked root exception; retain nested dist exclusions and all unrelated ignore rules. |
+
+The public deployment is verified by HTTP delivery and byte hashes of index/JS/CSS/metadata, then an actual public browser render showing the same version and running game. Robin's timing/feel verdict remains separate from deployment success. KStore-mediated turn archival/correction is mandatory; the legacy task_event failure is not a separate required ledger or evidence of KStore capture failure.
