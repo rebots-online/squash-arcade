@@ -1,9 +1,9 @@
 ---
 doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
-version: "2.2.1"
-status: "ALIGNED_TO_CODEGRAPH (2026-10-17 audit) + PENDING REFINEMENTS"
-updated_at: "2026-10-17T15:05:00-04:00"
+version: "2.3.0"
+status: "ALIGNED_TO_CODEGRAPH (2026-10-17 audit) + PENDING REFINEMENTS + §5.9 SHOT-LAW AD APPROVED 2026-10-21"
+updated_at: "2026-10-21T01:55:00-04:00"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
 kstore_namespace: "mba.robin.squasharcade"
 kstore_schema_version: "1.3"
@@ -385,7 +385,7 @@ Instead of classifying from a single 2-point velocity delta, `BiomechStrokeClass
 - Post-shot T-recovery (`getTRecoveryPosition`, `isRecoveringToT` scaling) is unchanged.
 - **Position-relative strike quality** (`OpponentAI.updateAI` patience gate): no strikes on high/fresh balls before the bounce except a deliberate poach volley when the hitter is stranded deep (time pressure); off the back glass the receiver waits for sit-up-and-descend (`y ≤ 0.72` or `y < 1.15 && vy < -0.35`) so contact comes on the upswing — the stroke that drives it back deep and sustains T→corner→T cycling.
 - **Off-back-glass shot mix**: same-corner counter-drive is the backbone (~55%), cross/lob/boast/drop mix it up (~45%) — legible pattern, not invariant.
-- **Deep lob requirement**: a lob landing mid-court is an invitation for a kill — `HIGH_LOB` strikes the front wall near-ceiling at `y ≈ 4.85` with ~11.2 m/s pace and light cut (`spin.x = -2.5`) so the rebound arcs over the T and dies in the back corner; it must never sit up mid-court.
+- **Deep lob requirement — FAILED ATTEMPT (`2f68ee9`), superseded by §5.9**: the 4.85 m front-wall aim sits ABOVE the 4.57 m out line. Measured through the shipped `BallPhysics` (drag+Magnus, 120 Hz): mid/front-court contacts arrive at 4.70–4.74 m → `hitOut` (`BallPhysics.js:62`) → rally ended at the wall (`RulesEngine.js:170`) — every lob from most of the court is called Out. Deep-court contacts scrape legal (4.43–4.48 m, drag luck) but the rebound dies at z ≈ 0–1.5 m mid-court: the blanket `frontWallRestitution: 0.68` caps post-wall carry at ~7 m, so no pace/height mix reaches the corner. Keep-or-revert verdict: revert intent, replace mechanic per §5.9.
 
 ### 5.8 Match-Start Ceremony, Shot-Select Onboarding & Player Identity — shipped
 - **Racket-spin ceremony** (`ArgonSquashEngine._runRacketSpinCeremony`, `#racket-spin-overlay`): the first `_setupPointServe` of a fresh match in real play mode (score 0-0, games 0-0, not spectator/autoplay/multiplayer) is gated into `phase = 'RACKET_SPIN'` — an unlisted phase that idles the loop safely. Player calls UP/DOWN while the racket twirls (~1.2s); winner elects serve or receive (AI always elects to serve); `score.server` is set before serve-stance setup proceeds.
@@ -397,3 +397,27 @@ Instead of classifying from a single 2-point velocity delta, `BiomechStrokeClass
 - **T-recovery yields the lane**: post-shot T-recovery (both actors) targets the far side of the ball's lane and hangs slightly deep, cutting false let calls during receiver recovery.
 - **Mobile side menu**: fully rolls up to its handle and starts rolled at ≤768px viewports.
 - **Spin graphic**: the twirling racket is an inline squash-racket SVG (teardrop head, string bed, throat, handle) — no emoji; UP/DOWN via buttons or arrow keys, overlay ignores stray pointer events.
+
+### 5.9 Honest Shot Law — Corner-Landing Solves, Per-Shot Charge Envelopes, Executable Failure & Probabilistic AI Skill (AD approved 2026-10-21; pending implementation)
+
+**Design principles (settled with operator 2026-10-21):**
+1. **Intent vs execution.** The shot call fixes intent: a lob always *attempts* the back-corner landing (corner chosen from the striker's position, straight lane). Charge scales execution within the shot's OWN envelope — a full charge on a lob means "the best lob this position allows", never drive-pace on a lob arc (extends the §3.5 invariant; header comment `ShotController.js:7`).
+2. **Executable failure.** The solver searches for the corner landing; if no legal solve exists from a position, the optimal attempt is executed ANYWAY and lands out (or sits up catchable). No refusal, no silent retarget to a safe mediocre shot, no runtime legality clamp — `BallPhysics.js:62` + `RulesEngine.js:170` remain the sole judges. Poor shot choices must be *visibly punished*; unpunished poor choices are a design failure.
+3. **One discriminator, both outcomes.** "Ball crosses the T band (z ∈ [0.5, 2.5]) above racket reach (~2.6 m)" simultaneously defines the good lob (AI cannot volley it) and the bad lob (AI punish rule fires on everything below it). No special-casing.
+4. **AI skill = error distribution, not a dumber brain.** Every difficulty level runs the same tactical selection (an easy AI still goes for the kill on a sitter); levels differ only in probabilistic execution error, extending the §5.1 serve-error pattern. Watching the AI punish — or tin — the sitter the player created is itself the lesson: the successful kill costs the point (hard lesson), the tin spares it (soft lesson, framed as luck: "Count your blessings — that sat up"). Both name the player's choice as the cause.
+
+**Entity rows (anchors cite the code site each entity extends; new entities ship at the named module):**
+
+| Entity | Kind | Anchor | Role / signature |
+| :--- | :--- | :--- | :--- |
+| `SHOT_CHARGE_ENVELOPES` | frozen export | `src/squash/TuningConfig.js` (new, beside `DEFAULT_TUNING_PARAMS` @ `TuningConfig.js:49`) | Per-shot charge envelopes `{ minPaceMps, maxPaceMps, contactHeightBandM }`. LOB: pace 9.0–15.5, contact aim 4.10–4.90 (crosses 4.57 near envelope top — full charge from a bad spot is out by construction). KILL: 24–31 (charge sharpens pace only; never lifts out of the nick band). DROP: 6–9.5 (charge adds depth; cannot become a drive). DRIVE/BOAST: existing charge behavior unchanged. |
+| `ShotController.solveCornerLob` | method | replaces fixed 4.85/11.2 branch `src/squash/ShotController.js:260-274` | `solveCornerLob({ actorPos, contactPos, targetCornerSign, chargeNormalized, params }) -> { vel, spin, targetFrontY, paceMps, solveStatus }`, `solveStatus ∈ 'LEGAL_CORNER' \| 'ATTEMPT_OUT' \| 'ATTEMPT_SHORT'`. Straight lane only (`targetX = sideSign * 2.35`; cross-court lobs measured side-wall-bound 131/180 sweeps). Solve = bisection over `(targetFrontY, pace)` using `BallPhysics.simulateTrajectory`; legality is classification of the best solve, NEVER a filter. Charge lerps within the LOB envelope; low charge = same intent under-executed (short, catchable — also a lesson). |
+| Front-wall viscoelastic COR | physics change | `src/squash/BallPhysics.js:65` | `cor = min(0.88, lerp(0.86, 0.66, clamp01(impactSpeed / 28)) * tempFactor)` — restitution rises as impact speed drops (real viscoelastic response). Drives (≥20 m/s) keep today's ≈0.66–0.68 feel; soft lob contacts respond ≈0.85. REQUIRED for solve convergence: at flat 0.68 every measured lob stays catchable (see §5.7 failure record). |
+| Anti-float punish rule | gate extension | poach gate `src/squash/OpponentAI.js:234-249` | Incoming ball slow (`speed < 6 m/s`) + reachable (`y <= 1.9`) + pre-bounce → early volley-kill regardless of hitter depth (today's gate requires `player.z > 1.6`, so mid-court floaters go unpunished). Balls above 2.6 m in the T band stay exempt per principle 3. |
+| AI error params | tuning params | `movementAndAI` block `src/squash/TuningConfig.js:97-102` (`VITE_SA_*`-overridable, §5.1 pattern) | `aiKillTinChance`, `aiKillOutChance`, `aiLobOutChance`, `aiExecutionNoiseSigma` (multiplicative pace noise), `aiAimJitterDeg`. Difficulty presets set in `_applyDifficultyTuning` (`src/game_engine.js:642`): casual `{ tin 0.22, lobOut 0.30, sigma 0.08 }`, pro `{ 0.04, 0.06, 0.02 }`, `ai_vs_ai` uses the pro table. |
+| Fatigue error multiplier | tuning param | beside error params above | `aiFatigueErrorMultiplier = min(1.6, 1 + 0.04 * gamesPlayed + 0.004 * pointsPlayed + 0.015 * lastRallyStrokeCount)` — error chances (incl. `aiServeWrongBoxChance` @ `TuningConfig.js:102`, base 0.04) scale up slightly over a long match and especially right after exerting (long) rallies; always very low probability (worst case ≈ 0.064 at cap). Fatigue never changes shot selection. |
+| Choice grades | feedback | `RulesEngine.formatRefereeCallout` (`src/squash/RulesEngine.js:512`) + `HudUI.showTimingPopup` (`src/hud_ui.js`) | Outcome-named choice grades: "POOR — lob from mid-court" (punished), "LUCKY — Count your blessings, that sat up" (AI error bailed the player out; choice still named as the cause), "GOOD — deep defensive lob" (corner-death solve). Victory-card tactical rating (§5.8) accumulates choice quality — the scoreboard forgets, the rating remembers. |
+
+**Verification (`TestHarness`, new invariant beside existing sims at `src/squash/TestHarness.js:48+`):** `test_shot_law_lob` — contact-grid sweep asserting (a) deep-zone full-charge lob → `LEGAL_CORNER` (wall contact < 4.5 m, min height > 2.6 m across T band, first drop `|x| >= 1.6 && z >= 3.0`), (b) failure classes exist and are reachable (mid-court top-charge → `ATTEMPT_OUT`; deep-center → no corner solve — the "should not be played from here" zone), (c) no legality filter exists anywhere in `ShotController` execution paths.
+
+**Calibration data (measured 2026-10-21 against shipped `BallPhysics`, restitution 0.85, aim 4.35 m, straight lane):** deep-corner pace 15 → CORNER (z ≈ 4.9, minY 2.8); mid-court pace 13.5 → CORNER (minY 3.7), pace 15 → OUT; front-court pace 12 → CORNER (minY 3.0); deep-center → short of corner at all paces.
