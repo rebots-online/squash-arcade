@@ -42,3 +42,8 @@ Public sites were not redeployed. The separately observed intermittent AI-rally 
 ## Attestation
 
 Codex, msi4090, 2026-10-21T11:29:46.397112+00:00: I grant BW34-R1's two controlled-integration PASS results on direct inspection of the cited rendered sequences and endpoint frames, with the raw live-engine event data as supporting evidence. I do not grant BW34-R2, human input timing/feel acceptance, unrestricted gameplay acceptance, performance acceptance, or a SHIP-READY verdict.
+
+
+## Subsequent operator review — 2026-10-21
+
+Robin rejected the demonstrated overall behavior: both examples are too flat/hard and sit up toward mid-court; the drive should use a softer touch, contact just above the front-wall middle/service line and fall into the rear quarter. The second example reads as a side-wall boast; an actual boast should die near the side-wall/nick. The missing visible side-on preparation, opposite-leg loading, and rotation/step through contact also require correction. The bounded R1 measurements above remain a record of those two runs, not acceptance of this shot shape or human movement. BW34-R2 is REJECTED, not pending operator observation. New work must satisfy these revised requirements.
