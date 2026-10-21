@@ -490,30 +490,34 @@ export class ShotController {
     const closest = (pool) =>
       pool.reduce((best, cand) => (best === null || cand.cornerDist < best.cornerDist ? cand : best), null);
 
-    // 1. The charged scan: a legal steep corner drop wins outright.
+    const legalPick = (pool) =>
+      closest(pool.filter((c) => c.reachesCorner && c.isLegalContact)) ||
+      closest(pool.filter((c) => c.inCornerZone && c.isLegalContact));
+
+    // 1. The charged scan: a legal corner landing — steep if one exists, else the
+    //    flat, catchable one that is the honest result of lobbing from mid/back court.
     const charged = scan(LOB_ELEVATIONS_DEG, paces);
-    const legal = closest(charged.filter((c) => c.reachesCorner && c.isLegalContact));
-    // 2. No steep legal drop (typically from mid/back court): the legal corner lob
-    //    that exists is flat and catchable — the honest result of lobbing from there.
-    const catchable = legal ? null : closest(charged.filter((c) => c.inCornerZone && c.isLegalContact));
-    // 3. No legal way into a corner at all: the player aims at the out location that
-    //    WOULD have solved a back corner — legality ignored, elevations widened, pace
-    //    capped at the LOB envelope.
-    let winner = legal || catchable || closest(charged.filter((c) => c.reachesCorner));
+    let winner = legalPick(charged);
+
+    // 2. Not reachable at the charged pace: step the pace up from the charged pace
+    //    (smallest over-hit first, never past the LOB envelope — a lob is never full
+    //    power) until a legal corner landing exists.
+    const wide = [];
     if (!winner) {
-      // Paces ascend from the charged pace, so the first pace that reaches a corner
-      // is the smallest over-hit — the nearest "would have" shot. A lob is never
-      // full power: the scan stays inside the LOB envelope.
-      const wide = [];
-      for (let pace = paceCenter; pace <= maxPaceMps + 1e-9; pace += 1.0) {
+      for (let pace = paceCenter + 1.0; pace < maxPaceMps + 1.0 - 1e-9; pace += 1.0) {
+        pace = Math.min(pace, maxPaceMps); // the last step lands exactly on the envelope ceiling
         const atPace = scan(LOB_WOULD_HAVE_ELEVATIONS_DEG, [pace]);
         wide.push(...atPace);
-        winner = closest(atPace.filter((c) => c.reachesCorner));
+        winner = legalPick(atPace);
         if (winner) break;
       }
-      // 4. Last resort (no corner-reaching trajectory exists at all): closest landing.
-      winner = winner || closest([...charged, ...wide]);
     }
+
+    // 3. No legal way into a corner anywhere in the envelope: the player aims at the
+    //    out location that WOULD have solved a back corner (legality ignored).
+    // 4. Last resort (no corner-reaching trajectory at all): closest landing.
+    const all = [...charged, ...wide];
+    winner = winner || closest(all.filter((c) => c.reachesCorner)) || closest(all);
 
     return {
       vel: winner.vel,
@@ -521,7 +525,7 @@ export class ShotController {
       cornerSign: winner.cornerSign,
       solvedContactY: winner.solvedContactY,
       paceMps: winner.paceMps,
-      solveStatus: legal ? 'LEGAL_CORNER' : catchable ? 'CATCHABLE_CORNER' : this._classifyLobAttempt(winner)
+      solveStatus: this._lobStatus(winner)
     };
   }
 
@@ -534,13 +538,7 @@ export class ShotController {
     const scored = this._scoreLobCandidate(this._simulateLobCandidate(contactPos, vel, spin, params), corner);
     return {
       solvedContactY: scored.solvedContactY,
-      solveStatus: !scored.isLegalContact
-        ? this._classifyLobAttempt(scored)
-        : scored.reachesCorner
-        ? 'LEGAL_CORNER'
-        : scored.inCornerZone
-        ? 'CATCHABLE_CORNER'
-        : this._classifyLobAttempt(scored)
+      solveStatus: this._lobStatus(scored)
     };
   }
 
@@ -605,6 +603,12 @@ export class ShotController {
         inCornerZone && Number.isFinite(sim.postWallTBandMinY) && sim.postWallTBandMinY > LOB_T_BAND_CLEARANCE_M,
       cornerDist: Math.hypot(restPos.x - corner.x, restPos.z - corner.z)
     };
+  }
+
+  _lobStatus(scored) {
+    if (scored.isLegalContact && scored.reachesCorner) return 'LEGAL_CORNER';
+    if (scored.isLegalContact && scored.inCornerZone) return 'CATCHABLE_CORNER';
+    return this._classifyLobAttempt(scored);
   }
 
   _classifyLobAttempt(scored) {
