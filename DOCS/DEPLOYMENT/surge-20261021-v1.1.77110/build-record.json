@@ -1,0 +1,11 @@
+{
+  "version": "1.1.77110",
+  "sourceCommit": "913b3f37f9d01b4b82dd325171138a10f42bcfe8",
+  "builtAt": "2026-10-21T23:50:04.157Z",
+  "site": "https://squash-arcade.surge.sh",
+  "buildCommand": "npm run build",
+  "buildResult": "success",
+  "fileCount": 18,
+  "priorSurgeRevision": "1792571904021-squash-arcade.surge.sh",
+  "publicVerification": "pending"
+}
