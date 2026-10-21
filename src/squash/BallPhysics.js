@@ -62,7 +62,7 @@ export class BallPhysics {
         const hitOut = ball.pos.y >= COURT_SPECS.FRONT_WALL_OUT_Y;
 
         ball.pos.z = frontLimitZ + 0.002;
-        const cor = Math.min(0.88, (bp.frontWallRestitution ?? 0.68) * tempFactor);
+        const cor = Math.min(0.88, THREE.MathUtils.lerp(0.88, 0.66, THREE.MathUtils.clamp((impactSpeed - 13) / 15, 0, 1)) * tempFactor);
         ball.vel.z = -ball.vel.z * (hitTin ? 0.32 : cor);
         ball.vel.x *= friction;
 
