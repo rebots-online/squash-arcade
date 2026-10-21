@@ -32,6 +32,8 @@ const LOB_CORNER_REF = Object.freeze({ x: 2.35, z: 4.2 }); // x is mirrored per 
 const LOB_T_BAND_Z = Object.freeze([0.5, 2.5]);
 const LOB_T_BAND_CLEARANCE_M = 2.6;
 const LOB_OVERHIT_PACE_SCALE = 1.14;
+const LOB_ELEVATIONS_DEG = Object.freeze([30, 35, 40, 45, 50, 55, 60, 65]);
+const LOB_WOULD_HAVE_ELEVATIONS_DEG = Object.freeze([30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80]);
 
 export class ShotController {
   constructor() {
@@ -452,13 +454,8 @@ export class ShotController {
       if (!paces.some((p) => Math.abs(p - pace) < 1e-9)) paces.push(pace);
     }
 
-    const ELEV_MIN_DEG = 30;
-    const ELEV_MAX_DEG = 65;
-    const ELEV_STEPS = 8;
     const AIM_CALIBRATION_ELEV_DEG = 35;
-    const candidates = [];
-
-    for (const cornerSign of [1, -1]) {
+    const aims = [1, -1].map((cornerSign) => {
       const corner = { x: cornerSign * LOB_CORNER_REF.x, z: LOB_CORNER_REF.z };
       // Unfold the front-wall reflection: aim at the corner mirrored through the
       // wall plane, then correct the lateral aim from the simulated landing.
@@ -474,22 +471,49 @@ export class ShotController {
         if (!probe.landingPos) break;
         aimX -= probe.landingPos.x - corner.x;
       }
+      return { cornerSign, corner, aimX, mirrorZ };
+    });
 
-      for (let ei = 0; ei < ELEV_STEPS; ei++) {
-        const elevDeg = ELEV_MIN_DEG + ((ELEV_MAX_DEG - ELEV_MIN_DEG) * ei) / (ELEV_STEPS - 1);
-        for (const pace of paces) {
-          const vel = this._lobLaunchVelocity(contactPos, aimX, mirrorZ, elevDeg, pace);
-          const sim = this._simulateLobCandidate(contactPos, vel, spin, params);
-          candidates.push({ vel, paceMps: pace, cornerSign, ...this._scoreLobCandidate(sim, corner) });
+    const scan = (elevations, scanPaces) => {
+      const out = [];
+      for (const { cornerSign, corner, aimX, mirrorZ } of aims) {
+        for (const elevDeg of elevations) {
+          for (const pace of scanPaces) {
+            const vel = this._lobLaunchVelocity(contactPos, aimX, mirrorZ, elevDeg, pace);
+            const sim = this._simulateLobCandidate(contactPos, vel, spin, params);
+            out.push({ vel, paceMps: pace, cornerSign, ...this._scoreLobCandidate(sim, corner) });
+          }
         }
       }
-    }
-
+      return out;
+    };
     const closest = (pool) =>
       pool.reduce((best, cand) => (best === null || cand.cornerDist < best.cornerDist ? cand : best), null);
 
-    const legal = closest(candidates.filter((c) => c.reachesCorner && c.isLegalContact));
-    const winner = legal || closest(candidates.filter((c) => c.reachesCorner)) || closest(candidates);
+    // 1. The charged scan: a legal steep corner drop wins outright.
+    const charged = scan(LOB_ELEVATIONS_DEG, paces);
+    const legal = closest(charged.filter((c) => c.reachesCorner && c.isLegalContact));
+    // 2. No steep legal drop (typically from mid/back court): the legal corner lob
+    //    that exists is flat and catchable — the honest result of lobbing from there.
+    const catchable = legal ? null : closest(charged.filter((c) => c.inCornerZone && c.isLegalContact));
+    // 3. No legal way into a corner at all: the player aims at the out location that
+    //    WOULD have solved a back corner — legality ignored, elevations widened, pace
+    //    capped at the LOB envelope.
+    let winner = legal || catchable || closest(charged.filter((c) => c.reachesCorner));
+    if (!winner) {
+      // Paces ascend from the charged pace, so the first pace that reaches a corner
+      // is the smallest over-hit — the nearest "would have" shot. A lob is never
+      // full power: the scan stays inside the LOB envelope.
+      const wide = [];
+      for (let pace = paceCenter; pace <= maxPaceMps + 1e-9; pace += 1.0) {
+        const atPace = scan(LOB_WOULD_HAVE_ELEVATIONS_DEG, [pace]);
+        wide.push(...atPace);
+        winner = closest(atPace.filter((c) => c.reachesCorner));
+        if (winner) break;
+      }
+      // 4. Last resort (no corner-reaching trajectory exists at all): closest landing.
+      winner = winner || closest([...charged, ...wide]);
+    }
 
     return {
       vel: winner.vel,
@@ -497,7 +521,7 @@ export class ShotController {
       cornerSign: winner.cornerSign,
       solvedContactY: winner.solvedContactY,
       paceMps: winner.paceMps,
-      solveStatus: legal ? 'LEGAL_CORNER' : this._classifyLobAttempt(winner)
+      solveStatus: legal ? 'LEGAL_CORNER' : catchable ? 'CATCHABLE_CORNER' : this._classifyLobAttempt(winner)
     };
   }
 
@@ -510,8 +534,13 @@ export class ShotController {
     const scored = this._scoreLobCandidate(this._simulateLobCandidate(contactPos, vel, spin, params), corner);
     return {
       solvedContactY: scored.solvedContactY,
-      solveStatus:
-        scored.reachesCorner && scored.isLegalContact ? 'LEGAL_CORNER' : this._classifyLobAttempt(scored)
+      solveStatus: !scored.isLegalContact
+        ? this._classifyLobAttempt(scored)
+        : scored.reachesCorner
+        ? 'LEGAL_CORNER'
+        : scored.inCornerZone
+        ? 'CATCHABLE_CORNER'
+        : this._classifyLobAttempt(scored)
     };
   }
 
@@ -560,18 +589,20 @@ export class ShotController {
 
   _scoreLobCandidate(sim, corner) {
     const restPos = sim.landingPos || sim.finalPos;
+    const inCornerZone =
+      !!sim.landingPos &&
+      Math.abs(sim.landingPos.x) >= 1.6 &&
+      Math.sign(sim.landingPos.x) === Math.sign(corner.x) &&
+      sim.landingPos.z >= 3.0;
     const solvedContactY = sim.frontContact ? sim.frontContact.y : null;
     return {
       solvedContactY,
       isLegalContact:
         !!sim.frontContact && !sim.frontContact.isTin && solvedContactY < COURT_SPECS.FRONT_WALL_OUT_Y,
+      inCornerZone,
+      // Steep: the post-wall flight clears the T band, so it cannot be volleyed there.
       reachesCorner:
-        !!sim.landingPos &&
-        Number.isFinite(sim.postWallTBandMinY) &&
-        sim.postWallTBandMinY > LOB_T_BAND_CLEARANCE_M &&
-        Math.abs(sim.landingPos.x) >= 1.6 &&
-        Math.sign(sim.landingPos.x) === Math.sign(corner.x) &&
-        sim.landingPos.z >= 3.0,
+        inCornerZone && Number.isFinite(sim.postWallTBandMinY) && sim.postWallTBandMinY > LOB_T_BAND_CLEARANCE_M,
       cornerDist: Math.hypot(restPos.x - corner.x, restPos.z - corner.z)
     };
   }

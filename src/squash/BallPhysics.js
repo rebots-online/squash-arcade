@@ -11,6 +11,15 @@ import { NickCollisionModel } from './NickCollisionModel.js';
 
 const _subStepVel = new THREE.Vector3();
 
+// Back-glass rebound (real squash ball: very lossy at speed, dies shallow in the back).
+export const BACK_WALL_TUNING = {
+  sitUpBaseMps: 1.9,     // upward pop from a once-bounced ball's roll biting the glass
+  rollCheck: 0.4,        // forward pace kept after that roll bites
+  hotSpeedMps: 6.0,      // above this impact speed the hollow ball loses extra energy
+  hotLossPerMps: 0.05,   // COR loss per m/s above hotSpeedMps
+  minCorScale: 0.75      // floor: a hard back-wall boast must still carry to the front wall
+};
+
 export class BallPhysics {
   /**
    * Advances the squash ball by `dt` seconds using 4 CCD sub-steps so high-speed
@@ -147,7 +156,12 @@ export class BallPhysics {
         const hitOut = ball.pos.y >= COURT_SPECS.BACK_WALL_OUT_Y;
 
         ball.pos.z = backLimitZ - 0.002;
-        const cor = Math.min(0.86, (bp.backWallRestitution ?? 0.64) * tempFactor);
+        const hotLoss = THREE.MathUtils.clamp(
+          1 - Math.max(0, impactSpeed - BACK_WALL_TUNING.hotSpeedMps) * BACK_WALL_TUNING.hotLossPerMps,
+          BACK_WALL_TUNING.minCorScale,
+          1
+        );
+        const cor = Math.min(0.86, (bp.backWallRestitution ?? 0.64) * tempFactor * hotLoss);
         ball.vel.z = -ball.vel.z * cor;
         ball.vel.x *= friction;
 
@@ -156,16 +170,18 @@ export class BallPhysics {
         // its forward topspin roll bites against the glass and pops the ball UPWARD
         // as it returns forward (vel.z < 0, vel.y > 0), allowing the receiver to
         // strike the ball coming upwards off the back wall!
+        // Only a ball that has bounced once carries that roll; one arriving on the
+        // full has none. The roll's bite trades forward pace for lift, so the ball
+        // sits up and dies shallow in the back, as on a real court.
         const sitUpScale = Number(bp.backWallSitUpLift ?? 1.05);
-        if ((ball.bounceCountOnFloor || 0) <= 1 && !hitOut && sitUpScale > 0) {
+        if ((ball.bounceCountOnFloor || 0) === 1 && !hitOut && sitUpScale > 0) {
           const forwardRoll = Math.max(0, ball.spin.x);
           const upwardKick =
-            (1.95 + Math.min(1.4, impactSpeed * 0.14 + forwardRoll * 0.045)) *
+            (BACK_WALL_TUNING.sitUpBaseMps + Math.min(0.9, impactSpeed * 0.08 + forwardRoll * 0.03)) *
             sitUpScale *
             tempFactor;
-          ball.vel.y = Math.max(ball.vel.y * friction + 1.35, upwardKick);
-          // Ensure sufficient forward rebound speed so the ball steps out into the playable back pocket
-          ball.vel.z = Math.min(ball.vel.z, -Math.max(4.5, impactSpeed * cor));
+          ball.vel.y = Math.max(ball.vel.y * friction, upwardKick);
+          ball.vel.z *= BACK_WALL_TUNING.rollCheck;
         } else {
           ball.vel.y *= friction * 0.92;
         }
@@ -311,11 +327,14 @@ export class BallPhysics {
         simBall.bounceCountOnFloor <= 1 &&
         simBall.vel.z < 0
       ) {
-        // Prefer the point where the ball has stepped 0.70m - 1.35m forward off the back glass while rising/at crest
+        // Prefer the crest of the sit-up, 0.35m - 1.2m off the back glass (the ball dies shallow)
         const distFromBackGlass = COURT_SPECS.BACK_WALL_Z - simBall.pos.z;
         if (
           !optimalBackWallStrikePos ||
-          (distFromBackGlass >= 0.65 && distFromBackGlass <= 1.45 && simBall.vel.y >= -0.15)
+          (distFromBackGlass >= 0.35 &&
+            distFromBackGlass <= 1.2 &&
+            simBall.vel.y >= -0.6 &&
+            simBall.pos.y >= optimalBackWallStrikePos.y)
         ) {
           optimalBackWallStrikePos = simBall.pos.clone();
         }
