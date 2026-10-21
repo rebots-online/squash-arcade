@@ -413,7 +413,7 @@ The existing AI-rally diagnostic also failed before the edit and passed on the f
 - **Accept (implementation)**: test and lint exit0, numeric/order requirements observed. Mark `[X]` only. Direct live boast and swing-through observation and Robin's feel verdict remain separate gates.
 
 ### `TASK-38` — Make the existing six-second AI exchange diagnostic reproducible
-- **Status**: `[ ]`
+- **Status**: `[X]` — callback-only dependency change verified; eight full diagnostic runs each15/15 with original720steps/both-hit criteria unchanged.
 - **Owner Modules**: `src/squash/OpponentAI.js`, `src/squash/ShotController.js`, `src/squash/TestHarness.js`, `tests/diagnostic-randomness.test.mjs` (new). Read-only interfaces `TuningConfig.js`, `BallPhysics.js`, `PlayerMovement.js`, existing tests. Original Arcade only; no Tauri access. Parent owns docs/git.
 - **Architecture Ref**: §5.14. Current integrated run14/15; same20 streams baseline284c982 failed9/10/11, corrected39d9844 failed6/9/10/11/17. Actual live engine31/31 commits over80simulationseconds. Do not claim baseline equivalence or gameplay perfection.
 - **Do**:

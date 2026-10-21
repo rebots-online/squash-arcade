@@ -361,8 +361,16 @@ export class TestHarness {
     );
 
     // 8. Continuous AI vs AI Spectator Match Simulation (playerAI + opponentAI with real physics)
-    const p1AI = new OpponentAI('player');
-    const p2AI = new OpponentAI('opponent');
+    // Pin this exchange to repeatable mechanics; random tactical distribution
+    // belongs to separately observed gameplay.
+    let rallyRandomState = 1;
+    const rallyRandom = () => {
+      rallyRandomState = (Math.imul(rallyRandomState, 1664525) + 1013904223) >>> 0;
+      return rallyRandomState / 4294967296;
+    };
+    const rallyShotCtrl = new ShotController(rallyRandom);
+    const p1AI = new OpponentAI('player', rallyRandom);
+    const p2AI = new OpponentAI('opponent', rallyRandom);
     const p1Actor = {
       role: 'player',
       pos: new THREE.Vector3(1.4, 0, 1.8),
@@ -408,7 +416,7 @@ export class TestHarness {
         params,
         predictedTrajectory: predicted,
         onExecuteAIShot: (choice) => {
-          const s = shotCtrl.computeShotExecution({
+          const s = rallyShotCtrl.computeShotExecution({
             actor: p1Actor,
             ball: simBall,
             opponent: p2Actor,
@@ -436,7 +444,7 @@ export class TestHarness {
         params,
         predictedTrajectory: predicted,
         onExecuteAIShot: (choice) => {
-          const s = shotCtrl.computeShotExecution({
+          const s = rallyShotCtrl.computeShotExecution({
             actor: p2Actor,
             ball: simBall,
             opponent: p1Actor,

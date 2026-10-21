@@ -38,7 +38,8 @@ const LOB_DESCENT_TIE_DEG = 2;
 const LOB_WOULD_HAVE_ELEVATIONS_DEG = Object.freeze([30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80]);
 
 export class ShotController {
-  constructor() {
+  constructor(randomSource = Math.random) {
+    this.randomSource = randomSource;
     this.prepStates = {
       player: this._createPrepState(),
       opponent: this._createPrepState()
@@ -382,17 +383,17 @@ export class ShotController {
       }
     } else if (inputEvent.aiErrorMode === 'TIN' && dzToFront < -0.5) {
       const flightEst = Math.max(0.18, Math.abs(dzToFront) / Math.max(10, Math.abs(vel.z)));
-      const tinTargetY = 0.24 + Math.random() * 0.18; // Hits squarely into the 0.48m Tin!
+      const tinTargetY = 0.24 + this.randomSource() * 0.18; // Hits squarely into the 0.48m Tin!
       vel.y = (tinTargetY - contactPos.y + 0.5 * g * flightEst * flightEst) / flightEst;
       label = `${label} (TIN ERROR)`;
     } else if (inputEvent.aiErrorMode === 'OUT' && dzToFront < -0.5) {
       const flightEst = Math.max(0.22, Math.abs(dzToFront) / Math.max(10, Math.abs(vel.z)));
-      const outTargetY = COURT_SPECS.FRONT_WALL_OUT_Y + 0.14 + Math.random() * 0.32; // Above 4.57m Out line!
+      const outTargetY = COURT_SPECS.FRONT_WALL_OUT_Y + 0.14 + this.randomSource() * 0.32; // Above 4.57m Out line!
       vel.y = (outTargetY - contactPos.y + 0.5 * g * flightEst * flightEst) / flightEst;
       label = `${label} (OVERHIT OUT)`;
     } else if (inputEvent.aiWinnerMargin && dzToFront < -0.5 && !isBoastRequest) {
       const flightEst = Math.max(0.2, Math.abs(dzToFront) / Math.max(10, Math.abs(vel.z)));
-      const lowWinnerY = 0.56 + Math.random() * 0.1; // Just above the 0.48m Tin for a dead nick/winner
+      const lowWinnerY = 0.56 + this.randomSource() * 0.1; // Just above the 0.48m Tin for a dead nick/winner
       vel.y = (lowWinnerY - contactPos.y + 0.5 * g * flightEst * flightEst) / flightEst;
     }
 
