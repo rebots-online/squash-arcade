@@ -44,6 +44,7 @@ NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING, NO inter-task dependenci
 
   [TASK-25 COR]   [TASK-26 Envelopes+Params]   [TASK-27 solveCornerLob]   [TASK-28 Serve+Corkscrew]
   [TASK-29 Punish+Errors]   [TASK-30 Difficulty+Fatigue]   [TASK-31 Grades+Rating]   [TASK-32 test_shot_law_lob]
+  [TASK-33 Jukebox De-Argon + All-14 Default]
 ```
 
 
@@ -319,10 +320,24 @@ Source of truth: `DOCS/ARCHITECTURE.md` v2.3.0 §5.9 (entity rows are cited verb
 - **Verify**: `npm run lint`; open Tuning Lab → run Diagnostics → `test_shot_law_lob` PASSES.
 - **Accept (AP-1)**: `grep -c "test_shot_law_lob" src/squash/TestHarness.js` ≥ 2; `TestHarness.runAll` executed from a fresh clone reports the new test present and passing after TASK-25..27 land; lint exits 0.
 
+### `TASK-33` — Jukebox De-Argon & All-14 Default Rotation
+- **Status**: `[ ]`
+- **Owner Module**: `src/audio_engine.js`
+- **Architecture Ref**: §5.10 entity rows "`JUKEBOX_TRACK_LIST` reorder", "De-Argon rename map", "Default rotation semantics"
+- **Depends On**: `[]` — order-independent: all changes confined to `audio_engine.js` (verified: no other file references the renamed id).
+- **kstore Key**: `mba.robin.squasharcade.tasks.TASK-33`
+- **Do**:
+  1. **Rename** `argon_glass_overture` → `glass_overture` at all five sites: `LYRIA_TRACKS` entry, `TRACK_DRUM_KIT` key, `ORIGINAL_DEFAULT_TRACK_IDS`, `STATE_TO_TRACK` values, title strings ('Argon Glass Overture' → 'Glass Overture', incl. '(Original #1)' forms).
+  2. **Strip every remaining argon token** in the file (14 lines today): 'Argon Original Soundtrack' → 'Squash Original Soundtrack'; 'ARGON SQUASH DEFAULT SOUNDTRACK' → 'SQUASH DEFAULT SOUNDTRACK'; comments likewise de-Argonned; '🎙️ WELCOME TO ARGON SQUASH • CHOOSE YOUR WAY TO PLAY' → '🎙️ WELCOME TO SQUASH ARCADE • CHOOSE YOUR WAY TO PLAY'. Engine class names elsewhere are out of scope.
+  3. **Pin `JUKEBOX_TRACK_LIST`** to the explicit 14-entry order (replace `Object.values(LYRIA_TRACKS)`): `virtua_arcade_95, t_zone_cyber, cairo_glass_finals, match_rally, menu_theme, court_intro, victory_fanfare,` then the 7 synth originals in existing relative order (`glass_overture, physical_chess_protocol, crimson_tin_fanfare, nick_roller_overdrive, alexandria_showcourt_nights, forearm_cut_funk, psa_championship_crown`).
+  4. **Default rotation**: `jukeboxMode='auto'` plays the pinned list sequentially with wrap-around; boot starts at index 0 (`virtua_arcade_95`). Demote `STATE_TO_TRACK` from the default path — `playMusicForState` becomes a no-op in `'auto'` mode (map stays for explicit/locked selection). Retain §5.6 muted-start/no-auto-lock/`ended` fixes unchanged.
+- **Verify**: `npm run lint`; `node -e "import('./src/audio_engine.js').then(m=>{const L=m.JUKEBOX_TRACK_LIST;if(L.length!==14||L[0].id!=='virtua_arcade_95'||L.slice(0,7).some(t=>t.id==='glass_overture'))process.exit(1)})"` exits 0.
+- **Accept (AP-1)**: `grep -ci argon src/audio_engine.js` reports 0; `grep -c "glass_overture" src/audio_engine.js` ≥ 4 (LYRIA + DRUM_KIT + DEFAULT_IDS + STATE_TO_TRACK); the node assertion above exits 0 from any starting state; lint exits 0.
+
 ---
 
 ## Sign-off
 
 - [ ] Architecture alignment approved (`DOCS/ARCHITECTURE.md` v2.3.0)
 - [ ] TASK-15 .. TASK-24 historical `[X]` records confirmed (✅ backfill at operator discretion)
-- [ ] TASK-25 .. TASK-32 scope + idempotent acceptance gates approved for dispatch
+- [ ] TASK-25 .. TASK-33 scope + idempotent acceptance gates approved for dispatch
