@@ -344,7 +344,7 @@ Source of truth: `DOCS/ARCHITECTURE.md` v2.3.0 §5.9 (entity rows are cited verb
 
 
 ### `TASK-34` — Back-wall drive contact-height correction
-- **Status**: ✅
+- **Status**: `[X]` — implemented; runtime acceptance OPEN (review correction 2026-10-21).
 - **Owner Modules**: `src/squash/ShotController.js`, `tests/back-wall-drive.test.mjs` (new).
 - **Architecture Ref**: §5.11. Current operator bug report authorizes this bounded correction.
 - **Depends On**: `[]`.
@@ -355,3 +355,15 @@ Source of truth: `DOCS/ARCHITECTURE.md` v2.3.0 §5.9 (entity rows are cited verb
 - **Verify**: `node --test tests/back-wall-drive.test.mjs`; `npm run lint`.
 - **Accept**: Both commands exit 0; all exhaustive trajectory assertions pass using actual modules. Mark `[X]` only after observing acceptance; report exact grid count.
 - **Operator verification protocol**: Play successive back-wall returns, waiting until the ball falls into a low contact; confirm the drive stays a deep low-bouncing return. Browser gameplay feel remains unverified until observed.
+
+
+**Acceptance record — review correction, 2026-10-21**
+
+The former ✅ marker overstated acceptance. Source review, 1,440 deterministic trajectory cases, four regression tests, and lint verify the implementation and calculation. They do not establish the reported delayed-contact gameplay sequence or operator feel. No SHIP-READY or runtime PASS is asserted; TASK-34 remains open for runtime acceptance. Public sites have not been redeployed.
+
+| ID | Requirement | Driver | Steps / PASS criteria | Severity | Evidence / state |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| BW34-R1 | Delayed back-wall drive in the actual game | AUTO | On the local corrected game, allow a return off the back glass to fall into a low contact, then drive; directly observe a deep first bounce before the next back-glass contact, with no out-line crossing. Repeat straight and cross-court. Capture the sequence. | HIGH | OPEN — local game opened and a match started through the real UI, but no controlled delayed-contact return sequence was isolated or captured. Node simulation and an empty browser error log do not close this row. |
+| BW34-R2 | Operator timing and shot-feel acceptance | OPERATOR | Compare an earlier contact with waiting for the lower ball after the back-wall rebound; confirm the later good contact remains a usable drive rather than an excessive high launch/bounce. | HIGH | OPEN — requires Robin's observation of the corrected local game after BW34-R1. |
+
+The existing AI-rally diagnostic also failed before the edit and passed on the final run; its intermittency remains unresolved and is not certified repaired by TASK-34.
