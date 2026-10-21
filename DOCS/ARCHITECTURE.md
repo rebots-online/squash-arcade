@@ -3,7 +3,7 @@ doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
 version: "2.3.0"
 status: "ALIGNED_TO_CODEGRAPH (2026-10-17 audit) + PENDING REFINEMENTS + §5.9 SHOT-LAW AD APPROVED 2026-10-21"
-updated_at: "2026-10-21T02:10:00-04:00"
+updated_at: "2026-10-21T03:05:00-04:00"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
 kstore_namespace: "mba.robin.squasharcade"
 kstore_schema_version: "1.3"
@@ -204,7 +204,7 @@ All modules (`CourtGeometry`, `BallPhysics`, `NickCollisionModel`, `PlayerMoveme
 
 ### 3.12 `AudioEngine` (`src/audio_engine.js`)
 - **Responsibility**: All audio output through one WebAudio graph (`ctx` -> `masterGain` -> `sfxGain` / `musicSynthGain` / `reverbSend`).
-- **Exports**: `LYRIA_TRACKS` (12 jukebox tracks incl. Lyria-sourced remixes), `JUKEBOX_TRACK_LIST`, `ORIGINAL_DEFAULT_TRACK_IDS`, `STATE_TO_TRACK` (game-state -> track map), `NARRATOR_USP_INVITES` (scripted narrator lines), `GEMINI_TTS_CLIPS = {}` (empty clip map, currently unused), `AudioEngine`.
+- **Exports**: `LYRIA_TRACKS` (14 jukebox tracks: 7 synth originals + 3 synth remixes + 4 legacy mp3s — count corrected 2026-10-21, see §5.10), `JUKEBOX_TRACK_LIST`, `ORIGINAL_DEFAULT_TRACK_IDS`, `STATE_TO_TRACK` (game-state -> track map), `NARRATOR_USP_INVITES` (scripted narrator lines), `GEMINI_TTS_CLIPS = {}` (empty clip map, currently unused), `AudioEngine`.
 - **Referee voice today**: `playVoiceCallout` -> `SpeechSynthesisUtterance` with `_selectDeepMaleVoice()` (prefers `Google UK English Male`/system male voice, `en-GB`), `refereeVoicePitch`/`refereeVoiceRate` tunables, and `_playRefereeBaritonePA` (oscillator formant bed behind speech). `announceScore(outcome)` composes callout text + chime.
 - **Runtime invariants (invisible to codegraph — document-only)**:
   - Two track types in `LYRIA_TRACKS`: `'audio'` = HTMLAudioElement streaming remote `www.gstatic.com` mp3s (4 legacy tracks, no local audio files ship in `dist/`); `'synth'` = 7 original Web Audio sequencer tracks.
@@ -423,3 +423,17 @@ Instead of classifying from a single 2-point velocity delta, `BiomechStrokeClass
 **Verification (`TestHarness`, new invariant beside existing sims at `src/squash/TestHarness.js:48+`):** `test_shot_law_lob` — contact-grid sweep asserting (a) deep-zone full-charge lob → `LEGAL_CORNER` (wall contact < 4.5 m, min height > 2.6 m across T band, first drop `|x| >= 1.6 && z >= 3.0`), (b) failure classes exist and are reachable (mid-court top-charge → `ATTEMPT_OUT`; deep-center → no corner solve — the "should not be played from here" zone), (c) no legality filter exists anywhere in `ShotController` execution paths.
 
 **Calibration data (measured 2026-10-21 against shipped `BallPhysics`, restitution 0.85; calibration-sweep wall-aim 4.35 m — the shipped solver takes no aim input):** deep-corner pace 15 → CORNER (z ≈ 4.9, minY 2.8); mid-court pace 13.5 → CORNER (minY 3.7), pace 15 → OUT; front-court pace 12 → CORNER (minY 3.0); deep-center → short of corner at all paces.
+
+### 5.10 Jukebox Identity & Default Rotation — de-Argon; all-14 sequential, beginning with the non-original block (AD approved 2026-10-21; pending implementation)
+
+**Why (operator, 2026-10-21):** the 7 generated tracks exist precisely to NOT be associated with Argon Tennis — yet the first is named `argon_glass_overture` / "Argon Glass Overture" and soundtrack labels brand them "Argon". And the default jukebox begins with the original 7; the default is to play **all 14 in order, beginning with the NON-original tracks**. This supersedes TASK-22's "begin on track #1 of the new 7" directive; §5.6's muted-start/no-auto-lock/`ended` fixes are retained unchanged.
+
+**Verified current state (2026-10-21):** 14 tracks — 7 synth originals (`ORIGINAL_DEFAULT_TRACK_IDS` @ `audio_engine.js:175`), 3 synth remixes (`virtua_arcade_95`, `t_zone_cyber`, `cairo_glass_finals`), 4 legacy mp3s (`match_rally`, `menu_theme`, `court_intro`, `victory_fanfare`). `JUKEBOX_TRACK_LIST` = insertion order = originals first (`:185`); default `jukeboxMode = 'auto'` (`:284`); `STATE_TO_TRACK` (`:198`) boots title/menu on `argon_glass_overture`. No file outside `audio_engine.js` references the renamed id (verified).
+
+**Entity rows:**
+
+| Entity | Kind | Anchor | Role |
+| :--- | :--- | :--- | :--- |
+| `JUKEBOX_TRACK_LIST` reorder | export change | `src/audio_engine.js:185` | Pinned 14-entry order — non-original block first, existing relative order: `virtua_arcade_95, t_zone_cyber, cairo_glass_finals, match_rally, menu_theme, court_intro, victory_fanfare`, then the 7 synth originals in existing relative order (renamed ids). |
+| De-Argon rename map | id/string change | throughout `src/audio_engine.js` only | `argon_glass_overture` → `glass_overture` (update all five sites: LYRIA entry, `TRACK_DRUM_KIT` key, `ORIGINAL_DEFAULT_TRACK_IDS`, `STATE_TO_TRACK` values, title strings). Titles: 'Argon Glass Overture' → 'Glass Overture' (incl. '(Original #1)' forms). Every remaining 'argon'/'Argon'/'ARGON' token in the file is removed: 'Argon Original Soundtrack' → 'Squash Original Soundtrack'; 'ARGON SQUASH DEFAULT SOUNDTRACK' → 'SQUASH DEFAULT SOUNDTRACK'; comments likewise. Product-name strings use the repo name: '🎙️ WELCOME TO ARGON SQUASH • CHOOSE YOUR WAY TO PLAY' → '🎙️ WELCOME TO SQUASH ARCADE • CHOOSE YOUR WAY TO PLAY'. Scope is the music system only — engine class names (`ArgonSquashEngine`) are out of scope. |
+| Default rotation semantics | behavior | `src/audio_engine.js:284`, `:198` | Default `jukeboxMode='auto'` = sequential play of the pinned 14-list with wrap-around; boot begins at index 0 (a non-original track). `STATE_TO_TRACK` per-state switching is demoted from the default path (map stays exported for explicit/locked selection) so the 14-sequence is never interrupted by state changes in auto mode. Autoplay note: the first block is synth-then-mp3 — pre-gesture start is muted for synths (§5.6 sound-gate covers), mp3s audible via muted-start. |
