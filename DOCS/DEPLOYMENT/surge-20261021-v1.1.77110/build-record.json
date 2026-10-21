@@ -7,5 +7,20 @@
   "buildResult": "success",
   "fileCount": 18,
   "priorSurgeRevision": "1792571904021-squash-arcade.surge.sh",
-  "publicVerification": "pending"
+  "publicVerification": "passed",
+  "verifiedAt": "2026-10-21T23:53:54.597042+00:00",
+  "surgeRevision": "1792626656613-squash-arcade.surge.sh",
+  "artifactCommit": "86590362611a7108eca620e0b87b49308adbd2ce",
+  "servedFileHashes": "18/18 matched",
+  "browserVersion": "v1.1.77110",
+  "desktopViewport": [
+    1280,
+    800
+  ],
+  "mobileViewport": [
+    390,
+    844
+  ],
+  "overlappingBadgeButtons": 0,
+  "publicMatchStart": "Play Match Now -> RACKET_SPIN; spectator=false; autoplay=false"
 }
