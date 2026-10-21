@@ -101,7 +101,13 @@ export const DEFAULT_TUNING_PARAMS = {
     aiFrontCourtCreep: _envNum('VITE_SA_AI_FRONT_COURT_CREEP', 0.38),   // How far AI creeps up when expecting a short ball
     aiServeWrongBoxChance: _envNum('VITE_SA_AI_SERVE_WRONG_BOX_CHANCE', 0.04),    // Low-frequency accidental wrong service box (TASK-17)
     aiServeSelfCorrectChance: _envNum('VITE_SA_AI_SERVE_SELF_CORRECT_CHANCE', 0.55), // Chance the AI notices and walks to the correct box mid-stance
-    aiServeFootFaultChance: _envNum('VITE_SA_AI_SERVE_FOOT_FAULT_CHANCE', 0.001)   // Rare foot fault (~1 in 1000 serves — not even once a day)
+    aiServeFootFaultChance: _envNum('VITE_SA_AI_SERVE_FOOT_FAULT_CHANCE', 0.001),  // Rare foot fault (~1 in 1000 serves — not even once a day)
+    aiExecutionSkill: _envNum('VITE_SA_AI_EXECUTION_SKILL', 0.65),                 // ONE scalar driving all AI error channels via aiErrorChannelsFromSkill (TASK-26)
+    aiFlairAttemptChance: _envNum('VITE_SA_AI_FLAIR_ATTEMPT_CHANCE', 0.04),        // Occasional low-percentage flair shot attempt
+    aiFatiguePerGame: 0.04,         // Fatigue multiplier contribution per completed game
+    aiFatiguePerPoint: 0.004,       // Fatigue multiplier contribution per point played
+    aiFatiguePerRallyStroke: 0.015, // Fatigue multiplier contribution per stroke in last rally
+    aiFatigueCap: 1.6               // Upper bound on runtime fatigue error multiplier
   },
 
   // --- 4. Court & Rules Configuration ---
@@ -116,6 +122,39 @@ export const DEFAULT_TUNING_PARAMS = {
     deterministicSeed: 20261015
   }
 };
+
+/**
+ * TASK-26 — Per-shot charge envelopes (§5.9).
+ * Charge sharpens pace (KILL) or adds depth (DROP) within these bounds.
+ * LOB's emergentContactBandM is descriptive (validator input), never a solver input.
+ * DRIVE/BOAST: null — existing charge behavior unchanged.
+ */
+export const SHOT_CHARGE_ENVELOPES = Object.freeze({
+  LOB: Object.freeze({ minPaceMps: 9.0, maxPaceMps: 15.5, emergentContactBandM: Object.freeze([4.10, 4.90]) }),
+  KILL: Object.freeze({ minPaceMps: 24.0, maxPaceMps: 31.0, emergentContactBandM: null }),
+  DROP: Object.freeze({ minPaceMps: 6.0, maxPaceMps: 9.5, emergentContactBandM: null }),
+  DRIVE: null,
+  BOAST: null
+});
+
+/**
+ * TASK-26 — Pure mapping from the ONE aiExecutionSkill scalar to all AI error
+ * channels (§5.9). Monotone, calibrated through anchors:
+ *   casual 0.65 -> { tin 0.22, out ~0.11, lobOut 0.30, sigma 0.08, jitter ~3.5° }
+ *   pro    0.93 -> { tin 0.04, out ~0.02, lobOut 0.06, sigma 0.02, jitter ~0.8° }
+ * Fatigue scales ALL channels uniformly at runtime (game_engine.js wiring) and
+ * never changes shot selection.
+ */
+export function aiErrorChannelsFromSkill(skill) {
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+  return {
+    aiKillTinChance: clamp(0.638 - 0.643 * skill, 0.02, 0.34),
+    aiKillOutChance: clamp(0.318 - 0.318 * skill, 0.02, 0.18),
+    aiLobOutChance: clamp(0.857 - 0.857 * skill, 0.03, 0.45),
+    aiExecutionNoiseSigma: clamp(0.219 - 0.214 * skill, 0.01, 0.12),
+    aiAimJitterDeg: clamp(10.4 - 10.3 * skill, 0.5, 4.5)
+  };
+}
 
 export const BUILTIN_PRESETS = {
   'Physical Chess (Default)': structuredClone(DEFAULT_TUNING_PARAMS),
