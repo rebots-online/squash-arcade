@@ -33,6 +33,7 @@ const LOB_T_BAND_Z = Object.freeze([0.5, 2.5]);
 const LOB_T_BAND_CLEARANCE_M = 2.6;
 const LOB_OVERHIT_PACE_SCALE = 1.14;
 const LOB_ELEVATIONS_DEG = Object.freeze([30, 35, 40, 45, 50, 55, 60, 65]);
+const LOB_DESCENT_TIE_DEG = 2;
 const LOB_WOULD_HAVE_ELEVATIONS_DEG = Object.freeze([30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80]);
 
 export class ShotController {
@@ -490,28 +491,26 @@ export class ShotController {
     const closest = (pool) =>
       pool.reduce((best, cand) => (best === null || cand.cornerDist < best.cornerDist ? cand : best), null);
 
-    const legalPick = (pool) =>
-      closest(pool.filter((c) => c.reachesCorner && c.isLegalContact)) ||
-      closest(pool.filter((c) => c.inCornerZone && c.isLegalContact));
+    // A lob is judged by how steeply it falls into the corner: among legal corner
+    // landings take the steepest drop, and the softer launch when two are within
+    // LOB_DESCENT_TIE_DEG of each other.
+    const steepest = (pool) =>
+      pool.reduce((best, c) => {
+        if (best === null) return c;
+        if (c.descentDeg > best.descentDeg + LOB_DESCENT_TIE_DEG) return c;
+        if (Math.abs(c.descentDeg - best.descentDeg) <= LOB_DESCENT_TIE_DEG && c.paceMps < best.paceMps) return c;
+        return best;
+      }, null);
+    const legalPick = (pool) => steepest(pool.filter((c) => c.inCornerZone && c.isLegalContact));
 
-    // 1. The charged scan: a legal corner landing — steep if one exists, else the
-    //    flat, catchable one that is the honest result of lobbing from mid/back court.
+    // 1–2. Search the whole LOB envelope (never full power) for legal corner landings:
+    //      steep ones are LEGAL_CORNER, flat ones from mid/back court CATCHABLE_CORNER.
     const charged = scan(LOB_ELEVATIONS_DEG, paces);
-    let winner = legalPick(charged);
-
-    // 2. Not reachable at the charged pace: step the pace up from the charged pace
-    //    (smallest over-hit first, never past the LOB envelope — a lob is never full
-    //    power) until a legal corner landing exists.
-    const wide = [];
-    if (!winner) {
-      for (let pace = paceCenter + 1.0; pace < maxPaceMps + 1.0 - 1e-9; pace += 1.0) {
-        pace = Math.min(pace, maxPaceMps); // the last step lands exactly on the envelope ceiling
-        const atPace = scan(LOB_WOULD_HAVE_ELEVATIONS_DEG, [pace]);
-        wide.push(...atPace);
-        winner = legalPick(atPace);
-        if (winner) break;
-      }
-    }
+    const envelopePaces = [];
+    for (let pace = minPaceMps; pace < maxPaceMps; pace += 1.0) envelopePaces.push(pace);
+    envelopePaces.push(maxPaceMps);
+    const wide = scan(LOB_WOULD_HAVE_ELEVATIONS_DEG, envelopePaces);
+    let winner = legalPick([...charged, ...wide]);
 
     // 3. No legal way into a corner anywhere in the envelope: the player aims at the
     //    out location that WOULD have solved a back corner (legality ignored).
@@ -568,13 +567,20 @@ export class ShotController {
     let frontContact = null;
     let landingPos = null;
     let postWallTBandMinY = Infinity;
+    let descentDeg = -Infinity;
+    let backWallBeforeLanding = false;
     for (let i = 0; i < 3.0 / dt && !landingPos; i++) {
+      const preVel = ball.vel.clone();
       BallPhysics.stepBallPhysics(ball, dt, params, null, {
         onCollision: (evt) => {
           if (!frontContact && (evt.surface === 'front_wall' || evt.surface === 'tin')) {
             frontContact = { y: evt.pos.y, isTin: evt.surface === 'tin' };
+          } else if (!landingPos && evt.surface === 'back_wall') {
+            backWallBeforeLanding = true;
           } else if (!landingPos && (evt.surface === 'floor' || evt.surface === 'nick')) {
             landingPos = evt.pos.clone();
+            // Angle of the drop into the floor: how steeply the lob falls into the corner.
+            descentDeg = (Math.atan2(-preVel.y, Math.hypot(preVel.x, preVel.z)) * 180) / Math.PI;
           }
         }
       });
@@ -582,13 +588,15 @@ export class ShotController {
         postWallTBandMinY = Math.min(postWallTBandMinY, ball.pos.y);
       }
     }
-    return { frontContact, landingPos, postWallTBandMinY, finalPos: ball.pos.clone() };
+    return { frontContact, landingPos, postWallTBandMinY, descentDeg, backWallBeforeLanding, finalPos: ball.pos.clone() };
   }
 
   _scoreLobCandidate(sim, corner) {
     const restPos = sim.landingPos || sim.finalPos;
+    // A lob drops into the corner: it must reach the floor before the back glass.
     const inCornerZone =
       !!sim.landingPos &&
+      !sim.backWallBeforeLanding &&
       Math.abs(sim.landingPos.x) >= 1.6 &&
       Math.sign(sim.landingPos.x) === Math.sign(corner.x) &&
       sim.landingPos.z >= 3.0;
@@ -601,7 +609,8 @@ export class ShotController {
       // Steep: the post-wall flight clears the T band, so it cannot be volleyed there.
       reachesCorner:
         inCornerZone && Number.isFinite(sim.postWallTBandMinY) && sim.postWallTBandMinY > LOB_T_BAND_CLEARANCE_M,
-      cornerDist: Math.hypot(restPos.x - corner.x, restPos.z - corner.z)
+      cornerDist: Math.hypot(restPos.x - corner.x, restPos.z - corner.z),
+      descentDeg: sim.descentDeg
     };
   }
 
