@@ -1,8 +1,8 @@
 ---
 checklist_id: "ARGON-SQUASH-DAG-002"
-version: "2.3.0"
-status: "FOUR_STATE_DISCIPLINE_ADOPTED_PENDING_SIGNOFF"
-architecture_ref: "DOCS/ARCHITECTURE.md (v2.3.0, §5.9 Honest Shot Law + §5 Planned Refinements)"
+version: "2.2.0"
+status: "PENDING_REVIEW_SIGNOFF"
+architecture_ref: "DOCS/ARCHITECTURE.md (v2.2.0, §5 Planned Refinements)"
 target_executor: "GLM-5.3 / Non-Reasoning Execution Agent"
 kstore_meta:
   namespace: "argon.squash.v2.tasks"
@@ -18,34 +18,22 @@ Dependency-ordered recipe for the **remaining outstanding work** defined in `DOC
 
 ---
 
-## Task Marker Discipline (four-state, canonical)
-
-> `[ ]` Task → `[/]` Undertaken Task → `[X]` Completed Task → `✅` Orchestrator-semantically-validated-as-complete Task
-
-- `[ ]` — one-coder-one-task logical execution block; sum-total of `[ ]` tasks comprises the assembly of `ARCHITECTURE.md`.
-- `[/]` — flipped by the assigned coder to acknowledge assignment (task line suffixed with coder session id where possible).
-- `[X]` — flipped by the coder on completion of `Do` with `Verify` run.
-- `✅` — flipped ONLY by the Orchestrator upon semantic validation against the architecture entity row (never proxy attestation — a grep/exit code alone never justifies ✅; a grep/exit code plus direct semantic evaluation of the entity does).
-
-Historical tasks TASK-15..TASK-24 are recorded `[X]` (implemented and committed in prior sessions); ✅ backfill for that group is an operator action, not assumed here. Every `Accept` clause below is an idempotent end-state assertion (AP-1..AP-5): observable from any starting state, including post-success.
-
----
-
 ## Orchestration Task Graph (DAG)
 
 ```
-COMPLETED GROUP ([X], TASK-15..24 — prior sessions):
-
-[TASK-15 Back-Wall Line]─►[TASK-16 FRONT_WALL_CAM]─►[TASK-17 Serve Errors]
-        └►[TASK-18 G-Dependency Cleanup]─►[TASK-19 surge Deploy]
-[TASK-20 Skills Demo] [TASK-21 Audio] [TASK-22 Original-7] [TASK-23 Retrieval] [TASK-24 Ceremony]
-
-NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING):
-
-[TASK-25 Viscoelastic COR]─┬─►[TASK-27 solveCornerLob]─┬─►[TASK-29 AI Punish+Errors]─►[TASK-31 Choice Grades+Rating]
-[TASK-26 Envelopes+Params]─┤   [TASK-28 Serve Re-Anchor]─┘            │
-                           └─►[TASK-30 Difficulty+Fatigue Wiring]      │
-[TASK-25]─►[TASK-26]─►[TASK-27]─►[TASK-29]─►[TASK-32 test_shot_law_lob + TuningPanel]
+[TASK-15: CourtGeometry — Lighter Back-Wall Out Line]
+       │
+       ├──► [TASK-16: FRONT_WALL_CAM Viewpoint Cycle]
+       │           │
+       ├──► [TASK-17: Two-Tier AI Serve Errors (Wrong Box + Foot Fault)]
+       │           │
+       │           ▼
+       └──► [TASK-18: Google Dependency Cleanup & Static-Host Boundary]
+       │           │
+       │           ▼
+       │   [TASK-19: surge.sh Static Deploy Verification]
+       │
+       └──► [TASK-20: Skills Demonstration Onboarding (Wonder-Demo Rework)]
 ```
 
 ---
@@ -53,7 +41,7 @@ NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING):
 ## Ordered Tasks & Acceptance Gates
 
 ### `TASK-15` — Lighter Back-Wall Out Line
-- **Status**: `[X]` COMPLETED
+- **Status**: `[x] COMPLETED`
 - **Owner Module**: `src/squash/CourtGeometry.js`
 - **Architecture Ref**: `§5.2`, Gate H
 - **Depends On**: `[]`
@@ -65,7 +53,7 @@ NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING):
 - **Acceptance Gate (H)**: Back-wall out line renders at reduced opacity/lighter tint in all three themes; front and side out lines unchanged.
 
 ### `TASK-16` — `FRONT_WALL_CAM` Viewpoint in Camera Cycle
-- **Status**: `[X]` COMPLETED
+- **Status**: `[x] COMPLETED`
 - **Owner Modules**: `src/game_engine.js`, `src/squash/CourtGeometry.js`
 - **Architecture Ref**: `§5.3`, Gate I
 - **Depends On**: `["TASK-15"]`
@@ -77,7 +65,7 @@ NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING):
 - **Acceptance Gate (I)**: `C` cycles through all five labels ending in `Front Wall`; front wall is transparent and full back court visible; wrap-around returns to `Back Glass`.
 
 ### `TASK-17` — Two-Tier AI Serve Errors (Wrong Box + Foot Fault)
-- **Status**: `[X]` COMPLETED
+- **Status**: `[x] COMPLETED`
 - **Owner Modules**: `src/squash/RulesEngine.js`, `src/game_engine.js`, `src/squash/TuningConfig.js`, `src/squash/TuningPanel.js`, `src/mii_facial_fx.js` (flavor only)
 - **Architecture Ref**: `§5.1`, Gate G
 - **Depends On**: `["TASK-16"]`
@@ -90,7 +78,7 @@ NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING):
 - **Acceptance Gate (G)**: `aiServeWrongBoxChance=1` forces a visible wrong-box approach; legality check returns fault kinds deterministically; `Fault!`/`Foot fault!` callouts fire and handout is awarded.
 
 ### `TASK-18` — Google Dependency Cleanup & Static-Host Boundary
-- **Status**: `[X]` COMPLETED
+- **Status**: `[x] COMPLETED`
 - **Owner Modules**: `package.json`, `vite.config.ts`, `README.md`
 - **Architecture Ref**: `§5.4`, `§3.16`
 - **Depends On**: `["TASK-17"]`
@@ -101,7 +89,7 @@ NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING):
 - **Acceptance Gate**: `npm run build` and `npm run dev` succeed with no Gemini/genai references remaining; `/api/*` middleware still works under `vite preview`.
 
 ### `TASK-19` — surge.sh Static Deploy Verification
-- **Status**: `[X]` COMPLETED
+- **Status**: `[x] COMPLETED`
 - **Owner**: `dist/` (build output)
 - **Architecture Ref**: `§3.16`
 - **Depends On**: `["TASK-18"]`
@@ -112,7 +100,7 @@ NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING):
 - **Acceptance Gate**: Deployed site boots and rallies with zero console errors on a clean browser profile.
 
 ### `TASK-20` — Skills Demonstration Onboarding (Wonder-Demo Rework)
-- **Status**: `[X]` COMPLETED
+- **Status**: `[x] COMPLETED`
 - **Owner Modules**: `src/squash/IntroDirector.js`, `src/squash/NickCollisionModel.js`, `src/hud_ui.js`, `index.html` (copy)
 - **Architecture Ref**: `§5.5`, `§3.8`, Gate J
 - **Depends On**: `["TASK-17"]`
@@ -124,7 +112,7 @@ NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING):
 - **Acceptance Gate (J)**: Onboarding presents a clearly labeled skills walkthrough; each demonstrated shot is named for its squash skill on screen; skip-to-play still works; no unexplained "wonder" framing remains in user-facing text.
 
 ### `TASK-21` — Audio Autoplay & Jukebox Rotation Restoration
-- **Status**: `[X]` COMPLETED
+- **Status**: `[x] COMPLETED`
 - **Owner Modules**: `src/audio_engine.js`
 - **Architecture Ref**: `§5.6`, `§3.12` (runtime invariants)
 - **Depends On**: `["TASK-19"]`
@@ -139,12 +127,15 @@ NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING):
 
 ---
 
-## TASK-22 — Original-7 first: state map revert, sound-gate, per-track timbre, camera pill
+## Sign-off
 
-- **Status**: `[X]` COMPLETED (deployed; pending user audio-verify)
-- **Owner Modules**: `src/audio_engine.js`, `index.html`, `public/styles.css`, `src/game_engine.js` (camera pill)
-- **Architecture Ref**: `ARCHITECTURE.md §5.6`; Gate — audio autoplay + `§5.3` camera cycle
-- **Depends On**: `["TASK-21"]`
+- [ ] Architecture alignment approved (v2.2.0)
+- [ ] TASK-15 .. TASK-21 scope + acceptance gates approved
+
+
+---
+
+## TASK-22 — Original-7 first: state map revert, sound-gate, per-track timbre, camera pill
 
 **Why**: TASK-21's mp3 remap made the game open on legacy Argon Tennis tracks (jukebox #12 "CLASSIC"). Operator directive: begin on track #1 of the NEW 7 Argon Squash originals; the 7 originals must sound distinct (they read as variants of #8); browsers still gate AudioContext behind a gesture — addressed with an explicit, prominent unlock control instead of mp3 fallback.
 
@@ -162,12 +153,7 @@ NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING):
 
 ---
 
-## TASK-23 — Retrieval Mechanics: timed arrival + hip-drive swing
-
-- **Status**: `[X]` COMPLETED (deployed; supersedes the arrive-plant-flap bug — see body)
-- **Owner Modules**: `src/squash/PlayerMovement.js`, `src/squash/OpponentAI.js`, `src/game_engine.js`
-- **Architecture Ref**: `ARCHITECTURE.md §5.7` (all bullets except the recorded-failed deep-lob line)
-- **Depends On**: `["TASK-19"]`
+## TASK-23 (IMPLEMENTED — deployed) — Retrieval Mechanics: timed arrival + hip-drive swing
 
 **Shipped**: `PlayerMovement._estimateContactTimeSec` (nearest trajectory-sample `t`; distance/speed fallback post-back-wall), `_applyTimedArrival` (paces `targetPos` to a fraction of remaining distance that fits inside contact lead — arrive ~100ms early still stepping; drives `strokeWindupYaw` closed-stance ramp last 0.55s), hip-snap yaw override in `stepActorLocomotion` (closed→open smoothstep 0.3→0.82 of swing progress, follow-through over-rotate). Wired for both human receiver (`updatePlayerRallyTarget`) and AI receiver (`OpponentAI.updateAI` + windup reset on recovery). Live bundle `index-B3-_Hh1S.js`.
 
@@ -193,12 +179,7 @@ NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING):
 
 ---
 
-## TASK-24 — Match ceremony, Shot-Select onboarding & identity
-
-- **Status**: `[X]` COMPLETED (deployed)
-- **Owner Modules**: `src/game_engine.js`, `src/hud_ui.js`, `index.html`, `src/squash/OpponentAI.js`
-- **Architecture Ref**: `ARCHITECTURE.md §5.8` (note: body line "deep lob physics front wall y≈4.12, spin.x=-4" records the PRE-`2f68ee9` state and is superseded by §5.7's failure record + §5.9)
-- **Depends On**: `["TASK-23"]`
+## TASK-24 (IMPLEMENTED — deployed) — Match ceremony, Shot-Select onboarding & identity
 
 **Shipped** (see ARCHITECTURE.md §5.7–§5.8):
 - Racket-spin "who serves first" ceremony: `RACKET_SPIN` phase gates the first `_setupPointServe` of a fresh real-play match; call UP/DOWN, winner elects serve, AI always takes serve. Spoken + visual explainer teaches Shot-Select Mode mid-ceremony.
@@ -208,114 +189,3 @@ NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING):
 - YOU-ARE-RED identity cues: red/blue score digits, YOU chip, red-ringed avatar, red nameplate + setup tag.
 
 Commits: `775a340`, `fff35d8`, `c97d67e`, `7cc02ae`, `457d739`, `2f50cae` — all deployed.
-
----
-
-# §5.9 HONEST SHOT LAW — TASK GROUP (all `[ ]` PENDING; reduce only after operator sign-off)
-
-Source of truth: `DOCS/ARCHITECTURE.md` v2.3.0 §5.9 (entity rows are cited verbatim below so a coder need not open the architecture doc). Bounded brownfield contract: touch ONLY the files named in your task; do not restructure neighboring modules; work additively with timestamped backups beside every file you edit.
-
-### `TASK-25` — Front-Wall Viscoelastic COR
-- **Status**: `[ ]`
-- **Owner Module**: `src/squash/BallPhysics.js`
-- **Architecture Ref**: §5.9 entity row "Front-wall viscoelastic COR"
-- **Depends On**: `[]`
-- **kstore Key**: `mba.robin.squasharcade.tasks.TASK-25`
-- **Do**: At `BallPhysics.js:65` replace `const cor = Math.min(0.88, (bp.frontWallRestitution ?? 0.68) * tempFactor);` with a speed-dependent response: `const cor = Math.min(0.88, THREE.MathUtils.lerp(0.86, 0.66, THREE.MathUtils.clamp(impactSpeed / 28, 0, 1)) * tempFactor);` — `impactSpeed` is already computed at `BallPhysics.js:59`. Side-wall (`:121`), back-wall (`:150`), and floor (`:215`) restitutions remain untouched.
-- **Verify**: `npm run lint` exits 0.
-- **Accept (AP-1)**: `grep -c "lerp(0.86, 0.66" src/squash/BallPhysics.js` reports exactly 1; `grep -c "bp.frontWallRestitution" src/squash/BallPhysics.js` reports 0; `npm run lint` exits 0. (Semantic: a ~7 m/s lob contact responds ≈0.81, a ≥20 m/s drive keeps today's ≈0.66–0.68 — full numeric attestation lands in TASK-32.)
-
-### `TASK-26` — Charge Envelopes, Skill Scalar & Error/Fatigue Params
-- **Status**: `[ ]`
-- **Owner Module**: `src/squash/TuningConfig.js`
-- **Architecture Ref**: §5.9 entity rows "`SHOT_CHARGE_ENVELOPES`", "AI error params", "Fatigue error multiplier"
-- **Depends On**: `[]`
-- **kstore Key**: `mba.robin.squasharcade.tasks.TASK-26`
-- **Do**:
-  1. New frozen export `SHOT_CHARGE_ENVELOPES` beside `DEFAULT_TUNING_PARAMS` (`TuningConfig.js:49`): `LOB { minPaceMps: 9.0, maxPaceMps: 15.5, emergentContactBandM: [4.10, 4.90] }`, `KILL { 24.0, 31.0 }` (charge sharpens pace only), `DROP { 6.0, 9.5 }` (charge adds depth only), `DRIVE`/`BOAST`: `null` (existing charge behavior unchanged). `emergentContactBandM` is descriptive (validator input), never a solver input.
-  2. New pure export `aiErrorChannelsFromSkill(skill)` returning `{ aiKillTinChance, aiKillOutChance, aiLobOutChance, aiExecutionNoiseSigma, aiAimJitterDeg }` — fixed monotone functions of the ONE scalar, calibrated through the anchors: casual skill 0.65 → `{ 0.22, ~0.11, 0.30, 0.08, ~3.5° }`, pro 0.93 → `{ 0.04, ~0.02, 0.06, 0.02, ~0.8° }`. Exact closed forms: `killTin = clamp(0.638 − 0.643·skill, 0.02, 0.34)`; `killOut = clamp(0.318 − 0.318·skill, 0.02, 0.18)`; `lobOut = clamp(0.857 − 0.857·skill, 0.03, 0.45)`; `sigma = clamp(0.219 − 0.214·skill, 0.01, 0.12)`; `jitterDeg = clamp(10.4 − 10.3·skill, 0.5, 4.5)`.
-  3. In the `movementAndAI` block (`TuningConfig.js:97-102`, `_envNum`/`VITE_SA_*` pattern per §5.1): add `aiExecutionSkill: _envNum('VITE_SA_AI_EXECUTION_SKILL', 0.65)`, `aiFlairAttemptChance: _envNum('VITE_SA_AI_FLAIR_ATTEMPT_CHANCE', 0.04)`, and fatigue coefficients `aiFatiguePerGame: 0.04`, `aiFatiguePerPoint: 0.004`, `aiFatiguePerRallyStroke: 0.015`, `aiFatigueCap: 1.6`. The runtime multiplier is computed (TASK-30), not stored: `min(aiFatigueCap, 1 + aiFatiguePerGame·gamesPlayed + aiFatiguePerPoint·pointsPlayed + aiFatiguePerRallyStroke·lastRallyStrokeCount)`; it scales ALL error channels uniformly and never changes shot selection.
-- **Verify**: `npm run lint`; `node -e "import('./src/squash/TuningConfig.js').then(m=>{const a=m.aiErrorChannelsFromSkill(0.65),b=m.aiErrorChannelsFromSkill(0.93);if(Math.abs(a.aiKillTinChance-0.22)>1e-9||Math.abs(b.aiKillTinChance-0.04)>1e-9||m.SHOT_CHARGE_ENVELOPES.LOB.maxPaceMps!==15.5)process.exit(1)})"` exits 0.
-- **Accept (AP-1)**: the node assertion above exits 0 from any starting state; `grep -c "SHOT_CHARGE_ENVELOPES" src/squash/TuningConfig.js` ≥ 1; `grep -c "VITE_SA_AI_EXECUTION_SKILL" src/squash/TuningConfig.js` = 1.
-
-### `TASK-27` — `ShotController.solveCornerLob` (replaces the 4.85/11.2 branch)
-- **Status**: `[ ]`
-- **Owner Module**: `src/squash/ShotController.js`
-- **Architecture Ref**: §5.9 entity rows "`ShotController.solveCornerLob`", "`SHOT_CHARGE_ENVELOPES`"; §5.7 failure record (what must NOT return)
-- **Depends On**: `["TASK-25", "TASK-26"]`
-- **kstore Key**: `mba.robin.squasharcade.tasks.TASK-27`
-- **Do**: Replace the fixed lob branch at `ShotController.js:260-274` with `solveCornerLob({ actorPos, contactPos, targetCornerSign, chargeNormalized, params }) -> { vel, spin, solvedContactY, paceMps, solveStatus }`, `solveStatus ∈ 'LEGAL_CORNER' | 'ATTEMPT_OUT' | 'ATTEMPT_SHORT'`:
-  1. **Decision variables are LAUNCH CONDITIONS** (pace × launch angle, spin). Objective = the landing: steep first drop in the back-corner zone (`|x| ≥ 1.6 && z ≥ 3.0`), T-band (z ∈ [0.5, 2.5]) clearance > 2.6 m, evaluated by iterating `BallPhysics.simulateTrajectory` over candidate launch conditions (bounded search, ≤ ~24 evaluations, deterministic order). Straight lane only: lateral target `x = sideSign · 2.35` with near-zero lateral drift at the wall (cross-court is measured side-wall-bound — do not implement).
-  2. `solvedContactY` is the EMERGENT front-wall contact height of the winning trajectory — an OUTPUT for classification and HUD, never a search input. NO aim point, NO legality filter, NO clamp of `solvedContactY` anywhere in the path: if the best attempt's contact is ≥ 4.57 it executes and is classified `ATTEMPT_OUT`; if no candidate reaches the corner zone the best carry is classified `ATTEMPT_SHORT`.
-  3. Charge lerps commitment inside `SHOT_CHARGE_ENVELOPES.LOB` (9.0–15.5 m/s band); low charge = same intent under-executed. Calibration reference (measured 2026-10-21, COR per TASK-25): deep-corner solves ≈ pace 15 → corner; mid-court ≈ 13.5 → corner, 15 → out; front ≈ 12 → corner; deep-center → no corner solve at any pace (the "should not be played" zone).
-  4. Wire `computeShotExecution`'s `isLobRequest` branch to route through `solveCornerLob`, preserving label/cutAngle/pronation fields.
-- **Verify**: `npm run lint`; `grep -n "4.85\|/ 11.2" src/squash/ShotController.js` reports no matches in the lob path.
-- **Accept (AP-1)**: `grep -c "solveCornerLob" src/squash/ShotController.js` ≥ 2 (definition + call site); `grep -cE "Math.min\(4\.5|clamp.*4\.57" src/squash/ShotController.js` = 0 (no legality clamp exists); lint exits 0.
-
-### `TASK-28` — Serve Re-Anchor to Landing-Goal Solve + Corkscrew Flair Variant
-- **Status**: `[ ]`
-- **Owner Module**: `src/squash/ShotController.js`
-- **Architecture Ref**: §5.9 principle 4 (generalized solve semantics + flair attempts); §3.5 `computeServeExecution`
-- **Depends On**: `["TASK-25", "TASK-26"]`
-- **kstore Key**: `mba.robin.squasharcade.tasks.TASK-28`
-- **Do**:
-  1. Re-anchor `computeServeExecution` (`ShotController.js:95-96` wall-aim `frontWallHitX/Y` solve) to a landing-goal solve mirroring TASK-27: decision variables = launch conditions; objective = ball landing in the correct opposite rear quarter; front-wall contact is emergent output. Serve legality margins unchanged (`1.78 < y < 4.57` contact; quarter landing; existing `RulesEngine` judging untouched).
-  2. Add the corkscrew flair variant: when the caller passes `variant: 'corkscrew'` (AI only, gated by `aiFlairAttemptChance` in TASK-29), the solve uses a side-spin-dominant `spin` (`spin.y` magnitude ≥ 8) whose swerve comes from the EXISTING lateral Magnus coupling in `BallPhysics` — no scripted curve, no trajectory teleportation. The ordinary serve rules remain the only judge of whether it lands in.
-- **Verify**: `npm run lint`; manual determinism spot: two identical corkscrew calls produce identical `vel`/`spin`.
-- **Accept (AP-1)**: `grep -c "frontWallHitY" src/squash/ShotController.js` = 0; `grep -c "corkscrew" src/squash/ShotController.js` ≥ 1; lint exits 0.
-
-### `TASK-29` — AI Anti-Float Punish, Lob Selection Discipline & Error Application
-- **Status**: `[ ]`
-- **Owner Module**: `src/squash/OpponentAI.js`
-- **Architecture Ref**: §5.9 entity row "Anti-float punish rule"; principles 3 & 4 (one discriminator; correlated errors; out-surface realism)
-- **Depends On**: `["TASK-26", "TASK-27", "TASK-28"]`
-- **kstore Key**: `mba.robin.squasharcade.tasks.TASK-29`
-- **Do**:
-  1. **Anti-float punish** (fixes the mid-court overpatience): in the poach/patience gate at `OpponentAI.js:234-249`, add: incoming ball `speed < 6 m/s` AND `y <= 1.9` AND `bounceCountOnFloor === 0` → commit to the early volley-kill REGARDLESS of hitter depth (today's `player.z > 1.6` condition stops covering mid-court floaters). Balls crossing the T band above 2.6 m remain exempt (same discriminator, both outcomes — principle 3).
-  2. **Lob selection discipline**: `chooseTacticalShot` selects lob ONLY from deep/back-court contexts (`opponent.pos.z > ~2.6` or off-back-glass recovery); never from mid/front court. The AI never plays the "no solution" zone (deep-center lobs stay out of its repertoire; it may still be *fed* them).
-  3. **Error application**: before executing any solved shot, roll the skill-derived channels once (`aiErrorChannelsFromSkill(params.movementAndAI.aiExecutionSkill) × fatigueMultiplier` from TASK-30). On a failed roll, perturb the SOLVE OUTPUTS (pace multiplier draw from `aiExecutionNoiseSigma`, contact-height offset, `aiAimJitterDeg` rotation) — never pick the out surface; `BallPhysics` alone decides whether the errant ball departs via front wall > 4.57, back glass > 2.13, or the sloped side line. Serve error chances (§5.1) and `aiFlairAttemptChance` corkscrew selection ride the same rolls.
-- **Verify**: `npm run lint`; spectate a casual match — mid-court floaters are volley-killed, not waited on.
-- **Accept (AP-1)**: `grep -c "speed < 6" src/squash/OpponentAI.js` ≥ 1 (punish gate present); `grep -c "aiErrorChannelsFromSkill" src/squash/OpponentAI.js` ≥ 1; lint exits 0. Semantic (operator/✅ time): from a mid-court feed, the punish fires without the deep-hitter condition; a deep legal lob over 2.6 m is still waited out.
-
-### `TASK-30` — Difficulty Skill-Scalar Wiring & Fatigue Multiplier
-- **Status**: `[ ]`
-- **Owner Module**: `src/game_engine.js`
-- **Architecture Ref**: §5.9 entity rows "AI error params", "Fatigue error multiplier"; §3.11 `_applyDifficultyTuning`
-- **Depends On**: `["TASK-26"]`
-- **kstore Key**: `mba.robin.squasharcade.tasks.TASK-30`
-- **Do**: In `_applyDifficultyTuning` (`game_engine.js:642`): set `aiExecutionSkill` — `casual` 0.65, `pro` 0.93, `ai_vs_ai` uses the pro table, `1v1` untouched (human opponent). Track fatigue state on the engine: `gamesPlayed`, `pointsPlayed`, `lastRallyStrokeCount` (updated at `awardPoint` / rally end), and expose `getFatigueErrorMultiplier() = min(aiFatigueCap, 1 + 0.04·games + 0.004·points + 0.015·lastRallyStrokes)` consumed by TASK-29's rolls. Fatigue scales ALL channels uniformly and never changes selection.
-- **Verify**: `npm run lint`; casual match shows measurably more AI errors late-game than early.
-- **Accept (AP-1)**: `grep -c "aiExecutionSkill" src/game_engine.js` ≥ 2 (casual + pro branches); `grep -c "getFatigueErrorMultiplier" src/game_engine.js` ≥ 1; lint exits 0.
-
-### `TASK-31` — Choice Grades, Blessings Framing & Tactical Rating Memory
-- **Status**: `[ ]`
-- **Owner Modules**: `src/squash/RulesEngine.js`, `src/hud_ui.js`, `src/game_engine.js` (victory card wiring)
-- **Architecture Ref**: §5.9 entity row "Choice grades"; §5.8 victory rating
-- **Depends On**: `["TASK-27", "TASK-29"]`
-- **kstore Key**: `mba.robin.squasharcade.tasks.TASK-31`
-- **Do**:
-  1. `formatRefereeCallout` (`RulesEngine.js:512`) accepts shot-context (`solveStatus` + striker zone) and appends choice-grade text: punished poor choice → "POOR — lob from mid-court"; AI-error bailout of a bad player shot → "LUCKY — count your blessings, that sat up" (names the player's choice as the cause even when the point survives); corner-death solve → "GOOD — deep defensive lob".
-  2. `HudUI.showTimingPopup` displays the same grade on the timing popup channel.
-  3. Victory-card tactical rating accumulates choice quality across the match (count of GOOD minus POOR weighted into the displayed `YOUR TACTICAL RATING` number) — the scoreboard forgets, the rating remembers.
-- **Verify**: `npm run lint`; play one casual match — each punished lob shows a named grade; bailout shows the LUCKY framing.
-- **Accept (AP-1)**: `grep -c "count your blessings" src/squash/RulesEngine.js` ≥ 1 (case-insensitive); `grep -c "solveStatus" src/squash/RulesEngine.js` ≥ 1; lint exits 0.
-
-### `TASK-32` — `test_shot_law_lob` Invariant & Tuning-Panel Surface
-- **Status**: `[ ]`
-- **Owner Modules**: `src/squash/TestHarness.js`, `src/squash/TuningPanel.js`
-- **Architecture Ref**: §5.9 "Verification" paragraph; §3.9
-- **Depends On**: `["TASK-25", "TASK-26", "TASK-27", "TASK-29"]`
-- **kstore Key**: `mba.robin.squasharcade.tasks.TASK-32`
-- **Do**:
-  1. New static `TestHarness.test_shot_law_lob` in `runAll`: contact-grid sweep (deep-corner, deep-center, mid-court, front-court × charge 0.4/0.8/1.0) asserting (a) deep-zone full-charge → `LEGAL_CORNER` with wall contact < 4.5 m, min T-band height > 2.6 m, first drop `|x| ≥ 1.6 && z ≥ 3.0`; (b) failure classes exist and are reachable (mid-court top-charge → `ATTEMPT_OUT`; deep-center → no corner solve); (c) emergent contacts stay inside `SHOT_CHARGE_ENVELOPES.LOB.emergentContactBandM`; (d) COR response: ~7 m/s contact ratio ≥ 0.80, ≥20 m/s ratio ≤ 0.70.
-  2. `TuningPanel` Movement & AI tab gains sliders for `aiExecutionSkill`, `aiFlairAttemptChance`, and the four fatigue coefficients (persist via existing store; §5.1 env-override precedence preserved).
-- **Verify**: `npm run lint`; open Tuning Lab → run Diagnostics → `test_shot_law_lob` PASSES.
-- **Accept (AP-1)**: `grep -c "test_shot_law_lob" src/squash/TestHarness.js` ≥ 2; `TestHarness.runAll` executed from a fresh clone reports the new test present and passing after TASK-25..27 land; lint exits 0.
-
----
-
-## Sign-off
-
-- [ ] Architecture alignment approved (`DOCS/ARCHITECTURE.md` v2.3.0)
-- [ ] TASK-15 .. TASK-24 historical `[X]` records confirmed (✅ backfill at operator discretion)
-- [ ] TASK-25 .. TASK-32 scope + idempotent acceptance gates approved for dispatch
