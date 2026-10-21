@@ -40,13 +40,20 @@ COMPLETED GROUP ([X], TASK-15..24 — prior sessions):
         └►[TASK-18 G-Dependency Cleanup]─►[TASK-19 surge Deploy]
 [TASK-20 Skills Demo] [TASK-21 Audio] [TASK-22 Original-7] [TASK-23 Retrieval] [TASK-24 Ceremony]
 
-NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING):
+NEW GROUP (§5.9 Honest Shot Law — all `[ ]` PENDING, NO inter-task dependencies — any order, one coder per task):
 
-[TASK-25 Viscoelastic COR]─┬─►[TASK-27 solveCornerLob]─┬─►[TASK-29 AI Punish+Errors]─►[TASK-31 Choice Grades+Rating]
-[TASK-26 Envelopes+Params]─┤   [TASK-28 Serve Re-Anchor]─┘            │
-                           └─►[TASK-30 Difficulty+Fatigue Wiring]      │
-[TASK-25]─►[TASK-26]─►[TASK-27]─►[TASK-29]─►[TASK-32 test_shot_law_lob + TuningPanel]
+  [TASK-25 COR]   [TASK-26 Envelopes+Params]   [TASK-27 solveCornerLob]   [TASK-28 Serve+Corkscrew]
+  [TASK-29 Punish+Errors]   [TASK-30 Difficulty+Fatigue]   [TASK-31 Grades+Rating]   [TASK-32 test_shot_law_lob]
 ```
+
+
+### Order Independence (any task, any order, one coder per task)
+
+Every task in the §5.9 group is self-contained and may be coded and dispatched in ANY order, on a fresh clone, with no sibling task landed:
+- Each task codes ONLY against **shipped** interfaces (`BallPhysics.simulateTrajectory`, existing params objects, existing methods) — never a static import of another task's new symbol.
+- Cross-task values pass through runtime lookups with **fallback defaults** pinned in the task text (e.g. `params.movementAndAI.aiExecutionSkill ?? 0.65`), so the code is correct in isolation and automatically composes when the sibling lands.
+- Accept clauses are idempotent end-state assertions that **fail cleanly** (assert false, never crash/halt) while their subject entity is absent, and pass once it exists — consistent truth from any starting state (AP-1).
+- Same-file pairs (TASK-27/28 on `ShotController.js`, TASK-30/31 on `game_engine.js`) are each additive in disjoint regions; the sequential commit policy (`kstore_meta.execution_policy`) serializes their landings — no merge window.
 
 ---
 
@@ -242,7 +249,7 @@ Source of truth: `DOCS/ARCHITECTURE.md` v2.3.0 §5.9 (entity rows are cited verb
 - **Status**: `[ ]`
 - **Owner Module**: `src/squash/ShotController.js`
 - **Architecture Ref**: §5.9 entity rows "`ShotController.solveCornerLob`", "`SHOT_CHARGE_ENVELOPES`"; §5.7 failure record (what must NOT return)
-- **Depends On**: `["TASK-25", "TASK-26"]`
+- **Depends On**: `[]` — order-independent: the search runs against LIVE `simulateTrajectory` (correct under any COR state); LOB envelope values are inlined locally, preferring `SHOT_CHARGE_ENVELOPES.LOB` at runtime if present.
 - **kstore Key**: `mba.robin.squasharcade.tasks.TASK-27`
 - **Do**: Replace the fixed lob branch at `ShotController.js:260-274` with `solveCornerLob({ actorPos, contactPos, targetCornerSign, chargeNormalized, params }) -> { vel, spin, solvedContactY, paceMps, solveStatus }`, `solveStatus ∈ 'LEGAL_CORNER' | 'ATTEMPT_OUT' | 'ATTEMPT_SHORT'`:
   1. **Decision variables are LAUNCH CONDITIONS** (pace × launch angle, spin). Objective = the landing: steep first drop in the back-corner zone (`|x| ≥ 1.6 && z ≥ 3.0`), T-band (z ∈ [0.5, 2.5]) clearance > 2.6 m, evaluated by iterating `BallPhysics.simulateTrajectory` over candidate launch conditions (bounded search, ≤ ~24 evaluations, deterministic order). Straight lane only: lateral target `x = sideSign · 2.35` with near-zero lateral drift at the wall (cross-court is measured side-wall-bound — do not implement).
@@ -256,7 +263,7 @@ Source of truth: `DOCS/ARCHITECTURE.md` v2.3.0 §5.9 (entity rows are cited verb
 - **Status**: `[ ]`
 - **Owner Module**: `src/squash/ShotController.js`
 - **Architecture Ref**: §5.9 principle 4 (generalized solve semantics + flair attempts); §3.5 `computeServeExecution`
-- **Depends On**: `["TASK-25", "TASK-26"]`
+- **Depends On**: `[]` — order-independent: serve re-anchor touches only `computeServeExecution`; corkscrew keyed off `inputEvent.variant`, absent by default.
 - **kstore Key**: `mba.robin.squasharcade.tasks.TASK-28`
 - **Do**:
   1. Re-anchor `computeServeExecution` (`ShotController.js:95-96` wall-aim `frontWallHitX/Y` solve) to a landing-goal solve mirroring TASK-27: decision variables = launch conditions; objective = ball landing in the correct opposite rear quarter; front-wall contact is emergent output. Serve legality margins unchanged (`1.78 < y < 4.57` contact; quarter landing; existing `RulesEngine` judging untouched).
@@ -268,7 +275,7 @@ Source of truth: `DOCS/ARCHITECTURE.md` v2.3.0 §5.9 (entity rows are cited verb
 - **Status**: `[ ]`
 - **Owner Module**: `src/squash/OpponentAI.js`
 - **Architecture Ref**: §5.9 entity row "Anti-float punish rule"; principles 3 & 4 (one discriminator; correlated errors; out-surface realism)
-- **Depends On**: `["TASK-26", "TASK-27", "TASK-28"]`
+- **Depends On**: `[]` — order-independent: the punish gate is pure ball-state logic; error channels computed locally via the closed forms with `aiExecutionSkill ?? 0.65`; fatigue read as `engine.getFatigueErrorMultiplier?.() ?? 1`.
 - **kstore Key**: `mba.robin.squasharcade.tasks.TASK-29`
 - **Do**:
   1. **Anti-float punish** (fixes the §5.9 mid-court freeze defect record): in the poach/patience gate at `OpponentAI.js:234-249`, add: incoming ball `speed < 6 m/s` AND `y <= 1.9` AND `bounceCountOnFloor === 0` → commit to the early volley-kill REGARDLESS of hitter depth (today's `player.z > 1.6` condition stops covering mid-court floaters). Balls crossing the T band above 2.6 m remain exempt (same discriminator, both outcomes — principle 3).
@@ -281,7 +288,7 @@ Source of truth: `DOCS/ARCHITECTURE.md` v2.3.0 §5.9 (entity rows are cited verb
 - **Status**: `[ ]`
 - **Owner Module**: `src/game_engine.js`
 - **Architecture Ref**: §5.9 entity rows "AI error params", "Fatigue error multiplier"; §3.11 `_applyDifficultyTuning`
-- **Depends On**: `["TASK-26"]`
+- **Depends On**: `[]` — order-independent: params read with `??` defaults matching the specified values.
 - **kstore Key**: `mba.robin.squasharcade.tasks.TASK-30`
 - **Do**: In `_applyDifficultyTuning` (`game_engine.js:642`): set `aiExecutionSkill` — `casual` 0.65, `pro` 0.93, `ai_vs_ai` uses the pro table, `1v1` untouched (human opponent). Track fatigue state on the engine: `gamesPlayed`, `pointsPlayed`, `lastRallyStrokeCount` (updated at `awardPoint` / rally end), and expose `getFatigueErrorMultiplier() = min(aiFatigueCap, 1 + 0.04·games + 0.004·points + 0.015·lastRallyStrokes)` consumed by TASK-29's rolls. Fatigue scales ALL channels uniformly and never changes selection.
 - **Verify**: `npm run lint`; casual match shows measurably more AI errors late-game than early.
@@ -291,7 +298,7 @@ Source of truth: `DOCS/ARCHITECTURE.md` v2.3.0 §5.9 (entity rows are cited verb
 - **Status**: `[ ]`
 - **Owner Modules**: `src/squash/RulesEngine.js`, `src/hud_ui.js`, `src/game_engine.js` (victory card wiring)
 - **Architecture Ref**: §5.9 entity row "Choice grades"; §5.8 victory rating
-- **Depends On**: `["TASK-27", "TASK-29"]`
+- **Depends On**: `[]` — order-independent: grade logic no-ops on absent `solveStatus` until the solver lands; victory-rating accumulator works standalone.
 - **kstore Key**: `mba.robin.squasharcade.tasks.TASK-31`
 - **Do**:
   1. `formatRefereeCallout` (`RulesEngine.js:512`) accepts shot-context (`solveStatus` + striker zone) and appends choice-grade text: punished poor choice → "POOR — lob from mid-court"; AI-error bailout of a bad player shot → "LUCKY — count your blessings, that sat up" (names the player's choice as the cause even when the point survives); corner-death solve → "GOOD — deep defensive lob".
@@ -304,7 +311,7 @@ Source of truth: `DOCS/ARCHITECTURE.md` v2.3.0 §5.9 (entity rows are cited verb
 - **Status**: `[ ]`
 - **Owner Modules**: `src/squash/TestHarness.js`, `src/squash/TuningPanel.js`
 - **Architecture Ref**: §5.9 "Verification" paragraph; §3.9
-- **Depends On**: `["TASK-25", "TASK-26", "TASK-27", "TASK-29"]`
+- **Depends On**: `[]` — order-independent: tests are written against the specified public contracts and fail cleanly (assert, never crash) while subjects are absent.
 - **kstore Key**: `mba.robin.squasharcade.tasks.TASK-32`
 - **Do**:
   1. New static `TestHarness.test_shot_law_lob` in `runAll`: contact-grid sweep (deep-corner, deep-center, mid-court, front-court × charge 0.4/0.8/1.0) asserting (a) deep-zone full-charge → `LEGAL_CORNER` with wall contact < 4.5 m, min T-band height > 2.6 m, first drop `|x| ≥ 1.6 && z ≥ 3.0`; (b) failure classes exist and are reachable (mid-court top-charge → `ATTEMPT_OUT`; deep-center → no corner solve); (c) emergent contacts stay inside `SHOT_CHARGE_ENVELOPES.LOB.emergentContactBandM`; (d) COR response: ~7 m/s contact ratio ≥ 0.80, ≥20 m/s ratio ≤ 0.70.
