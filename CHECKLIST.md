@@ -370,7 +370,7 @@ The existing AI-rally diagnostic also failed before the edit and passed on the f
 
 
 ### `TASK-37` — Side-on opposite-leg step-through and timed rally contact
-- **Status**: `[ ]`
+- **Status**: `[X]` — implementation checks pass; rendered/runtime acceptance remains open.
 - **Owner Modules**: `src/squash/StrokeMotion.js` (new), `src/game_engine.js`, `src/squash/PlayerMovement.js`, `tests/stroke-motion.test.mjs` (new). Named read-only interfaces: `src/racket_kinematics.js` triggerSwing/update/getRacketRimWorldPoints; `src/mii_body_animation.js` exposed rig pivots; `src/squash/BallPhysics.js`; `src/squash/CourtGeometry.js`; `src/squash/RulesEngine.js`; `src/squash/TestHarness.js`.
 - **Architecture Ref**: §5.12. Current user requests explicitly authorize this correction in the original Arcade repository only.
 - **Do**:

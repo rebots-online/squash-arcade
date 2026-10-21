@@ -26,6 +26,7 @@ import { BallPhysics } from './squash/BallPhysics.js';
 import { RulesEngine } from './squash/RulesEngine.js';
 import { ShotController, SQUASH_SHOT_TYPES } from './squash/ShotController.js';
 import { PlayerMovement } from './squash/PlayerMovement.js';
+import { StrokeMotion } from './squash/StrokeMotion.js';
 import { OpponentAI } from './squash/OpponentAI.js';
 import { IntroDirector } from './squash/IntroDirector.js';
 import { TuningPanel } from './squash/TuningPanel.js';
@@ -2430,6 +2431,8 @@ export class ArgonTennisEngine {
     bannerStyle = 'style-gold',
     persistentBanner = false
   } = {}) {
+    StrokeMotion.reset(this.player);
+    StrokeMotion.reset(this.opponent);
     // Racket-spin ceremony: first point of a fresh match in real play mode only
     if (
       !this.spectatorMatchMode &&
@@ -2991,11 +2994,13 @@ export class ArgonTennisEngine {
   }
 
   _attemptPlayerRallyStrike(evt = {}, isAuto = false) {
+    if (this.player.strokeMotion?.pending) return true;
+    if (this.phase !== 'RALLY' || !this.ball.inPlay || !this.ball.hitFrontWallThisShot) return false;
     if (this.ball.lastHitter === 'player') return false;
-    if (!isAuto && this.player.swingCooldown > 0) return false;
+    if (this.player.swingCooldown > 0) return false;
 
     const dist = Math.hypot(this.ball.pos.x - this.player.pos.x, this.ball.pos.z - this.player.pos.z);
-    const maxReach = isAuto ? 3.6 : 2.85;
+    const maxReach = 1.15;
     if (dist > maxReach || this.ball.pos.y > 2.6) {
       return false;
     }
@@ -3006,12 +3011,36 @@ export class ArgonTennisEngine {
       prepSnapshot.chargeNormalized = Math.min(1, prepSnapshot.durationSec / 0.42);
     }
 
+    const handedness = this.motionController?.handedness || this.player.handedness || 'right';
+    const handSign = handedness === 'left' ? -1 : 1;
+    const shotType = String(evt.shotType || this.selectedShotType || 'topspin').toLowerCase();
+    const cutModifier = Boolean(evt.cutModifier || ['drop', 'slice'].includes(shotType) ||
+      ['DROP', 'SLICE'].includes(this.selectedShotType));
+    const isKill = ['smash', 'kill', 'volley_kill'].includes(shotType);
+    const side = isKill ? 'overhead' : evt.side ||
+      ((this.ball.pos.x - this.player.pos.x) * handSign < -0.05 ? 'backhand' : 'forehand');
+    const k = this.racketKinematics?.triggerSwing(this.player, {
+      shotType: isKill ? 'smash' : ['drop', 'slice'].includes(shotType) ? 'slice' : 'topspin',
+      side, speed: Number(evt.speed || 1.2), timing: 'sweet', dirX: Number(evt.dirX || 0)
+    });
+    const requested = StrokeMotion.request(this.player, {
+      ball: this.ball, inputEvent: { ...evt, shotType, cutModifier, side: k?.swingSide || side },
+      prepSnapshot, isAuto, handedness, gravity: this.tuningStore.params.ballPhysics.gravity
+    });
+    if (requested) this.player.swingCooldown = 0.50;
+    return requested;
+  }
+
+  _commitPlayerRallyStrike({ inputEvent: evt = {}, prepSnapshot }) {
+    if (this.phase !== 'RALLY' || !this.ball.inPlay || !this.ball.hitFrontWallThisShot ||
+        this.ball.lastHitter === 'player' || this.ball.bounceCountOnFloor >= 2) return false;
+    const dist = Math.hypot(this.ball.pos.x - this.player.pos.x, this.ball.pos.z - this.player.pos.z);
+    if (dist > 1.15 || this.ball.pos.y > 2.6) return false;
+
     const cutModifier = Boolean(
       evt.cutModifier ||
         evt.shotType === 'drop' ||
-        evt.shotType === 'slice' ||
-        this.selectedShotType === 'DROP' ||
-        this.selectedShotType === 'SLICE'
+        evt.shotType === 'slice'
     );
 
     const shot = this.shotController.computeShotExecution({
@@ -3020,46 +3049,22 @@ export class ArgonTennisEngine {
       opponent: this.opponent,
       inputEvent: {
         ...evt,
-        shotType: evt.shotType || this.selectedShotType.toLowerCase(),
+        shotType: evt.shotType || 'topspin',
         cutModifier
       },
       prepSnapshot,
       params: this.tuningStore.params
     });
 
-    const playerHandSign = this.motionController?.handedness === 'left' ? -1 : 1;
-    const isBackhand =
-      evt.side === 'backhand'
-        ? true
-        : evt.side === 'forehand'
-        ? false
-        : (this.ball.pos.x - this.player.pos.x) * playerHandSign < -0.05;
     const isKill = shot.shotId === SQUASH_SHOT_TYPES.VOLLEY_KILL;
     const isDrop =
       shot.shotId === SQUASH_SHOT_TYPES.DISGUISED_DROP ||
       shot.shotId === SQUASH_SHOT_TYPES.COUNTER_DROP;
-    const side = isKill ? 'overhead' : isBackhand ? 'backhand' : 'forehand';
-
-    this.player.swingType = side === 'overhead' ? 'smash' : side;
-    this.player.swingDuration = 0.32;
-    this.player.swingTimer = 0.32;
-    this.player.arcVisibleTimer = 0.36;
-    this.player.swingCooldown = 0.18;
-
     if (this.racketKinematics) {
-      this.racketKinematics.triggerSwing(this.player, {
-        shotType: isDrop ? 'slice' : isKill ? 'smash' : 'topspin',
-        side,
-        speed: Number(evt.speed || 1.2),
-        timing: 'sweet',
-        dirX: Number(evt.dirX || 0)
-      });
       this.racketKinematics.triggerImpactRecoil(this.player, isKill ? 1.35 : 0.95);
     }
 
     const contactPos = this.ball.pos.clone();
-    contactPos.y = Math.max(0.24, Math.min(2.1, contactPos.y));
-    this.ball.pos.copy(contactPos);
     this.ball.vel.copy(shot.vel);
     this.ball.spin.copy(shot.spin);
     this.ball.isPowerShot = isKill || shot.speedKmh > 92;
@@ -3136,9 +3141,10 @@ export class ArgonTennisEngine {
   }
 
   _attemptOpponentManualStrike(evt = {}) {
+    if (this.opponent.strokeMotion?.pending) return true;
     if (this.ball.lastHitter === 'opponent') return false;
     const dist = Math.hypot(this.ball.pos.x - this.opponent.pos.x, this.ball.pos.z - this.opponent.pos.z);
-    if (dist > 2.95) return false;
+    if (dist > 1.15) return false;
     return this._executeOpponentSquashStrike({
       shotType: (evt.shotType || 'topspin').toLowerCase(),
       dirX: Number(evt.dirX || 0),
@@ -3150,47 +3156,55 @@ export class ArgonTennisEngine {
   }
 
   _executeOpponentSquashStrike(aiDecision = {}) {
+    if (this.opponent.strokeMotion?.pending) return true;
+    if (this.phase !== 'RALLY' || !this.ball.inPlay || !this.ball.hitFrontWallThisShot ||
+        this.ball.lastHitter === 'opponent' || this.ball.bounceCountOnFloor >= 2) return false;
     if (this.opponent.swingCooldown > 0) return false;
-    this.opponent.swingCooldown = 0.22;
+    const dist = Math.hypot(this.ball.pos.x - this.opponent.pos.x, this.ball.pos.z - this.opponent.pos.z);
+    if (dist > 1.15 || this.ball.pos.y > 2.6) return false;
+    const handedness = this.opponent.handedness || 'right';
+    const handSign = handedness === 'left' ? -1 : 1;
+    const shotType = String(aiDecision.shotType || 'topspin').toLowerCase();
+    const isKill = ['smash', 'kill', 'volley_kill'].includes(shotType);
+    const side = isKill ? 'overhead' : aiDecision.side ||
+      ((this.ball.pos.x - this.opponent.pos.x) * handSign < -0.05 ? 'backhand' : 'forehand');
+    const k = this.racketKinematics?.triggerSwing(this.opponent, {
+      shotType: isKill ? 'smash' : ['drop', 'slice'].includes(shotType) ? 'slice' : 'topspin',
+      side, speed: Number(aiDecision.speed || 1.16), timing: 'sweet', dirX: Number(aiDecision.dirX || 0)
+    });
+    const requested = StrokeMotion.request(this.opponent, {
+      ball: this.ball, inputEvent: { ...aiDecision, side: k?.swingSide || side }, isAuto: true,
+      prepSnapshot: { active: true, durationSec: 0.35, chargeNormalized: Number(aiDecision.prepCharge ?? 0.65) },
+      handedness, gravity: this.tuningStore.params.ballPhysics.gravity
+    });
+    if (requested) this.opponent.swingCooldown = 0.50;
+    return requested;
+  }
+
+  _commitOpponentSquashStrike({ inputEvent: aiDecision = {}, prepSnapshot }) {
+    if (this.phase !== 'RALLY' || !this.ball.inPlay || !this.ball.hitFrontWallThisShot ||
+        this.ball.lastHitter === 'opponent' || this.ball.bounceCountOnFloor >= 2) return false;
+    const dist = Math.hypot(this.ball.pos.x - this.opponent.pos.x, this.ball.pos.z - this.opponent.pos.z);
+    if (dist > 1.15 || this.ball.pos.y > 2.6) return false;
 
     const shot = this.shotController.computeShotExecution({
       actor: this.opponent,
       ball: this.ball,
       opponent: this.player,
       inputEvent: aiDecision,
-      prepSnapshot: {
-        active: true,
-        durationSec: 0.35,
-        chargeNormalized: Number(aiDecision.prepCharge ?? 0.65)
-      },
+      prepSnapshot,
       params: this.tuningStore.params
     });
 
-    const isBackhand = this.ball.pos.x < this.opponent.pos.x - 0.05;
     const isDrop =
       shot.shotId === SQUASH_SHOT_TYPES.DISGUISED_DROP ||
       shot.shotId === SQUASH_SHOT_TYPES.COUNTER_DROP;
     const isKill = shot.shotId === SQUASH_SHOT_TYPES.VOLLEY_KILL;
-    const side = isBackhand ? 'backhand' : 'forehand';
-
-    this.opponent.swingType = side;
-    this.opponent.swingDuration = 0.34;
-    this.opponent.swingTimer = 0.34;
-    this.opponent.arcVisibleTimer = 0.36;
-
     if (this.racketKinematics) {
-      this.racketKinematics.triggerSwing(this.opponent, {
-        shotType: isDrop ? 'slice' : isKill ? 'smash' : 'topspin',
-        side,
-        speed: Number(aiDecision.speed || 1.16),
-        timing: 'sweet'
-      });
       this.racketKinematics.triggerImpactRecoil(this.opponent, 1.0);
     }
 
     const contactPos = this.ball.pos.clone();
-    contactPos.y = Math.max(0.24, Math.min(2.0, contactPos.y));
-    this.ball.pos.copy(contactPos);
     this.ball.vel.copy(shot.vel);
     this.ball.spin.copy(shot.spin);
     this.ball.isPowerShot = isKill;
@@ -3365,7 +3379,36 @@ export class ArgonTennisEngine {
     return this.rulesEngine.evaluateCollision(evt, this.ball);
   }
 
+  _updateStrokeMotions(dt) {
+    for (const actor of [this.player, this.opponent]) {
+      const handedness = actor === this.player
+        ? this.motionController?.handedness || actor.handedness || 'right'
+        : actor.handedness || 'right';
+      StrokeMotion.prepare(actor, dt, { ball: this.ball, phase: this.phase, handedness });
+      const payload = StrokeMotion.update(actor, dt, { ball: this.ball, phase: this.phase });
+      if (payload) {
+        const committed = actor === this.player
+          ? this._commitPlayerRallyStrike(payload) : this._commitOpponentSquashStrike(payload);
+        if (!committed) {
+          StrokeMotion.reset(actor);
+          actor.swingTimer = 0;
+          if (actor.racketKinematics) actor.racketKinematics.swingActive = false;
+        }
+      }
+      const motion = actor.strokeMotion;
+      if (motion.phase === 'swing') {
+        actor.swingDuration = motion.racketDurationSec;
+        actor.swingTimer = (1 - motion.progress) * motion.racketDurationSec;
+        actor.swingType = motion.side === 'overhead' ? 'smash' : motion.side;
+      }
+    }
+  }
+
   _stepPhysics(dt) {
+    if (this.phase !== 'RALLY' || !this.ball.inPlay) {
+      StrokeMotion.reset(this.player);
+      StrokeMotion.reset(this.opponent);
+    }
     this.phaseTimer += dt;
     if (this.player.swingCooldown > 0) {
       this.player.swingCooldown = Math.max(0, this.player.swingCooldown - dt);
@@ -3500,7 +3543,14 @@ export class ArgonTennisEngine {
         }
       });
 
-      if (pointEnded) return;
+      if (pointEnded) {
+        StrokeMotion.reset(this.player);
+        StrokeMotion.reset(this.opponent);
+        return;
+      }
+
+      // Integrate the incoming ball and resolve wall/floor rules before contact.
+      this._updateStrokeMotions(dt);
 
       // Check WSF Rule 9: Did the ball strike a player's body?
       const bodyCollision = this.rulesEngine.evaluateBallPlayerBodyCollision({
@@ -3670,7 +3720,7 @@ export class ArgonTennisEngine {
               this.ball.pos.x - this.player.pos.x,
               this.ball.pos.z - this.player.pos.z
             );
-            if (dist <= 2.75 && this.ball.pos.y <= 2.35) {
+            if (dist <= 1.15 && this.ball.pos.y <= 2.35) {
               const evt = this.pendingUserSwing.evt;
               this.pendingUserSwing = null;
               this._attemptPlayerRallyStrike(evt, false);
@@ -3930,6 +3980,16 @@ export class ArgonTennisEngine {
     if (actor.swingArcMesh) actor.swingArcMesh.visible = false;
 
     if (this.racketKinematics) {
+      const motion = actor.strokeMotion;
+      const k = actor.racketKinematics;
+      if (motion?.phase === 'swing' && k) {
+        const effectiveDt = THREE.MathUtils.clamp(Number(dt || 1 / 60), 0.0005, 0.05);
+        k.swingElapsed = motion.progress * motion.racketDurationSec - effectiveDt;
+        k.swingDuration = motion.racketDurationSec;
+        k.swingActive = true;
+        actor.swingDuration = motion.racketDurationSec;
+        actor.swingTimer = (1 - motion.progress) * motion.racketDurationSec;
+      }
       this.racketKinematics.update(actor, dt, {
         phase: this.phase === 'WONDER_INTRO' ? 'RALLY' : this.phase,
         score: this.score,
@@ -3945,8 +4005,10 @@ export class ArgonTennisEngine {
       actor.root.position.set(actor.pos.x, actor.pos.y, actor.pos.z);
     }
 
-    const ballAngle = Math.atan2(this.ball.pos.x - actor.pos.x, -3.5) * 0.28;
-    actor.root.rotation.y = Math.PI - ballAngle;
+    if (!StrokeMotion.applyPose(actor, this.ball)) {
+      const ballAngle = Math.atan2(this.ball.pos.x - actor.pos.x, -3.5) * 0.28;
+      actor.root.rotation.y = Math.PI - ballAngle;
+    }
 
     updateCharacterContactShadow(actor, actor.rig?.verticalHopOffset || 0);
     this.facialFX &&

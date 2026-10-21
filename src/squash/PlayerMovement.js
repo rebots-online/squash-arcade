@@ -214,8 +214,10 @@ export class PlayerMovement {
     const recoveryScale = isRecoveringToT ? Number(ma.tRecoverySpeedScale ?? 0.86) : 1.0;
     const maxSpeed = Math.min(baseMaxSpeed, actor.maxSpeed || baseMaxSpeed) * recoveryScale;
 
-    const dx = actor.targetPos.x - actor.pos.x;
-    const dz = actor.targetPos.z - actor.pos.z;
+    const locomotionTarget = actor.strokeMotion?.phase === 'swing' && actor.strokeMotion.stepTargetWorld
+      ? actor.strokeMotion.stepTargetWorld : actor.targetPos;
+    const dx = locomotionTarget.x - actor.pos.x;
+    const dz = locomotionTarget.z - actor.pos.z;
     const dist = Math.hypot(dx, dz);
 
     if (dist > 0.04) {
