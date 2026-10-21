@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import { ShotController, SQUASH_SHOT_TYPES } from '../src/squash/ShotController.js';
 import { BallPhysics } from '../src/squash/BallPhysics.js';
+import { ShotTrajectorySolver } from '../src/squash/ShotTrajectorySolver.js';
 import { DEFAULT_TUNING_PARAMS } from '../src/squash/TuningConfig.js';
 
 const controller = new ShotController();
@@ -37,10 +38,15 @@ function assertReturnTrajectory(contact, shot) {
   }, params);
   const context = JSON.stringify(contact);
   const firstBounceIndex = sim.events.findIndex((event) => event.surface === 'floor' || event.surface === 'nick');
+  const front = sim.events.find((event) => event.surface === 'front_wall');
+  assert.ok(front && Math.abs(front.pos.y - 2.05) <= 0.10, `front height ${front?.pos.y}: ${context}`);
   const firstBackIndex = sim.events.findIndex((event) => event.surface === 'back_wall');
   assert.ok(firstBounceIndex >= 0, `first bounce exists: ${context}`);
   assert.ok(firstBackIndex < 0 || firstBounceIndex < firstBackIndex, `floor before back glass: ${context}`);
   assert.ok(Math.abs(sim.events[firstBounceIndex].pos.z - 3.8) <= 0.12, `bounce depth ${sim.events[firstBounceIndex].pos.z}: ${context}`);
+  const targetX = Math.sign(contact.x) * (contact.shotType === 'cross' ? -2.8 : 2.8);
+  assert.ok(Math.abs(sim.events[firstBounceIndex].pos.x - targetX) <= 0.10, `landing x ${sim.events[firstBounceIndex].pos.x}: ${context}`);
+  assert.ok(!sim.events.slice(0, firstBounceIndex).some((event) => event.surface.startsWith('side_wall')), `no side before floor: ${context}`);
   assert.ok(sim.events.every((event) => !event.isOut && !event.isTin && event.surface !== 'tin'), `legal trajectory: ${context}`);
   for (const event of sim.events.filter((event) => event.surface === 'back_wall')) {
     assert.ok(event.pos.y < 2.13, `back contact below out line: ${context}`);
@@ -101,4 +107,46 @@ test('ordinary shot identities and full-preparation drop disguise stay intact', 
   const disguisedDrop = execute({ ...contact, shotType: 'drop', prepCharge: 1 });
   assert.equal(disguisedDrop.shotId, SQUASH_SHOT_TYPES.DISGUISED_DROP);
   assert.equal(disguisedDrop.isDisguised, true);
+});
+
+
+test('actual delayed low contacts remain higher and softer without moving contact', () => {
+  for (const x of [-2.8, 2.8]) {
+    for (const y of [0.10, 0.15]) {
+      for (const shotType of ['topspin', 'cross']) {
+        const contact = { x, y, z: 3.96, shotType };
+        assertReturnTrajectory(contact, execute(contact));
+      }
+    }
+  }
+});
+
+test('drive solve mirrors exactly and never mutates supplied contact/spin', () => {
+  for (const isCrossRequest of [false, true]) {
+    const contactPos = new THREE.Vector3(2.8, 0.1, 3.96);
+    const spin = new THREE.Vector3(14, 0, 0);
+    const positive = ShotTrajectorySolver.solveDrive({ contactPos, spin, params, isCrossRequest });
+    const negative = ShotTrajectorySolver.solveDrive({ contactPos: new THREE.Vector3(-2.8, 0.1, 3.96), spin, params, isCrossRequest });
+    assert.deepEqual(negative.toArray(), [-positive.x, positive.y, positive.z]);
+    assert.deepEqual(contactPos.toArray(), [2.8, 0.1, 3.96]);
+    assert.deepEqual(spin.toArray(), [14, 0, 0]);
+  }
+});
+
+test('drive probes are deterministic and bounded by 55 real simulations', (t) => {
+  const original = BallPhysics.simulateTrajectory;
+  let count = 0;
+  BallPhysics.simulateTrajectory = function (...args) {
+    count++;
+    return original.apply(this, args);
+  };
+  t.after(() => { BallPhysics.simulateTrajectory = original; });
+  const first = execute({ y: 0.1, z: 3.96, shotType: 'cross' });
+  const firstCount = count;
+  count = 0;
+  const second = execute({ y: 0.1, z: 3.96, shotType: 'cross' });
+  assert.ok(firstCount > 0 && firstCount <= 55);
+  assert.equal(count, firstCount);
+  assert.deepEqual(second.vel.toArray(), first.vel.toArray());
+  t.diagnostic(`drive reproduction physics probes: ${firstCount}`);
 });

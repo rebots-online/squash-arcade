@@ -13,6 +13,7 @@ import * as THREE from 'three';
 import { COURT_SPECS } from './CourtGeometry.js';
 import { BallPhysics } from './BallPhysics.js';
 import { SHOT_CHARGE_ENVELOPES } from './TuningConfig.js';
+import { ShotTrajectorySolver } from './ShotTrajectorySolver.js';
 
 export const SQUASH_SHOT_TYPES = Object.freeze({
   STRAIGHT_DRIVE: 'STRAIGHT_DRIVE',
@@ -151,7 +152,7 @@ export class ShotController {
       : Number(inputEvent.prepCharge ?? 0.45);
 
     const contactPos = ball.pos.clone();
-    contactPos.y = THREE.MathUtils.clamp(contactPos.y, 0.24, Number(sm.contactHeightReachMeters ?? 2.15));
+    contactPos.y = THREE.MathUtils.clamp(contactPos.y, COURT_SPECS.BALL_RADIUS * 1.65, Number(sm.contactHeightReachMeters ?? 2.15));
 
     const playerSideSign = contactPos.x >= 0 ? 1 : -1;
     const isVolley = (ball.bounceCountOnFloor || 0) === 0 && contactPos.z < COURT_SPECS.SHORT_LINE_Z + 0.85;
@@ -204,7 +205,7 @@ export class ShotController {
     const isTrappedAtBack =
       rawRequested === 'back_wall_boast' ||
       (contactPos.z >= 3.10 && !isOffBackWall && Math.abs(contactPos.x) > 1.15) ||
-      contactPos.z >= 3.48;
+      (contactPos.z >= 3.48 && !isOffBackWall);
 
     if (isBoastRequest && isTrappedAtBack) {
       // --- BACK-WALL RECOVERY BOAST (Trapped at Back of Court -> Back Glass + Side Wall + Front Wall) ---
@@ -361,7 +362,7 @@ export class ShotController {
       );
       spin.set(14 * spinScale, 0, 0);
       if (isOffBackWall) {
-        vel.copy(this._computeBackWallDriveVelocity({ contactPos, vel, spin, params }));
+        vel.copy(this._computeBackWallDriveVelocity({ contactPos, spin, params, isCrossRequest }));
       }
     }
 
@@ -436,31 +437,9 @@ export class ShotController {
     };
   }
 
-  /** Adjust only lift so a back-wall drive's first bounce stays deep. */
-  _computeBackWallDriveVelocity({ contactPos, vel, spin, params }) {
-    const candidate = vel.clone();
-    const flightSec = (COURT_SPECS.FRONT_WALL_Z - contactPos.z) / vel.z;
-    const g = Number(params.ballPhysics?.gravity ?? 9.81);
-    const liftForHeight = (height) =>
-      (height - contactPos.y + 0.5 * g * flightSec * flightSec) / flightSec;
-    let lowerVy = liftForHeight(0.68);
-    let upperVy = liftForHeight(3.2);
-
-    for (let iteration = 0; iteration < 10; iteration++) {
-      candidate.y = (lowerVy + upperVy) / 2;
-      const sim = BallPhysics.simulateTrajectory({ pos: contactPos, vel: candidate, spin }, params);
-      const terminal = sim.events.find((event) =>
-        ['floor', 'nick', 'back_wall', 'tin'].includes(event.surface)
-      );
-      const depth = !terminal
-        ? COURT_SPECS.BACK_WALL_Z + 1
-        : terminal.surface === 'back_wall'
-        ? COURT_SPECS.BACK_WALL_Z + 1 + terminal.pos.y
-        : terminal.pos.z;
-      if (depth > 3.8) upperVy = candidate.y;
-      else lowerVy = candidate.y;
-    }
-    return candidate;
+  /** Solve the higher, softer rear-quarter return from the actual contact. */
+  _computeBackWallDriveVelocity({ contactPos, spin, params, isCrossRequest = false }) {
+    return ShotTrajectorySolver.solveDrive({ contactPos, spin, params, isCrossRequest });
   }
 
   /**
@@ -657,58 +636,11 @@ export class ShotController {
   }
 
   _computeSideFrontNickBoastVector(contactPos, sideSign, params = {}) {
-    const bp = params.ballPhysics || {};
-    const tempFactor = Math.max(0.76, Math.min(1.18, 1.0 + ((bp.ballTemperatureC ?? 36) - 36) * 0.011));
-    const corSide = Math.min(0.86, (bp.sideWallRestitution ?? 0.66) * tempFactor);
-    const friction = Number(bp.surfaceFriction ?? 0.80);
     const spinScale = Number(params.shotMechanics?.spinMagnitudeScale ?? 1.0);
     const spin = new THREE.Vector3(-12 * spinScale, sideSign * 14 * spinScale, 0);
+    const vel = ShotTrajectorySolver.solveBoast({ contactPos, spin, params });
 
-    const radius = COURT_SPECS.BALL_RADIUS * 1.65;
-    const sideLimitX = COURT_SPECS.HALF_WIDTH - radius; // 3.167m
-    const frontLimitZ = COURT_SPECS.FRONT_WALL_Z + radius; // -4.842m
-
-    const dx1 = Math.max(0.35, sideLimitX - sideSign * contactPos.x);
-    const dzFront = Math.max(1.8, contactPos.z - frontLimitZ);
-    const dxAcross = 2 * sideLimitX; // 6.334m across court from near side wall to opposite nick
-
-    const tFront = THREE.MathUtils.clamp(dzFront / 19.5, 0.25, 0.42);
-    const tAfterFront = 0.17;
-    const K = dxAcross / (dx1 * corSide * 0.96);
-    const t1 = (tFront + friction * tAfterFront) / (1 + K);
-
-    const baseVx = sideSign * (dx1 / t1) * 1.005;
-    const baseVz = -(dzFront / (t1 + friction * (tFront - t1))) * 1.02;
-    const baseVy = (0.72 - contactPos.y) / tFront + 0.5 * 9.81 * (tFront + tAfterFront) * 0.56;
-
-    let bestVel = new THREE.Vector3(baseVx, baseVy, baseVz);
-    let bestScore = 1e9;
-
-    for (const dvy of [-0.55, -0.35, -0.18, 0, 0.18, 0.36, 0.55, 0.75]) {
-      const candVel = new THREE.Vector3(baseVx, baseVy + dvy, baseVz);
-      const sim = BallPhysics.simulateTrajectory(
-        { pos: contactPos, vel: candVel, spin },
-        params,
-        null,
-        { maxTimeSec: 0.75 }
-      );
-      const sideHit = sim.events.find((c) => c.surface.startsWith('side_wall'));
-      const frontHit = sim.events.find((c) => c.surface === 'front_wall');
-      const firstBounce = sim.events.find((c) => c.surface === 'nick' || c.surface === 'floor');
-      if (!sideHit || !frontHit || !firstBounce || frontHit.isTin || frontHit.isOut) continue;
-      if (sim.events.indexOf(sideHit) > sim.events.indexOf(frontHit)) continue;
-      const targetNickX = -sideSign * sideLimitX;
-      const xErr = Math.abs(firstBounce.pos.x - targetNickX);
-      const nickBonus = firstBounce.isNick ? -2.0 : 0;
-      const score = xErr + nickBonus;
-      if (score < bestScore) {
-        bestScore = score;
-        bestVel = candVel;
-      }
-      if (firstBounce.isNick) break;
-    }
-
-    return { vel: bestVel, spin };
+    return { vel, spin };
   }
 }
 
