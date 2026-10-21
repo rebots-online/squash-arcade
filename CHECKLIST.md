@@ -341,3 +341,17 @@ Source of truth: `DOCS/ARCHITECTURE.md` v2.3.0 §5.9 (entity rows are cited verb
 - [ ] Architecture alignment approved (`DOCS/ARCHITECTURE.md` v2.3.0)
 - [ ] TASK-15 .. TASK-24 historical `[X]` records confirmed (✅ backfill at operator discretion)
 - [ ] TASK-25 .. TASK-33 scope + idempotent acceptance gates approved for dispatch
+
+
+### `TASK-34` — Back-wall drive contact-height correction
+- **Status**: ✅
+- **Owner Modules**: `src/squash/ShotController.js`, `tests/back-wall-drive.test.mjs` (new).
+- **Architecture Ref**: §5.11. Current operator bug report authorizes this bounded correction.
+- **Depends On**: `[]`.
+- **Do**:
+  1. Add `ShotController._computeBackWallDriveVelocity({ contactPos, vel, spin, params }) -> THREE.Vector3` before the existing lob solver. Clone `vel`; preserve x/z and `spin`. Let `flightSec = (COURT_SPECS.FRONT_WALL_Z - contactPos.z) / vel.z`, `g = Number(params.ballPhysics?.gravity ?? 9.81)`. Lower/upper vy seeds are `(height - contactPos.y + 0.5*g*flightSec*flightSec)/flightSec` for heights `0.68` and `3.2`. Repeat 10 times: candidate y = midpoint; call existing `BallPhysics.simulateTrajectory({pos: contactPos, vel: candidate, spin}, params)`. Find first event whose surface is `floor`, `nick`, `back_wall`, or `tin`. Depth = event.pos.z, except back_wall => `COURT_SPECS.BACK_WALL_Z + 1 + event.pos.y`; no terminal event => `COURT_SPECS.BACK_WALL_Z + 1`. If depth > 3.8, move upper bound to candidate y; otherwise move lower bound. Return tenth candidate. Never filter isOut/isTin, change shared physics, or add legality rescue.
+  2. In drive branch immediately after `spin.set(14 * spinScale, 0, 0)`, only when `isOffBackWall`, copy that helper's output into `vel`. Keep existing shot identity/labels, x/z pace and spin, preparation/disguise, and intentional AI-error code intact. Do not modify lob/drop/kill/boast/ordinary-drive execution.
+  3. Create `tests/back-wall-drive.test.mjs` using `node:test` and `node:assert/strict`, importing THREE, ShotController, BallPhysics, DEFAULT_TUNING_PARAMS from their existing module paths. Exhaustively simulate mirrored x `{0.2,2,2.8}`, z `{1,2,3,4.3}`, y `{0.24,0.45,0.7,1,1.4}`, speed `{0.92,1.12,1.32}`, vy sign `{1,-1}` and shotType `topspin`/`cross`. Incoming ball bounceCountOnFloor=1, hitBackWallThisShot=true, vel.z=-2. New struck ball resets hit flags/bounce count; simulate real physics. Every case: first floor/nick exists before back glass, depth within 0.12 m of 3.8; no tin/out; back contact when present below 2.13 m. Include exact reported reproduction `(2.8,0.24,3)`, descending, speed1.32. Verify changing prep charge0/0.45/1 alone leaves drive velocity identical; assert lob/kill/drop/boast identities and full-prep drop disguise remain intact using ordinary contact `(-1,0.95,0.8)`. No new dependencies or package scripts.
+- **Verify**: `node --test tests/back-wall-drive.test.mjs`; `npm run lint`.
+- **Accept**: Both commands exit 0; all exhaustive trajectory assertions pass using actual modules. Mark `[X]` only after observing acceptance; report exact grid count.
+- **Operator verification protocol**: Play successive back-wall returns, waiting until the ball falls into a low contact; confirm the drive stays a deep low-bouncing return. Browser gameplay feel remains unverified until observed.

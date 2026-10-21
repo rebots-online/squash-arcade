@@ -360,6 +360,9 @@ export class ShotController {
         dzToFront / flightSec
       );
       spin.set(14 * spinScale, 0, 0);
+      if (isOffBackWall) {
+        vel.copy(this._computeBackWallDriveVelocity({ contactPos, vel, spin, params }));
+      }
     }
 
     // Apply realistic AI error modes (clipping the 0.48m Tin or overhitting above the 4.57m Out Line)
@@ -431,6 +434,33 @@ export class ShotController {
       solvedContactY: lobSolve ? lobSolve.solvedContactY : null,
       lobPaceMps: lobSolve ? lobSolve.paceMps : null
     };
+  }
+
+  /** Adjust only lift so a back-wall drive's first bounce stays deep. */
+  _computeBackWallDriveVelocity({ contactPos, vel, spin, params }) {
+    const candidate = vel.clone();
+    const flightSec = (COURT_SPECS.FRONT_WALL_Z - contactPos.z) / vel.z;
+    const g = Number(params.ballPhysics?.gravity ?? 9.81);
+    const liftForHeight = (height) =>
+      (height - contactPos.y + 0.5 * g * flightSec * flightSec) / flightSec;
+    let lowerVy = liftForHeight(0.68);
+    let upperVy = liftForHeight(3.2);
+
+    for (let iteration = 0; iteration < 10; iteration++) {
+      candidate.y = (lowerVy + upperVy) / 2;
+      const sim = BallPhysics.simulateTrajectory({ pos: contactPos, vel: candidate, spin }, params);
+      const terminal = sim.events.find((event) =>
+        ['floor', 'nick', 'back_wall', 'tin'].includes(event.surface)
+      );
+      const depth = !terminal
+        ? COURT_SPECS.BACK_WALL_Z + 1
+        : terminal.surface === 'back_wall'
+        ? COURT_SPECS.BACK_WALL_Z + 1 + terminal.pos.y
+        : terminal.pos.z;
+      if (depth > 3.8) upperVy = candidate.y;
+      else lowerVy = candidate.y;
+    }
+    return candidate;
   }
 
   /**
