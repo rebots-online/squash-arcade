@@ -394,7 +394,7 @@ export class ShotController {
       const outTargetY = COURT_SPECS.FRONT_WALL_OUT_Y + 0.14 + this.randomSource() * 0.32; // Above 4.57m Out line!
       vel.y = (outTargetY - contactPos.y + 0.5 * g * flightEst * flightEst) / flightEst;
       label = `${label} (OVERHIT OUT)`;
-    } else if (inputEvent.aiWinnerMargin && dzToFront < -0.5 && !isBoastRequest) {
+    } else if (inputEvent.aiExecution && inputEvent.aiWinnerMargin && dzToFront < -0.5 && !isBoastRequest) {
       const flightEst = Math.max(0.2, Math.abs(dzToFront) / Math.max(10, Math.abs(vel.z)));
       const lowWinnerY = 0.56 + this.randomSource() * 0.1; // Just above the 0.48m Tin for a dead nick/winner
       vel.y = (lowWinnerY - contactPos.y + 0.5 * g * flightEst * flightEst) / flightEst;

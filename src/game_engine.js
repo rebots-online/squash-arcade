@@ -3689,6 +3689,7 @@ export class ArgonTennisEngine {
                 ...this.spectatorShotNudge,
                 aiErrorMode: null,
                 aiExecution: false,
+                aiWinnerMargin: false,
                 isSpectatorNudge: true
               };
               this.spectatorShotNudge = null;
@@ -3796,6 +3797,8 @@ export class ArgonTennisEngine {
                 ...choice,
                 ...this.spectatorShotNudge,
                 aiErrorMode: null,
+                aiExecution: false,
+                aiWinnerMargin: false,
                 isSpectatorNudge: true
               };
               this.spectatorShotNudge = null;

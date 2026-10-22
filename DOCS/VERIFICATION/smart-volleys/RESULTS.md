@@ -15,3 +15,5 @@ The independent reviewer reproduced a frozen crowded setup despite target correc
 
 ## Review repair — volley intent and lane preservation
 New regressions failed for strong explicit drop/drive/lob/kill aim, blocked cross-lane assistance, and queued-contact payload. Selected families now take precedence over gesture heuristics. Immediate and planned volley drops share lane-aware corner selection; queued input retains the accepted corner through scheduled contact. Focused nine-case volley suite passes.
+
+Review repair: inherited AI winner margins are cleared for either human spectator nudge path and require explicit AI execution in the solver. New regression failed on a random draw before the fix and now passes with identical deterministic human velocities.

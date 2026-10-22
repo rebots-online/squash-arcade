@@ -29,3 +29,11 @@ test('contact quality leaves reliable drive and lob placement unchanged',()=>{
     assert.deepEqual(a.shot.vel.toArray(),b.shot.vel.toArray());
   }
 });
+test('human spectator input cannot inherit random AI winner margins',()=>{
+  const ball={pos:new Vector3(2,1.2,3),vel:new Vector3(),bounceCountOnFloor:0};
+  const actor={pos:new Vector3(1.45,0,3.25),vel:new Vector3()};
+  const inputEvent={shotType:'drop',isSpectatorNudge:true,aiExecution:false};
+  const a=controller.computeShotExecution({actor,ball,inputEvent,params});
+  const b=controller.computeShotExecution({actor,ball,inputEvent:{...inputEvent,aiWinnerMargin:true},params});
+  assert.deepEqual(a.vel.toArray(),b.vel.toArray());
+});
