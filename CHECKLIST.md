@@ -1,10 +1,18 @@
 # Squash Arcade — approved independent implementation checklist
 
-Architecture: DOCS/ARCHITECTURE.md v2.6.3. User approved initial implementation on 2026-10-21; later requests are identified per item. Initial baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
+Architecture: DOCS/ARCHITECTURE.md v2.6.4. User approved initial implementation on 2026-10-21; later requests are identified per item. Initial baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
 
 Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with verification -> `✅` independently semantically validated. AP1–4 adopted; AP5 remains draft. No test-only sibling task and no external live service in coder Accept.
 
 Current operator override: no automated tests for follow-up work. TASK-40–45 test commands below are historical completed-release instructions, not current gates. TASK-46–48 are independent on release 178584f; each includes its own implementation and focused browser observation. No task requires another follow-up task.
+
+## TASK-58 — Keep one racket hand and remove backhand grip jumps
+
+- **Status**: [/]
+- **Dependencies**: [] (baseline 60176e6; independent of billing and queued tactics).
+- **Files**: src/racket_kinematics.js; src/squash/RacketGrip.js (new); src/squash/StrokeMotion.js; src/game_engine.js. Read-only: mii_body_animation.js and existing rig/recorded pose structure.
+- **Do**: Implement §4.19: dominant-hand ownership through the stroke, complete left-handed mirroring, shared preparation side, actual-pose swing start, neutral recovery, and final selected-hand grip synchronization with a separate balancing hand. Preserve live physics/contact, torso turn/foot planting and replay poses.
+- **Verify / Accept**: Observe the reported overlapping hands in the deployed backhand; inspect corrected forehand/backhand grip attachment, free-hand separation, continuity through swing start/recovery, explicit left-handed selection and replay. No automated tests. Build, commit/push each sensible change, deploy and verify public release bytes. Record focused runtime evidence and limits.
 
 ## TASK-57 — Stop unconditional polling of unavailable relay APIs
 

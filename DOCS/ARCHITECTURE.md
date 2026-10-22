@@ -1,7 +1,7 @@
 ---
 doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
-version: "2.6.3"
+version: "2.6.4"
 status: "TARGET — replay shadows follow recorded poses; volley tactics and serve repertoire queued"
 updated_at: "2026-10-22"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
@@ -422,6 +422,12 @@ The ball keeps one rendered ball and its soft floor contact shadow. During autom
 The static production build has no relay backend and must issue no automatic match-state, match-sync or racket-feedback requests. Relay capability is enabled only by the Vite development server or an explicit VITE_RELAY_ENABLED=true build configured with a same-origin backend. Capability alone does not start polling: require an explicit room, successful room creation, phone input selection or opening phone pairing. Ordinary solo/spectator startup remains silent. Leaving the requested input/session stops polling unless another relay consumer remains.
 
 The motion controller owns one cancellable request chain. Schedule the next request only after the previous one completes, use a five-second request timeout, ignore stale responses after room changes/stop/disposal, and cancel timers and requests together. Poll at the existing responsive interval only for connected phones or an active remote peer, otherwise wait one second. Transient failures back off exponentially and stop after three consecutive failures; missing/unauthorized endpoints or non-JSON/invalid relay responses stop immediately. Retry requires an explicit new session request. Gate network haptics on confirmed phone connection and match snapshots on confirmed relay availability; local vibration remains available. Preserve actual phone event decoding and gameplay.
+
+### 4.19 One committed racket hand and continuous backhand preparation (TASK-58)
+
+Handedness selects the racket hand independently of forehand/backhand stroke side. Retain that hand through preparation, contact, follow-through and recovery; explicit user hand changes apply outside a committed stroke. Mirror the complete legacy right-handed grip trajectory once for left-handed play. One final grip synchronization after body and stroke posing aligns the selected hand with the real racket handle; the free hand balances away from the handle instead of copying its position during backhands. Backhand loading crosses the dominant arm in front of the torso while the existing shoulder turn and opposite-foot plant remain.
+
+Start each racket swing at its actual displayed position/orientation, not a forehand/backhand preset. Preparation uses the same actor-relative stroke side as StrokeMotion, and neutral ready position belongs to the selected hand rather than the previous court side. Keep continuous recovery into the neutral grip and preserve scheduled ball contact, reach, shot physics and replayed recorded transforms.
 
 ## 5. Acceptance and release protocol
 
