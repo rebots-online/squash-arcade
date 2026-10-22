@@ -87,7 +87,10 @@ export class PointPresentation {
     const u=MathUtils.clamp(this.replayElapsed/4,0,1);
     const angle=(this.focus.x >= 0 ? -1 : 1)*MathUtils.lerp(.12,.72,u);
     const radius=MathUtils.lerp(8,4.1,MathUtils.smoothstep(u,0,1));
-    const targetLook=this.focus.clone();targetLook.y=Math.max(.35,targetLook.y);
+    const targetLook=this.focus.clone();
+    // High out-line faults still need the players and falling ball in frame.
+    targetLook.y=MathUtils.clamp(targetLook.y,.35,1.5);
+    targetLook.x*=MathUtils.lerp(.6,1,MathUtils.smoothstep(u,0,1));
     const orbitZ=targetLook.z-Math.cos(angle)*radius;
     const openingZ=Math.min(COURT_SPECS.FRONT_WALL_Z-.3,orbitZ);
     return {targetLook,targetPos:new Vector3(
