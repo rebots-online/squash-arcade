@@ -1,7 +1,7 @@
 ---
 doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
-version: "2.6.2"
+version: "2.6.3"
 status: "TARGET — replay shadows follow recorded poses; volley tactics and serve repertoire queued"
 updated_at: "2026-10-22"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
@@ -416,6 +416,12 @@ The authoritative appeal decision must reach the shared point callout formatter.
 Recorded point replay owns actor transforms while live animation remains suspended. Contact shadows are derived presentation and must still update on every displayed replay frame: use each recorded actor position and root height above that position, rather than the final live animation's hop offset. This keeps shadows beneath moving or airborne replay players instead of marking their eventual resting locations. Do not resume live body, racket, face, movement or stroke simulation to update shadows.
 
 The ball keeps one rendered ball and its soft floor contact shadow. During automatic point replay, suppress only the ball core's hard light-cast shadow, whose displaced dark disk can look like a second ball on the floor in the close camera. Restore the normal ball caster when returning to gameplay, including skip and restart. Actor lighting shadows, physical ball motion, recorded poses, scoring, tin visibility, orbit/zoom and ordinary gameplay shadows remain unchanged.
+
+### 4.18 Relay traffic requires a backend and a requested session (TASK-57)
+
+The static production build has no relay backend and must issue no automatic match-state, match-sync or racket-feedback requests. Relay capability is enabled only by the Vite development server or an explicit VITE_RELAY_ENABLED=true build configured with a same-origin backend. Capability alone does not start polling: require an explicit room, successful room creation, phone input selection or opening phone pairing. Ordinary solo/spectator startup remains silent. Leaving the requested input/session stops polling unless another relay consumer remains.
+
+The motion controller owns one cancellable request chain. Schedule the next request only after the previous one completes, use a five-second request timeout, ignore stale responses after room changes/stop/disposal, and cancel timers and requests together. Poll at the existing responsive interval only for connected phones or an active remote peer, otherwise wait one second. Transient failures back off exponentially and stop after three consecutive failures; missing/unauthorized endpoints or non-JSON/invalid relay responses stop immediately. Retry requires an explicit new session request. Gate network haptics on confirmed phone connection and match snapshots on confirmed relay availability; local vibration remains available. Preserve actual phone event decoding and gameplay.
 
 ## 5. Acceptance and release protocol
 

@@ -1,10 +1,18 @@
 # Squash Arcade — approved independent implementation checklist
 
-Architecture: DOCS/ARCHITECTURE.md v2.6.2. User approved initial implementation on 2026-10-21; later requests are identified per item. Initial baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
+Architecture: DOCS/ARCHITECTURE.md v2.6.3. User approved initial implementation on 2026-10-21; later requests are identified per item. Initial baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
 
 Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with verification -> `✅` independently semantically validated. AP1–4 adopted; AP5 remains draft. No test-only sibling task and no external live service in coder Accept.
 
 Current operator override: no automated tests for follow-up work. TASK-40–45 test commands below are historical completed-release instructions, not current gates. TASK-46–48 are independent on release 178584f; each includes its own implementation and focused browser observation. No task requires another follow-up task.
+
+## TASK-57 — Stop unconditional polling of unavailable relay APIs
+
+- **Status**: [/]
+- **Dependencies**: [] (baseline 97a1192; independent of queued tasks).
+- **Files**: src/motion_controls.js; src/game_engine.js; src/hud_ui.js. Read-only: vite.config.ts relay responses and existing room/input callbacks.
+- **Do**: Implement architecture §4.18 completely: static-build capability off by default, explicit backend opt-in, demand-driven session start/stop, single cancellable timeout chain, request timeout, response validation, bounded error backoff and terminal failure stop. Gate automatic feedback and snapshot writes; preserve local controls/vibration and phone event decoding. Reconfigure safely on room changes and stop on disposal.
+- **Verify / Accept**: Inspect live static-build network requests during spectator and solo play and after requesting pairing; no automatic relay calls. Inspect enabled local relay pairing and stop behavior with one request in flight at most. Build, record observed evidence and limits, commit/push and deploy; verify public release bytes. No automated tests.
 
 ## TASK-56 — Keep replay shadows with the recorded players and ball
 
