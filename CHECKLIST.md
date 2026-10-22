@@ -8,7 +8,7 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-56 — Keep replay shadows with the recorded players and ball
 
-- **Status**: [/]
+- **Status**: [X]
 - **Dependencies**: [] (baseline ac7032f; independent of queued tasks).
 - **Files**: src/game_engine.js. Read-only: PointPresentation.apply and updateCharacterContactShadow in src/mii_model_overhaul.js.
 - **Do**: Update both actor contact shadows in the replay animation bypass, deriving hop height from the displayed root and recorded actor position. Preserve the bypass of live body/racket/face animation. Track the ball core caster and disable its hard cast shadow only during POINT_REPLAY; keep the soft ball contact shadow and restore the caster in normal play. Preserve physics, recorded transforms, scoring, tin and camera.
