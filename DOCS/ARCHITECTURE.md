@@ -379,7 +379,13 @@ Predicted sample timestamps are measured from the shot, so all approach decision
 
 ### 4.10 Clear rearward-facing replay openings (TASK-48)
 
-Every automatic point replay opens on the front-wall side of the decisive event, looking toward the rear wall, then orbits and zooms on the recorded ball. Enter with a camera cut so the opening does not sweep through players from the previous gameplay view. Keep the orbit inside the side walls. Make the front wall transparent while the replay camera is in front of it, restoring normal wall treatment and the selected whole-court gameplay view on exit. Recorded poses, scoring, aftermath duration and skip behaviour remain unchanged.
+Every automatic point replay opens on the front-wall side of the decisive event, looking toward the rear wall, then orbits and zooms on the recorded ball. Enter with a camera cut so the opening does not sweep through players from the previous gameplay view. Keep the orbit inside the side walls. Make the front wall transparent while the replay camera is in front of it, restoring normal wall treatment and the selected whole-court gameplay view on exit. A compact bordered corner toast announces replay and the skip gesture, with a brief pulse respecting reduced-motion preferences. No central replay banner obscures the action. Recorded poses, scoring, aftermath duration and skip behaviour remain unchanged.
+
+### 4.11 Red-player ownership and learning from shot choices (TASK-49)
+
+The red player is the user's player in solo play and the target of spectator shot influence. Mark the front and back of that jersey YOU; repeat the red identity in the scoreboard and above the shot controls with mode-appropriate guidance. Keep existing explicit second-player controls separate.
+
+The shot chips display red's current chosen family while watching AI play, including a changed plan before contact and the final executed family. Blink once when a new shot is chosen or the family changes, then retain one highlight until the next choice; never blink every frame. Blue's shots must not replace that highlight. Normalise drive/topspin, drop/slice, boast, lob and kill/smash to the existing five chips. Keep visible volley context in the choice label. Display updates do not alter human-selected input, AI decisions, or shot timing. During replay retain red's last choice without inventing new decisions.
 
 ## 5. Acceptance and release protocol
 
