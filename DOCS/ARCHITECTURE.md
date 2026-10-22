@@ -365,6 +365,10 @@ Wrong-box staging/crowding pauses setup, announces the correction and moves auto
 
 Successful contact alone must not grant an exact nick. At committed human drop/kill/attacking-boast contact, derive deterministic contact quality from the actual ball relative to the actor's strike pocket and the actor's balance/movement. A compact sweet pocket preserves full precision; late, stretched or hurried contacts open the target margin and leave a more retrievable ball. This is not a random human error lottery. Explicit manual aim and family remain, and no contact is fabricated. Drives/lobs retain their existing reliable placement. Feedback explains balanced versus stretched timing. Direct pure-solver tests describe ideal launch construction, never human gameplay success rates. AI execution variation remains its separate skill model.
 
+### 4.7 Whole-court gameplay framing (TASK-45; operator correction)
+
+The normal Rally/Auto and serve cameras must show all four floor corners and the legal wall envelope at desktop, landscape and portrait aspect ratios, even during lateral tracking. Fit the court envelope to the actual perspective frustum with HUD margin rather than a fixed camera distance. Preserve the existing view direction, field of view and bounded lateral tracking, pulling back only as required. Cinematic replay is temporary and must restore the selected gameplay camera immediately on exit. Keep orbit cameras inside side walls to avoid opaque wall occlusion. The source camera constants in 96c84d4, the recovered local snapshot and 7b1df9b match; do not claim a particular synced commit caused the observed viewport change.
+
 ## 5. Acceptance and release protocol
 
 DOCS/TEST_RUBRIC.md maps the four complete entities to behavior evidence. Each CHECKLIST item contains all production changes, tests and deterministic acceptance needed to stand alone on baseline 7b1df9b. Shared files are integrated serially; no task imports another task's new module or depends on another task's acceptance. Existing interfaces are explicit prerequisites, not hidden sibling tasks.

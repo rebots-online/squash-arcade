@@ -11,3 +11,4 @@ Each row is independently evaluated; implementation, fresh review, rendered obse
 
 Release evidence: all baseline plus new tests, lint, fresh whole-branch review, versioned build; pushed commits; exact Surge file hashes; public desktop/mobile-width UI and gameplay. Physical-device and human feel remain operator evaluation unless directly observed.
 | TASK-44 | Deterministic real-contact attack precision, perfect versus stretched physics outcomes, no human random draws; drive/lob unchanged | Mistimed killer attempt leaves a retrievable ball; balanced sweet contact remains rewarding |
+| TASK-45 | Whole-court envelope projection at desktop/mobile aspects and lateral extremes | All court boundaries visible in normal play, resize and after replay |
