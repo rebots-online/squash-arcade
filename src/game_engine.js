@@ -1961,7 +1961,7 @@ export class ArgonTennisEngine {
     actor.root.add(actor.swingArcMesh);
     actor.root.add(actor.racketPivot);
 
-    actor.root.rotation.y = Math.PI;
+    actor.root.rotation.y = StrokeMotion.readyYaw(actor, this.ball);
     actor.root.position.copy(actor.pos);
     this.scene.add(actor.root);
 
@@ -4059,8 +4059,7 @@ export class ArgonTennisEngine {
     }
 
     if (!StrokeMotion.applyPose(actor, this.ball)) {
-      const ballAngle = Math.atan2(this.ball.pos.x - actor.pos.x, -3.5) * 0.28;
-      actor.root.rotation.y = Math.PI - ballAngle;
+      actor.root.rotation.y = StrokeMotion.readyYaw(actor, this.ball);
     }
 
     updateCharacterContactShadow(actor, actor.rig?.verticalHopOffset || 0);

@@ -10,8 +10,8 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 - **Status**: [/]
 - **Dependencies**: [] (baseline 178584f).
-- **Files**: src/squash/StrokeMotion.js; src/game_engine.js. Read-only: PlayerMovement, character rig and racket kinematics.
-- **Do**: Unify stroke and ready-pose yaw with the model's front-wall-facing zero yaw. Preserve handed stance, opposite-foot step and live contact. Remove the tracking-angle discontinuity at the centre line.
+- **Files**: src/squash/StrokeMotion.js; src/squash/PlayerMovement.js; src/game_engine.js; src/racket_kinematics.js. Read-only: character rig geometry.
+- **Do**: Honour explicit actor-relative forehand/backhand choice and unify stroke, locomotion and ready-pose yaw with the model's front-wall-facing PI yaw. Preserve handed stance, opposite-foot step and live contact. Remove the tracking-angle discontinuity at the centre line.
 - **Verify / Accept**: Inspect rendered forehand/backhand poses, including front and back court; backhand closes toward its ball side and opens toward the front wall without a backward turn. Reach, timing and shot family remain unchanged. Record actual observation in DOCS/VERIFICATION/gameplay-followup.md. No automated tests.
 
 ## TASK-47 — Keep bounced-ball reception current

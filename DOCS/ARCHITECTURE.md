@@ -371,7 +371,7 @@ The normal Rally/Auto and serve cameras must show all four floor corners and the
 
 ### 4.8 Stroke orientation and mirrored backhands (TASK-46)
 
-The character rig's forward direction is local -Z. Root yaw zero faces the front wall; positive yaw closes a right-handed backhand toward the left wall, negative yaw closes a forehand toward the right wall. Stroke preparation, contact, follow-through, recovery and ordinary ready pose use that same convention, with handedness mirroring the stance once. The ordinary ball-tracking yaw is continuous across the actor's centre line. Preserve opposite-foot planting, existing racket paths and scheduled live contact; orientation must not alter reach, ball physics or shot selection.
+The character rig's eyes and chest face local +Z. Root yaw PI faces the front wall; positive offset closes a right-handed backhand toward the left wall, negative offset closes a forehand toward the right wall. Stroke preparation, contact, follow-through, recovery and locomotion use that same convention, with handedness mirroring the stance once. The ordinary ball-tracking yaw is continuous across the actor's centre line. The racket controller honours an explicit stroke side selected relative to the actor; its legacy court-half anticipation must never replace that side. Preserve opposite-foot planting, existing racket paths and scheduled live contact; orientation must not alter reach, ball physics or shot selection.
 
 ### 4.9 Live reception timing (TASK-47)
 

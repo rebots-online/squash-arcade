@@ -286,8 +286,8 @@ export class PlayerMovement {
       actor.stridePhase = (actor.stridePhase || 0) + actualSpeed * dt * 4.4;
     }
 
-    // Both actors face the Front Wall (-Z => rotation.y = 0) with subtle turn toward ball/movement
-    let targetYaw = THREE.MathUtils.clamp(-actor.vel.x * 0.06, -0.35, 0.35);
+    // The model faces local +Z, so PI faces the front wall at world -Z.
+    let targetYaw = Math.PI + THREE.MathUtils.clamp(-actor.vel.x * 0.06, -0.35, 0.35);
     let yawRate = 1 - Math.exp(-10 * dt);
 
     // TASK-23 hip-driven stroke: windup holds a closed stance, hips snap open
@@ -302,13 +302,16 @@ export class PlayerMovement {
             ? 0.3
             : -0.45; // righty forehand closed chest faces +x side wall
       const open = THREE.MathUtils.smoothstep(p, 0.3, 0.82);
-      targetYaw = closedYaw * (1 - open) + -closedYaw * 0.18 * open;
+      targetYaw = Math.PI + closedYaw * (1 - open) + -closedYaw * 0.18 * open;
       yawRate = 1 - Math.exp(-(10 + 30 * open) * dt);
     } else if (actor.strokeWindupYaw) {
       targetYaw += actor.strokeWindupYaw;
       yawRate = 1 - Math.exp(-7 * dt);
     }
-    actor.root.rotation.y = THREE.MathUtils.lerp(actor.root.rotation.y, targetYaw, yawRate);
+    // Do not rotate away from the stroke between physics and rendered pose updates.
+    actor.root.rotation.y = actor.strokeMotion && actor.strokeMotion.phase !== 'idle'
+      ? actor.strokeMotion.yawRad
+      : THREE.MathUtils.lerp(actor.root.rotation.y, targetYaw, yawRate);
     actor.root.position.copy(actor.pos);
   }
 }

@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { COURT_SPECS } from './CourtGeometry.js';
 import { getRacketRimWorldPoints } from '../racket_kinematics.js';
 
+// The rig's eyes and chest face local +Z; PI turns them toward the front wall.
 const FORWARD_YAW = Math.PI;
 const CONTACT_PROGRESS = 0.34;
 const clamp = THREE.MathUtils.clamp;
@@ -61,6 +62,10 @@ function plantPivot(pivot, worldPosition) {
 
 /** Physics owns contact timing; this layer changes articulated poses, never positions of game bodies. */
 export class StrokeMotion {
+  static readyYaw(actor, ball) {
+    return FORWARD_YAW - Math.atan2((ball?.pos.x ?? actor.pos.x) - actor.pos.x, 3.5) * 0.28;
+  }
+
   static prepare(actor, dt, { ball, phase, handedness = actor.handedness || 'right', predictedContactSec } = {}) {
     const motion = motionFor(actor);
     if (motion.phase === 'swing' || motion.phase === 'recover') return;
@@ -75,7 +80,7 @@ export class StrokeMotion {
     motion.phase = motion.prepareWeight > 0.002 ? 'prepare' : 'idle';
     // Arrival prediction can be absent; live distance remains the preparation authority.
     if (Number.isFinite(predictedContactSec)) motion.predictedContactSec = predictedContactSec;
-    const ordinaryYaw = FORWARD_YAW - Math.atan2((ball?.pos.x ?? actor.pos.x) - actor.pos.x, -3.5) * 0.28;
+    const ordinaryYaw = this.readyYaw(actor, ball);
     const targetYaw = motion.side === 'overhead'
       ? ordinaryYaw
       : mixAngle(ordinaryYaw, FORWARD_YAW + stanceSign(motion) * Math.PI / 2, motion.prepareWeight);
@@ -179,7 +184,7 @@ export class StrokeMotion {
     const recovery = motion.phase === 'recover'
       ? smooth((motion.elapsedSec - motion.contactDelaySec - motion.followThroughSec) / motion.recoverSec) : 0;
     const poseWeight = active ? 1 - recovery : motion.prepareWeight;
-    const ordinaryYaw = FORWARD_YAW - Math.atan2((ball?.pos.x ?? actor.pos.x) - actor.pos.x, -3.5) * 0.28;
+    const ordinaryYaw = this.readyYaw(actor, ball);
     actor.root.rotation.y = motion.phase === 'recover'
       ? mixAngle(motion.recoverYawRad, ordinaryYaw, recovery) : motion.yawRad;
     if (motion.phase === 'recover') motion.yawRad = actor.root.rotation.y;
