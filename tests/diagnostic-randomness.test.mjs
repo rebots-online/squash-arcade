@@ -72,7 +72,7 @@ test('injected shot streams reproduce all three intentional-error draws', () => 
     const outputs = [
       shots.computeShotExecution(shotOptions({ aiErrorMode: 'TIN' })),
       shots.computeShotExecution(shotOptions({ aiErrorMode: 'OUT' })),
-      shots.computeShotExecution(shotOptions({ aiWinnerMargin: true }))
+      shots.computeShotExecution(shotOptions({ aiExecution: true, aiWinnerMargin: true }))
     ];
     assert.equal(draws, 3);
     return outputs;
@@ -100,7 +100,7 @@ test('ordinary constructors still draw from normal Math.random and restore the i
     assert.equal(draws, 2);
     shots.computeShotExecution(shotOptions({ aiErrorMode: 'OUT' }));
     assert.equal(draws, 3);
-    shots.computeShotExecution(shotOptions({ aiWinnerMargin: true }));
+    shots.computeShotExecution(shotOptions({ aiExecution: true, aiWinnerMargin: true }));
     assert.equal(draws, 4);
   } finally {
     Math.random = originalRandom;

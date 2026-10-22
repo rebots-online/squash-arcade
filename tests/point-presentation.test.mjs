@@ -82,3 +82,15 @@ test('nick, tin, out and second bounce all keep visible non-scoring aftermath',(
     assert.equal(e.score.playerPoints,1);
   }
 });
+test('slow winning lob replay retains its final stroke and precontact poses',()=>{
+  const p=new PointPresentation(),b=ball();b.lastHitter='player';b.rallyStrokeCount=1;
+  for(let i=0;i<90;i++)p.record(1/30,b,[]);
+  const strikeTime=p.recordClock;
+  b.lastHitter='opponent';b.rallyStrokeCount=2;
+  for(let i=0;i<110;i++)p.record(1/30,b,[]);
+  p.begin(b);p.step(5,params);
+  assert.equal(p.phase,'POINT_REPLAY');
+  assert.ok(p.frames[0].t<strikeTime-.25,'retain the preparation preceding a slow final stroke');
+  assert.ok(p.frames.some(f=>f.ball.rallyStrokeCount===2));
+  assert.ok(p.frames.length<=300);
+});

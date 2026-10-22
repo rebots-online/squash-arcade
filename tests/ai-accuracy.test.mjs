@@ -9,7 +9,7 @@ import { DEFAULT_TUNING_PARAMS as params, createSeededRNG } from '../src/squash/
 function shot(controller, inputEvent, x=2.8) {
   return controller.computeShotExecution({ball:{pos:new Vector3(x,.7,3),vel:new Vector3(0,-1,-2),bounceCountOnFloor:1,hitBackWallThisShot:true},inputEvent,params});
 }
-test('seeded AI attacking boasts hit fewer actual nicks than exact human solves', t=>{
+test('seeded AI attacking boasts hit fewer actual nicks than ideal unperturbed solves', t=>{
   const c=new ShotController(createSeededRNG(41).next);
   let aiNicks=0, exactNicks=0;
   for(let i=0;i<120;i++) {

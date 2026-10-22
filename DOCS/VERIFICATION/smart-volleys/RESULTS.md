@@ -20,3 +20,7 @@ Review repair: inherited AI winner margins are cleared for either human spectato
 
 ## Review repair — replay isolation and restart
 Live Replay control no longer replaces the ball with the canned nick demonstration. It explains the automatic recorded replay; the legacy replay URL opens the separate skills demonstration. Showcase/intro/lab resets cancel pending point presentation. Two regressions failed before repair; eight presentation cases pass, including score-once continuation for nick/tin/out/second-bounce reasons.
+
+Full-suite follow-up: two original random-source fixtures lacked the newly explicit AI ownership on winner-margin inputs. Added aiExecution:true to those AI cases, preserving every existing random-draw assertion (3 and 4). Human non-random regression remains separate. Architecture wording now distinguishes ideal solving from actual human execution and names all six entities.
+
+Review repair: replay recording now tracks hitter/stroke-count changes and retains 0.6 seconds of precontact preparation through the aftermath. A slow final-shot test failed against the fixed2.5s cutoff and passes after repair. This preserves winning lob strokes within the bounded300frame recording.

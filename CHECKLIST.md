@@ -30,7 +30,7 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 
 - **Status**: [X]
 - **Dependencies**: [] (each task can be implemented and verified on 7b1df9b). Integrate serially because existing files overlap.
-- **Files**: src/squash/PointPresentation.js (new); src/game_engine.js; tests/point-presentation.test.mjs; tests/engine-fixture.mjs (self-contained fixture with optional presentation injection). Read-only baseline interfaces: BallPhysics, RulesEngine, CourtGeometry, StrokeMotion, tuningStore and existing tests.
+- **Files**: src/squash/PointPresentation.js (new); src/game_engine.js; index.html; tests/point-presentation.test.mjs; tests/engine-fixture.mjs (self-contained fixture with optional presentation injection). Read-only baseline interfaces: BallPhysics, RulesEngine, CourtGeometry, StrokeMotion, tuningStore and existing tests.
 - **Architecture**: §4.4; complete behavior contract is reproduced in Do and Accept here.
 - **Do**: Implement bounded recorded snapshots and collision focus; cloned live-physics settle without rules; recorded four-second replay with orbit/zoom; scoring once and deferred next-serve/game/match transitions. Record/render actual actor/racket transforms. Capture any fresh key/pointer gesture and swallow repeat/up/click chain; cancel on restart and respect pause. Keep onboarding demo separate. Add focused behavioral regressions first and observe failure. Implement and re-read affected contact/state paths. Record evidence in DOCS/VERIFICATION/smart-volleys/RESULTS.md.
 - **Verify**: focused named test file in Files, then `node --test tests/*.test.mjs` and `npm --ignore-scripts run lint` on native Windows.
@@ -55,7 +55,7 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 
 - **Status**: [X]
 - **Dependencies**: [] (standalone on 7b1df9b; recognize explicit AI execution ownership within this task if absent).
-- **Files**: src/squash/ShotController.js; src/squash/OpponentAI.js; src/game_engine.js; tests/human-contact-quality.test.mjs. Read-only: BallPhysics, CourtGeometry, existing motion and solver tests.
+- **Files**: src/squash/ShotController.js; src/squash/OpponentAI.js; src/game_engine.js; tests/human-contact-quality.test.mjs; tests/diagnostic-randomness.test.mjs (explicit AI ownership, unchanged assertions). Read-only: BallPhysics, CourtGeometry, existing motion and solver tests.
 - **Architecture**: §4.6, added from operator clarification that easy killer shots teach poor real-world tactics.
 - **Do**: Evaluate actual contact pocket/balance once at human committed low attack. Preserve exact precision only in compact balanced contact pocket; deterministic margin opens on stretch, mistiming and rushed movement. No random human misses. Explicit shot family/aim remain, no contact teleport. Expose useful contact-quality feedback. AI ownership is explicit, independent of actor role; manual spectator nudges are human execution.
 - **Verify**: node --test tests/human-contact-quality.test.mjs; full Node suite and lint.

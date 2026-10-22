@@ -15,10 +15,16 @@ export class PointPresentation {
     this.phase='IDLE';this.frames=[];this.events=[];this.recordClock=0;
     this.sampleClock=0;this.settleElapsed=0;this.replayElapsed=0;this.restElapsed=0;
     this.ball=null;this.focus=new Vector3();
+    this.lastStrokeToken=null;this.lastStrokeTime=null;
   }
   get active(){return this.phase==='POINT_SETTLE'||this.phase==='POINT_REPLAY';}
+  observeStroke(ball) {
+    const token=`${ball.lastHitter}:${ball.rallyStrokeCount||0}`;
+    if(token!==this.lastStrokeToken){this.lastStrokeTime=this.recordClock;this.lastStrokeToken=token;}
+  }
   record(dt,ball,actors) {
     if(this.phase==='POINT_REPLAY'||this.phase==='DONE') return;
+    if(this.phase!=='POINT_SETTLE')this.observeStroke(ball);
     this.recordClock+=dt;this.sampleClock+=dt;
     if(this.sampleClock<1/30&&this.frames.length) return;
     this.sampleClock=0;
@@ -33,6 +39,7 @@ export class PointPresentation {
   }
   begin(ball,event=null) {
     if(this.active) return false;
+    this.observeStroke(ball);
     this.ball=cloneBall(ball);this.ball.inPlay=true;
     this.phase='POINT_SETTLE';this.settleElapsed=0;this.restElapsed=0;this.replayElapsed=0;
     this.focus.copy(event?.pos||this.events.at(-1)?.pos||ball.pos);
@@ -47,7 +54,7 @@ export class PointPresentation {
       if(this.settleElapsed>=5||(this.settleElapsed>=1.5&&this.restElapsed>=.3)) {
         this.phase='POINT_REPLAY';this.replayElapsed=0;
         // Preserve the final stroke and the complete visible aftermath.
-        this.frames=this.frames.filter(f=>f.t>=this.endTime-2.5);
+        this.frames=this.frames.filter(f=>f.t>=(this.lastStrokeTime??this.endTime-2.5)-.6);
       }
     } else if(this.phase==='POINT_REPLAY') {
       this.replayElapsed+=dt;

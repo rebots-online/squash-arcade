@@ -331,13 +331,13 @@ This document defines the integrated target. Implementation and independent vali
 
 ### 4.1 Preserved physical and presentation invariants
 
-BallPhysics remains the sole flight, collision, nick and bounce authority at 120 Hz with four substeps. Court coordinates and rules in sections 2–3 remain authoritative. ShotTrajectorySolver retains the bounded 55-probe drive/boast solver: a soft back-wall drive reaches the front around 2.05 m, first lands around rear z=3.8 m and x=±2.8 m, then rebounds naturally. Intentional side-front boasts retain their physical solution before AI execution variation. Human shot solves remain exact. Preparation controls disguise and pose, independently of power. Existing lob, scoring, audio, identity, candy spectacle, controls and ordinary tactical variety remain.
+BallPhysics remains the sole flight, collision, nick and bounce authority at 120 Hz with four substeps. Court coordinates and rules in sections 2–3 remain authoritative. ShotTrajectorySolver retains the bounded 55-probe drive/boast solver: a soft back-wall drive reaches the front around 2.05 m, first lands around rear z=3.8 m and x=±2.8 m, then rebounds naturally. Intentional side-front boasts retain their physical solution before AI execution variation. Ideal shot solves remain exact; committed human attacks apply the actual contact-quality contract in section 4.6. Preparation controls disguise and pose, independently of power. Existing lob, scoring, audio, identity, candy spectacle, controls and ordinary tactical variety remain.
 
 StrokeMotion keeps side-on preparation, opposite-foot step, hip rotation and a single scheduled contact against the moving live ball. No teleport, fake reach, frozen ball or instant hit. The engine revalidates phase, hitter token, floor bounce and 1.15 m horizontal reach at contact. When no volley is reachable, preserve the current floor–back-wall–sit-up timing.
 
 ### 4.2 AI attacking accuracy (TASK-40)
 
-Winner-margin chance defaults to 0.20 instead of 0.38. TuningConfig and TuningPanel expose chance and execution yaw/elevation/pace bounds. For AI drop, kill and attacking side-front boast only, sample a bounded yaw ±0.75°, elevation ±0.5° and pace ±2% from the injected random source once at committed shot execution. Apply to the final launch vector after any precise solver. Do not perturb human inputs, drives, lobs or explicit intentional tin/out errors. Real physics determines the resulting nick, miss or bounce. Never manufacture a winner classification. Compare actual seeded nick frequency with unperturbed launches.
+Winner-margin chance defaults to 0.20 instead of 0.38. TuningConfig and TuningPanel expose chance and execution yaw/elevation/pace bounds. For AI drop, kill and attacking side-front boast only, sample a bounded yaw ±0.75°, elevation ±0.5° and pace ±2% from the injected random source once at committed shot execution. Apply to the final launch vector after any precise solver. This random variation never applies to human inputs, drives, lobs or explicit intentional tin/out errors; deterministic human contact quality is specified in section 4.6. Real physics determines the resulting nick, miss or bounce. Never manufacture a winner classification. Compare actual seeded nick frequency with unperturbed launches.
 
 ### 4.3 Opportunity-driven volleys (TASK-41)
 
@@ -359,7 +359,7 @@ Any fresh keydown or pointerdown skips the entire remaining finish sequence. Cap
 
 ServeSetup exports evaluateServeSetup({server,receiver,serviceSide,params}) -> {ready,reason,correctionTargets}. RulesEngine score.serviceSide is authoritative. Test server arrival in the selected box, receiver clearance from that box, inter-player distance/swing clearance and stable movement. Both toss and serve contact require readiness; require 0.2 s stable readiness before toss. Moving toward the box is not permission to toss.
 
-Wrong-box staging/crowding pauses setup, announces the correction and moves automatic actors to safe targets. Show guidance for manual movement. A setup correction does not award a point. A genuine foot fault at actual legal-side contact retains existing adjudication. Do not invent a blanket receiver-half rule. Each setup has a point token; delayed correction/input cannot affect a later point.
+Wrong-box staging/crowding pauses setup, announces the correction and moves both actors to safe service-staging targets using ordinary locomotion, with visible guidance. A setup correction does not award a point. A genuine foot fault at actual legal-side contact retains existing adjudication. Do not invent a blanket receiver-half rule. Each setup has a point token; delayed correction/input cannot affect a later point.
 
 ### 4.6 Human attacking precision (TASK-44; operator clarification)
 
@@ -371,7 +371,7 @@ The normal Rally/Auto and serve cameras must show all four floor corners and the
 
 ## 5. Acceptance and release protocol
 
-DOCS/TEST_RUBRIC.md maps the four complete entities to behavior evidence. Each CHECKLIST item contains all production changes, tests and deterministic acceptance needed to stand alone on baseline 7b1df9b. Shared files are integrated serially; no task imports another task's new module or depends on another task's acceptance. Existing interfaces are explicit prerequisites, not hidden sibling tasks.
+DOCS/TEST_RUBRIC.md maps the six complete entities to behavior evidence. Each CHECKLIST item contains all production changes, tests and deterministic acceptance needed to stand alone on baseline 7b1df9b. Shared files are integrated serially; no task imports another task's new module or depends on another task's acceptance. Existing interfaces are explicit prerequisites, not hidden sibling tasks.
 
 Run focused red/green tests, all Node tests, lint and production build. Do not weaken the original six-second exchange diagnostic or existing drive/boast/motion checks. Implementation [X], independent semantic review ✅, rendered verification and human feel evaluation are distinct evidence.
 
