@@ -1,0 +1,388 @@
+{
+  "last": "RALLY",
+  "phases": [
+    "SERVE_TOSS",
+    "RALLY",
+    "POINT_OVER",
+    "SERVE_STANCE",
+    "SERVE_TOSS",
+    "RALLY",
+    "POINT_SETTLE",
+    "POINT_REPLAY",
+    "SERVE_STANCE",
+    "SERVE_TOSS",
+    "RALLY",
+    "POINT_SETTLE",
+    "POINT_REPLAY",
+    "SERVE_STANCE",
+    "SERVE_TOSS",
+    "RALLY",
+    "POINT_SETTLE",
+    "POINT_REPLAY",
+    "SERVE_STANCE",
+    "SERVE_TOSS",
+    "RALLY",
+    "POINT_SETTLE",
+    "POINT_REPLAY",
+    "SERVE_STANCE",
+    "SERVE_TOSS",
+    "RALLY",
+    "POINT_SETTLE",
+    "POINT_REPLAY",
+    "SERVE_STANCE",
+    "SERVE_TOSS",
+    "RALLY"
+  ],
+  "points": [
+    {
+      "position": [
+        -1.862809265670176,
+        0.033,
+        2.423846022828822
+      ],
+      "reason": "Not Up! (Two Bounces)"
+    },
+    {
+      "position": [
+        -3.1630000000000003,
+        0.035,
+        -3.6028042024603097
+      ],
+      "reason": "NICK! Rolled Dead!"
+    },
+    {
+      "position": [
+        1.7305280510478256,
+        0.033,
+        2.720127423708412
+      ],
+      "reason": "Not Up! (Two Bounces)"
+    },
+    {
+      "position": [
+        -2.8421347090891875,
+        0.033,
+        0.7572077531493947
+      ],
+      "reason": "Not Up! (Two Bounces)"
+    },
+    {
+      "position": [
+        2.782656432787644,
+        0.033,
+        -3.351720141189655
+      ],
+      "reason": "NICK ROLLER!"
+    }
+  ],
+  "shots": [
+    {
+      "bounces": 0,
+      "input": {
+        "aiExecution": true,
+        "cutModifier": true,
+        "dirX": -0.62,
+        "prepCharge": 0.78,
+        "shotType": "drop",
+        "side": "backhand",
+        "speed": 0.86
+      },
+      "method": "_commitOpponentSquashStrike",
+      "pos": [
+        -3.1162956759701586,
+        1.9936940303372883,
+        4.708067402509246
+      ]
+    },
+    {
+      "bounces": 1,
+      "input": {
+        "aiExecution": true,
+        "cutModifier": false,
+        "dirX": -0.78,
+        "prepCharge": 0.75,
+        "shotType": "boast",
+        "side": "backhand",
+        "speed": 1.181155094834632
+      },
+      "method": "_commitPlayerRallyStrike",
+      "pos": [
+        -1.999887754578616,
+        0.4985618774819525,
+        -0.28133672591645315
+      ]
+    },
+    {
+      "bounces": 1,
+      "input": {
+        "aiExecution": true,
+        "dirX": -0.68,
+        "prepCharge": 0.55,
+        "shotType": "kill",
+        "side": "overhead",
+        "speed": 1.32
+      },
+      "method": "_commitOpponentSquashStrike",
+      "pos": [
+        2.5614754111178546,
+        0.21155279388928305,
+        -3.117521554799164
+      ]
+    },
+    {
+      "bounces": 0,
+      "input": {
+        "aiExecution": true,
+        "cutModifier": true,
+        "dirX": -0.62,
+        "prepCharge": 0.78,
+        "shotType": "drop",
+        "side": "backhand",
+        "speed": 0.86
+      },
+      "method": "_commitOpponentSquashStrike",
+      "pos": [
+        -3.1162956759701586,
+        1.9936940303372883,
+        4.708067402509246
+      ]
+    },
+    {
+      "bounces": 0,
+      "input": {
+        "aiExecution": true,
+        "cutModifier": false,
+        "dirX": 0.34,
+        "prepCharge": 0.78,
+        "shotType": "topspin",
+        "side": "forehand",
+        "speed": 1.16
+      },
+      "method": "_commitPlayerRallyStrike",
+      "pos": [
+        3.1162956759701586,
+        1.9936940303372883,
+        4.708067402509246
+      ]
+    },
+    {
+      "bounces": 0,
+      "input": {
+        "aiExecution": true,
+        "cutModifier": true,
+        "dirX": -0.62,
+        "prepCharge": 0.78,
+        "shotType": "drop",
+        "side": "forehand",
+        "speed": 0.86
+      },
+      "method": "_commitOpponentSquashStrike",
+      "pos": [
+        2.840215780739023,
+        0.8240748926826973,
+        1.626026273046862
+      ]
+    },
+    {
+      "bounces": 1,
+      "input": {
+        "aiExecution": true,
+        "aiWinnerMargin": true,
+        "cutModifier": true,
+        "dirX": 0.62,
+        "prepCharge": 0.88,
+        "shotType": "disguised_drop",
+        "side": "backhand",
+        "speed": 0.8785021696749357
+      },
+      "method": "_commitPlayerRallyStrike",
+      "pos": [
+        -0.917437441736697,
+        0.2839256912665111,
+        -0.6041248249012595
+      ]
+    },
+    {
+      "bounces": 1,
+      "input": {
+        "aiExecution": true,
+        "cutModifier": true,
+        "dirX": -0.62,
+        "prepCharge": 0.88,
+        "shotType": "disguised_drop",
+        "side": "forehand",
+        "speed": 0.8737465727588078
+      },
+      "method": "_commitOpponentSquashStrike",
+      "pos": [
+        1.760213528381564,
+        0.2038858553898996,
+        -1.5391972858899947
+      ]
+    },
+    {
+      "bounces": 1,
+      "input": {
+        "aiExecution": true,
+        "cutModifier": true,
+        "dirX": -0.62,
+        "prepCharge": 0.88,
+        "shotType": "disguised_drop",
+        "side": "backhand",
+        "speed": 0.8754218284027493
+      },
+      "method": "_commitPlayerRallyStrike",
+      "pos": [
+        -0.4095819097012247,
+        0.2507897299729422,
+        -1.4762161987934328
+      ]
+    },
+    {
+      "bounces": 1,
+      "input": {
+        "aiExecution": true,
+        "cutModifier": true,
+        "dirX": 0.62,
+        "prepCharge": 0.88,
+        "shotType": "disguised_drop",
+        "side": "backhand",
+        "speed": 0.8761407568005573
+      },
+      "method": "_commitOpponentSquashStrike",
+      "pos": [
+        -2.0033944193000397,
+        0.2544812983309174,
+        -1.0431300484981625
+      ]
+    },
+    {
+      "bounces": 1,
+      "input": {
+        "aiExecution": true,
+        "cutModifier": false,
+        "dirX": 0.78,
+        "prepCharge": 0.75,
+        "shotType": "boast",
+        "side": "forehand",
+        "speed": 1.2038031001197738
+      },
+      "method": "_commitPlayerRallyStrike",
+      "pos": [
+        0.4541208055686591,
+        0.24784239154347332,
+        -1.0732270722157824
+      ]
+    },
+    {
+      "bounces": 0,
+      "input": {
+        "aiExecution": true,
+        "cutModifier": true,
+        "dirX": 0.62,
+        "prepCharge": 0.78,
+        "shotType": "drop",
+        "side": "forehand",
+        "speed": 0.86
+      },
+      "method": "_commitOpponentSquashStrike",
+      "pos": [
+        3.1162956759701586,
+        1.9936940303372883,
+        4.708067402509246
+      ]
+    },
+    {
+      "bounces": 0,
+      "input": {
+        "aiExecution": true,
+        "cutModifier": true,
+        "dirX": -0.62,
+        "prepCharge": 0.78,
+        "shotType": "drop",
+        "side": "backhand",
+        "speed": 0.86
+      },
+      "method": "_commitPlayerRallyStrike",
+      "pos": [
+        -3.1162956759701586,
+        1.9936940303372883,
+        4.708067402509246
+      ]
+    },
+    {
+      "bounces": 1,
+      "input": {
+        "aiExecution": true,
+        "aiWinnerMargin": true,
+        "cutModifier": true,
+        "dirX": -0.62,
+        "prepCharge": 0.88,
+        "shotType": "disguised_drop",
+        "side": "backhand",
+        "speed": 0.8805476145512497
+      },
+      "method": "_commitOpponentSquashStrike",
+      "pos": [
+        -1.9845820825014453,
+        0.49460305584254655,
+        -0.37054595456192
+      ]
+    },
+    {
+      "bounces": 0,
+      "input": {
+        "aiExecution": true,
+        "cutModifier": false,
+        "dirX": 0.34,
+        "prepCharge": 0.78,
+        "shotType": "topspin",
+        "side": "forehand",
+        "speed": 1.16
+      },
+      "method": "_commitPlayerRallyStrike",
+      "pos": [
+        3.1162956759701586,
+        1.9936940303372883,
+        4.708067402509246
+      ]
+    },
+    {
+      "bounces": 0,
+      "input": {
+        "aiExecution": true,
+        "cutModifier": true,
+        "dirX": -0.62,
+        "prepCharge": 0.78,
+        "shotType": "drop",
+        "side": "forehand",
+        "speed": 0.86
+      },
+      "method": "_commitOpponentSquashStrike",
+      "pos": [
+        2.840215780739023,
+        0.8240748926826973,
+        1.626026273046862
+      ]
+    },
+    {
+      "bounces": 1,
+      "input": {
+        "aiExecution": true,
+        "aiWinnerMargin": true,
+        "cutModifier": false,
+        "dirX": -0.78,
+        "prepCharge": 0.75,
+        "shotType": "boast",
+        "side": "backhand",
+        "speed": 1.2347354365588743
+      },
+      "method": "_commitPlayerRallyStrike",
+      "pos": [
+        -1.0765361311014257,
+        0.27447415718642404,
+        -0.8586169505302346
+      ]
+    }
+  ]
+}

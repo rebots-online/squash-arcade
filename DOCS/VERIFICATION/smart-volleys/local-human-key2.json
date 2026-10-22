@@ -1,0 +1,36 @@
+{
+  "before": {
+    "bounce": 0,
+    "pos": [
+      2,
+      1.1499613562909268,
+      3.099901592597279
+    ]
+  },
+  "input": {
+    "aiExecution": false,
+    "angleX": 0,
+    "biomechClassification": null,
+    "confidence": 1,
+    "cutModifier": true,
+    "dirX": 0,
+    "dirY": 0.38,
+    "pitch": 0,
+    "prepHoldMs": 0,
+    "role": "p1",
+    "roll": 0,
+    "shotType": "drop",
+    "side": "forehand",
+    "source": "keyboard",
+    "speed": 0.86,
+    "timestamp": 1792639216094,
+    "timing": null,
+    "type": "swing"
+  },
+  "result": true,
+  "velocity": [
+    -7.343233166513196,
+    2.6859112224817383,
+    -12.907551658461372
+  ]
+}

@@ -6,7 +6,7 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 
 ## TASK-40 — AI attacking execution accuracy
 
-- **Status**: [X]
+- **Status**: ✅
 - **Dependencies**: [] (each task can be implemented and verified on 7b1df9b). Integrate serially because existing files overlap.
 - **Files**: src/squash/OpponentAI.js; src/squash/ShotController.js; src/squash/TuningConfig.js; src/squash/TuningPanel.js; tests/ai-accuracy.test.mjs. Read-only baseline interfaces: BallPhysics, RulesEngine, CourtGeometry, StrokeMotion, tuningStore and existing tests.
 - **Architecture**: §4.2; complete behavior contract is reproduced in Do and Accept here.
@@ -17,7 +17,7 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 
 ## TASK-41 — Reachable volleys and volley drops across the court
 
-- **Status**: [X]
+- **Status**: ✅
 - **Dependencies**: [] (each task can be implemented and verified on 7b1df9b). Integrate serially because existing files overlap.
 - **Files**: src/squash/VolleyPlanner.js (new); src/squash/OpponentAI.js; src/squash/ShotController.js; src/squash/PlayerMovement.js; src/game_engine.js; tests/volley-planner.test.mjs; tests/engine-fixture.mjs (baseline-compatible fixture). Read-only baseline interfaces: BallPhysics, RulesEngine, CourtGeometry, StrokeMotion, tuningStore and existing tests.
 - **Architecture**: §4.3; complete behavior contract is reproduced in Do and Accept here.
@@ -28,7 +28,7 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 
 ## TASK-42 — Visible aftermath and actual cinematic point replay
 
-- **Status**: [X]
+- **Status**: ✅
 - **Dependencies**: [] (each task can be implemented and verified on 7b1df9b). Integrate serially because existing files overlap.
 - **Files**: src/squash/PointPresentation.js (new); src/game_engine.js; index.html; tests/point-presentation.test.mjs; tests/engine-fixture.mjs (self-contained fixture with optional presentation injection). Read-only baseline interfaces: BallPhysics, RulesEngine, CourtGeometry, StrokeMotion, tuningStore and existing tests.
 - **Architecture**: §4.4; complete behavior contract is reproduced in Do and Accept here.
@@ -39,7 +39,7 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 
 ## TASK-43 — Serve positioning and stable readiness
 
-- **Status**: [X]
+- **Status**: ✅
 - **Dependencies**: [] (each task can be implemented and verified on 7b1df9b). Integrate serially because existing files overlap.
 - **Files**: src/squash/ServeSetup.js (new); src/game_engine.js; tests/serve-setup.test.mjs; tests/engine-fixture.mjs (baseline-compatible fixture; no sibling module imports). Read-only baseline interfaces: BallPhysics, RulesEngine, CourtGeometry, StrokeMotion, tuningStore and existing tests.
 - **Architecture**: §4.5; complete behavior contract is reproduced in Do and Accept here.
@@ -53,7 +53,7 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 
 ## TASK-44 — Human attack precision rewards actual contact quality
 
-- **Status**: [X]
+- **Status**: ✅
 - **Dependencies**: [] (standalone on 7b1df9b; recognize explicit AI execution ownership within this task if absent).
 - **Files**: src/squash/ShotController.js; src/squash/OpponentAI.js; src/game_engine.js; tests/human-contact-quality.test.mjs; tests/diagnostic-randomness.test.mjs (explicit AI ownership, unchanged assertions). Read-only: BallPhysics, CourtGeometry, existing motion and solver tests.
 - **Architecture**: §4.6, added from operator clarification that easy killer shots teach poor real-world tactics.
@@ -67,7 +67,7 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 
 ## TASK-45 — Keep the whole court in the gameplay viewport
 
-- **Status**: [X]
+- **Status**: ✅
 - **Dependencies**: [] (standalone on 7b1df9b).
 - **Files**: src/squash/CourtCamera.js; src/game_engine.js; tests/court-camera.test.mjs. Read-only: CourtGeometry, Three perspective projection.
 - **Architecture**: §4.7; operator meant normal camera, not numbered View 8.
@@ -75,3 +75,5 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 - **Verify**: node --test tests/court-camera.test.mjs; full tests and lint; actual browser screenshots for landscape/portrait.
 - **Accept**: All named court boundary projections fit inside specified screen margins at desktop, landscape and portrait aspects and extreme actor/ball lateral positions; camera transitions/resize do not crop live play. Independent visual gate separate.
 
+
+Independent source/deterministic review accepted all six entities at d8ad00d after follow-up repairs. Review evidence and the separate browser/deployment gates: DOCS/VERIFICATION/smart-volleys/RESULTS.md.

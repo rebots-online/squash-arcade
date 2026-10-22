@@ -1,0 +1,48 @@
+{
+  "after": {
+    "phase": "SERVE_TOSS",
+    "receiver": [
+      -1.883774639493429,
+      0,
+      1.515
+    ],
+    "score": {
+      "handOutJustOccurred": false,
+      "opponentGames": 0,
+      "opponentPoints": 0,
+      "playerGames": 0,
+      "playerPoints": 0,
+      "server": "player",
+      "serviceSide": "right"
+    },
+    "server": [
+      1.8164653645019573,
+      0,
+      1.515
+    ],
+    "steps": 203
+  },
+  "banner": "\n      \n      WAIT — SERVICE POSITION\n      Server, use the right box.\n    ",
+  "initial": {
+    "phase": "SERVE_STANCE",
+    "receiver": [
+      -1.866499074074074,
+      0,
+      1.515
+    ],
+    "score": {
+      "handOutJustOccurred": false,
+      "opponentGames": 0,
+      "opponentPoints": 0,
+      "playerGames": 0,
+      "playerPoints": 0,
+      "server": "player",
+      "serviceSide": "right"
+    },
+    "server": [
+      -1.8487152777777776,
+      0,
+      1.515
+    ]
+  }
+}

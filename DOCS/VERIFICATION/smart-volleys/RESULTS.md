@@ -24,3 +24,14 @@ Live Replay control no longer replaces the ball with the canned nick demonstrati
 Full-suite follow-up: two original random-source fixtures lacked the newly explicit AI ownership on winner-margin inputs. Added aiExecution:true to those AI cases, preserving every existing random-draw assertion (3 and 4). Human non-random regression remains separate. Architecture wording now distinguishes ideal solving from actual human execution and names all six entities.
 
 Review repair: replay recording now tracks hitter/stroke-count changes and retains 0.6 seconds of precontact preparation through the aftermath. A slow final-shot test failed against the fixed2.5s cutoff and passes after repair. This preserves winning lob strokes within the bounded300frame recording.
+
+## Independent review closure and rendered evidence
+The fresh reviewer accepted TASK-40 through TASK-45 at d8ad00d; no outstanding source/deterministic findings. Reviewer repeated the three real-physics winning lobs: point durations3.067/3.117/2.808s; replay starts0.592s before the final strike; retained157/157/148 frames. Same-frame stroke observation also passed. Full suite60/60, zero skipped. Lint30files/zero defects; CodeGraph current, SQLite integrity ok.
+
+Local Chromium observation (temporary developer diagnostics removed by reload):
+- Actual continuous AI match committed rear volleys at z4.708/y1.994 with zero floor bounces, both drive and drop; midcourt drop at z1.626/y.824. Captured local-ai-rally.json includes ordinary bounced shots and real POINT_SETTLE -> POINT_REPLAY -> SERVE_STANCE sequences, including a nick finish.
+- Controlled early native keyboard2 input committed through actual StrokeMotion with zero bounces, input shotType drop / aiExecution false, cross-court vx -7.343. local-human-key2.json records the scheduled commit. This verifies input/contact plumbing, not a population success rate.
+- Controlled wrong-side overlapping setup displayed WAIT — SERVICE POSITION and Server, use the right box. Ordinary physics ticks separated the players and entered SERVE_TOSS after203 ticks with score0–0 unchanged (local-serve-correction.json/png).
+- A fresh2 key during recorded replay and a click on the Drop chip during settle both restored SERVE_STANCE with no pending shot/serve/nudge. Full key/up/click swallowing has complementary deterministic tests.
+- local-recorded-replay.png shows the actual recorded ball and actor poses with cinematic camera. local-restored-court.png and local-portrait-court.png show the restored full court, portrait390x844 included.
+- Browser error log was empty during the checked local run. Physical devices, phone/webcam tracking and human difficulty/feel were not inferred from these browser checks.
