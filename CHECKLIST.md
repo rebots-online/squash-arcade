@@ -1,10 +1,18 @@
 # Squash Arcade — approved independent implementation checklist
 
-Architecture: DOCS/ARCHITECTURE.md v2.6.0. User approved initial implementation on 2026-10-21; later requests are identified per item. Initial baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
+Architecture: DOCS/ARCHITECTURE.md v2.6.1. User approved initial implementation on 2026-10-21; later requests are identified per item. Initial baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
 
 Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with verification -> `✅` independently semantically validated. AP1–4 adopted; AP5 remains draft. No test-only sibling task and no external live service in coder Accept.
 
 Current operator override: no automated tests for follow-up work. TASK-40–45 test commands below are historical completed-release instructions, not current gates. TASK-46–48 are independent on release 178584f; each includes its own implementation and focused browser observation. No task requires another follow-up task.
+
+## TASK-55 — Announce the actual let ruling
+
+- **Status**: [ ]
+- **Dependencies**: [] (baseline 43f2ba8; independent of queued tasks).
+- **Files**: src/squash/RulesEngine.js; src/game_engine.js. Read-only: AudioEngine announceScore/playVoiceCallout and existing appeal resolver.
+- **Do**: Pass authoritative appeal metadata into the shared referee callout formatter. Map NO_LET, YES_LET and STROKE explicitly before interpreting prose; distinguish text-only denied lets before any granted-let fallback. Use the same result for the banner and speech. Preserve ruling/scoring, score/handout/game/match wording, actual let replay and sound settings.
+- **Verify / Accept**: Observe an invalid appeal in the running browser, confirm the point is awarded against the caller and both banner and speech request begin "No let!". Inspect granted-let/stroke handling and ordinary score path. Record browser observation versus actual listening scope in DOCS/VERIFICATION/gameplay-followup.md. No automated tests. Build once, commit/push and deploy; verify the public build and preserve the previous release for rollback.
 
 ## TASK-53 — Roll up mobile setup and make player identity readable
 

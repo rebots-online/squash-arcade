@@ -1,8 +1,8 @@
 ---
 doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
-version: "2.6.0"
-status: "TARGET — clear mobile controls and visible replay tin; volley tactics and serve repertoire queued"
+version: "2.6.1"
+status: "TARGET — referee announcement follows appeal ruling; volley tactics and serve repertoire queued"
 updated_at: "2026-10-22"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
 kstore_namespace: "mba.robin.squasharcade"
@@ -406,6 +406,10 @@ The compact top bar contains the score, both avatars, a separate legible YOU / r
 ### 4.15 Visible tin through the replay front wall (TASK-54)
 
 The front-wall replay viewpoint must retain a readable tin boundary. Keep the actual tin panel and top border visible instead of hiding them. Use a slightly darker panel in normal play; from a transparent front-wall viewpoint show a darker translucent panel and a translucent red top strip, preserving sight of the ball and players behind it. Draw the boundary clearly over the transparent front wall without disabling scene depth testing or moving the real boundary. Restore normal tin treatment when leaving that viewpoint, including replay skip and camera changes. Tin height, collision geometry, scoring, orbit and zoom remain unchanged.
+
+### 4.16 Referee announcement follows the appeal ruling (TASK-55)
+
+The authoritative appeal decision must reach the shared point callout formatter. NO_LET announces "No let!", STROKE announces "Stroke!", and YES_LET announces "Yes, let!". Explicit decision metadata takes precedence over explanatory prose; text-only legacy callers must distinguish a denied let before considering a granted let. The banner and spoken referee announcement use the same formatted result, retaining the existing handout, score, game and match wording. A rejected appeal must never be announced as granted merely because its explanation contains the word "let". Preserve appeal adjudication, awarded points, actual let replay behaviour and sound settings.
 
 ## 5. Acceptance and release protocol
 
