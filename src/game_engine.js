@@ -28,6 +28,7 @@ import { ShotController, SQUASH_SHOT_TYPES } from './squash/ShotController.js';
 import { PlayerMovement } from './squash/PlayerMovement.js';
 import { StrokeMotion } from './squash/StrokeMotion.js';
 import { planVolleyContact } from './squash/VolleyPlanner.js';
+import { PointPresentation } from './squash/PointPresentation.js';
 import { OpponentAI } from './squash/OpponentAI.js';
 import { IntroDirector } from './squash/IntroDirector.js';
 import { TuningPanel } from './squash/TuningPanel.js';
@@ -497,6 +498,15 @@ export class ArgonTennisEngine {
     this.shotController = new ShotController();
     this.opponentAI = new OpponentAI('opponent');
     this.playerAI = new OpponentAI('player');
+    this.pointPresentation = new PointPresentation();
+    this.pendingPointOutcome = null;
+    for (const type of ['keydown','keyup','pointerdown','pointerup','pointercancel','click']) {
+      window.addEventListener(type, event => {
+        const result=this.pointPresentation.input(event);
+        if(result.consume){event.preventDefault();event.stopImmediatePropagation();}
+        if(result.skip) this._finishPointPresentation();
+      }, {capture:true,passive:false});
+    }
 
     // 4. Match & Score State
     const initialDiff = this.isMultiplayer
@@ -2254,6 +2264,8 @@ export class ArgonTennisEngine {
   }
 
   startNewMatch({ showStartBanner = true } = {}) {
+    this.pointPresentation?.cancel();
+    this.pendingPointOutcome = null;
     if (this.introDirector) {
       this.introDirector.active = false;
       this.hud.hideIntroOverlay();
@@ -2434,6 +2446,8 @@ export class ArgonTennisEngine {
   } = {}) {
     StrokeMotion.reset(this.player);
     StrokeMotion.reset(this.opponent);
+    this.pointPresentation?.cancel();
+    this.pendingPointOutcome = null;
     // Racket-spin ceremony: first point of a fresh match in real play mode only
     if (
       !this.spectatorMatchMode &&
@@ -3337,6 +3351,7 @@ export class ArgonTennisEngine {
 
     this._updateMiiAnimation(this.player, dt);
     this._updateMiiAnimation(this.opponent, dt);
+    if(this.phase==='RALLY'||this.phase==='POINT_SETTLE') this.pointPresentation.record(dt,this.ball,[this.player,this.opponent]);
     this._updateCrowdAnimation(dt);
 
     if (this.swingVfx) {
@@ -3353,6 +3368,7 @@ export class ArgonTennisEngine {
   }
 
   _handleCollisionEvent(evt, { checkRules = true } = {}) {
+    if(checkRules) this.pointPresentation?.collision(evt);
     this.lastSurfaceContact = evt.surface;
     this.courtGeometry.spawnSurfaceImpact(evt.surface, evt.pos, {
       isNick: evt.isNick,
@@ -3406,6 +3422,21 @@ export class ArgonTennisEngine {
   }
 
   _stepPhysics(dt) {
+    if(this.pointPresentation?.active) {
+      const was=this.pointPresentation.phase;
+      const phase=this.pointPresentation.step(dt,this.tuningStore.params,e=>this._handleCollisionEvent(e,{checkRules:false}));
+      if(phase==='DONE'){this._finishPointPresentation();return;}
+      this.phase=phase;
+      if(phase==='POINT_SETTLE') {
+        this.ball.pos.copy(this.pointPresentation.ball.pos);
+        this.ball.vel.copy(this.pointPresentation.ball.vel);
+      } else {
+        if(was!==phase){this.ballTrail.clear();this.hud.showCenterBanner('INSTANT REPLAY',{style:'style-gold',subText:'Any key or tap to skip',durationMs:4000});}
+        this.pointPresentation.apply(this.ball,[this.player,this.opponent]);
+      }
+      this.ballTrail.pushPoint(this.ball.pos);
+      return;
+    }
     if (this.phase !== 'RALLY' || !this.ball.inPlay) {
       StrokeMotion.reset(this.player);
       StrokeMotion.reset(this.opponent);
@@ -3798,13 +3829,20 @@ export class ArgonTennisEngine {
   }
 
   _awardPoint(winnerRole, reason = '', decisionMeta = null) {
-    this.phase = 'POINT_OVER';
+    if(this.pendingPointOutcome || this.pointPresentation?.active || this.phase==='MATCH_OVER') return;
+    this.pointPresentation.begin(this.ball);
+    this.phase = 'POINT_SETTLE';
     this.phaseTimer = 0;
     this.ball.inPlay = false;
     this.cheerEnergy = 1.0;
     this.pendingUserSwing = null;
     this.pendingP2Swing = null;
     this.pendingServeSwing = null;
+    this.spectatorShotNudge = null;
+    this.motionController?.keysDown?.clear();
+    if(this.motionController){this.motionController.prepHoldStartMs=0;this.motionController.pointerDrag=null;}
+    StrokeMotion.reset(this.player);
+    StrokeMotion.reset(this.opponent);
     this._updateLetAdvisoryUI(false);
     this.currentRallyPlayerInterference = null;
 
@@ -3824,6 +3862,27 @@ export class ArgonTennisEngine {
     const outcome = this.rulesEngine.awardPoint(winnerRole);
     this.score = this.rulesEngine.score;
     this._syncScoreboardHUD();
+    this.pendingPointOutcome={outcome,reason,decisionMeta};
+    const callout=this.rulesEngine.formatRefereeCallout(outcome,reason);
+    this.hud.showCenterBanner(callout,{style:'style-score',subText:'Watch the finish • Any key or tap to skip',durationMs:1800});
+    this.audioEngine?.announceScore(callout);
+  }
+
+  _finishPointPresentation() {
+    const result=this.pendingPointOutcome;
+    if(!result) return;
+    this.pendingPointOutcome=null;
+    this.pointPresentation.cancel();
+    this.hud.setReplayMode(false);
+    this.ballTrail.clear();
+    this.motionController?.keysDown?.clear();
+    this.phaseTimer=0;
+    if(!result.outcome.matchWonBy) this._setupPointServe({showBanner:true});
+    else this.phase='MATCH_OVER';
+    if(result.outcome.gameWonBy||result.outcome.matchWonBy) this._showPointOutcome(result.outcome,result.reason,result.decisionMeta);
+  }
+
+  _showPointOutcome(outcome,reason,decisionMeta) {
 
     // Build authentic WSF/PSA deep male referee callout ("Down! Handout, five-four.", etc.)
     const baseRefereeCallout = this.rulesEngine.formatRefereeCallout(outcome, reason);
@@ -3858,15 +3917,11 @@ export class ArgonTennisEngine {
         this.audioEngine.announceScore(refereeCallout);
       }
       if (!this.spectatorMatchMode && !this.autoPlayMode) {
-        setTimeout(() => {
-          if (!this.spectatorMatchMode && !this.autoPlayMode) {
             this.hud.showVictoryModal({
               playerWon: this.playerRole === 'p2' ? !pWon : pWon,
               playerGames: this.score.playerGames,
               opponentGames: this.score.opponentGames
             });
-          }
-        }, 1800);
       }
       return;
     }
@@ -3978,6 +4033,7 @@ export class ArgonTennisEngine {
   }
 
   _updateMiiAnimation(actor, dt) {
+    if(this.phase==='POINT_REPLAY') return;
     if (!actor.model) return;
     if (actor.swingTimer > 0) actor.swingTimer = Math.max(0, actor.swingTimer - dt);
     if (actor.arcVisibleTimer > 0) actor.arcVisibleTimer = Math.max(0, actor.arcVisibleTimer - dt);
@@ -4111,6 +4167,7 @@ export class ArgonTennisEngine {
   }
 
   _computeTargetCameraPose() {
+    if(this.phase==='POINT_REPLAY') return this.pointPresentation.cameraPose();
     const mode = this.manualCameraOverride || this.cameraMode;
     const targetPos = new THREE.Vector3();
     const targetLook = new THREE.Vector3();
