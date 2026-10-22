@@ -1,10 +1,26 @@
 # Squash Arcade — approved independent implementation checklist
 
-Architecture: DOCS/ARCHITECTURE.md v2.4.0. User approved implementation on 2026-10-21. Baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
+Architecture: DOCS/ARCHITECTURE.md v2.5.0. User approved initial implementation on 2026-10-21; later requests are identified per item. Initial baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
 
 Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with verification -> `✅` independently semantically validated. AP1–4 adopted; AP5 remains draft. No test-only sibling task and no external live service in coder Accept.
 
 Current operator override: no automated tests for follow-up work. TASK-40–45 test commands below are historical completed-release instructions, not current gates. TASK-46–48 are independent on release 178584f; each includes its own implementation and focused browser observation. No task requires another follow-up task.
+
+## TASK-50 — Choose volley placement around the opponent (queued)
+
+- **Status**: [ ]
+- **Dependencies**: [] (complete implementation can start from release 63adb65).
+- **Files**: src/squash/VolleyPlanner.js; src/squash/OpponentAI.js; src/squash/ShotController.js; src/game_engine.js as needed for choice feedback. Read-only: existing physics, contact timing and chip-display interfaces.
+- **Do**: Evaluate opponent coverage of the intended landing and interception lane. When the opponent waits in front, prefer a high-enough deep straight or crosscourt volley into the rear corner away from them; do not default to a volley drop, including an easily covered opposite-front-corner drop. Retain opportunistic drops against an opponent unable to cover the front. Preserve physical reach, smart length, back-wall sit-up timing and explicit human shot-family choice. Apply to both AI roles and keep red's displayed choice accurate. This tactical correction precedes the experimental serve work in the queue but has no task dependency.
+- **Verify / Accept**: Observe front-court and deep opponents, both actors and court sides, and reachable front/mid/back-court volleys in the running game. Record actual shot choices and trajectories: front coverage discourages drops; good deep placement clears interception; an exposed front still permits a volley drop. Include all tuning and feedback changes in this task. No automated tests. Record the observation scope and remaining feel questions in DOCS/VERIFICATION/gameplay-followup.md; build and publish when this task is implemented.
+
+## TASK-51 — Explore and enable shot chips for serves (queued)
+
+- **Status**: [ ]
+- **Dependencies**: [] (complete implementation can start from release 63adb65).
+- **Files**: src/game_engine.js; src/motion_controls.js; src/squash/ShotController.js; src/squash/TuningConfig.js; src/squash/TuningPanel.js; index.html; public/styles.css as needed. Read-only: current serve state machine, readiness, rules and physics.
+- **Do**: Experiment with useful legal serve ranges and connect chips/keys 1–5 to red's serve in human and spectator-influence modes. Candidate meanings: Drive = typical hard serve; Lob = lob serve; Boast = corkscrew-style experiment; Drop = unresolved; Kill = potentially an extra-hard serve. Do not treat tentative mappings or numerical ranges as settled. Resolve and describe useful behaviour before exposing a family, recording any unsuccessful corkscrew/Drop experiments. Own selection timing through toss/contact, trajectory construction, tuning, labels and red-choice blink/hold feedback within this item. Preserve existing readiness, legal validation and rally behaviour.
+- **Verify / Accept**: Observe every offered serve from both service boxes, with human chip/keyboard input and spectator influence on red. Document useful trajectory ranges, faults, practical distinctions and unresolved choices; no guaranteed winners or hidden fallback contradicting the displayed family. No automated tests. Record evidence in DOCS/VERIFICATION/gameplay-followup.md; build and publish when this task is implemented. This is queued exploration, not a change to the current evaluation build.
 
 ## TASK-46 — Correct backward-facing backhand rotation
 

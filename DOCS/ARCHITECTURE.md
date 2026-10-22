@@ -1,9 +1,9 @@
 ---
 doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
-version: "2.4.0"
-status: "APPROVED TARGET — smart volleys, variable execution, recorded finishes, serve readiness"
-updated_at: "2026-10-21T03:05:00-04:00"
+version: "2.5.0"
+status: "TARGET — facing correction; opponent-aware volleys and serve repertoire queued"
+updated_at: "2026-10-22"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
 kstore_namespace: "mba.robin.squasharcade"
 kstore_schema_version: "1.3"
@@ -386,6 +386,14 @@ Every automatic point replay opens on the front-wall side of the decisive event,
 The red player is the user's player in solo play and the target of spectator shot influence. Mark the front and back of that jersey YOU; repeat the red identity in the scoreboard and above the shot controls with mode-appropriate guidance. Keep existing explicit second-player controls separate.
 
 The shot chips display red's current chosen family while watching AI play, including a changed plan before contact and the final executed family. Blink once when a new shot is chosen or the family changes, then retain one highlight until the next choice; never blink every frame. Blue's shots must not replace that highlight. Normalise drive/topspin, drop/slice, boast, lob and kill/smash to the existing five chips. Keep visible volley context in the choice label. Display updates do not alter human-selected input, AI decisions, or shot timing. During replay retain red's last choice without inventing new decisions.
+
+### 4.12 Opponent-aware volley placement (TASK-50; queued)
+
+An available volley is an opportunity to take time away, not an automatic drop. Evaluate the opponent's ability to reach the intended placement, including their current position and travel time. When the opponent is waiting in the front court, prefer a legal deep straight or crosscourt volley that clears their interception height and reaches the rear corner away from them. Merely choosing the opposite front corner does not make a drop sensible when the opponent can cover it. Retain volley drops when the opponent cannot cover the front placement. Choose trajectory height and depth intelligently within the existing physical solver; do not force a flat interceptible drive, guarantee a winner, or alter ball speed after contact. If no useful volley is reachable, retain the established deep-length/back-wall sit-up reception. Apply the tactical decision to both AI players and reflect red's final choice on the existing chips without overriding an explicit human shot-family choice.
+
+### 4.13 Selectable serve repertoire (TASK-51; exploratory queue)
+
+Allow the five shot chips and keys 1–5 to select red's serve family in human play and influence red's serve in spectator mode. Preserve the existing toss, service-box readiness, legal serve validation and red-choice feedback. Serve trajectories need their own observed tuning ranges; rally parameters must not be copied blindly. Candidate mappings are Drive = ordinary hard serve, Lob = high lob serve, Boast = experimental corkscrew-style attempt, Drop = unresolved, and Kill = potentially a faster hard serve. These are hypotheses for live experimentation, not approved numerical ranges or a claim that every proposed trajectory is viable. Establish a useful, clearly described legal meaning for each offered family before exposing it; if Drop or corkscrew cannot be made useful, record the finding and resolve that choice explicitly. Include the complete selection, trajectory, feedback and both-service-box observations within this task. No serve experimentation is included in the current deployed evaluation build.
 
 ## 5. Acceptance and release protocol
 
