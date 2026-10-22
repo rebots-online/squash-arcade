@@ -835,13 +835,20 @@ export class ArgonTennisEngine {
       },
       onSelectDifficulty: (diff) => {
         this._applyDifficultyTuning(diff);
+        this._updateRelayPolling();
         if (diff === '1v1' && (!this.roomId || this.roomId === 'default')) {
           this.createMultiplayerRoom();
         }
       },
       onCreateMultiplayerRoom: async (opts = {}) => await this.createMultiplayerRoom(opts),
+      onPhonePairing: (open) => {
+        this.phonePairingOpen = open;
+        this._updateRelayPolling();
+      },
       onSelectInputMode: (mode) => {
         this.matchConfig.inputMode = mode;
+        if (mode !== 'phone') this.motionController?.stopPhonePolling();
+        this._updateRelayPolling();
         if (mode === 'webcam' && this.motionController) {
           this.motionController.enableWebcam();
         }
@@ -1003,6 +1010,7 @@ export class ArgonTennisEngine {
         webcamCanvasId: 'webcam-canvas',
         roomId: this.roomId,
         role: this.playerRole,
+        relayRequested: Boolean(this.urlRoom && this.urlRoom !== 'DEFAULT'),
         onPrepStart: (evt) => this._handleUserPrepStart(evt),
         onPrepEnd: (evt) => this._handleUserPrepEnd(evt),
         onSwing: (evt) => this._handleUserSwingInput(evt),
@@ -1760,7 +1768,18 @@ export class ArgonTennisEngine {
     this.player.manualPrepCharge = 0;
   }
 
+  _updateRelayPolling() {
+    const controller = this.motionController;
+    if (!controller) return;
+    const networkRoom = this.isMultiplayer && this.roomId && this.roomId.toLowerCase() !== 'default';
+    const phoneRequested = this.matchConfig.inputMode === 'phone' || this.phonePairingOpen ||
+      controller.phoneState.connected || controller.p2PhoneState.connected;
+    if (networkRoom || phoneRequested) controller.startPhonePolling();
+    else controller.stopPhonePolling();
+  }
+
   async createMultiplayerRoom({ p1Name = 'Player 1', p2Name = 'Player 2' } = {}) {
+    if (!MotionControlsMod.RELAY_ENABLED) return null;
     try {
       const res = await fetch('/api/match/create', {
         method: 'POST',
@@ -1775,6 +1794,7 @@ export class ArgonTennisEngine {
           this._applyDifficultyTuning('1v1');
           if (this.motionController && this.motionController.setRoomConfig) {
             this.motionController.setRoomConfig({ roomId: this.roomId, role: this.playerRole });
+            this._updateRelayPolling();
           }
           this.roomStatus = {
             ...this.roomStatus,
@@ -4021,6 +4041,7 @@ export class ArgonTennisEngine {
   }
 
   _broadcastMultiplayerSnapshot() {
+    if (!this.motionController?.relayAvailable) return;
     const serActor = (a) => ({
       px: Number(a.pos.x.toFixed(3)),
       pz: Number(a.pos.z.toFixed(3)),

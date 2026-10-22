@@ -8,7 +8,7 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-57 — Stop unconditional polling of unavailable relay APIs
 
-- **Status**: [/]
+- **Status**: [X]
 - **Dependencies**: [] (baseline 97a1192; independent of queued tasks).
 - **Files**: src/motion_controls.js; src/game_engine.js; src/hud_ui.js. Read-only: vite.config.ts relay responses and existing room/input callbacks.
 - **Do**: Implement architecture §4.18 completely: static-build capability off by default, explicit backend opt-in, demand-driven session start/stop, single cancellable timeout chain, request timeout, response validation, bounded error backoff and terminal failure stop. Gate automatic feedback and snapshot writes; preserve local controls/vibration and phone event decoding. Reconfigure safely on room changes and stop on disposal.

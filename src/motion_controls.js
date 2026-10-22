@@ -12,6 +12,9 @@
 
 import { BiomechStrokeClassifier, STROKE_SIDES } from './squash/BiomechStrokeClassifier.js';
 
+// Surge serves static files; opt in only when a same-origin relay is deployed.
+export const RELAY_ENABLED = import.meta.env.DEV || import.meta.env.VITE_RELAY_ENABLED === 'true';
+
 export class MotionController {
   constructor(options = {}) {
     this.onSwing = typeof options.onSwing === 'function' ? options.onSwing : null;
@@ -72,6 +75,8 @@ export class MotionController {
 
     this.phonePollIntervalMs = options.phonePollIntervalMs || 50;
     this.phonePollTimer = null;
+    this.phonePollSession = null;
+    this.relayAvailable = false;
     this.phoneState = {
       connected: false,
       p2Connected: false,
@@ -112,11 +117,13 @@ export class MotionController {
     this._disposed = false;
 
     this._initDOMBindings();
-    this.startPhonePolling();
+    if (options.relayRequested) this.startPhonePolling();
     this._startHudRenderLoop();
   }
 
   setRoomConfig({ roomId, role } = {}) {
+    const restart = Boolean(this.phonePollSession);
+    this.stopPhonePolling();
     if (roomId) {
       this.roomId = String(roomId).trim().toLowerCase() || 'default';
       this.phonePollInitialized = false;
@@ -127,6 +134,7 @@ export class MotionController {
     if (role) {
       this.role = String(role).toLowerCase() === 'p2' ? 'p2' : 'p1';
     }
+    if (restart) this.startPhonePolling();
   }
 
   on(event, fn) {
@@ -1190,16 +1198,38 @@ export class MotionController {
   }
 
   startPhonePolling() {
-    if (this.phonePollTimer) return;
+    if (!RELAY_ENABLED || this._disposed || this.phonePollSession) return;
+    const session = { controller: null, failures: 0 };
+    this.phonePollSession = session;
     const poll = async () => {
-      if (this._disposed) return;
+      if (this._disposed || this.phonePollSession !== session) return;
+      this.phonePollTimer = null;
+      const controller = new AbortController();
+      session.controller = controller;
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      let delay = 1000;
       try {
         const q = `?room=${encodeURIComponent(this.roomId || 'default')}&role=${encodeURIComponent(
           this.role || 'p1'
-        )}&touch=1`;
-        const res = await fetch(`/api/match/state${q}`, { cache: 'no-store' });
-        if (!res.ok) return;
+        )}&touch=${encodeURIComponent(this.role || 'p1')}`;
+        const res = await fetch(`/api/match/state${q}`, { cache: 'no-store', signal: controller.signal });
+        if (this.phonePollSession !== session) return;
+        if ([401, 403, 404, 405, 410, 501].includes(res.status) ||
+            (res.ok && !res.headers.get('content-type')?.includes('application/json'))) {
+          this.stopPhonePolling();
+          return;
+        }
+        if (!res.ok) throw new Error(`Relay HTTP ${res.status}`);
         const data = await res.json();
+        if (this.phonePollSession !== session) return;
+        if (!data?.ok || !data.p1 || !data.p2 || typeof data.roomId !== 'string') {
+          this.stopPhonePolling();
+          return;
+        }
+        session.failures = 0;
+        this.relayAvailable = true;
+        const remoteOnline = this.role === 'p2' ? data.p1Online : data.p2Online;
+        delay = data.p1.connected || data.p2.connected || remoteOnline ? this.phonePollIntervalMs : 1000;
         if (typeof this.onRoomState === 'function') this.onRoomState(data);
 
         const p1 = data.p1 || data;
@@ -1357,18 +1387,43 @@ export class MotionController {
           this.p2PhonePollInitialized = true;
           this.lastProcessedP2PhoneSeq = 0;
         }
-      } catch {
-        // Ignore transient poll errors
+      } catch (error) {
+        if (this.phonePollSession !== session) return;
+        if (error instanceof SyntaxError) {
+          this.stopPhonePolling();
+          return;
+        }
+        this.relayAvailable = false;
+        session.failures += 1;
+        if (session.failures >= 3) {
+          this.stopPhonePolling();
+          return;
+        }
+        delay = 1000 * (2 ** (session.failures - 1));
+      } finally {
+        clearTimeout(timeout);
+        if (this.phonePollSession === session && !this._disposed) {
+          session.controller = null;
+          this.phonePollTimer = setTimeout(poll, delay);
+        }
       }
     };
-    poll();
-    this.phonePollTimer = setInterval(poll, this.phonePollIntervalMs);
+    void poll();
   }
 
   stopPhonePolling() {
-    if (this.phonePollTimer) {
-      clearInterval(this.phonePollTimer);
-      this.phonePollTimer = null;
+    const session = this.phonePollSession;
+    this.phonePollSession = null;
+    this.relayAvailable = false;
+    if (this.phonePollTimer !== null) clearTimeout(this.phonePollTimer);
+    this.phonePollTimer = null;
+    session?.controller?.abort();
+    const wasConnected = this.phoneState.connected || this.p2PhoneState.connected;
+    this.phoneState.connected = false;
+    this.p2PhoneState.connected = false;
+    if (wasConnected) {
+      this._updatePhoneBadgeUI(false);
+      this._notifyStatus({ webcam: this.webcamActive, phone: false, p1Phone: false, p2Phone: false });
     }
   }
 
@@ -1392,6 +1447,8 @@ export class MotionController {
         }
       } catch {}
     }
+    const connected = targetRole === 'p2' ? this.p2PhoneState.connected : this.phoneState.connected;
+    if (!this.relayAvailable || !connected) return;
     fetch('/api/racket/feedback', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
