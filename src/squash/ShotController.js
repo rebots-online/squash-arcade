@@ -397,6 +397,20 @@ export class ShotController {
       vel.y = (lowWinnerY - contactPos.y + 0.5 * g * flightEst * flightEst) / flightEst;
     }
 
+    // A solved target is an intention: AI contact has small, bounded execution
+    // variation. Humans and explicit mistake trajectories retain their inputs.
+    const lowAttack = isCutModifier || isKillRequest || shotId === SQUASH_SHOT_TYPES.TWO_WALL_BOAST;
+    if (inputEvent.aiExecution && lowAttack && !inputEvent.aiErrorMode) {
+      const ma = params.movementAndAI || {};
+      const yaw = THREE.MathUtils.degToRad((this.randomSource() * 2 - 1) * Number(ma.aiAttackYawDeg ?? 0.75));
+      const elevation = THREE.MathUtils.degToRad((this.randomSource() * 2 - 1) * Number(ma.aiAttackElevationDeg ?? 0.5));
+      const pace = 1 + (this.randomSource() * 2 - 1) * Number(ma.aiAttackPaceVariation ?? 0.02);
+      const speed = vel.length() * pace;
+      const azimuth = Math.atan2(vel.x, -vel.z) + yaw;
+      const pitch = Math.atan2(vel.y, Math.hypot(vel.x, vel.z)) + elevation;
+      vel.set(Math.sin(azimuth) * Math.cos(pitch), Math.sin(pitch), -Math.cos(azimuth) * Math.cos(pitch)).multiplyScalar(speed);
+    }
+
     const speedKmh = Math.round(vel.length() * 3.6);
     const forcedErrorMode = lobSolve ? null : inputEvent.aiErrorMode;
     const timingGradeBase =

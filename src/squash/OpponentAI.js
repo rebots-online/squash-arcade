@@ -478,11 +478,12 @@ export class OpponentAI {
     } else if (isHighOrHardShot && errorRoll < baseErrorChance * 0.85) {
       // Overhits above the Front-Wall Out Line (4.57m) or Side-Wall Out Line under pressure!
       decision.aiErrorMode = 'OUT';
-    } else if (isAttackingLowShot && this.randomSource() < 0.38) {
+    } else if (isAttackingLowShot && this.randomSource() < Number(params.movementAndAI?.aiWinnerMarginChance ?? 0.20)) {
       // Razor-sharp nick/winner target!
       decision.aiWinnerMargin = true;
     }
 
+    decision.aiExecution = true;
     return decision;
   }
 }

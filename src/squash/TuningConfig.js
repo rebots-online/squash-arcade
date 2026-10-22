@@ -97,6 +97,10 @@ export const DEFAULT_TUNING_PARAMS = {
     aiAnticipationStrength: _envNum('VITE_SA_AI_ANTICIPATION', 0.68),   // How strongly AI leans based on pattern memory & windup disguise
     aiReactionDelayMs: _envNum('VITE_SA_AI_REACTION_DELAY_MS', 195),    // Split-step lag when player disguises a shot (ms)
     aiPatternMemoryLength: 4,       // Number of recent player shots tracked for rhythm/trance
+    aiWinnerMarginChance: 0.20,
+    aiAttackYawDeg: 0.75,
+    aiAttackElevationDeg: 0.5,
+    aiAttackPaceVariation: 0.02,
     aiAggression: _envNum('VITE_SA_AI_AGGRESSION', 0.55),               // Likelihood of AI playing attacking boasts/drops/kills vs length
     aiFrontCourtCreep: _envNum('VITE_SA_AI_FRONT_COURT_CREEP', 0.38),   // How far AI creeps up when expecting a short ball
     aiServeWrongBoxChance: _envNum('VITE_SA_AI_SERVE_WRONG_BOX_CHANCE', 0.04),    // Low-frequency accidental wrong service box (TASK-17)
