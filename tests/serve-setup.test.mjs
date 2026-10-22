@@ -28,9 +28,10 @@ test('engine blocks crowded toss without a point and corrects targets before sta
   e._startServeToss(e.player);
   assert.equal(e.phase,'SERVE_STANCE');assert.equal(e.score.opponentPoints,0);
   assert.ok(e.opponent.targetPos.x<0);
-  e.opponent.pos.copy(e.opponent.targetPos);e.player.pos.copy(e.player.targetPos);
-  e._updateServeReadiness(.1);e._startServeToss(e.player);assert.equal(e.phase,'SERVE_STANCE');
-  e._updateServeReadiness(.11);e._startServeToss(e.player);assert.equal(e.phase,'SERVE_TOSS');
+  for(let i=0;i<1200&&e.phase==='SERVE_STANCE';i++)e._stepPhysics(1/120);
+  assert.equal(e.phase,'SERVE_TOSS');
+  assert.ok(e.opponent.pos.distanceTo(e.player.pos)>1.25);
+  assert.equal(e.score.opponentPoints,0);
 });
 test('serve contact rechecks crowding and rejects a stale point token',()=>{
   const e=engineFixture();e.phase='SERVE_TOSS';e.pointToken=2;e.serveTossToken=1;
@@ -38,8 +39,23 @@ test('serve contact rechecks crowding and rejects a stale point token',()=>{
   e.serveTossToken=2;e.opponent.pos.copy(e.player.pos);
   e._executeServeHit(e.player);assert.equal(e.phase,'SERVE_STANCE');assert.equal(e.score.opponentPoints,0);
 });
+test('wrong-box setup walks into the legal box for either server and side',()=>{
+  for(const role of ['player','opponent'])for(const side of ['left','right']) {
+    const e=engineFixture(),sign=side==='left'?-1:1;
+    e.phase='SERVE_STANCE';e.pointToken=1;e.autoPlayMode=true;
+    e.score.server=role;e.score.serviceSide=side;
+    const server=e[role],receiver=e[role==='player'?'opponent':'player'];
+    server.pos.set(-sign*1.85,0,1.515);server.targetPos.copy(server.pos);
+    receiver.pos.copy(server.pos);receiver.targetPos.copy(receiver.pos);
+    for(let i=0;i<1200&&e.phase==='SERVE_STANCE';i++)e._stepPhysics(1/120);
+    assert.equal(e.phase,'SERVE_TOSS',`${role} ${side}`);
+    assert.ok(server.pos.x*sign>1.6);
+    assert.equal(e.score.playerPoints+e.score.opponentPoints,0);
+  }
+});
 test('genuine foot fault at contact still awards receiver',()=>{
   const e=engineFixture();e.phase='SERVE_TOSS';e.pointToken=1;e.serveTossToken=1;
+  e._awardPoint=winner=>e.rulesEngine.awardPoint(winner);
   e.player.pos.x=.12;e._executeServeHit(e.player);
-  assert.equal(e.score.opponentPoints,1);assert.equal(e.phase,'POINT_SETTLE');
+  assert.equal(e.score.opponentPoints,1);
 });

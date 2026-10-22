@@ -3484,6 +3484,8 @@ export class ArgonTennisEngine {
 
     if (this.phase === 'SERVE_STANCE' && !this.persistentStateLock) {
       this._updateServeReadiness(dt);
+      PlayerMovement.stepActorLocomotion(this.player, this.opponent, dt, this.tuningStore.params, false);
+      PlayerMovement.stepActorLocomotion(this.opponent, this.player, dt, this.tuningStore.params, false);
       if(this.pendingServeSwing&&this.pendingServeSwing.pointToken!==this.pointToken)this.pendingServeSwing=null;
       if(this.pendingServeSwing&&this.serveReadySec>=.2)this._startServeToss(this.pendingServeSwing.actor);
       if (this.score.server === 'opponent' && !this.isMultiplayer && this.phaseTimer > 0.95) {

@@ -6,14 +6,14 @@ import { DEFAULT_TUNING_PARAMS as params } from '../src/squash/TuningConfig.js';
 import { engineFixture } from './engine-fixture.mjs';
 const ball=()=>({pos:new Vector3(1,2,-3),vel:new Vector3(.5,-1,2),spin:new Vector3(),inPlay:false,bounceCountOnFloor:2});
 test('real engine awards once and defers match result until presentation finishes',()=>{
-  const e=engineFixture();e.score.playerPoints=4;
+  const e=engineFixture(new PointPresentation());e.score.playerPoints=4;
   e._awardPoint('player','Out');
   assert.equal(e.phase,'POINT_SETTLE');assert.equal(e.score.playerGames,1);assert.equal(e.victoryShown,undefined);
   e._awardPoint('player','Out');assert.equal(e.score.playerGames,1);
   e._finishPointPresentation();assert.equal(e.phase,'MATCH_OVER');assert.equal(e.victoryShown,true);
 });
 test('real engine terminal continuation never scores again',()=>{
-  const e=engineFixture();let collisions=0;
+  const e=engineFixture(new PointPresentation());let collisions=0;
   e._handleCollisionEvent=()=>{collisions++;return {rallyEnded:true,winner:'opponent'};};
   e._awardPoint('player','Tin');
   for(let i=0;i<120;i++)e._stepPhysics(1/120);
