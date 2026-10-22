@@ -3432,7 +3432,7 @@ export class ArgonTennisEngine {
         this.ball.pos.copy(this.pointPresentation.ball.pos);
         this.ball.vel.copy(this.pointPresentation.ball.vel);
       } else {
-        if(was!==phase){this.ballTrail.clear();this.hud.showCenterBanner('INSTANT REPLAY',{style:'style-gold',subText:'Any key or tap to skip',durationMs:4000});}
+        if(was!==phase){this.ballTrail.clear();this.hud.hideCenterBanner();this._snapCameraImmediate();}
         this.pointPresentation.apply(this.ball,[this.player,this.opponent]);
       }
       this.ballTrail.pushPoint(this.ball.pos);
@@ -4159,18 +4159,25 @@ export class ArgonTennisEngine {
   }
 
   _computeTargetCameraPose() {
-    if(this.phase==='POINT_REPLAY') return this.pointPresentation.cameraPose();
+    const replayPose = this.phase === 'POINT_REPLAY' ? this.pointPresentation.cameraPose() : null;
+    document.getElementById('point-replay-toast')?.classList.toggle('hidden', !replayPose);
     const mode = this.manualCameraOverride || this.cameraMode;
     const targetPos = new THREE.Vector3();
     const targetLook = new THREE.Vector3();
 
     // TASK-16 / Gate I: front-wall viewpoint keeps the front wall transparent
     // so it doesn't occlude the back court; restore on exit.
-    const frontCamActive = mode === 'FRONT_WALL_CAM';
+    const frontCamActive = replayPose
+      ? replayPose.targetPos.z < COURT_SPECS.FRONT_WALL_Z
+      : mode === 'FRONT_WALL_CAM';
     if (frontCamActive !== this._frontWallTransparent) {
       this._frontWallTransparent = frontCamActive;
       this.courtGeometry?.setFrontWallTransparency(frontCamActive);
     }
+    // The opaque tin would hide a front-wall nick when viewed through the wall.
+    if (this.courtGeometry?.tinMesh) this.courtGeometry.tinMesh.visible = !(replayPose && frontCamActive);
+    if (this.courtGeometry?.tinBorderLine) this.courtGeometry.tinBorderLine.visible = !(replayPose && frontCamActive);
+    if (replayPose) return replayPose;
 
     if (mode === 'INTRO_PAN') {
       targetPos.set(0, 11.4, 2.2);

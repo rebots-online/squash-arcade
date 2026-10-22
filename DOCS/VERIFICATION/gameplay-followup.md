@@ -15,3 +15,7 @@ Observed a live corrected backhand at actor (-0.826, -0.305), ball (-1.786, -0.0
 ## TASK-47 — Live reception timing
 
 Approach timing now subtracts shot age, ignores passed samples and follows the remaining first-bounce trajectory. With no remaining prediction, the receiver closes on the live ball. Both AI roles and human automatic movement share this correction. Existing back-wall rebound branches and patience gates are unchanged. In the running browser, blue made repeated real one-bounce returns, including at x=-2.712, z=0.001 (height 0.294 m, shot age 1.042 s), near the short line; other recorded bounced returns covered both sides of front/mid court. This observation does not establish that every service-box miss is eliminated.
+
+## TASK-48 — Rearward replay and corner notification
+
+Observed a live replay opening from z=-10.776 looking rearward at the decisive event z=-2.835, with both actors and the approaching ball visible. The front wall was transparent and the tin temporarily hidden from this outside-front viewpoint. The central replay banner was replaced by the small bordered upper-right toast. Every opening is clamped to the front-wall side before orbiting and zooming, including rear-court events. The existing replay exit snaps back to the selected gameplay camera; wall/tin visibility is restored by the same camera path.

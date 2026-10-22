@@ -253,3 +253,16 @@ kbd{display:inline-block;padding:1px 6px;border-radius:5px;background:#1e293b;bo
 #bottom-right-dock {
   bottom: calc(32px + env(safe-area-inset-bottom, 0px));
 }
+/* Recorded replay notice stays out of the middle of the court. */
+.point-replay-toast {
+  position: fixed; top: 108px; right: 18px; z-index: 70;
+  display: flex; flex-direction: column; gap: 3px; pointer-events: none;
+  padding: 9px 13px; border: 1px solid #ffe575; border-radius: 10px;
+  background: rgba(10, 20, 36, .92); color: #fff6c9;
+  box-shadow: 0 3px 14px #0006; font-size: 12px;
+}
+.point-replay-toast strong { font-size: 14px; }
+.point-replay-toast:not(.hidden) { animation: replay-toast-pulse .65s ease-out 1; }
+@keyframes replay-toast-pulse { 50% { border-color: #fff; box-shadow: 0 0 16px #ffe575aa; } }
+@media (max-width: 768px) { .point-replay-toast { top: 120px; right: 10px; padding: 7px 10px; font-size: 10px; } .point-replay-toast strong { font-size: 12px; } }
+@media (prefers-reduced-motion: reduce) { .point-replay-toast:not(.hidden) { animation: none; } }

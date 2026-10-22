@@ -1,5 +1,6 @@
 import { Vector3, MathUtils } from 'three';
 import { BallPhysics } from './BallPhysics.js';
+import { COURT_SPECS } from './CourtGeometry.js';
 
 const cloneBall=b=>({...b,mesh:undefined,pos:b.pos.clone(),vel:b.vel.clone(),spin:b.spin.clone()});
 const nodesOf=actor=>{const nodes=[];actor.root?.traverse(n=>nodes.push(n));return nodes;};
@@ -83,10 +84,17 @@ export class PointPresentation {
     });
   }
   cameraPose() {
-    const u=MathUtils.clamp(this.replayElapsed/4,0,1),angle=-.65+u*1.3;
+    const u=MathUtils.clamp(this.replayElapsed/4,0,1);
+    const angle=(this.focus.x >= 0 ? -1 : 1)*MathUtils.lerp(.12,.72,u);
     const radius=MathUtils.lerp(8,4.1,MathUtils.smoothstep(u,0,1));
     const targetLook=this.focus.clone();targetLook.y=Math.max(.35,targetLook.y);
-    return {targetLook,targetPos:new Vector3(MathUtils.clamp(targetLook.x+Math.sin(angle)*radius,-2.7,2.7),targetLook.y+2.4+(1-u)*1.4,targetLook.z+Math.cos(angle)*radius)};
+    const orbitZ=targetLook.z-Math.cos(angle)*radius;
+    const openingZ=Math.min(COURT_SPECS.FRONT_WALL_Z-.3,orbitZ);
+    return {targetLook,targetPos:new Vector3(
+      MathUtils.clamp(targetLook.x+Math.sin(angle)*radius,-2.7,2.7),
+      targetLook.y+2.4+(1-u)*1.4,
+      MathUtils.lerp(openingZ,orbitZ,MathUtils.smoothstep(u,0,.5))
+    )};
   }
   input(e) {
     const down=e.type==='keydown',up=e.type==='keyup';
