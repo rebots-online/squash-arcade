@@ -2090,18 +2090,8 @@ export class ArgonTennisEngine {
     }
 
     if (this.urlState === 'replay') {
-      this.rulesEngine.resetMatch({
-        gamesToWin: this.matchConfig.gamesToWin,
-        scoringMode: this.matchConfig.scoringSystem
-      });
-      this.score = this.rulesEngine.score;
-      this.score.playerPoints = 10;
-      this.score.opponentPoints = 9;
-      this._syncScoreboardHUD();
-      this.persistentStateLock = true;
-      this._enterInstantReplayState({ persistent: true });
+      this.startWonderIntro('SKILL_8_FEED');
       this._snapCameraImmediate();
-      this.audioEngine && this.audioEngine.playMusicForState('replay');
       return;
     }
 
@@ -2139,6 +2129,8 @@ export class ArgonTennisEngine {
   }
 
   startWonderIntro(startAt = 'SKILL_1_FEED') {
+    this.pointPresentation?.cancel();
+    this.pendingPointOutcome = null;
     this.hud.hideTitleModal();
     this.hud.hideCenterBanner();
     this.hud.setReplayMode(false);
@@ -2150,6 +2142,8 @@ export class ArgonTennisEngine {
   }
 
   launchNickLabScenario(scenarioId = 'demo_a_kill') {
+    this.pointPresentation?.cancel();
+    this.pendingPointOutcome = null;
     this.hud.hideTitleModal();
     this.hud.hideCenterBanner();
     if (this.introDirector) {
@@ -2540,6 +2534,8 @@ export class ArgonTennisEngine {
   }
 
   _setupMidRallyShowcase() {
+    this.pointPresentation?.cancel();
+    this.pendingPointOutcome = null;
     this.phase = 'RALLY';
     this.phaseTimer = 0;
     this.cameraMode = 'RALLY_CAM';
@@ -2575,30 +2571,14 @@ export class ArgonTennisEngine {
     this.ballTrail.seedArc(new THREE.Vector3(1.35, 0.95, 1.65), this.ball.pos, 0.2);
   }
 
-  _enterInstantReplayState({ persistent = false } = {}) {
-    this.phase = 'REPLAY';
-    this.phaseTimer = 0;
-    this.cameraMode = 'CORNER_NICK_CAM';
-    this.persistentStateLock = persistent;
-    this.hud.hideCenterBanner();
-    this.hud.setReplayMode(true);
-    this.cheerEnergy = 0.85;
-    if (this.audioEngine && !persistent) {
-      this.audioEngine.playVoiceCallout('replay');
+  _enterInstantReplayState() {
+    if (this.introDirector?.active) {
+      this.introDirector.triggerSlowMoReplay();
+      return;
     }
-
-    const scenario = NickCollisionModel.getNickLabScenario('demo_b_soft_drop');
-    this.ball.pos.copy(scenario.pos);
-    this.ball.vel.copy(scenario.vel);
-    this.ball.spin.copy(scenario.spin);
-    this.rulesEngine.onStrokeHit(this.ball, 'player', {
-      isServe: false,
-      shotType: 'DISGUISED_DROP',
-      isDisguised: true
+    this.hud.showCenterBanner('POINT REPLAYS ARE AUTOMATIC', {
+      style:'style-start',subText:'Watch the finish after each point. Any key or tap skips it.',durationMs:1800
     });
-    this.ballTrail.clear();
-    this.ballTrail.setStyle('DROP', false);
-    this.ballTrail.pushPoint(this.ball.pos);
   }
 
   _queueSpectatorShotNudge(evt = {}) {

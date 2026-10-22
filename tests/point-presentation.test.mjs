@@ -61,3 +61,24 @@ test('fresh key and pointer skip consumes full gesture; held repeat does not ski
   assert.equal(p.input({type:'click',pointerId:1}).consume,true);
   assert.equal(p.input({type:'click',pointerId:1}).consume,false);
 });
+test('live Replay control cannot replace the rally with a canned nick',()=>{
+  const e=engineFixture(new PointPresentation()),pos=e.ball.pos.clone(),vel=e.ball.vel.clone();
+  e._enterInstantReplayState();
+  assert.equal(e.phase,'RALLY');assert.deepEqual(e.ball.pos,pos);assert.deepEqual(e.ball.vel,vel);
+});
+test('showcase restart cancels stale result presentation',()=>{
+  const e=engineFixture(new PointPresentation());
+  e.ballTrail.seedArc=()=>{};
+  e._awardPoint('player','Out');e._setupMidRallyShowcase();
+  assert.equal(e.phase,'RALLY');assert.equal(e.pointPresentation.active,false);
+  assert.equal(e.pendingPointOutcome,null);
+});
+test('nick, tin, out and second bounce all keep visible non-scoring aftermath',()=>{
+  for(const reason of ['Nick','Tin','Out','Double bounce']) {
+    const e=engineFixture(new PointPresentation());e._handleCollisionEvent=()=>{};
+    e._awardPoint('player',reason);const before=e.ball.pos.clone();
+    for(let i=0;i<120;i++)e._stepPhysics(1/120);
+    assert.equal(e.phase,'POINT_SETTLE');assert.ok(e.ball.pos.distanceTo(before)>.01);
+    assert.equal(e.score.playerPoints,1);
+  }
+});
