@@ -16,7 +16,7 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-47 — Keep bounced-ball reception current
 
-- **Status**: [ ]
+- **Status**: [/]
 - **Dependencies**: [] (baseline 178584f).
 - **Files**: src/squash/PlayerMovement.js; src/squash/OpponentAI.js. Read-only: current ball/prediction, VolleyPlanner and live engine contact guards.
 - **Do**: Use remaining prediction time, discard expired bounced-ball samples and commit the approach when contact is due. Keep the existing volley priority and valid back-wall sit-up behaviour.
@@ -26,9 +26,17 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 - **Status**: [ ]
 - **Dependencies**: [] (baseline 178584f).
-- **Files**: src/squash/PointPresentation.js; src/game_engine.js. Read-only: CourtGeometry front-wall transparency and existing camera restoration.
-- **Do**: Open every recorded point replay from the front side looking rearward, cut into the opening, then orbit and zoom. Apply front-wall transparency while needed; restore on exit. Preserve recorded action, scoring, settling and input skip.
+- **Files**: src/squash/PointPresentation.js; src/game_engine.js; index.html; public/styles.css. Read-only: CourtGeometry front-wall transparency and existing camera restoration.
+- **Do**: Open every recorded point replay from the front side looking rearward, cut into the opening, then orbit and zoom. Apply front-wall transparency while needed; restore on exit. Replace the central replay banner with a small bordered corner toast and brief pulse. Preserve recorded action, scoring, settling and input skip.
 - **Verify / Accept**: Observe front- and rear-court replay openings and return to the normal whole-court camera. No automated tests. Record evidence in DOCS/VERIFICATION/gameplay-followup.md.
+
+## TASK-49 — Red-player identity and visible shot decisions
+
+- **Status**: [ ]
+- **Dependencies**: [] (baseline 178584f).
+- **Files**: src/game_engine.js; src/motion_controls.js; src/squash/OpponentAI.js; index.html; public/styles.css. Read-only: existing character torso, HudUI, shot execution and spectator nudge flow.
+- **Do**: Mark both sides of red's jersey YOU. Label red ownership in scoreboard and shot controls for solo/spectator play. Display red's planned and committed shot family on the five chips, blinking once per new choice/change and holding the highlight; blue cannot overwrite it. Show volley context without changing input selection or AI tactics. Respect reduced motion.
+- **Verify / Accept**: Observe red jersey and mode guidance, a red shot choice/change and its persistent chip through blue's turn; inspect spectator influence and solo controls. No automated tests. Record observations in DOCS/VERIFICATION/gameplay-followup.md.
 
 ## TASK-40 — AI attacking execution accuracy
 

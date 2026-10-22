@@ -38,18 +38,28 @@ export class PlayerMovement {
     }
     const samples = predictedTrajectory?.samples;
     if (samples?.length) {
-      let bestT = samples[samples.length - 1].t;
+      const age = Math.max(0, Number(ball?.timeSinceHitSec) || 0);
+      let bestT = age;
       let bestD = Infinity;
       for (const s of samples) {
+        if (s.t < age || s.bounceCount >= 2) continue;
         const d = Math.hypot(s.pos.x - strikePos.x, s.pos.z - strikePos.z);
         if (d < bestD) {
           bestD = d;
           bestT = s.t;
         }
       }
-      return bestT;
+      return Math.max(0, bestT - age);
     }
-    return 9e9; // unknown -> never stage (commit fully)
+    return 0; // No future prediction: close on the live ball without staging.
+  }
+
+  static remainingBounceContact(predictedTrajectory, ball) {
+    const age = Math.max(0, Number(ball?.timeSinceHitSec) || 0);
+    const sample = predictedTrajectory?.samples?.find(s =>
+      s.t >= age && s.bounceCount === 1 && s.pos.y >= 0.12 && s.pos.y <= 1.32
+    );
+    return sample?.pos || ball.pos;
   }
 
   /**
@@ -166,8 +176,8 @@ export class PlayerMovement {
         } else if (willComeOffBackWall) {
           // Let the deep drive hit the back wall first and wait at the rising forward rebound pocket!
           targetBallPos = predictedTrajectory.optimalBackWallStrikePos;
-        } else if (predictedTrajectory?.optimalInterceptPos) {
-          targetBallPos = predictedTrajectory.optimalInterceptPos;
+        } else {
+          targetBallPos = this.remainingBounceContact(predictedTrajectory, ball);
         }
 
         // Stand slightly beside the ball's path (~0.42m lateral spacing) for clean racket swing clearance

@@ -188,24 +188,14 @@ export class OpponentAI {
         0,
         THREE.MathUtils.clamp(this.currentIntercept.z + 0.12, -3.9, 4.45)
       );
-    } else if (predictedTrajectory && predictedTrajectory.samples?.length > 0) {
-      const viableSample =
-        predictedTrajectory.samples.find(
-          (s) => s.pos.z > -3.2 && s.pos.y >= 0.30 && s.pos.y <= 1.32 && s.bounceCount >= 1
-        ) ||
-        (predictedTrajectory.firstFloorBouncePos
-          ? { pos: predictedTrajectory.firstFloorBouncePos }
-          : predictedTrajectory.samples[predictedTrajectory.samples.length - 1]);
-
-      if (viableSample && viableSample.pos) {
-        this.currentIntercept.copy(viableSample.pos);
-        const spacingX = this.currentIntercept.x >= 0 ? -0.38 : 0.38;
-        opponent.targetPos.set(
-          THREE.MathUtils.clamp(this.currentIntercept.x + spacingX, -2.78, 2.78),
-          0,
-          THREE.MathUtils.clamp(this.currentIntercept.z + 0.15, -3.9, 4.45)
-        );
-      }
+    } else {
+      this.currentIntercept.copy(PlayerMovement.remainingBounceContact(predictedTrajectory, ball));
+      const spacingX = this.currentIntercept.x >= 0 ? -0.38 : 0.38;
+      opponent.targetPos.set(
+        THREE.MathUtils.clamp(this.currentIntercept.x + spacingX, -2.78, 2.78),
+        0,
+        THREE.MathUtils.clamp(this.currentIntercept.z + 0.15, -3.9, 4.45)
+      );
     }
 
     // TASK-23: pace the approach so arrival coincides with contact — staged
