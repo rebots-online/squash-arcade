@@ -375,7 +375,7 @@ The character rig's eyes and chest face local +Z. Root yaw PI faces the front wa
 
 ### 4.9 Live reception timing (TASK-47)
 
-Predicted sample timestamps are measured from the shot, so all approach decisions subtract the ball's current shot age. Bounced-ball receivers choose remaining legal samples before the second bounce, never a sample already passed. A used-up prediction falls back to the live ball. Stop staging when contact is due so receivers actually close the last distance. Preserve reachable volley priority and real deep-length/back-wall rebound patience; this correction applies to both AI roles and human automatic footwork.
+Predicted sample timestamps are measured from the shot, so all approach decisions subtract the ball's current shot age. Bounced-ball receivers choose remaining legal samples before the second bounce, never a sample already passed. A used-up prediction falls back to the live ball. Stop staging when contact is due so receivers actually close the last distance. If a scheduled contact fails while the same incoming ball is still legally playable, reset the cancelled swing's cooldown so a new real stroke can be prepared. Successful contact retains normal cooldown and recovery. Preserve reachable volley priority and real deep-length/back-wall rebound patience; this correction applies to both AI roles and human automatic footwork.
 
 ### 4.10 Clear rearward-facing replay openings (TASK-48)
 

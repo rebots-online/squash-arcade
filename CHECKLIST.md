@@ -18,8 +18,8 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 - **Status**: [X]
 - **Dependencies**: [] (baseline 178584f).
-- **Files**: src/squash/PlayerMovement.js; src/squash/OpponentAI.js. Read-only: current ball/prediction, VolleyPlanner and live engine contact guards.
-- **Do**: Use remaining prediction time, discard expired bounced-ball samples and commit the approach when contact is due. Keep the existing volley priority and valid back-wall sit-up behaviour.
+- **Files**: src/squash/PlayerMovement.js; src/squash/OpponentAI.js; src/game_engine.js. Read-only: current ball/prediction, VolleyPlanner and live contact rules.
+- **Do**: Use remaining prediction time, discard expired bounced-ball samples and commit the approach when contact is due. Release the cancelled swing's cooldown after a failed contact while the incoming ball remains playable, allowing a fresh real attempt. Keep successful recovery, existing volley priority and valid back-wall sit-up behaviour.
 - **Verify / Accept**: Observe receiver movement and actual return around the service box in the running game; confirm a deep ball still receives the established back-wall treatment. No artificial contact/reach, no automated tests. Record evidence in DOCS/VERIFICATION/gameplay-followup.md.
 
 ## TASK-48 — Rearward-facing opening for every point replay

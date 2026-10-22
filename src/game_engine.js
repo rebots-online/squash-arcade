@@ -3445,6 +3445,10 @@ export class ArgonTennisEngine {
         if (!committed) {
           StrokeMotion.reset(actor);
           actor.swingTimer = 0;
+          // A missed volley must not lock out a legal second attempt on the bounce.
+          if (this.phase === 'RALLY' && this.ball.inPlay && this.ball.lastHitter !== actor.role && this.ball.bounceCountOnFloor < 2) {
+            actor.swingCooldown = 0;
+          }
           if (actor.racketKinematics) actor.racketKinematics.swingActive = false;
         }
       }
