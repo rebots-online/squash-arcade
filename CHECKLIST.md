@@ -53,7 +53,7 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 
 ## TASK-44 — Human attack precision rewards actual contact quality
 
-- **Status**: [ ]
+- **Status**: [X]
 - **Dependencies**: [] (standalone on 7b1df9b; recognize explicit AI execution ownership within this task if absent).
 - **Files**: src/squash/ShotController.js; src/squash/OpponentAI.js; src/game_engine.js; tests/human-contact-quality.test.mjs. Read-only: BallPhysics, CourtGeometry, existing motion and solver tests.
 - **Architecture**: §4.6, added from operator clarification that easy killer shots teach poor real-world tactics.
@@ -61,5 +61,6 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 - **Verify**: node --test tests/human-contact-quality.test.mjs; full Node suite and lint.
 - **Accept**: Perfect-pocked and poor-pocket attacks have distinct real-physics nick rates; repeated same human input produces same result without random calls; drive/lob unchanged; real missing contact still misses; all existing motion and solver invariants pass. [X] is implementation only.
 - **Independent validation**: inspect contact quality behavior and UI feedback, preserve operator feel assessment separately.
+
 
 

@@ -401,6 +401,21 @@ export class ShotController {
     // A solved target is an intention: AI contact has small, bounded execution
     // variation. Humans and explicit mistake trajectories retain their inputs.
     const lowAttack = isCutModifier || isKillRequest || shotId === SQUASH_SHOT_TYPES.TWO_WALL_BOAST;
+    let contactQuality = 1;
+    const humanAttack = actor?.pos && lowAttack && !inputEvent.aiExecution && !inputEvent.aiErrorMode;
+    if (humanAttack) {
+      const lateral = Math.abs(contactPos.x - actor.pos.x);
+      const forward = contactPos.z - actor.pos.z;
+      const stretch = Math.max(0, Math.abs(lateral - .55) - .16) / .5;
+      const timing = Math.max(0, Math.abs(forward + .25) - .12) / .65;
+      const hurried = Math.max(0, Math.hypot(actor.vel?.x || 0, actor.vel?.z || 0) - 2) / 4;
+      const height = Math.max(0, .4 - contactPos.y, contactPos.y - 1.7) / .7;
+      contactQuality = 1 - THREE.MathUtils.clamp(Math.max(stretch, timing, hurried, height), 0, 1);
+      // A late/stretched face opens up: a playable attack with more margin and
+      // bounce, instead of automatic centimetre-perfect nick placement.
+      vel.y += (1 - contactQuality) * 1.15;
+      vel.multiplyScalar(1 + (1 - contactQuality) * .035);
+    }
     if (inputEvent.aiExecution && lowAttack && !inputEvent.aiErrorMode) {
       const ma = params.movementAndAI || {};
       const yaw = THREE.MathUtils.degToRad((this.randomSource() * 2 - 1) * Number(ma.aiAttackYawDeg ?? 0.75));
@@ -420,6 +435,8 @@ export class ShotController {
         ? 'CLIPPED TIN!'
         : forcedErrorMode === 'OUT'
         ? 'OVERHIT OUT!'
+        : humanAttack
+        ? contactQuality >= .9 ? 'BALANCED CONTACT ★' : contactQuality >= .55 ? 'LATE CONTACT • MORE MARGIN' : 'STRETCHED / RUSHED • LOOSE BALL'
         : isRisingOffBackWall
         ? 'RISING OFF BACK WALL ★'
         : isOffBackWall
@@ -444,6 +461,7 @@ export class ShotController {
       forearmPronationDegPerSec,
       isDisguised,
       isVolley,
+      contactQuality,
       isOffBackWall,
       isRisingOffBackWall,
       prepDurationSec: prepSnapshot ? prepSnapshot.durationSec : 0,

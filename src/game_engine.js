@@ -3042,7 +3042,7 @@ export class ArgonTennisEngine {
       side, speed: Number(evt.speed || 1.2), timing: 'sweet', dirX: Number(evt.dirX || 0)
     });
     const requested = StrokeMotion.request(this.player, {
-      ball: this.ball, inputEvent: { ...evt, shotType, cutModifier, side: k?.swingSide || side },
+      ball: this.ball, inputEvent: { ...evt, aiExecution:isAuto && !evt.isSpectatorNudge, shotType, cutModifier, side: k?.swingSide || side },
       prepSnapshot, isAuto, handedness, gravity: this.tuningStore.params.ballPhysics.gravity
     });
     if (requested) this.player.swingCooldown = 0.50;
@@ -3191,7 +3191,7 @@ export class ArgonTennisEngine {
       side, speed: Number(aiDecision.speed || 1.16), timing: 'sweet', dirX: Number(aiDecision.dirX || 0)
     });
     const requested = StrokeMotion.request(this.opponent, {
-      ball: this.ball, inputEvent: { ...aiDecision, side: k?.swingSide || side }, isAuto: true,
+      ball: this.ball, inputEvent: { ...aiDecision, aiExecution:Boolean(aiDecision.aiExecution && !aiDecision.isSpectatorNudge), side: k?.swingSide || side }, isAuto: true,
       prepSnapshot: { active: true, durationSec: 0.35, chargeNormalized: Number(aiDecision.prepCharge ?? 0.65) },
       handedness, gravity: this.tuningStore.params.ballPhysics.gravity
     });
