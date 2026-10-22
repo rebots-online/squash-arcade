@@ -2034,6 +2034,7 @@ export class ArgonTennisEngine {
     });
     const coreMesh = new THREE.Mesh(coreGeom, coreMat);
     coreMesh.castShadow = true;
+    this.ballShadowCaster = coreMesh;
     group.add(coreMesh);
 
     // Double yellow dot markers on the squash ball
@@ -4091,7 +4092,11 @@ export class ArgonTennisEngine {
   }
 
   _updateMiiAnimation(actor, dt) {
-    if(this.phase==='POINT_REPLAY') return;
+    if (this.phase === 'POINT_REPLAY') {
+      // Replay restores the root pose, but the contact shadow lives in the scene.
+      updateCharacterContactShadow(actor);
+      return;
+    }
     if (!actor.model) return;
     if (actor.swingTimer > 0) actor.swingTimer = Math.max(0, actor.swingTimer - dt);
     if (actor.arcVisibleTimer > 0) actor.arcVisibleTimer = Math.max(0, actor.arcVisibleTimer - dt);
@@ -4180,6 +4185,11 @@ export class ArgonTennisEngine {
   }
 
   _updateEffects(dt) {
+    if (this.ballShadowCaster) {
+      // The close replay camera makes the displaced hard shadow look like a second ball.
+      // Retain the soft contact shadow below; restore the normal caster on replay exit.
+      this.ballShadowCaster.castShadow = this.phase !== 'POINT_REPLAY';
+    }
     if (this.ball.mesh) {
       this.ball.mesh.position.copy(this.ball.pos);
     }
