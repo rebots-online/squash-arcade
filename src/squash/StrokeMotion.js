@@ -185,8 +185,10 @@ export class StrokeMotion {
       ? smooth((motion.elapsedSec - motion.contactDelaySec - motion.followThroughSec) / motion.recoverSec) : 0;
     const poseWeight = active ? 1 - recovery : motion.prepareWeight;
     const ordinaryYaw = this.readyYaw(actor, ball);
-    actor.root.rotation.y = motion.phase === 'recover'
-      ? mixAngle(motion.recoverYawRad, ordinaryYaw, recovery) : motion.yawRad;
+    // Replay quaternions can leave an equivalent Euler with X/Z at PI.
+    // Gameplay owns yaw only; retaining those components reverses the facing.
+    actor.root.rotation.set(0, motion.phase === 'recover'
+      ? mixAngle(motion.recoverYawRad, ordinaryYaw, recovery) : motion.yawRad, 0);
     if (motion.phase === 'recover') motion.yawRad = actor.root.rotation.y;
     const rig = actor.rig;
     if (!rig) return true;

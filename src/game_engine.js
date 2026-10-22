@@ -1993,7 +1993,7 @@ export class ArgonTennisEngine {
     actor.root.add(actor.swingArcMesh);
     actor.root.add(actor.racketPivot);
 
-    actor.root.rotation.y = StrokeMotion.readyYaw(actor, this.ball);
+    actor.root.rotation.set(0, StrokeMotion.readyYaw(actor, this.ball), 0);
     actor.root.position.copy(actor.pos);
     this.scene.add(actor.root);
 
@@ -2223,10 +2223,10 @@ export class ArgonTennisEngine {
     this.hud.hideCenterBanner();
     this.player.pos.set(1.15, 0, 1.45);
     this.player.targetPos.copy(this.player.pos);
-    this.player.root.rotation.y = Math.PI + 0.12;
+    this.player.root.rotation.set(0, Math.PI + 0.12, 0);
     this.opponent.pos.set(-1.15, 0, 1.25);
     this.opponent.targetPos.copy(this.opponent.pos);
-    this.opponent.root.rotation.y = Math.PI - 0.12;
+    this.opponent.root.rotation.set(0, Math.PI - 0.12, 0);
     this._refreshShowcasePose();
   }
 
@@ -2506,12 +2506,12 @@ export class ArgonTennisEngine {
     this.player.pos.copy(pos.playerPos);
     this.player.targetPos.copy(pos.playerPos);
     this.player.vel.set(0, 0, 0);
-    this.player.root.rotation.y = Math.PI;
+    this.player.root.rotation.set(0, Math.PI, 0);
 
     this.opponent.pos.copy(pos.opponentPos);
     this.opponent.targetPos.copy(pos.opponentPos);
     this.opponent.vel.set(0, 0, 0);
-    this.opponent.root.rotation.y = Math.PI;
+    this.opponent.root.rotation.set(0, Math.PI, 0);
 
     this.ball.pos.copy(pos.ballStart);
     this.ball.vel.set(0, 0, 0);
@@ -2576,11 +2576,11 @@ export class ArgonTennisEngine {
 
     this.player.pos.set(1.45, 0, 1.85);
     this.player.targetPos.set(0.15, 0, COURT_SPECS.T_POS.z);
-    this.player.root.rotation.y = Math.PI;
+    this.player.root.rotation.set(0, Math.PI, 0);
 
     this.opponent.pos.set(-0.95, 0, 1.15);
     this.opponent.targetPos.set(-1.35, 0, 1.65);
-    this.opponent.root.rotation.y = Math.PI;
+    this.opponent.root.rotation.set(0, Math.PI, 0);
 
     this.ball.pos.set(1.2, 0.95, -0.8);
     this.ball.vel.set(0.45, 2.6, -21.5);
@@ -4103,7 +4103,7 @@ export class ArgonTennisEngine {
     }
 
     if (!StrokeMotion.applyPose(actor, this.ball)) {
-      actor.root.rotation.y = StrokeMotion.readyYaw(actor, this.ball);
+      actor.root.rotation.set(0, StrokeMotion.readyYaw(actor, this.ball), 0);
     }
 
     updateCharacterContactShadow(actor, actor.rig?.verticalHopOffset || 0);

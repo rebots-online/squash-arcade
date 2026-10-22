@@ -319,9 +319,9 @@ export class PlayerMovement {
       yawRate = 1 - Math.exp(-7 * dt);
     }
     // Do not rotate away from the stroke between physics and rendered pose updates.
-    actor.root.rotation.y = actor.strokeMotion && actor.strokeMotion.phase !== 'idle'
+    actor.root.rotation.set(0, actor.strokeMotion && actor.strokeMotion.phase !== 'idle'
       ? actor.strokeMotion.yawRad
-      : THREE.MathUtils.lerp(actor.root.rotation.y, targetYaw, yawRate);
+      : THREE.MathUtils.lerp(actor.root.rotation.y, targetYaw, yawRate), 0);
     actor.root.position.copy(actor.pos);
   }
 }
