@@ -509,7 +509,7 @@ export class RulesEngine {
    *   - "Out! Handout, three all."
    *   - "Nick! Eight-six, game ball."
    */
-  formatRefereeCallout(outcome = {}, reason = '') {
+  formatRefereeCallout(outcome = {}, reason = '', decisionMeta = null) {
     const numToWord = (n) => {
       const words = [
         'love', 'one', 'two', 'three', 'four', 'five', 'six',
@@ -522,9 +522,18 @@ export class RulesEngine {
 
     const parts = [];
     const r = String(reason || '').toLowerCase();
+    const appealCallout = {
+      NO_LET: 'No let!',
+      YES_LET: 'Yes, let!',
+      STROKE: 'Stroke!'
+    }[decisionMeta?.decision];
 
     // 1. Fault / Winner Call Prefix
-    if (r.includes('foot fault')) {
+    if (appealCallout) {
+      parts.push(appealCallout);
+    } else if (/\bno[\s,_-]+let\b/.test(r)) {
+      parts.push('No let!');
+    } else if (r.includes('foot fault')) {
       parts.push('Foot fault!');
     } else if (r.includes('wrong box') || r.includes('serve fault') || r.includes('fault')) {
       parts.push('Fault!');

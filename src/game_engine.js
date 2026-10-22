@@ -3920,7 +3920,7 @@ export class ArgonTennisEngine {
     this.score = this.rulesEngine.score;
     this._syncScoreboardHUD();
     this.pendingPointOutcome={outcome,reason,decisionMeta};
-    const callout=this.rulesEngine.formatRefereeCallout(outcome,reason);
+    const callout=this.rulesEngine.formatRefereeCallout(outcome,reason,decisionMeta);
     this.hud.showCenterBanner(callout,{style:'style-score',subText:'Watch the finish • Any key or tap to skip',durationMs:1800});
     this.audioEngine?.announceScore(callout);
   }
@@ -3943,7 +3943,7 @@ export class ArgonTennisEngine {
   _showPointOutcome(outcome,reason,decisionMeta) {
 
     // Build authentic WSF/PSA deep male referee callout ("Down! Handout, five-four.", etc.)
-    const baseRefereeCallout = this.rulesEngine.formatRefereeCallout(outcome, reason);
+    const baseRefereeCallout = this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta);
     const refereeCallout = decisionMeta?.safetyWarningText
       ? `${decisionMeta.refereeCallout || baseRefereeCallout} ${decisionMeta.safetyWarningText}`
       : decisionMeta?.refereeCallout

@@ -8,7 +8,7 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-55 — Announce the actual let ruling
 
-- **Status**: [ ]
+- **Status**: [/]
 - **Dependencies**: [] (baseline 43f2ba8; independent of queued tasks).
 - **Files**: src/squash/RulesEngine.js; src/game_engine.js. Read-only: AudioEngine announceScore/playVoiceCallout and existing appeal resolver.
 - **Do**: Pass authoritative appeal metadata into the shared referee callout formatter. Map NO_LET, YES_LET and STROKE explicitly before interpreting prose; distinguish text-only denied lets before any granted-let fallback. Use the same result for the banner and speech. Preserve ruling/scoring, score/handout/game/match wording, actual let replay and sound settings.
