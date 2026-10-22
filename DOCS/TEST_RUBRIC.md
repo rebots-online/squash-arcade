@@ -10,3 +10,4 @@ Each row is independently evaluated; implementation, fresh review, rendered obse
 | TASK-43 | Both roles/sides, arrival/stability, crowding correction without point, legal receiver positions, contact guard, stale tokens | Wrong-side crowded setup halted and announced, players separate before toss; correct service side after handout |
 
 Release evidence: all baseline plus new tests, lint, fresh whole-branch review, versioned build; pushed commits; exact Surge file hashes; public desktop/mobile-width UI and gameplay. Physical-device and human feel remain operator evaluation unless directly observed.
+| TASK-44 | Deterministic real-contact attack precision, perfect versus stretched physics outcomes, no human random draws; drive/lob unchanged | Mistimed killer attempt leaves a retrievable ball; balanced sweet contact remains rewarding |

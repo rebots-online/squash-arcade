@@ -361,6 +361,10 @@ ServeSetup exports evaluateServeSetup({server,receiver,serviceSide,params}) -> {
 
 Wrong-box staging/crowding pauses setup, announces the correction and moves automatic actors to safe targets. Show guidance for manual movement. A setup correction does not award a point. A genuine foot fault at actual legal-side contact retains existing adjudication. Do not invent a blanket receiver-half rule. Each setup has a point token; delayed correction/input cannot affect a later point.
 
+### 4.6 Human attacking precision (TASK-44; operator clarification)
+
+Successful contact alone must not grant an exact nick. At committed human drop/kill/attacking-boast contact, derive deterministic contact quality from the actual ball relative to the actor's strike pocket and the actor's balance/movement. A compact sweet pocket preserves full precision; late, stretched or hurried contacts open the target margin and leave a more retrievable ball. This is not a random human error lottery. Explicit manual aim and family remain, and no contact is fabricated. Drives/lobs retain their existing reliable placement. Feedback explains balanced versus stretched timing. Direct pure-solver tests describe ideal launch construction, never human gameplay success rates. AI execution variation remains its separate skill model.
+
 ## 5. Acceptance and release protocol
 
 DOCS/TEST_RUBRIC.md maps the four complete entities to behavior evidence. Each CHECKLIST item contains all production changes, tests and deterministic acceptance needed to stand alone on baseline 7b1df9b. Shared files are integrated serially; no task imports another task's new module or depends on another task's acceptance. Existing interfaces are explicit prerequisites, not hidden sibling tasks.
