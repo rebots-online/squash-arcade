@@ -1,7 +1,7 @@
 {
   "name": "argon-tennis",
   "private": true,
-  "version": "1.6.77400",
+  "version": "1.7.77474",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
