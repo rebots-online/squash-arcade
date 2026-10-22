@@ -8,7 +8,7 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-53 — Roll up mobile setup and make player identity readable
 
-- **Status**: [/]
+- **Status**: [X]
 - **Dependencies**: [] (baseline eb63836; independent of TASK-54 and queued tasks).
 - **Files**: index.html; public/styles.css; src/game_engine.js. Read-only: HudUI show/hide and existing control callbacks.
 - **Do**: Start setup collapsed before initial game load on widths up to 900px and coarse-pointer widths up to 1200px. Provide one Menu handle to open/roll up configuration without resetting the rally or control mode. Reserve the compact top bar for both avatars, score, legible YOU/red label outside the clipped portrait and Menu. Retain secondary functions through the expanded panel/secondary controls; include camera, replay and tuning access. Make expanded setup scrollable and the sound-unlock prompt compact. Preserve arcade styling, desktop setup, red shot-choice feedback and whole-court camera.
@@ -16,7 +16,7 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-54 — Keep a translucent red tin boundary in replay
 
-- **Status**: [/]
+- **Status**: [X]
 - **Dependencies**: [] (baseline eb63836; independent of TASK-53 and queued tasks).
 - **Files**: src/squash/CourtGeometry.js; src/game_engine.js. Read-only: PointPresentation camera path and physical tin height/collision rules.
 - **Do**: Replace replay-only tin hiding with visible darker translucent tin panel and translucent red top strip for front-wall viewpoints. Slightly darken the normal panel; retain scene depth testing and physical boundary position. Restore normal material treatment on viewpoint exit and skip. Keep ball/players readable through the overlay and preserve camera orbit, framing and scoring.
