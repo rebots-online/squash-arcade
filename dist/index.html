@@ -20,7 +20,7 @@
     })();
   </script>
   <link rel="stylesheet" href="./styles.css" />
-  <script type="module" crossorigin src="/assets/index-tz5MYsHx.js"></script>
+  <script type="module" crossorigin src="/assets/index-BoHz0TQq.js"></script>
 </head>
 <body>
   <div id="root" class="hidden" aria-hidden="true"></div>
@@ -50,7 +50,7 @@
         <div class="mii-side mii-side-player">
           <div class="mii-avatar-badge player-tint">
             <canvas id="mii-icon-player" width="192" height="192"></canvas>
-            <span class="you-chip">YOU</span>
+            <span class="you-chip">YOU · RED</span>
           </div>
           <div class="mii-avatar-badge player-tint secondary-mii hidden">
             <canvas id="mii-icon-player-2" width="192" height="192"></canvas>
@@ -157,6 +157,10 @@
       </div>
     </div>
 
+    <div id="point-replay-toast" class="point-replay-toast hidden" role="status">
+      <strong>⏪ Instant replay</strong>
+      <span>Any key or tap to skip</span>
+    </div>
     <div id="center-banner-layer" class="center-banner-layer hidden">
       <div id="center-banner-streak" class="center-banner-streak"></div>
       <div id="center-banner-text" class="center-banner-text style-gold">Match Ball</div>
@@ -189,7 +193,11 @@
       <div id="let-advisory-banner" class="let-advisory-banner hidden" role="status" aria-live="polite">
         ⚠️ OBSTRUCTED! Press <kbd>F</kbd> / <kbd>L</kbd>, Raise Open Hand ✋, or Hold Phone Upright to Call <strong>LET!</strong>
       </div>
-      <div class="squash-shot-selector-row" aria-label="Squash Shot Shaping & Disguise">
+      <div class="red-control-card">
+        <strong id="red-control-hint">YOU influence RED · tap a shot or press 1–5</strong>
+        <span id="red-shot-choice">RED: Drive</span>
+      </div>
+      <div class="squash-shot-selector-row" aria-label="Red player's shot choice">
         <button type="button" class="shot-chip active" data-shot-type="topspin" title="Drive / Rail (Key 1 or Hold Space)">1: Drive</button>
         <button type="button" class="shot-chip" data-shot-type="drop" title="Open-Face Cut / Drop (Key 2 or Shift+Swing / Right-Click)">2: Cut Drop</button>
         <button type="button" class="shot-chip" data-shot-type="boast" title="2-Wall Boast (Key 3 or B)">3: Boast</button>
