@@ -6,6 +6,14 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 
 Current operator override: no automated tests for follow-up work. TASK-40–45 test commands below are historical completed-release instructions, not current gates. TASK-46–48 are independent on release 178584f; each includes its own implementation and focused browser observation. No task requires another follow-up task.
 
+## TASK-52 — Prevent replay rotation from reversing later gameplay
+
+- **Status**: [/]
+- **Dependencies**: [] (baseline 63adb65; independent of queued TASK-50/51).
+- **Files**: src/game_engine.js; src/squash/StrokeMotion.js; src/squash/PlayerMovement.js. Read-only: PointPresentation quaternion pose playback and character hierarchy.
+- **Do**: Replace partial root yaw writes with complete yaw-only `(0, yaw, 0)` rotations wherever gameplay owns actor facing, including setup, serve/showcase, locomotion, preparation, stroke and recovery. Recorded replay quaternions can yield equivalent Euler X/Z components of PI; clear those components on gameplay ownership instead of carrying them into the next rally. Preserve the replay's recorded poses, local hip/head/limb motion, stroke side, contact, physics and camera.
+- **Verify / Accept**: Capture the defect in the deployed game, inspect the complete root orientation, and confirm the same frozen pose faces correctly when residual X/Z rotation is cleared. Observe actual rallies after natural replay completion and early skip on the corrected build, including both players and forehand/backhand strokes. Record scope in DOCS/VERIFICATION/gameplay-followup.md. No automated tests. Build, commit/push and deploy the corrected version; verify public version and bundle bytes. This correction does not implement queued serve/volley tactics.
+
 ## TASK-50 — Choose volley placement around the opponent (queued)
 
 - **Status**: [ ]
