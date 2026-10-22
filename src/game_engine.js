@@ -30,6 +30,7 @@ import { StrokeMotion } from './squash/StrokeMotion.js';
 import { planVolleyContact } from './squash/VolleyPlanner.js';
 import { PointPresentation } from './squash/PointPresentation.js';
 import { evaluateServeSetup } from './squash/ServeSetup.js';
+import { fitCourtCamera } from './squash/CourtCamera.js';
 import { OpponentAI } from './squash/OpponentAI.js';
 import { IntroDirector } from './squash/IntroDirector.js';
 import { TuningPanel } from './squash/TuningPanel.js';
@@ -3886,6 +3887,7 @@ export class ArgonTennisEngine {
     if(!result.outcome.matchWonBy) this._setupPointServe({showBanner:true});
     else this.phase='MATCH_OVER';
     if(result.outcome.gameWonBy||result.outcome.matchWonBy) this._showPointOutcome(result.outcome,result.reason,result.decisionMeta);
+    if(this.camera) this._snapCameraImmediate();
   }
 
   _showPointOutcome(outcome,reason,decisionMeta) {
@@ -4219,7 +4221,9 @@ export class ArgonTennisEngine {
       targetPos.x -= 0.52;
       targetLook.x -= 0.92;
     }
-    return { targetPos, targetLook };
+    return ['RALLY_CAM','SERVE_CAM'].includes(mode)
+      ? fitCourtCamera({targetPos,targetLook,aspect:this.camera.aspect,fov:this.camera.fov})
+      : { targetPos, targetLook };
   }
 
   _snapCameraImmediate() {
@@ -4238,6 +4242,11 @@ export class ArgonTennisEngine {
     const blend = 1 - Math.exp(-6.5 * dt);
     this.cameraPosSmooth.lerp(targetPos, blend);
     this.cameraLookSmooth.lerp(targetLook, blend);
+    const mode=this.manualCameraOverride||this.cameraMode;
+    if(this.phase!=='POINT_REPLAY'&&['RALLY_CAM','SERVE_CAM'].includes(mode)) {
+      const fitted=fitCourtCamera({targetPos:this.cameraPosSmooth,targetLook:this.cameraLookSmooth,aspect:this.camera.aspect,fov:this.camera.fov});
+      this.cameraPosSmooth.copy(fitted.targetPos);
+    }
     this.camera.position.copy(this.cameraPosSmooth);
 
     if (this.cameraTrauma > 0.001) {
@@ -4272,6 +4281,7 @@ export class ArgonTennisEngine {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this._snapCameraImmediate();
   }
 
   render() {

@@ -79,7 +79,7 @@ export class PointPresentation {
     const u=MathUtils.clamp(this.replayElapsed/4,0,1),angle=-.65+u*1.3;
     const radius=MathUtils.lerp(8,4.1,MathUtils.smoothstep(u,0,1));
     const targetLook=this.focus.clone();targetLook.y=Math.max(.35,targetLook.y);
-    return {targetLook,targetPos:new Vector3(MathUtils.clamp(targetLook.x+Math.sin(angle)*radius,-5.8,5.8),targetLook.y+2.4+(1-u)*1.4,targetLook.z+Math.cos(angle)*radius)};
+    return {targetLook,targetPos:new Vector3(MathUtils.clamp(targetLook.x+Math.sin(angle)*radius,-2.7,2.7),targetLook.y+2.4+(1-u)*1.4,targetLook.z+Math.cos(angle)*radius)};
   }
   input(e) {
     const down=e.type==='keydown',up=e.type==='keyup';
