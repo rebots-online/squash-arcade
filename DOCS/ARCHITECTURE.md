@@ -1,8 +1,8 @@
 ---
 doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
-version: "2.5.0"
-status: "TARGET — facing correction; opponent-aware volleys and serve repertoire queued"
+version: "2.6.0"
+status: "TARGET — clear mobile controls and visible replay tin; volley tactics and serve repertoire queued"
 updated_at: "2026-10-22"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
 kstore_namespace: "mba.robin.squasharcade"
@@ -396,6 +396,16 @@ An available volley is an opportunity to take time away, not an automatic drop. 
 ### 4.13 Selectable serve repertoire (TASK-51; exploratory queue)
 
 Allow the five shot chips and keys 1–5 to select red's serve family in human play and influence red's serve in spectator mode. Preserve the existing toss, service-box readiness, legal serve validation and red-choice feedback. Serve trajectories need their own observed tuning ranges; rally parameters must not be copied blindly. Candidate mappings are Drive = ordinary hard serve, Lob = high lob serve, Boast = experimental corkscrew-style attempt, Drop = unresolved, and Kill = potentially a faster hard serve. These are hypotheses for live experimentation, not approved numerical ranges or a claim that every proposed trajectory is viable. Establish a useful, clearly described legal meaning for each offered family before exposing it; if Drop or corkscrew cannot be made useful, record the finding and resolve that choice explicitly. Include the complete selection, trajectory, feedback and both-service-box observations within this task. No serve experimentation is included in the current deployed evaluation build.
+
+### 4.14 Mobile court visibility and player identity (TASK-53)
+
+Compact layouts (viewport at most 900 CSS pixels, or coarse-pointer devices at most 1200 pixels) begin with the setup panel rolled up before the game loads. One Menu handle opens and closes the configuration panel without restarting the rally or changing who controls red. Explicit expansion remains under user control; a resize must not repeatedly reopen the panel. Desktop retains the existing expanded first-load setup.
+
+The compact top bar contains the score, both avatars, a separate legible YOU / red identity label, and the Menu handle. Secondary tactical, camera, replay, help, skill and tuning controls belong in the opened setup panel or their existing secondary controls, not a row competing with the scoreboard. All retained functions remain reachable. The identity label is outside the avatar's clipped circle, with stable space reserved for both portraits and score. Keep arcade colour and gloss, whole-court gameplay framing, touch-sized controls and the existing red shot-choice feedback. The initial sound-unlock prompt becomes a small corner control on compact screens. Open setup content scrolls within the available viewport and rolls back up completely.
+
+### 4.15 Visible tin through the replay front wall (TASK-54)
+
+The front-wall replay viewpoint must retain a readable tin boundary. Keep the actual tin panel and top border visible instead of hiding them. Use a slightly darker panel in normal play; from a transparent front-wall viewpoint show a darker translucent panel and a translucent red top strip, preserving sight of the ball and players behind it. Draw the boundary clearly over the transparent front wall without disabling scene depth testing or moving the real boundary. Restore normal tin treatment when leaving that viewpoint, including replay skip and camera changes. Tin height, collision geometry, scoring, orbit and zoom remain unchanged.
 
 ## 5. Acceptance and release protocol
 

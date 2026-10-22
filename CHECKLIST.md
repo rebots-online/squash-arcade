@@ -1,10 +1,26 @@
 # Squash Arcade — approved independent implementation checklist
 
-Architecture: DOCS/ARCHITECTURE.md v2.5.0. User approved initial implementation on 2026-10-21; later requests are identified per item. Initial baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
+Architecture: DOCS/ARCHITECTURE.md v2.6.0. User approved initial implementation on 2026-10-21; later requests are identified per item. Initial baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
 
 Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with verification -> `✅` independently semantically validated. AP1–4 adopted; AP5 remains draft. No test-only sibling task and no external live service in coder Accept.
 
 Current operator override: no automated tests for follow-up work. TASK-40–45 test commands below are historical completed-release instructions, not current gates. TASK-46–48 are independent on release 178584f; each includes its own implementation and focused browser observation. No task requires another follow-up task.
+
+## TASK-53 — Roll up mobile setup and make player identity readable
+
+- **Status**: [/]
+- **Dependencies**: [] (baseline eb63836; independent of TASK-54 and queued tasks).
+- **Files**: index.html; public/styles.css; src/game_engine.js. Read-only: HudUI show/hide and existing control callbacks.
+- **Do**: Start setup collapsed before initial game load on widths up to 900px and coarse-pointer widths up to 1200px. Provide one Menu handle to open/roll up configuration without resetting the rally or control mode. Reserve the compact top bar for both avatars, score, legible YOU/red label outside the clipped portrait and Menu. Retain secondary functions through the expanded panel/secondary controls; include camera, replay and tuning access. Make expanded setup scrollable and the sound-unlock prompt compact. Preserve arcade styling, desktop setup, red shot-choice feedback and whole-court camera.
+- **Verify / Accept**: Observe fresh mobile-width load, menu expansion/collapse, score and avatar separation, readable YOU and reachable secondary actions. Inspect portrait phone, fold/tablet width and landscape plus desktop; confirm opening configuration does not restart play. Record actual browser viewport scope in DOCS/VERIFICATION/gameplay-followup.md; no automated tests or physical-device claim. Build, commit/push and deploy the complete item.
+
+## TASK-54 — Keep a translucent red tin boundary in replay
+
+- **Status**: [/]
+- **Dependencies**: [] (baseline eb63836; independent of TASK-53 and queued tasks).
+- **Files**: src/squash/CourtGeometry.js; src/game_engine.js. Read-only: PointPresentation camera path and physical tin height/collision rules.
+- **Do**: Replace replay-only tin hiding with visible darker translucent tin panel and translucent red top strip for front-wall viewpoints. Slightly darken the normal panel; retain scene depth testing and physical boundary position. Restore normal material treatment on viewpoint exit and skip. Keep ball/players readable through the overlay and preserve camera orbit, framing and scoring.
+- **Verify / Accept**: Observe a front-facing replay opening and orbit, then skip/finish to normal play; inspect the tin boundary on light and dark court themes and a compact viewport. Confirm visible objects/material restoration and unchanged height. Record scope in DOCS/VERIFICATION/gameplay-followup.md. No automated tests. Build, commit/push and deploy the complete item.
 
 ## TASK-52 — Prevent replay rotation from reversing later gameplay
 
