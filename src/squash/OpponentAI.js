@@ -126,6 +126,7 @@ export class OpponentAI {
     predictedTrajectory,
     rulesEngine = null,
     onCallAILet = null,
+    onPlanAIShot = null,
     onExecuteAIShot
   }) {
     if (!ball || !ball.inPlay || !opponent) return;
@@ -156,6 +157,7 @@ export class OpponentAI {
     // Intercept a clean airborne opportunity before considering bounced retrieval.
     const volleyPlan = planVolleyContact({actor:opponent,opponent:player,ball,predictedTrajectory,params});
     if (volleyPlan) {
+      if (!opponent.strokeMotion?.pending) onPlanAIShot?.(volleyPlan);
       this.currentIntercept.copy(volleyPlan.contactPos);
       opponent.targetPos.copy(volleyPlan.targetPos);
       const distXZ=Math.hypot(ball.pos.x-opponent.pos.x,ball.pos.z-opponent.pos.z);

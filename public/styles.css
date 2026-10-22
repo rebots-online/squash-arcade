@@ -266,3 +266,16 @@ kbd{display:inline-block;padding:1px 6px;border-radius:5px;background:#1e293b;bo
 @keyframes replay-toast-pulse { 50% { border-color: #fff; box-shadow: 0 0 16px #ffe575aa; } }
 @media (max-width: 768px) { .point-replay-toast { top: 120px; right: 10px; padding: 7px 10px; font-size: 10px; } .point-replay-toast strong { font-size: 12px; } }
 @media (prefers-reduced-motion: reduce) { .point-replay-toast:not(.hidden) { animation: none; } }
+.red-control-card {
+  align-self: flex-end; display: flex; flex-direction: column; gap: 3px;
+  padding: 7px 10px; border: 1px solid #ff6b73; border-radius: 9px;
+  background: rgba(43, 12, 22, .9); color: #fff; font-size: 11px;
+  max-width: 100%; text-align: right;
+}
+.red-control-card span { color: #ffb8bd; font-size: 10px; font-weight: 800; }
+.squash-shot-selector-row .shot-chip.active {
+  background: linear-gradient(180deg, #f24f61, #a51e32);
+  box-shadow: 0 0 8px #ff536355;
+}
+.you-chip { background: #b32236; color: white; }
+@media (max-width: 768px) { .red-control-card { font-size: 10px; padding: 5px 8px; } }

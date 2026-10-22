@@ -1999,13 +1999,29 @@ export class MotionController {
     }
   }
 
-  _updateHudShotPills(shotType) {
+  _updateHudShotPills(shotType, { detail = '', decisionToken = '' } = {}) {
     if (typeof document === 'undefined') return;
+    const raw = String(shotType || 'topspin').toLowerCase();
+    const family = /drop|slice|cut/.test(raw) ? 'drop' : /boast/.test(raw) ? 'boast'
+      : /lob/.test(raw) ? 'lob' : /kill|smash/.test(raw) ? 'smash' : 'topspin';
+    const key = `${decisionToken}:${family}`;
+    const changed = this._displayedShotKey !== key;
+    this._displayedShotKey = key;
     const pills = document.querySelectorAll('[data-shot-type]');
     if (!pills || pills.length === 0) return;
     pills.forEach((el) => {
-      el.classList.toggle('active', el.dataset.shotType === shotType);
+      const active = el.dataset.shotType === family;
+      el.classList.toggle('active', active);
+      el.setAttribute('aria-pressed', String(active));
+      if (changed) {
+        el.getAnimations?.().forEach(animation => animation.cancel());
+        if (active && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          el.animate([{ filter: 'brightness(1)' }, { filter: 'brightness(2.4)', transform: 'scale(1.08)' }, { filter: 'brightness(1)', transform: 'scale(1)' }], { duration: 450, iterations: 1 });
+        }
+      }
     });
+    const label = document.getElementById('red-shot-choice');
+    if (label) label.textContent = detail || `RED: ${{topspin:'Drive',drop:'Cut drop',boast:'Boast',lob:'Lob',smash:'Kill'}[family]}`;
   }
 
   _notifyStatus(st) {

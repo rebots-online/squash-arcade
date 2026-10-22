@@ -8,7 +8,7 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-46 — Correct backward-facing backhand rotation
 
-- **Status**: [/]
+- **Status**: [X]
 - **Dependencies**: [] (baseline 178584f).
 - **Files**: src/squash/StrokeMotion.js; src/squash/PlayerMovement.js; src/game_engine.js; src/racket_kinematics.js. Read-only: character rig geometry.
 - **Do**: Honour explicit actor-relative forehand/backhand choice and unify stroke, locomotion and ready-pose yaw with the model's front-wall-facing PI yaw. Preserve handed stance, opposite-foot step and live contact. Remove the tracking-angle discontinuity at the centre line.
@@ -16,7 +16,7 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-47 — Keep bounced-ball reception current
 
-- **Status**: [/]
+- **Status**: [X]
 - **Dependencies**: [] (baseline 178584f).
 - **Files**: src/squash/PlayerMovement.js; src/squash/OpponentAI.js. Read-only: current ball/prediction, VolleyPlanner and live engine contact guards.
 - **Do**: Use remaining prediction time, discard expired bounced-ball samples and commit the approach when contact is due. Keep the existing volley priority and valid back-wall sit-up behaviour.
@@ -24,7 +24,7 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-48 — Rearward-facing opening for every point replay
 
-- **Status**: [ ]
+- **Status**: [X]
 - **Dependencies**: [] (baseline 178584f).
 - **Files**: src/squash/PointPresentation.js; src/game_engine.js; index.html; public/styles.css. Read-only: CourtGeometry front-wall transparency and existing camera restoration.
 - **Do**: Open every recorded point replay from the front side looking rearward, cut into the opening, then orbit and zoom. Apply front-wall transparency while needed; restore on exit. Replace the central replay banner with a small bordered corner toast and brief pulse. Preserve recorded action, scoring, settling and input skip.
@@ -32,7 +32,7 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-49 — Red-player identity and visible shot decisions
 
-- **Status**: [ ]
+- **Status**: [X]
 - **Dependencies**: [] (baseline 178584f).
 - **Files**: src/game_engine.js; src/motion_controls.js; src/squash/OpponentAI.js; index.html; public/styles.css. Read-only: existing character torso, HudUI, shot execution and spectator nudge flow.
 - **Do**: Mark both sides of red's jersey YOU. Label red ownership in scoreboard and shot controls for solo/spectator play. Display red's planned and committed shot family on the five chips, blinking once per new choice/change and holding the highlight; blue cannot overwrite it. Show volley context without changing input selection or AI tactics. Respect reduced motion.

@@ -1589,6 +1589,18 @@ export class ArgonTennisEngine {
         ? '🤖 AI vs AI LIVE (Click / P to Play)'
         : '🤖 WATCH AI vs AI (P)';
     }
+    const controlHint = document.getElementById('red-control-hint');
+    if (controlHint) controlHint.textContent = active
+      ? 'YOU influence RED · tap a shot or press 1–5'
+      : 'YOU play RED · tap a shot or press 1–5';
+    if (!active) this.motionController?._updateHudShotPills(this.selectedShotType);
+  }
+
+  _showRedShotChoice(shotType, detail = '') {
+    this.motionController?._updateHudShotPills(shotType, {
+      detail,
+      decisionToken: `${this.pointToken}:${this.ball.rallyStrokeCount}`
+    });
   }
 
   toggleRefereeVoice() {
@@ -1941,6 +1953,26 @@ export class ArgonTennisEngine {
     upgradeMiiCharacterMaterials(actor, paletteKey);
     this.facialFX && this.facialFX.attachFacialRig(actor);
     this.bodyAnimator && this.bodyAnimator.setupArticulatedMiiRig(actor);
+
+    if (actor.role === 'player' && actor.parts.torso) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512; canvas.height = 192;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.font = '900 138px Arial';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.lineWidth = 10; ctx.strokeStyle = '#781c24';
+      ctx.strokeText('YOU', 256, 98); ctx.fillText('YOU', 256, 98);
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1 });
+      for (const side of [1, -1]) {
+        const marking = new THREE.Mesh(new THREE.PlaneGeometry(.43, .18), material);
+        marking.name = side === 1 ? 'YouJerseyFront' : 'YouJerseyBack';
+        marking.position.set(0, .32, side * .183);
+        marking.rotation.y = side === 1 ? 0 : Math.PI;
+        actor.parts.torso.add(marking);
+      }
+    }
 
     const racket = racketTemplate.clone(true);
     racket.traverse((child) => {
@@ -3020,6 +3052,8 @@ export class ArgonTennisEngine {
     if (dist > maxReach || this.ball.pos.y > 2.6) {
       return false;
     }
+    this._showRedShotChoice(evt.shotType || this.selectedShotType,
+      `RED CHOOSES: ${String(evt.shotType || this.selectedShotType || 'Drive').replace(/topspin/i,'Drive')}`);
 
     const prepSnapshot = this.shotController.clearPreparation('player');
     if (evt.prepHoldMs && prepSnapshot.durationSec === 0) {
@@ -3076,6 +3110,7 @@ export class ArgonTennisEngine {
     const isDrop =
       shot.shotId === SQUASH_SHOT_TYPES.DISGUISED_DROP ||
       shot.shotId === SQUASH_SHOT_TYPES.COUNTER_DROP;
+    this._showRedShotChoice(shot.label, `RED PLAYS: ${shot.label}`);
     if (this.racketKinematics) {
       this.racketKinematics.triggerImpactRecoil(this.player, isKill ? 1.35 : 0.95);
     }
@@ -3661,6 +3696,11 @@ export class ArgonTennisEngine {
           predictedTrajectory: this.currentPredictedTrajectory,
           rulesEngine: this.rulesEngine,
           onCallAILet: (role) => this.requestLetAppeal(role, { source: 'ai_referee' }),
+          onPlanAIShot: (plan) => {
+            if (!this.spectatorShotNudge || this.elapsedTime > this.spectatorShotNudge.expiresAt) {
+              this._showRedShotChoice(plan.shotType, `RED PLANS: VOLLEY ${plan.shotType === 'topspin' ? 'DRIVE' : plan.shotType.toUpperCase()}`);
+            }
+          },
           onExecuteAIShot: (choice) => {
             let finalChoice = choice;
             if (this.spectatorShotNudge && this.elapsedTime <= this.spectatorShotNudge.expiresAt) {
