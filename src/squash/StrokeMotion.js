@@ -239,13 +239,6 @@ export class StrokeMotion {
       const pivotWorld = actor.racketPivot.getWorldPosition(new THREE.Vector3());
       plantPivot(actor.racketPivot, pivotWorld.addScaledVector(delta, weight));
     }
-    if (actor.racketPivot && rig.handRPivot?.parent) {
-      actor.root.updateMatrixWorld(true);
-      const grip = actor.racketMesh
-        ? actor.racketMesh.localToWorld(new THREE.Vector3(0, 0.08, 0))
-        : actor.racketPivot.localToWorld(new THREE.Vector3(0, 0.085, 0));
-      plantPivot(rig.handRPivot, grip);
-    }
     actor.root.updateMatrixWorld(true);
     return true;
   }

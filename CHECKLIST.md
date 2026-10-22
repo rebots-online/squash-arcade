@@ -8,7 +8,7 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-58 — Keep one racket hand and remove backhand grip jumps
 
-- **Status**: [/]
+- **Status**: [X]
 - **Dependencies**: [] (baseline 60176e6; independent of billing and queued tactics).
 - **Files**: src/racket_kinematics.js; src/squash/RacketGrip.js (new); src/squash/StrokeMotion.js; src/game_engine.js. Read-only: mii_body_animation.js and existing rig/recorded pose structure.
 - **Do**: Implement §4.19: dominant-hand ownership through the stroke, complete left-handed mirroring, shared preparation side, actual-pose swing start, neutral recovery, and final selected-hand grip synchronization with a separate balancing hand. Preserve live physics/contact, torso turn/foot planting and replay poses.

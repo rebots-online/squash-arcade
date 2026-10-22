@@ -1,3 +1,4 @@
+import { syncRacketGrip } from './squash/RacketGrip.js';
 // ============================================================================
 // ARGON SQUASH — MAIN GAME ENGINE & MODULE ORCHESTRATOR
 // "Physical Chess, Wonder First" — Modular, Playable, Tunable
@@ -4123,6 +4124,10 @@ export class ArgonTennisEngine {
     if (actor.arcVisibleTimer > 0) actor.arcVisibleTimer = Math.max(0, actor.arcVisibleTimer - dt);
     if (actor.swingArcMesh) actor.swingArcMesh.visible = false;
 
+    const committedHand = ['swing', 'recover'].includes(actor.strokeMotion?.phase)
+      ? actor.strokeMotion.handedness : null;
+    actor.handedness = committedHand || (actor === this.player
+      ? this.motionController?.handedness : actor.handedness) || 'right';
     if (this.racketKinematics) {
       const motion = actor.strokeMotion;
       const k = actor.racketKinematics;
@@ -4153,6 +4158,7 @@ export class ArgonTennisEngine {
       actor.root.rotation.set(0, StrokeMotion.readyYaw(actor, this.ball), 0);
     }
 
+    syncRacketGrip(actor, dt);
     updateCharacterContactShadow(actor, actor.rig?.verticalHopOffset || 0);
     this.facialFX &&
       this.facialFX.update(actor, dt, {
