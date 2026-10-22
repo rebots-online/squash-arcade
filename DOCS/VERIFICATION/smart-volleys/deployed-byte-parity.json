@@ -1,0 +1,152 @@
+{
+  "domain": "https://squash-arcade.surge.sh",
+  "version": "1.2.77322",
+  "verifiedAt": "2026-10-22T03:23:02.035589+00:00",
+  "files": [
+    {
+      "path": "companion.html",
+      "status": 200,
+      "bytes": 8715,
+      "localSha256": "3fb6cc452a92a34ca2a099e47d1a2fe0bd8c015b15f6b93b84d6104b28bf4efb",
+      "remoteSha256": "3fb6cc452a92a34ca2a099e47d1a2fe0bd8c015b15f6b93b84d6104b28bf4efb",
+      "match": true
+    },
+    {
+      "path": "deployment.json",
+      "status": 200,
+      "bytes": 132,
+      "localSha256": "9059b458edd3d8ef853b7f30880dab3868d4f2a5b439b400550600c3726d4603",
+      "remoteSha256": "9059b458edd3d8ef853b7f30880dab3868d4f2a5b439b400550600c3726d4603",
+      "match": true
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "bytes": 49783,
+      "localSha256": "47d81dc0f80b0c19def6920d522fb92d26318a8bd7e22756b55f1661de2c484d",
+      "remoteSha256": "47d81dc0f80b0c19def6920d522fb92d26318a8bd7e22756b55f1661de2c484d",
+      "match": true
+    },
+    {
+      "path": "styles.css",
+      "status": 200,
+      "bytes": 52221,
+      "localSha256": "092fdccb3dedec8178c39a17a8e7b65d4c282edf37cb919d271e8f7cd8fc3306",
+      "remoteSha256": "092fdccb3dedec8178c39a17a8e7b65d4c282edf37cb919d271e8f7cd8fc3306",
+      "match": true
+    },
+    {
+      "path": "assets/index-tz5MYsHx.js",
+      "status": 200,
+      "bytes": 1044561,
+      "localSha256": "2b5422cd33fbc1d4485c83630efb04836e4e8fe4f44024f9dec41da375361d59",
+      "remoteSha256": "2b5422cd33fbc1d4485c83630efb04836e4e8fe4f44024f9dec41da375361d59",
+      "match": true
+    },
+    {
+      "path": "assets/models/mii_crowd.glb",
+      "status": 200,
+      "bytes": 2297692,
+      "localSha256": "dc18bd9b109b7178f484c6c43758a2fbad95d911ef45a127b0eeff2689557e49",
+      "remoteSha256": "dc18bd9b109b7178f484c6c43758a2fbad95d911ef45a127b0eeff2689557e49",
+      "match": true
+    },
+    {
+      "path": "assets/models/mii_opponent.glb",
+      "status": 200,
+      "bytes": 1792764,
+      "localSha256": "4990efaac9296fe577e96e3add9a8cbb9224f6af1505a8986a3cc280f03cbde7",
+      "remoteSha256": "4990efaac9296fe577e96e3add9a8cbb9224f6af1505a8986a3cc280f03cbde7",
+      "match": true
+    },
+    {
+      "path": "assets/models/mii_player.glb",
+      "status": 200,
+      "bytes": 1777872,
+      "localSha256": "a1345a6fbcf7088f13d397f4eafff0675a722cc890426ee3e34499b47082489b",
+      "remoteSha256": "a1345a6fbcf7088f13d397f4eafff0675a722cc890426ee3e34499b47082489b",
+      "match": true
+    },
+    {
+      "path": "assets/models/stadium_court.glb",
+      "status": 200,
+      "bytes": 4497892,
+      "localSha256": "94a137e33c6b419f927d748b5611a21293ac0e72bb2f55f77d7a69f81d776da6",
+      "remoteSha256": "94a137e33c6b419f927d748b5611a21293ac0e72bb2f55f77d7a69f81d776da6",
+      "match": true
+    },
+    {
+      "path": "assets/models/tennis_ball.glb",
+      "status": 200,
+      "bytes": 95856,
+      "localSha256": "a7ea5f13e4f36dcca5f389e6d6ec392a43be72fa26f592ee11132d6f80939c73",
+      "remoteSha256": "a7ea5f13e4f36dcca5f389e6d6ec392a43be72fa26f592ee11132d6f80939c73",
+      "match": true
+    },
+    {
+      "path": "assets/models/tennis_net.glb",
+      "status": 200,
+      "bytes": 170724,
+      "localSha256": "94ea3a8a0a7183f8e0512abae1d735261fa0173dcd45f918d7a64928f7b88799",
+      "remoteSha256": "94ea3a8a0a7183f8e0512abae1d735261fa0173dcd45f918d7a64928f7b88799",
+      "match": true
+    },
+    {
+      "path": "assets/models/tennis_racket.glb",
+      "status": 200,
+      "bytes": 230516,
+      "localSha256": "dc478764925a35dad60b8df22a667a63dd01f40167651bddc169e8cade0d1bc1",
+      "remoteSha256": "dc478764925a35dad60b8df22a667a63dd01f40167651bddc169e8cade0d1bc1",
+      "match": true
+    },
+    {
+      "path": "assets/mediapipe/hands/hands.binarypb",
+      "status": 200,
+      "bytes": 550,
+      "localSha256": "ab76c4215fca99cc2db1b5885cb8398d210e59ebe685245f72e692b4b58421e4",
+      "remoteSha256": "ab76c4215fca99cc2db1b5885cb8398d210e59ebe685245f72e692b4b58421e4",
+      "match": true
+    },
+    {
+      "path": "assets/mediapipe/hands/hands_solution_packed_assets.data",
+      "status": 200,
+      "bytes": 4326731,
+      "localSha256": "bdce7b66bfc5b39ba86a47775c98e0b186fe73f8308c2279f852af4c89ffdf42",
+      "remoteSha256": "bdce7b66bfc5b39ba86a47775c98e0b186fe73f8308c2279f852af4c89ffdf42",
+      "match": true
+    },
+    {
+      "path": "assets/mediapipe/hands/hands_solution_simd_wasm_bin.wasm",
+      "status": 200,
+      "bytes": 6026259,
+      "localSha256": "78ef7eb86ebc6424ac06b13f89b9a1fc01ff35e07520e37de98887cf88c06653",
+      "remoteSha256": "78ef7eb86ebc6424ac06b13f89b9a1fc01ff35e07520e37de98887cf88c06653",
+      "match": true
+    },
+    {
+      "path": "assets/mediapipe/hands/hands_solution_wasm_bin.wasm",
+      "status": 200,
+      "bytes": 5917209,
+      "localSha256": "4e70eaf8063e0e9ac10e682d9d6b55c08d0788f0a8d49925e2e484636526e157",
+      "remoteSha256": "4e70eaf8063e0e9ac10e682d9d6b55c08d0788f0a8d49925e2e484636526e157",
+      "match": true
+    },
+    {
+      "path": "assets/mediapipe/hands/hand_landmark_full.tflite",
+      "status": 200,
+      "bytes": 5478688,
+      "localSha256": "8c026882c9ec059ce0f8e75266bee5a9a23c341a40e0000df755374d3d1b9b68",
+      "remoteSha256": "8c026882c9ec059ce0f8e75266bee5a9a23c341a40e0000df755374d3d1b9b68",
+      "match": true
+    },
+    {
+      "path": "assets/mediapipe/hands/hand_landmark_lite.tflite",
+      "status": 200,
+      "bytes": 2071408,
+      "localSha256": "d7fde8ac11f8ce03f8663775bfc323f4fc9f2a38062b4f4efa142874ef5b2a48",
+      "remoteSha256": "d7fde8ac11f8ce03f8663775bfc323f4fc9f2a38062b4f4efa142874ef5b2a48",
+      "match": true
+    }
+  ],
+  "allMatch": true
+}

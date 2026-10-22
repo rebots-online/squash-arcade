@@ -35,3 +35,12 @@ Local Chromium observation (temporary developer diagnostics removed by reload):
 - A fresh2 key during recorded replay and a click on the Drop chip during settle both restored SERVE_STANCE with no pending shot/serve/nudge. Full key/up/click swallowing has complementary deterministic tests.
 - local-recorded-replay.png shows the actual recorded ball and actor poses with cinematic camera. local-restored-court.png and local-portrait-court.png show the restored full court, portrait390x844 included.
 - Browser error log was empty during the checked local run. Physical devices, phone/webcam tracking and human difficulty/feel were not inferred from these browser checks.
+
+## Production release — 1.2.77322
+Built once with npm --ignore-scripts run build using Vite7.3.7, source d6865a34797096066b9bda9a01599723de394129, stamp2026-10-22T03:22:15.544Z. Existing dist backed up outside deployment at E:/devProjects/_snapshots/squash-arcade-pre-release-20261021-smart-volleys. Build completed; static styles.css copied from public and served successfully despite Vite's unchanged-runtime-link warning; bundle-size advisory remains.
+
+Deployed through E:/DevTools/surge-robin/surge-deploy.mjs to https://squash-arcade.surge.sh with --no-dns. No unrelated DNS changes. Downloaded all18 published files (excluding generated CNAME) and compared binary SHA256:18/18 match, zero mismatches (deployed-byte-parity.json).
+
+Public browser visibly reports v1.2.77322. Actual AI match recorded airborne drives/drops, ordinary bounced attacks, and repeated settle/replay/serve transitions (production-runtime.json). Production desktop and390x844 portrait screenshots show the entire court; no JavaScript errors were captured during the checked run. Temporary runtime probes were removed by reload and viewport override reset. This is browser/runtime evidence, not physical-device or player-feel acceptance.
+
+All completed changes are pushed as coherent checkpoints on codex/smart-volleys. The implementation worktree and original pre-sync backup are retained for rollback. Original main remains the synced baseline7b1df9b; the release work is published on the named branch.

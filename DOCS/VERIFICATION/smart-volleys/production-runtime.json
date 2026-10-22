@@ -1,0 +1,124 @@
+{
+  "last": "RALLY",
+  "phases": [
+    "SERVE_TOSS",
+    "RALLY",
+    "POINT_SETTLE",
+    "POINT_REPLAY",
+    "SERVE_STANCE",
+    "SERVE_TOSS",
+    "RALLY",
+    "POINT_OVER",
+    "SERVE_STANCE",
+    "SERVE_TOSS",
+    "RALLY",
+    "POINT_SETTLE",
+    "POINT_REPLAY",
+    "SERVE_STANCE",
+    "SERVE_TOSS",
+    "RALLY"
+  ],
+  "shots": [
+    {
+      "bounces": 0,
+      "family": "drop",
+      "position": [
+        -3.1162956759701586,
+        1.9936940303372883,
+        4.708067402509246
+      ],
+      "role": "_commitOpponentSquashStrike"
+    },
+    {
+      "bounces": 1,
+      "family": "disguised_drop",
+      "position": [
+        -1.835248694434271,
+        0.5052763849585465,
+        -0.013509969907030028
+      ],
+      "role": "_commitPlayerRallyStrike"
+    },
+    {
+      "bounces": 1,
+      "family": "boast",
+      "position": [
+        -2.983839033197924,
+        0.26870089380535084,
+        -0.9162158082738162
+      ],
+      "role": "_commitOpponentSquashStrike"
+    },
+    {
+      "bounces": 0,
+      "family": "topspin",
+      "position": [
+        3.1162956759701586,
+        1.9936940303372883,
+        4.708067402509246
+      ],
+      "role": "_commitPlayerRallyStrike"
+    },
+    {
+      "bounces": 0,
+      "family": "drop",
+      "position": [
+        2.8449437106495843,
+        0.9065718853353396,
+        1.3688294674103627
+      ],
+      "role": "_commitOpponentSquashStrike"
+    },
+    {
+      "bounces": 1,
+      "family": "kill",
+      "position": [
+        -0.973487578293564,
+        0.29179427022650495,
+        -0.6666939076478372
+      ],
+      "role": "_commitPlayerRallyStrike"
+    },
+    {
+      "bounces": 0,
+      "family": "drop",
+      "position": [
+        3.1162956759701586,
+        1.9936940303372883,
+        4.708067402509246
+      ],
+      "role": "_commitPlayerRallyStrike"
+    },
+    {
+      "bounces": 1,
+      "family": "disguised_drop",
+      "position": [
+        1.7599749190098235,
+        0.5142273191674894,
+        0.19086714327998583
+      ],
+      "role": "_commitOpponentSquashStrike"
+    },
+    {
+      "bounces": 0,
+      "family": "drop",
+      "position": [
+        -3.1162956759701586,
+        1.9936940303372883,
+        4.708067402509246
+      ],
+      "role": "_commitPlayerRallyStrike"
+    },
+    {
+      "bounces": 1,
+      "family": "kill",
+      "position": [
+        -1.9054704393082909,
+        0.4935283578527691,
+        -0.4070827130616316
+      ],
+      "role": "_commitOpponentSquashStrike"
+    }
+  ],
+  "version": "v1.2.77322"
+}
