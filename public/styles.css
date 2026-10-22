@@ -279,3 +279,67 @@ kbd{display:inline-block;padding:1px 6px;border-radius:5px;background:#1e293b;bo
 }
 .you-chip { background: #b32236; color: white; }
 @media (max-width: 768px) { .red-control-card { font-size: 10px; padding: 5px 8px; } }
+
+/* Keep identity outside the portrait crop, and reserve compact screens for play. */
+.mii-side-player { position: relative; }
+.you-chip { white-space: nowrap; }
+.mobile-only { display: none; }
+@media (max-width: 900px), (pointer: coarse) and (max-width: 1200px) {
+  #top-hud-bar {
+    top: max(8px, env(safe-area-inset-top)); left: 8px; right: 8px;
+    display: flex; gap: 8px; align-items: center;
+  }
+  #top-hud-bar > .top-hud-left-group,
+  #top-hud-bar > .top-hud-right-group { display: none; }
+  #scoreboard-pill {
+    flex: 1 1 auto; min-width: 0; max-width: 340px; height: 62px;
+    padding: 3px 12px; gap: 8px; box-sizing: border-box;
+  }
+  #scoreboard-pill .mii-side { flex: 0 0 auto; gap: 2px; }
+  #scoreboard-pill .mii-side-player { flex-direction: column; }
+  #scoreboard-pill .mii-avatar-badge { width: 36px; height: 36px; flex: 0 0 36px; }
+  #scoreboard-pill .you-chip {
+    position: static; transform: none; font-size: 10px; line-height: 1;
+    letter-spacing: .02em; padding: 3px 6px; border: 1px solid #ff949c;
+  }
+  #score-center-display { min-width: 0; padding: 0; gap: 7px; font-size: 25px; flex: 1; }
+  #btn-mobile-menu {
+    display: inline-flex; flex: 0 0 auto; justify-content: center;
+    min-height: 44px; padding: 8px 11px; font-size: 13px; white-space: nowrap;
+    pointer-events: auto; margin-left: auto;
+  }
+  #title-modal.side-docked-menu { padding: 78px 8px 20px!important; }
+  #title-modal.side-docked-menu.menu-collapsed { display: none!important; }
+  #title-modal .side-docked-card {
+    width: min(420px, calc(100vw - 16px))!important;
+    max-width: calc(100vw - 16px)!important;
+    max-height: calc(100dvh - 98px)!important; overflow-y: auto; overscroll-behavior: contain;
+  }
+  #title-modal .side-menu-top-bar { position: sticky; top: -11px; z-index: 2; background: #eaf5ff; padding: 4px 0; }
+  #btn-collapse-side-menu { min-height: 44px; }
+  .mobile-menu-tools { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+  .mobile-menu-tools button { min-height: 44px; }
+  #btn-sound-gate {
+    top: 78px; bottom: auto; left: 8px; transform: none; padding: 8px 12px;
+    min-height: 36px; font-size: 0; letter-spacing: 0; animation: none;
+    border-radius: 999px; box-shadow: 0 2px 8px #0006;
+  }
+  #btn-sound-gate::after { content: '🔊 Sound'; font-size: 12px; }
+  #btn-sound-gate:hover { transform: none; }
+  .point-replay-toast { top: 78px; right: 8px; padding: 6px 9px; font-size: 10px; }
+  .point-replay-toast strong { font-size: 12px; }
+  .wii-timing-popup { top: 78px!important; right: 8px!important; max-width: min(220px, 60vw); }
+  @media (max-height: 500px) {
+    #bottom-right-dock {
+      left: 8px; right: 8px; bottom: 18px; flex-direction: row;
+      align-items: center; justify-content: center; gap: 8px;
+    }
+    #bottom-right-dock .motion-controls-row,
+    #timing-gauge-card,
+    #bottom-left-dock { display: none!important; }
+    .red-control-card { align-self: center; max-width: 190px; padding: 5px 8px; }
+    .red-control-card strong { display: none; }
+    .squash-shot-selector-row { flex-wrap: nowrap; }
+    .squash-shot-selector-row .shot-chip { min-height: 36px; }
+  }
+}

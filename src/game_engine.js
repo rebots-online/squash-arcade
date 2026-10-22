@@ -1137,6 +1137,17 @@ export class ArgonTennisEngine {
     return !el.classList.contains('menu-collapsed');
   }
 
+  _usesCompactHUD() {
+    return window.matchMedia('(max-width: 900px), (pointer: coarse) and (max-width: 1200px)').matches;
+  }
+
+  _setSetupMenuCollapsed(collapsed) {
+    this.hud?.elTitleModal?.classList.toggle('menu-collapsed', collapsed);
+    const label = document.getElementById('collapse-side-menu-label');
+    if (label) label.textContent = collapsed ? '▶ Setup Menu' : '▲ Roll up';
+    document.getElementById('btn-collapse-side-menu')?.setAttribute('aria-expanded', String(!collapsed));
+  }
+
   triggerNarratorUSPInvite({ manual = false } = {}) {
     if (!this.audioEngine) return;
     const item = this.audioEngine.playNarratorUSPInvite(manual ? undefined : null);
@@ -1267,10 +1278,7 @@ export class ArgonTennisEngine {
       this._setupMidRallyShowcase();
     }
     // Mobile starts rolled up to a slim handle; desktop stays expanded.
-    const mobileRolled = window.matchMedia?.('(max-width: 768px)')?.matches === true;
-    this.hud?.elTitleModal?.classList.toggle('menu-collapsed', mobileRolled);
-    const collapseLbl = document.getElementById('collapse-side-menu-label');
-    if (collapseLbl) collapseLbl.textContent = mobileRolled ? '▶ Setup Menu' : '◀ Minimize';
+    this._setSetupMenuCollapsed(this._usesCompactHUD());
     this.hud?.showTitleModal();
     this.audioEngine?.playMusicForState('title');
   }
@@ -1281,9 +1289,21 @@ export class ArgonTennisEngine {
       e.stopPropagation();
       const modal = this.hud?.elTitleModal;
       if (!modal) return;
-      const collapsed = modal.classList.toggle('menu-collapsed');
-      const lbl = document.getElementById('collapse-side-menu-label');
-      if (lbl) lbl.textContent = collapsed ? '▶ Setup Menu' : '◀ Minimize';
+      this._setSetupMenuCollapsed(!modal.classList.contains('menu-collapsed'));
+    });
+
+    document.getElementById('btn-mobile-menu')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wasExpanded = this._isSideMenuExpanded();
+      this.hud?.showTitleModal();
+      this._setSetupMenuCollapsed(wasExpanded);
+    });
+    document.querySelectorAll('[data-hud-action]').forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._setSetupMenuCollapsed(true);
+        document.getElementById(button.dataset.hudAction)?.click();
+      });
     });
 
     const uspBtn = document.getElementById('btn-narrator-usp-invite');
@@ -2074,6 +2094,7 @@ export class ArgonTennisEngine {
       this._syncScoreboardHUD();
       this._syncSpectatorModeUI();
       this._setupMidRallyShowcase();
+      this._setSetupMenuCollapsed(this._usesCompactHUD());
       this.hud.showTitleModal();
       this._snapCameraImmediate();
       this.audioEngine && this.audioEngine.playMusicForState('title');
@@ -4218,9 +4239,6 @@ export class ArgonTennisEngine {
       this._frontWallTransparent = frontCamActive;
       this.courtGeometry?.setFrontWallTransparency(frontCamActive);
     }
-    // The opaque tin would hide a front-wall nick when viewed through the wall.
-    if (this.courtGeometry?.tinMesh) this.courtGeometry.tinMesh.visible = !(replayPose && frontCamActive);
-    if (this.courtGeometry?.tinBorderLine) this.courtGeometry.tinBorderLine.visible = !(replayPose && frontCamActive);
     if (replayPose) return replayPose;
 
     if (mode === 'INTRO_PAN') {

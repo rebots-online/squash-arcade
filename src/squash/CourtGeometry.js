@@ -171,13 +171,16 @@ export class CourtGeometry {
     });
 
     this.materials.tinPlate = new THREE.MeshStandardMaterial({
-      color: 0xd9dee8,
+      color: 0xb6bfcb,
       roughness: 0.35,
       metalness: 0.55
     });
 
     this.materials.tinRedStrip = new THREE.MeshBasicMaterial({
-      color: 0xef4444
+      color: 0xef4444,
+      transparent: true,
+      opacity: 0.9,
+      depthWrite: false
     });
 
     this.materials.courtLine = new THREE.MeshBasicMaterial({
@@ -250,11 +253,13 @@ export class CourtGeometry {
     this.tinMesh = new THREE.Mesh(tinGeo, this.materials.tinPlate);
     this.tinMesh.position.set(0, this.tinHeight * 0.5, COURT_SPECS.FRONT_WALL_Z + 0.018);
     this.tinMesh.receiveShadow = true;
+    this.tinMesh.renderOrder = 3;
     this.root.add(this.tinMesh);
 
     const tinBevelGeo = new THREE.BoxGeometry(W, 0.05, 0.045);
     this.tinBorderLine = new THREE.Mesh(tinBevelGeo, this.materials.tinRedStrip);
     this.tinBorderLine.position.set(0, this.tinHeight, COURT_SPECS.FRONT_WALL_Z + 0.022);
+    this.tinBorderLine.renderOrder = 4;
     this.root.add(this.tinBorderLine);
 
     // 3. Sloped Side Walls (X = -3.20m and X = +3.20m)
@@ -456,6 +461,18 @@ export class CourtGeometry {
 
   setFrontWallTransparency(transparent = false) {
     if (!this.materials.frontWall) return;
+    // Keep the real tin boundary readable through the front-wall replay view.
+    // Transparency preserves the ball/players behind it; normal scene depth still applies.
+    if (this.tinMesh) this.tinMesh.visible = true;
+    if (this.tinBorderLine) this.tinBorderLine.visible = true;
+    if (this.materials.tinPlate) {
+      this.materials.tinPlate.color.setHex(transparent ? 0x253243 : 0xb6bfcb);
+      this.materials.tinPlate.transparent = transparent;
+      this.materials.tinPlate.opacity = transparent ? 0.32 : 1;
+      this.materials.tinPlate.depthWrite = !transparent;
+      this.materials.tinPlate.needsUpdate = true;
+    }
+    if (this.materials.tinRedStrip) this.materials.tinRedStrip.opacity = transparent ? 0.72 : 0.9;
     if (transparent) {
       this.materials.frontWall.transparent = true;
       this.materials.frontWall.opacity = 0.16;

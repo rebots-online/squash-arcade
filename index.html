@@ -49,11 +49,11 @@
         <div class="mii-side mii-side-player">
           <div class="mii-avatar-badge player-tint">
             <canvas id="mii-icon-player" width="192" height="192"></canvas>
-            <span class="you-chip">YOU · RED</span>
           </div>
           <div class="mii-avatar-badge player-tint secondary-mii hidden">
             <canvas id="mii-icon-player-2" width="192" height="192"></canvas>
           </div>
+          <span class="you-chip">YOU · RED</span>
         </div>
         <div id="score-center-display" class="score-center-display">
           <span id="score-player-text" class="score-digits">00</span>
@@ -100,6 +100,7 @@
           <span class="game-bubble extra-slot hidden" data-slot="2"></span>
         </div>
       </div>
+      <button id="btn-mobile-menu" class="hud-tactical-pill mobile-only" type="button" aria-label="Setup menu" aria-controls="title-modal">☰ Menu</button>
     </header>
 
     <div id="opponent-presence-pill" class="opponent-presence-pill hidden" aria-live="polite">
@@ -282,7 +283,7 @@
   </div>
 
   <!-- TITLE MODAL (DOCKED OFF TO THE LEFT SIDE SO CRYSTAL-CLEAR AI VS AI PLAY IS FEATURED) -->
-  <div id="title-modal" class="wii-modal-backdrop side-docked-menu">
+  <div id="title-modal" class="wii-modal-backdrop side-docked-menu menu-collapsed">
     <div class="wii-title-card progressive-menu-card side-docked-card">
       <div class="wii-logo-header">
         <div class="side-menu-top-bar">
@@ -291,7 +292,7 @@
             <span>LIVE AI vs AI SHOWCASE</span>
           </span>
           <button type="button" id="btn-collapse-side-menu" class="side-menu-collapse-btn" title="Minimize or Expand Side Menu to watch full-screen AI vs AI">
-            <span id="collapse-side-menu-label">◀ Minimize</span>
+            <span id="collapse-side-menu-label">▶ Setup Menu</span>
           </button>
         </div>
         <h1 class="argon-logo-title">
@@ -334,6 +335,12 @@
         </div>
       </div>
 
+      <div class="mobile-menu-tools mobile-only" aria-label="More game controls">
+        <button type="button" class="welcome-callout-pill" data-hud-action="btn-top-camera-cycle">🎥 Camera</button>
+        <button type="button" class="welcome-callout-pill" data-hud-action="btn-top-replay-trigger">⏪ Replay</button>
+        <button type="button" class="welcome-callout-pill" data-hud-action="btn-tuning-lab-toggle">⚗️ Tune Lab</button>
+        <button type="button" class="welcome-callout-pill" data-hud-action="btn-handedness-toggle">✋ Left / right hand</button>
+      </div>
       <div class="setup-step-hint">
         Hover over any step or select an option to reveal the next step's choices:
       </div>
