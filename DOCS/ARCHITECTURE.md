@@ -369,10 +369,22 @@ Successful contact alone must not grant an exact nick. At committed human drop/k
 
 The normal Rally/Auto and serve cameras must show all four floor corners and the legal wall envelope at desktop, landscape and portrait aspect ratios, even during lateral tracking. Fit the court envelope to the actual perspective frustum with HUD margin rather than a fixed camera distance. Preserve the existing view direction, field of view and bounded lateral tracking, pulling back only as required. Cinematic replay is temporary and must restore the selected gameplay camera immediately on exit. Keep orbit cameras inside side walls to avoid opaque wall occlusion. The source camera constants in 96c84d4, the recovered local snapshot and 7b1df9b match; do not claim a particular synced commit caused the observed viewport change.
 
+### 4.8 Stroke orientation and mirrored backhands (TASK-46)
+
+The character rig's forward direction is local -Z. Root yaw zero faces the front wall; positive yaw closes a right-handed backhand toward the left wall, negative yaw closes a forehand toward the right wall. Stroke preparation, contact, follow-through, recovery and ordinary ready pose use that same convention, with handedness mirroring the stance once. The ordinary ball-tracking yaw is continuous across the actor's centre line. Preserve opposite-foot planting, existing racket paths and scheduled live contact; orientation must not alter reach, ball physics or shot selection.
+
+### 4.9 Live reception timing (TASK-47)
+
+Predicted sample timestamps are measured from the shot, so all approach decisions subtract the ball's current shot age. Bounced-ball receivers choose remaining legal samples before the second bounce, never a sample already passed. A used-up prediction falls back to the live ball. Stop staging when contact is due so receivers actually close the last distance. Preserve reachable volley priority and real deep-length/back-wall rebound patience; this correction applies to both AI roles and human automatic footwork.
+
+### 4.10 Clear rearward-facing replay openings (TASK-48)
+
+Every automatic point replay opens on the front-wall side of the decisive event, looking toward the rear wall, then orbits and zooms on the recorded ball. Enter with a camera cut so the opening does not sweep through players from the previous gameplay view. Keep the orbit inside the side walls. Make the front wall transparent while the replay camera is in front of it, restoring normal wall treatment and the selected whole-court gameplay view on exit. Recorded poses, scoring, aftermath duration and skip behaviour remain unchanged.
+
 ## 5. Acceptance and release protocol
 
 DOCS/TEST_RUBRIC.md maps the six complete entities to behavior evidence. Each CHECKLIST item contains all production changes, tests and deterministic acceptance needed to stand alone on baseline 7b1df9b. Shared files are integrated serially; no task imports another task's new module or depends on another task's acceptance. Existing interfaces are explicit prerequisites, not hidden sibling tasks.
 
-Run focused red/green tests, all Node tests, lint and production build. Do not weaken the original six-second exchange diagnostic or existing drive/boast/motion checks. Implementation [X], independent semantic review ✅, rendered verification and human feel evaluation are distinct evidence.
+For follow-up work the operator explicitly directs no automated tests: do not add or run them. Diagnose the reported behaviour, inspect the affected runtime paths, observe focused examples in the running game, and build for deployment. Older test instructions in completed tasks are historical evidence only. Implementation [X], independent semantic review ✅, rendered observation and human feel evaluation remain distinct; never imply that browser observation proves every possible rally.
 
 Source and generated build are committed and pushed. Back up prior dist outside the public directory, build once for the release (version.txt and package version plus public/deployment.json sourceCommit/builtAt), deploy exactly that dist, and verify served bytes against hashes excluding CNAME. Inspect desktop and mobile-width public gameplay. Browser viewport evidence does not assert physical mobile/controller acceptance.

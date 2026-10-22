@@ -4,6 +4,32 @@ Architecture: DOCS/ARCHITECTURE.md v2.4.0. User approved implementation on 2026-
 
 Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with verification -> `✅` independently semantically validated. AP1–4 adopted; AP5 remains draft. No test-only sibling task and no external live service in coder Accept.
 
+Current operator override: no automated tests for follow-up work. TASK-40–45 test commands below are historical completed-release instructions, not current gates. TASK-46–48 are independent on release 178584f; each includes its own implementation and focused browser observation. No task requires another follow-up task.
+
+## TASK-46 — Correct backward-facing backhand rotation
+
+- **Status**: [/]
+- **Dependencies**: [] (baseline 178584f).
+- **Files**: src/squash/StrokeMotion.js; src/game_engine.js. Read-only: PlayerMovement, character rig and racket kinematics.
+- **Do**: Unify stroke and ready-pose yaw with the model's front-wall-facing zero yaw. Preserve handed stance, opposite-foot step and live contact. Remove the tracking-angle discontinuity at the centre line.
+- **Verify / Accept**: Inspect rendered forehand/backhand poses, including front and back court; backhand closes toward its ball side and opens toward the front wall without a backward turn. Reach, timing and shot family remain unchanged. Record actual observation in DOCS/VERIFICATION/gameplay-followup.md. No automated tests.
+
+## TASK-47 — Keep bounced-ball reception current
+
+- **Status**: [ ]
+- **Dependencies**: [] (baseline 178584f).
+- **Files**: src/squash/PlayerMovement.js; src/squash/OpponentAI.js. Read-only: current ball/prediction, VolleyPlanner and live engine contact guards.
+- **Do**: Use remaining prediction time, discard expired bounced-ball samples and commit the approach when contact is due. Keep the existing volley priority and valid back-wall sit-up behaviour.
+- **Verify / Accept**: Observe receiver movement and actual return around the service box in the running game; confirm a deep ball still receives the established back-wall treatment. No artificial contact/reach, no automated tests. Record evidence in DOCS/VERIFICATION/gameplay-followup.md.
+
+## TASK-48 — Rearward-facing opening for every point replay
+
+- **Status**: [ ]
+- **Dependencies**: [] (baseline 178584f).
+- **Files**: src/squash/PointPresentation.js; src/game_engine.js. Read-only: CourtGeometry front-wall transparency and existing camera restoration.
+- **Do**: Open every recorded point replay from the front side looking rearward, cut into the opening, then orbit and zoom. Apply front-wall transparency while needed; restore on exit. Preserve recorded action, scoring, settling and input skip.
+- **Verify / Accept**: Observe front- and rear-court replay openings and return to the normal whole-court camera. No automated tests. Record evidence in DOCS/VERIFICATION/gameplay-followup.md.
+
 ## TASK-40 — AI attacking execution accuracy
 
 - **Status**: ✅
