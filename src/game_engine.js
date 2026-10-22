@@ -29,6 +29,7 @@ import { PlayerMovement } from './squash/PlayerMovement.js';
 import { StrokeMotion } from './squash/StrokeMotion.js';
 import { planVolleyContact } from './squash/VolleyPlanner.js';
 import { PointPresentation } from './squash/PointPresentation.js';
+import { evaluateServeSetup } from './squash/ServeSetup.js';
 import { OpponentAI } from './squash/OpponentAI.js';
 import { IntroDirector } from './squash/IntroDirector.js';
 import { TuningPanel } from './squash/TuningPanel.js';
@@ -2448,6 +2449,10 @@ export class ArgonTennisEngine {
     StrokeMotion.reset(this.opponent);
     this.pointPresentation?.cancel();
     this.pendingPointOutcome = null;
+    this.pointToken=(this.pointToken||0)+1;
+    this.serveReadySec=0;
+    this.serveTossToken=null;
+    this.serveCorrectionReason=null;
     // Racket-spin ceremony: first point of a fresh match in real play mode only
     if (
       !this.spectatorMatchMode &&
@@ -2501,19 +2506,6 @@ export class ArgonTennisEngine {
     if (this.facialFX) {
       this.facialFX.setExpression(this.player, 'neutral', 2);
       this.facialFX.setExpression(this.opponent, 'neutral', 2);
-    }
-
-    // TASK-17: AI wrong-box self-correction — the AI 'notices' mid-stance and
-    // visibly walks to the legal service box with a confused expression.
-    if (this.serveError?.selfCorrect && (this.score.server || 'player') === 'opponent') {
-      const sc = this.serveError.selfCorrect;
-      setTimeout(() => {
-        if (this.phase === 'SERVE_STANCE' && this.serveError?.type === 'WRONG_BOX') {
-          this.opponent.targetPos.set(sc.x, 0, sc.z);
-          this.facialFX && this.facialFX.setExpression(this.opponent, 'wide_eyed_panic', 1.4);
-          this.serveError = null;
-        }
-      }, 650);
     }
 
     let finalBanner = bannerText;
@@ -2746,7 +2738,7 @@ export class ArgonTennisEngine {
         const srv = this.score.server === 'player' ? this.player : this.opponent;
         this.hud.hideCenterBanner();
         this._startServeToss(srv);
-        this.pendingServeSwing = { actor: srv, evt };
+        this.pendingServeSwing = { actor: srv, evt, pointToken:this.pointToken };
         return;
       }
       if (this.phase === 'SERVE_TOSS') {
@@ -2806,7 +2798,7 @@ export class ArgonTennisEngine {
       this.persistentStateLock = false;
       this.hud.hideCenterBanner();
       this._startServeToss(this.player);
-      this.pendingServeSwing = { actor: this.player, evt };
+      this.pendingServeSwing = { actor: this.player, evt, pointToken:this.pointToken };
       return;
     }
 
@@ -2881,7 +2873,7 @@ export class ArgonTennisEngine {
       this.persistentStateLock = false;
       this.hud.hideCenterBanner();
       this._startServeToss(this.opponent);
-      this.pendingServeSwing = { actor: this.opponent, evt };
+      this.pendingServeSwing = { actor: this.opponent, evt, pointToken:this.pointToken };
       return;
     }
     if (this.phase === 'SERVE_TOSS' && this.score.server === 'opponent') {
@@ -2899,31 +2891,31 @@ export class ArgonTennisEngine {
     }
   }
 
-  _startServeToss(actor) {
-    // TASK-17: WSF service-stance legality at toss — wrong service box or
-    // foot fault loses the rally outright (handout to the receiver).
-    // Judge the stance the server is actually standing in — but only once
-    // they've ARRIVED in the box. A mid-walk server crossing the center line
-    // reads as a phantom wrong-side/foot fault otherwise.
-    const stanceArrived =
-      !actor.targetPos || actor.pos.distanceTo(actor.targetPos) < 0.4;
-    const serveFault = stanceArrived
-      ? this.rulesEngine.evaluateServeStanceLegality(actor.pos, this.score.serviceSide)
-      : null;
-    if (serveFault) {
-      this.serveError = null;
-      const receiverRole = actor.role === 'player' ? 'opponent' : 'player';
-      const reason = serveFault === 'FOOT_FAULT' ? 'foot fault' : 'wrong box';
-      this._awardPoint(receiverRole, reason, {
-        bannerTitle: serveFault === 'FOOT_FAULT' ? 'Foot fault!' : 'Fault!',
-        explanation:
-          serveFault === 'FOOT_FAULT'
-            ? 'Server touched the half-court line / stood short of the short line.'
-            : 'Server stood in the wrong service box.'
-      });
-      return;
+  _updateServeReadiness(dt) {
+    const server=this.score.server==='player'?this.player:this.opponent;
+    const receiver=server===this.player?this.opponent:this.player;
+    const setup=evaluateServeSetup({server,receiver,serviceSide:this.score.serviceSide,params:this.tuningStore.params});
+    this.serveReadySec=setup.ready?(this.serveReadySec||0)+dt:0;
+    if(!setup.ready) {
+      if(setup.reason==='SERVER_POSITION')server.targetPos.copy(setup.correctionTargets.server);
+      if(setup.reason==='RECEIVER_CLEARANCE')receiver.targetPos.copy(setup.correctionTargets.receiver);
+      // Clear wrong-box staging synchronously; no timeout can act on a later point.
+      this.serveError=null;
+      if(setup.reason!==this.serveCorrectionReason&&setup.reason!=='WAIT_FOR_ARRIVAL') {
+        const text=setup.reason==='SERVER_POSITION'?'Server, use the '+this.score.serviceSide+' box.':'Receiver, give the server room.';
+        this.hud.showCenterBanner('WAIT — SERVICE POSITION',{style:'style-start',subText:text,durationMs:1800});
+        this.audioEngine?.playVoiceCallout(text);
+      }
     }
+    this.serveCorrectionReason=setup.reason;
+    return setup;
+  }
 
+  _startServeToss(actor) {
+    if(this.phase!=='SERVE_STANCE'||actor.role!==this.score.server)return false;
+    const setup=this._updateServeReadiness(0);
+    if(!setup.ready||this.serveReadySec<.2)return false;
+    this.serveTossToken=this.pointToken;
     this.phase = 'SERVE_TOSS';
     this.phaseTimer = 0;
     const xOffset = this.score.serviceSide === 'left' ? -0.25 : 0.25;
@@ -2935,6 +2927,17 @@ export class ArgonTennisEngine {
   }
 
   _executeServeHit(actor, evt = {}) {
+    if(this.phase!=='SERVE_TOSS'||actor.role!==this.score.server||this.serveTossToken!==this.pointToken)return false;
+    const receiver=actor===this.player?this.opponent:this.player;
+    const setup=evaluateServeSetup({server:actor,receiver,serviceSide:this.score.serviceSide});
+    const fault=this.rulesEngine.evaluateServeStanceLegality(actor.pos,this.score.serviceSide);
+    if(fault==='FOOT_FAULT'&&actor.pos.distanceTo(receiver.pos)>=1.25) {
+      this._awardPoint(receiver.role,'foot fault',{bannerTitle:'Foot fault!'});return false;
+    }
+    if(!setup.ready) {
+      this.phase='SERVE_STANCE';this.phaseTimer=0;this.serveReadySec=0;this.pendingServeSwing=null;
+      this.ball.vel.set(0,0,0);this._updateServeReadiness(0);return false;
+    }
     this.pendingServeSwing = null;
     this.currentRallyPlayerInterference = null;
     this._updateLetAdvisoryUI(false);
@@ -3479,6 +3482,9 @@ export class ArgonTennisEngine {
     const aiControlsPlayer = this.spectatorMatchMode || this.autoPlayMode;
 
     if (this.phase === 'SERVE_STANCE' && !this.persistentStateLock) {
+      this._updateServeReadiness(dt);
+      if(this.pendingServeSwing&&this.pendingServeSwing.pointToken!==this.pointToken)this.pendingServeSwing=null;
+      if(this.pendingServeSwing&&this.serveReadySec>=.2)this._startServeToss(this.pendingServeSwing.actor);
       if (this.score.server === 'opponent' && !this.isMultiplayer && this.phaseTimer > 0.95) {
         this._startServeToss(this.opponent);
       } else if (

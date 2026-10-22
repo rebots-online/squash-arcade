@@ -39,7 +39,7 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 
 ## TASK-43 — Serve positioning and stable readiness
 
-- **Status**: [ ]
+- **Status**: [X]
 - **Dependencies**: [] (each task can be implemented and verified on 7b1df9b). Integrate serially because existing files overlap.
 - **Files**: src/squash/ServeSetup.js (new); src/game_engine.js; tests/serve-setup.test.mjs. Read-only baseline interfaces: BallPhysics, RulesEngine, CourtGeometry, StrokeMotion, tuningStore and existing tests.
 - **Architecture**: §4.5; complete behavior contract is reproduced in Do and Accept here.
@@ -61,4 +61,5 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 - **Verify**: node --test tests/human-contact-quality.test.mjs; full Node suite and lint.
 - **Accept**: Perfect-pocked and poor-pocket attacks have distinct real-physics nick rates; repeated same human input produces same result without random calls; drive/lob unchanged; real missing contact still misses; all existing motion and solver invariants pass. [X] is implementation only.
 - **Independent validation**: inspect contact quality behavior and UI feedback, preserve operator feel assessment separately.
+
 
