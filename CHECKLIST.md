@@ -1,10 +1,18 @@
 # Squash Arcade — approved independent implementation checklist
 
-Architecture: DOCS/ARCHITECTURE.md v2.6.1. User approved initial implementation on 2026-10-21; later requests are identified per item. Initial baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
+Architecture: DOCS/ARCHITECTURE.md v2.6.2. User approved initial implementation on 2026-10-21; later requests are identified per item. Initial baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
 
 Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with verification -> `✅` independently semantically validated. AP1–4 adopted; AP5 remains draft. No test-only sibling task and no external live service in coder Accept.
 
 Current operator override: no automated tests for follow-up work. TASK-40–45 test commands below are historical completed-release instructions, not current gates. TASK-46–48 are independent on release 178584f; each includes its own implementation and focused browser observation. No task requires another follow-up task.
+
+## TASK-56 — Keep replay shadows with the recorded players and ball
+
+- **Status**: [ ]
+- **Dependencies**: [] (baseline ac7032f; independent of queued tasks).
+- **Files**: src/game_engine.js. Read-only: PointPresentation.apply and updateCharacterContactShadow in src/mii_model_overhaul.js.
+- **Do**: Update both actor contact shadows in the replay animation bypass, deriving hop height from the displayed root and recorded actor position. Preserve the bypass of live body/racket/face animation. Track the ball core caster and disable its hard cast shadow only during POINT_REPLAY; keep the soft ball contact shadow and restore the caster in normal play. Preserve physics, recorded transforms, scoring, tin and camera.
+- **Verify / Accept**: Observe the reported stale shadow positions and isolate the apparent second floor ball in a held live replay. Observe corrected early/mid/late replay shadows following both recorded actors and the single rendered ball without the displaced hard shadow. Observe normal replay completion and skip restoring the ball caster and live shadows. Record focused browser evidence and limits in DOCS/VERIFICATION/gameplay-followup.md. No automated tests. Build, commit/push, deploy and verify served release bytes; preserve prior dist for rollback.
 
 ## TASK-55 — Announce the actual let ruling
 

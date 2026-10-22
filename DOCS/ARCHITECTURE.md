@@ -1,8 +1,8 @@
 ---
 doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
-version: "2.6.1"
-status: "TARGET — referee announcement follows appeal ruling; volley tactics and serve repertoire queued"
+version: "2.6.2"
+status: "TARGET — replay shadows follow recorded poses; volley tactics and serve repertoire queued"
 updated_at: "2026-10-22"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
 kstore_namespace: "mba.robin.squasharcade"
@@ -410,6 +410,12 @@ The front-wall replay viewpoint must retain a readable tin boundary. Keep the ac
 ### 4.16 Referee announcement follows the appeal ruling (TASK-55)
 
 The authoritative appeal decision must reach the shared point callout formatter. NO_LET announces "No let!", STROKE announces "Stroke!", and YES_LET announces "Yes, let!". Explicit decision metadata takes precedence over explanatory prose; text-only legacy callers must distinguish a denied let before considering a granted let. The banner and spoken referee announcement use the same formatted result, retaining the existing handout, score, game and match wording. A rejected appeal must never be announced as granted merely because its explanation contains the word "let". Preserve appeal adjudication, awarded points, actual let replay behaviour and sound settings.
+
+### 4.17 Replay shadows belong to the displayed frame (TASK-56)
+
+Recorded point replay owns actor transforms while live animation remains suspended. Contact shadows are derived presentation and must still update on every displayed replay frame: use each recorded actor position and root height above that position, rather than the final live animation's hop offset. This keeps shadows beneath moving or airborne replay players instead of marking their eventual resting locations. Do not resume live body, racket, face, movement or stroke simulation to update shadows.
+
+The ball keeps one rendered ball and its soft floor contact shadow. During automatic point replay, suppress only the ball core's hard light-cast shadow, whose displaced dark disk can look like a second ball on the floor in the close camera. Restore the normal ball caster when returning to gameplay, including skip and restart. Actor lighting shadows, physical ball motion, recorded poses, scoring, tin visibility, orbit/zoom and ordinary gameplay shadows remain unchanged.
 
 ## 5. Acceptance and release protocol
 
