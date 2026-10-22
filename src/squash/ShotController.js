@@ -156,7 +156,7 @@ export class ShotController {
     contactPos.y = THREE.MathUtils.clamp(contactPos.y, COURT_SPECS.BALL_RADIUS * 1.65, Number(sm.contactHeightReachMeters ?? 2.15));
 
     const playerSideSign = contactPos.x >= 0 ? 1 : -1;
-    const isVolley = (ball.bounceCountOnFloor || 0) === 0 && contactPos.z < COURT_SPECS.SHORT_LINE_Z + 0.85;
+    const isVolley = (ball.bounceCountOnFloor || 0) === 0;
     const isDeepBackCorner = contactPos.z > 2.65 && Math.abs(contactPos.x) > 1.55;
     const isOffBackWall = Boolean(ball.hitBackWallThisShot && ball.vel.z < 0);
     const isRisingOffBackWall = Boolean(isOffBackWall && ball.vel.y >= -0.35);
@@ -183,7 +183,7 @@ export class ShotController {
     const isKillRequest =
       rawRequested === 'smash' ||
       rawRequested === 'kill' ||
-      (isVolley && contactPos.y > 1.12 && Number(inputEvent.speed ?? 1.15) >= 1.25 && !isCutModifier);
+      (!rawRequested && isVolley && contactPos.y > 1.12 && Number(inputEvent.speed ?? 1.15) >= 1.25 && !isCutModifier);
 
     const isCrossRequest =
       rawRequested === 'cross' ||
@@ -253,7 +253,8 @@ export class ShotController {
       const targetCornerSign =
         Math.abs(Number(inputEvent.dirX ?? 0)) > 0.25
           ? Math.sign(Number(inputEvent.dirX))
-          : playerSideSign;
+          : isVolley && opponent?.pos && Math.sign(opponent.pos.x) === playerSideSign
+          ? -playerSideSign : playerSideSign;
       const targetX = targetCornerSign * THREE.MathUtils.lerp(2.42, 2.68, assist);
       const targetFrontY = THREE.MathUtils.lerp(0.88, 0.82, assist);
 
@@ -362,7 +363,7 @@ export class ShotController {
         dzToFront / flightSec
       );
       spin.set(14 * spinScale, 0, 0);
-      if (isOffBackWall) {
+      if (isOffBackWall || isVolley) {
         vel.copy(this._computeBackWallDriveVelocity({ contactPos, spin, params, isCrossRequest }));
       }
     }
@@ -411,6 +412,7 @@ export class ShotController {
       vel.set(Math.sin(azimuth) * Math.cos(pitch), Math.sin(pitch), -Math.cos(azimuth) * Math.cos(pitch)).multiplyScalar(speed);
     }
 
+    if (isVolley && !label.includes('VOLLEY')) label = `${isDisguised ? 'DISGUISED ' : ''}VOLLEY ${isCutModifier ? 'DROP' : label.replace('DISGUISED ', '')}`;
     const speedKmh = Math.round(vel.length() * 3.6);
     const forcedErrorMode = lobSolve ? null : inputEvent.aiErrorMode;
     const timingGradeBase =
@@ -441,6 +443,7 @@ export class ShotController {
       cutAngleDeg,
       forearmPronationDegPerSec,
       isDisguised,
+      isVolley,
       isOffBackWall,
       isRisingOffBackWall,
       prepDurationSec: prepSnapshot ? prepSnapshot.durationSec : 0,

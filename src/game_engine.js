@@ -27,6 +27,7 @@ import { RulesEngine } from './squash/RulesEngine.js';
 import { ShotController, SQUASH_SHOT_TYPES } from './squash/ShotController.js';
 import { PlayerMovement } from './squash/PlayerMovement.js';
 import { StrokeMotion } from './squash/StrokeMotion.js';
+import { planVolleyContact } from './squash/VolleyPlanner.js';
 import { OpponentAI } from './squash/OpponentAI.js';
 import { IntroDirector } from './squash/IntroDirector.js';
 import { TuningPanel } from './squash/TuningPanel.js';
@@ -3630,6 +3631,7 @@ export class ArgonTennisEngine {
                 ...choice,
                 ...this.spectatorShotNudge,
                 aiErrorMode: null,
+                aiExecution: false,
                 isSpectatorNudge: true
               };
               this.spectatorShotNudge = null;
@@ -3699,7 +3701,8 @@ export class ArgonTennisEngine {
           poseLungeOffset,
           params: this.tuningStore.params,
           interceptPoint: interceptSample,
-          predictedTrajectory: this.currentPredictedTrajectory
+          predictedTrajectory: this.currentPredictedTrajectory,
+          requestedShot: this.pendingUserSwing ? {...this.pendingUserSwing.evt, maxWaitSec:Math.max(0,this.pendingUserSwing.expiresAt-this.elapsedTime)} : {}
         });
 
         const playerRecoveringToT = this.ball.lastHitter === 'player';
@@ -3720,7 +3723,8 @@ export class ArgonTennisEngine {
               this.ball.pos.x - this.player.pos.x,
               this.ball.pos.z - this.player.pos.z
             );
-            if (dist <= 1.15 && this.ball.pos.y <= 2.35) {
+            const volley = planVolleyContact({actor:this.player,opponent:this.opponent,ball:this.ball,predictedTrajectory:this.currentPredictedTrajectory,params:this.tuningStore.params,requestedShot:{...this.pendingUserSwing.evt,maxWaitSec:this.pendingUserSwing.expiresAt-this.elapsedTime}});
+            if (dist <= 1.15 && this.ball.pos.y <= 2.35 && (this.ball.bounceCountOnFloor > 0 || (volley && volley.contactTimeSec <= .12))) {
               const evt = this.pendingUserSwing.evt;
               this.pendingUserSwing = null;
               this._attemptPlayerRallyStrike(evt, false);

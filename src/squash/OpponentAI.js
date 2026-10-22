@@ -11,6 +11,7 @@ import * as THREE from 'three';
 import { COURT_SPECS } from './CourtGeometry.js';
 import { PlayerMovement } from './PlayerMovement.js';
 import { SQUASH_SHOT_TYPES } from './ShotController.js';
+import { planVolleyContact } from './VolleyPlanner.js';
 
 export class OpponentAI {
   constructor(role = 'opponent', randomSource = Math.random) {
@@ -152,6 +153,19 @@ export class OpponentAI {
       return;
     }
 
+    // Intercept a clean airborne opportunity before considering bounced retrieval.
+    const volleyPlan = planVolleyContact({actor:opponent,opponent:player,ball,predictedTrajectory,params});
+    if (volleyPlan) {
+      this.currentIntercept.copy(volleyPlan.contactPos);
+      opponent.targetPos.copy(volleyPlan.targetPos);
+      const distXZ=Math.hypot(ball.pos.x-opponent.pos.x,ball.pos.z-opponent.pos.z);
+      if (volleyPlan.contactTimeSec <= .12 && distXZ <= 1.15 && ball.hitFrontWallThisShot && opponent.swingCooldown <= 0) {
+        const choice=this.chooseTacticalShot({opponent,player,ball,params,distXZ,volleyPlan});
+        onExecuteAIShot?.(choice);
+      }
+      return;
+    }
+
     const willComeOffBackWall = Boolean(
       predictedTrajectory?.willHitBackWallBeforeSecondBounce &&
         predictedTrajectory?.optimalBackWallStrikePos
@@ -281,7 +295,7 @@ export class OpponentAI {
    * Chooses a varied, tactical squash shot based on court geometry, opponent position,
    * recent shot history (preventing repetitive ruts), and realistic pressure/error rates.
    */
-  chooseTacticalShot({ opponent, player, ball, params = {}, distXZ = 1.0 }) {
+  chooseTacticalShot({ opponent, player, ball, params = {}, distXZ = 1.0, volleyPlan = null }) {
     const aggression = Number(params.movementAndAI?.aiAggression ?? 0.58);
     const playerDistFromFront = player.pos.z - COURT_SPECS.FRONT_WALL_Z;
     const playerLateralGap = Math.abs(player.pos.x - opponent.pos.x);
@@ -311,7 +325,14 @@ export class OpponentAI {
       consecutiveDrives >= 2 ||
       (rallyStrokes >= 4 && this.randomSource() < 0.52) ||
       this.randomSource() < 0.34;
-    if (isComingOffBackWall) {
+    if (volleyPlan) {
+      decision = {
+        shotType: volleyPlan.shotType, speed: volleyPlan.shotType === 'drop' ? .86 : 1.16,
+        cutModifier: volleyPlan.shotType === 'drop',
+        dirX: volleyPlan.shotType === 'drop' ? volleyPlan.targetCornerSign * .62 : Math.sign(ball.pos.x || 1) * .34,
+        prepCharge: .78
+      };
+    } else if (isComingOffBackWall) {
       // Corner-cycling: off the back glass the deep counter-drive back into
       // the same corner is the backbone (~55%), with cross drives, lobs,
       // boasts and disguised drops mixing it up — legible but not invariant.

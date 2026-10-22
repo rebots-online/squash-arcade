@@ -9,6 +9,8 @@ import { COURT_SPECS } from './CourtGeometry.js';
 
 const _desiredVel = new THREE.Vector3();
 
+import { planVolleyContact } from './VolleyPlanner.js';
+
 export class PlayerMovement {
   /**
    * Computes the canonical T-Position recovery target from `params.movementAndAI`.
@@ -103,7 +105,8 @@ export class PlayerMovement {
     poseLungeOffset,
     params,
     interceptPoint,
-    predictedTrajectory
+    predictedTrajectory,
+    requestedShot = {}
   }) {
     const ma = params.movementAndAI || {};
     const autoT = ma.autoTReturn !== false;
@@ -145,6 +148,11 @@ export class PlayerMovement {
     // 3. When opponent just hit the ball -> Player is Receiver
     if (ball && ball.inPlay && ball.lastHitter === 'opponent') {
       if (autoT) {
+        const volleyPlan = planVolleyContact({actor:player,opponent,ball,predictedTrajectory,params,requestedShot});
+        if (volleyPlan) {
+          player.targetPos.copy(volleyPlan.targetPos);
+          return;
+        }
         // Check if this is a deep drive that will hit the Back Glass Wall before bouncing twice
         const willComeOffBackWall = Boolean(
           predictedTrajectory?.willHitBackWallBeforeSecondBounce &&
