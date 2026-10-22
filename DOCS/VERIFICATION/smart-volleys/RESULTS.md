@@ -12,3 +12,6 @@ TASK-45: projection regression -> green over 30 viewport/lateral configurations,
 
 ## Review repair — serve movement
 The independent reviewer reproduced a frozen crowded setup despite target correction. Replaced teleporting test setup with actual engine physics ticks: red before fix. Service stance now advances normal actor locomotion; crowded setup and wrong-box corrections for both roles/sides reach a stable legal toss without awarding a point. Removed the shared fixture dependency on PointPresentation so TASK-43 tests are standalone. Focused serve/presentation tests pass.
+
+## Review repair — volley intent and lane preservation
+New regressions failed for strong explicit drop/drive/lob/kill aim, blocked cross-lane assistance, and queued-contact payload. Selected families now take precedence over gesture heuristics. Immediate and planned volley drops share lane-aware corner selection; queued input retains the accepted corner through scheduled contact. Focused nine-case volley suite passes.

@@ -1,3 +1,4 @@
+import { selectVolleyTargetCorner } from './VolleyPlanner.js';
 // ============================================================================
 // ARGON SQUASH — SHOT CONTROLLER (DECOUPLED PREPARATION vs EXECUTION)
 // Separates Backswing Preparation (Hold / Disguise) from Contact Execution
@@ -168,17 +169,17 @@ export class ShotController {
       rawRequested === 'slice' ||
       rawRequested === 'drop' ||
       rawRequested === 'disguised_drop' ||
-      (Number(inputEvent.dirY ?? 0) > 0.25 && Number(inputEvent.speed ?? 1.0) < 1.18);
+      (!rawRequested && Number(inputEvent.dirY ?? 0) > 0.25 && Number(inputEvent.speed ?? 1.0) < 1.18);
 
     const isBoastRequest =
       rawRequested === 'boast' ||
       rawRequested === 'two_wall_boast' ||
       rawRequested === 'back_wall_boast' ||
-      Math.abs(Number(inputEvent.dirX ?? 0)) > 0.72;
+      (!rawRequested && Math.abs(Number(inputEvent.dirX ?? 0)) > 0.72);
 
     const isLobRequest =
       rawRequested === 'lob' ||
-      (Number(inputEvent.dirY ?? 0) < -0.62 && !isVolley);
+      (!rawRequested && Number(inputEvent.dirY ?? 0) < -0.62 && !isVolley);
 
     const isKillRequest =
       rawRequested === 'smash' ||
@@ -253,8 +254,9 @@ export class ShotController {
       const targetCornerSign =
         Math.abs(Number(inputEvent.dirX ?? 0)) > 0.25
           ? Math.sign(Number(inputEvent.dirX))
-          : isVolley && opponent?.pos && Math.sign(opponent.pos.x) === playerSideSign
-          ? -playerSideSign : playerSideSign;
+          : isVolley
+          ? (inputEvent.volleyTargetCornerSign || selectVolleyTargetCorner(contactPos, opponent?.pos) || playerSideSign)
+          : playerSideSign;
       const targetX = targetCornerSign * THREE.MathUtils.lerp(2.42, 2.68, assist);
       const targetFrontY = THREE.MathUtils.lerp(0.88, 0.82, assist);
 

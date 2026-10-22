@@ -3012,6 +3012,23 @@ export class ArgonTennisEngine {
     }
   }
 
+  _tryPendingPlayerRallyStrike() {
+    if (!this.pendingUserSwing || this.ball.lastHitter !== 'opponent') return false;
+    if (this.elapsedTime > this.pendingUserSwing.expiresAt) {
+      this.pendingUserSwing = null;
+      return false;
+    }
+    if (!this.ball.hitFrontWallThisShot) return false;
+    const dist = Math.hypot(this.ball.pos.x-this.player.pos.x,this.ball.pos.z-this.player.pos.z);
+    const volley = planVolleyContact({actor:this.player,opponent:this.opponent,ball:this.ball,
+      predictedTrajectory:this.currentPredictedTrajectory,params:this.tuningStore.params,
+      requestedShot:{...this.pendingUserSwing.evt,maxWaitSec:this.pendingUserSwing.expiresAt-this.elapsedTime}});
+    if (dist>1.15 || this.ball.pos.y>2.35 || (this.ball.bounceCountOnFloor===0 && (!volley || volley.contactTimeSec>.12))) return false;
+    const evt = {...this.pendingUserSwing.evt, ...(volley ? {volleyTargetCornerSign:volley.targetCornerSign} : {})};
+    this.pendingUserSwing = null;
+    return this._attemptPlayerRallyStrike(evt, false);
+  }
+
   _attemptPlayerRallyStrike(evt = {}, isAuto = false) {
     if (this.player.strokeMotion?.pending) return true;
     if (this.phase !== 'RALLY' || !this.ball.inPlay || !this.ball.hitFrontWallThisShot) return false;
@@ -3754,24 +3771,7 @@ export class ArgonTennisEngine {
           playerRecoveringToT
         );
 
-        // Check queued player swing
-        if (this.pendingUserSwing && this.ball.lastHitter === 'opponent') {
-          if (this.elapsedTime > this.pendingUserSwing.expiresAt) {
-            this.pendingUserSwing = null;
-          } else if (this.ball.hitFrontWallThisShot) {
-            const dist = Math.hypot(
-              this.ball.pos.x - this.player.pos.x,
-              this.ball.pos.z - this.player.pos.z
-            );
-            const volley = planVolleyContact({actor:this.player,opponent:this.opponent,ball:this.ball,predictedTrajectory:this.currentPredictedTrajectory,params:this.tuningStore.params,requestedShot:{...this.pendingUserSwing.evt,maxWaitSec:this.pendingUserSwing.expiresAt-this.elapsedTime}});
-            if (dist <= 1.15 && this.ball.pos.y <= 2.35 && (this.ball.bounceCountOnFloor > 0 || (volley && volley.contactTimeSec <= .12))) {
-              const evt = this.pendingUserSwing.evt;
-              this.pendingUserSwing = null;
-              this._attemptPlayerRallyStrike(evt, false);
-              return;
-            }
-          }
-        }
+        if (this._tryPendingPlayerRallyStrike()) return;
       }
 
       // Opponent AI or P2

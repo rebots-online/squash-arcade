@@ -8,6 +8,19 @@ function segmentClear(from, to, other, clearance) {
   return Math.hypot(other.x-from.x-u*dx,other.z-from.z-u*dz)>=clearance;
 }
 
+/** Shared assistance for planned and immediate airborne drop contacts. */
+export function selectVolleyTargetCorner(pos, opponentPos, dirX = 0) {
+  const side=Math.sign(pos.x||1),explicitAim=Math.abs(Number(dirX))>.25;
+  let corner=explicitAim?Math.sign(dirX):Math.sign(opponentPos?.x||0)===side?-side:side;
+  const front=new Vector3(corner*2.55,.85,COURT_SPECS.FRONT_WALL_Z);
+  if(!segmentClear(pos,front,opponentPos,.55)) {
+    if(explicitAim)return null;
+    corner=-corner;front.x=corner*2.55;
+    if(!segmentClear(pos,front,opponentPos,.55))return null;
+  }
+  return corner;
+}
+
 /** Pure opportunity assessment; only the engine's live scheduled contact hits. */
 export function planVolleyContact({actor,opponent,ball,predictedTrajectory,params={},requestedShot={}}) {
   if (!actor || !ball?.inPlay || ball.lastHitter===actor.role || ball.bounceCountOnFloor!==0) return null;
@@ -31,16 +44,9 @@ export function planVolleyContact({actor,opponent,ball,predictedTrajectory,param
     if(dist>travel+.88) continue;
     const targetPos=new Vector3(MathUtils.clamp(pos.x-Math.sign(pos.x||1)*.38,-2.78,2.78),0,MathUtils.clamp(pos.z+.12,-3.9,4.45));
     if(!segmentClear(actor.pos,targetPos,opponent?.pos,.65) || !segmentClear(targetPos,pos,opponent?.pos,.68)) continue;
-    const side=Math.sign(pos.x||1);
-    const explicitAim=Math.abs(Number(requestedShot.dirX||0))>.25;
-    const sameSide=Math.sign(opponent?.pos?.x||0)===side;
-    let corner=explicitAim?Math.sign(requestedShot.dirX):sameSide?-side:side;
+    const corner=selectVolleyTargetCorner(pos,opponent?.pos,requestedShot.dirX);
+    if(corner===null)continue;
     const front=new Vector3(corner*2.55,.85,COURT_SPECS.FRONT_WALL_Z);
-    if(!segmentClear(pos,front,opponent?.pos,.55)) {
-      if(explicitAim) continue;
-      corner=-corner;front.x=corner*2.55;
-      if(!segmentClear(pos,front,opponent?.pos,.55)) continue;
-    }
     const coverage=opponent?.pos?Math.hypot(opponent.pos.x-front.x,opponent.pos.z-front.z):0;
     const dropFlight=.45+Math.abs(pos.z-front.z)/14;
     const attackOpen=coverage>Math.max(4.2,4.8*(dropFlight+.2));

@@ -6,6 +6,7 @@ import { OpponentAI } from '../src/squash/OpponentAI.js';
 import { ShotController } from '../src/squash/ShotController.js';
 import { BallPhysics } from '../src/squash/BallPhysics.js';
 import { DEFAULT_TUNING_PARAMS as params } from '../src/squash/TuningConfig.js';
+import { engineFixture } from './engine-fixture.mjs';
 function scenario(z=3,side=1) {
   const actor={role:'opponent',pos:new Vector3(side*1.6,0,z+.1),vel:new Vector3(),targetPos:new Vector3(),swingCooldown:0};
   const opponent={pos:new Vector3(side*1.8,0,4),vel:new Vector3()};
@@ -53,4 +54,26 @@ test('good arcing length denies a central actor a volley, leaving bounced retrie
   const actor={role:'opponent',pos:new Vector3(-2.7,0,3.8),vel:new Vector3(),maxSpeed:3};
   assert.equal(planVolleyContact({actor,opponent:{pos:new Vector3(2.8,0,3.9)},ball:{...ball,inPlay:true,hitFrontWallThisShot:false,hitBackWallThisShot:false,bounceCountOnFloor:0,lastHitter:'player',timeSinceHitSec:0},predictedTrajectory:trajectory,params}),null);
   assert.ok(trajectory.firstFloorBouncePos.z>3.5);
+});
+test('strong explicit aim preserves every selected volley family',()=>{
+  const s=scenario(3.4),c=new ShotController();
+  for(const [shotType,family] of [['drop',/DROP/],['topspin',/DRIVE/],['lob',/LOB/],['kill',/KILL/],['boast',/BOAST/]]) {
+    const shot=c.computeShotExecution({ball:s.ball,inputEvent:{shotType,dirX:.9},params});
+    assert.match(shot.shotId,family,shotType);
+  }
+});
+test('queued human drop carries the safe corner through scheduled contact',()=>{
+  const s=scenario(3),e=engineFixture();
+  e.player.pos.copy(s.actor.pos);e.opponent.pos.set(.8,0,.9);
+  e.ball={...s.ball,lastHitter:'opponent'};e.currentPredictedTrajectory=s.predictedTrajectory;
+  e.pendingUserSwing={evt:{shotType:'drop'},expiresAt:.5};
+  let input;e._attemptPlayerRallyStrike=evt=>{input=evt;return true;};
+  assert.equal(e._tryPendingPlayerRallyStrike(),true);
+  const shot=new ShotController().computeShotExecution({actor:e.player,opponent:e.opponent,ball:e.ball,inputEvent:input,params});
+  assert.ok(shot.vel.x>0,'clear same-side corner must survive commit');
+});
+test('immediate human volley assistance also avoids the blocked cross lane',()=>{
+  const s=scenario(3);s.opponent.pos.set(.8,0,.9);
+  const shot=new ShotController().computeShotExecution({actor:s.actor,opponent:s.opponent,ball:s.ball,inputEvent:{shotType:'drop'},params});
+  assert.ok(shot.vel.x>0);
 });
