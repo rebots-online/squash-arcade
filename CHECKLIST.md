@@ -11,7 +11,7 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 - **Status**: [/]
 - **Dependencies**: [] (78aec6d; independent of native packaging, billing and queued tactics).
 - **Requirements**: HUD-1, HUD-2 (§4.20).
-- **Files**: src/squash/CourtHUD.js; public/court-hud.css; index.html; src/game_engine.js. Read-only: existing HudUI IDs/callbacks, MotionController relayAvailable/enableWebcam and shot selectors.
+- **Files**: src/squash/CourtHUD.js; public/court-hud.css; index.html; src/game_engine.js. Read-only: existing HudUI IDs/callbacks, MotionController RELAY_ENABLED/enableWebcam and shot selectors.
 - **Do**: Reparent the existing bottom settings/music controls into the collapsed hamburger setup at every width. Put the existing red shot choice and descriptive continuum in the upper HUD, keep six usable shot/Let chips along the lower edge. Preserve IDs/listeners and camera/gameplay. Add three prominent start methods. Keyboard uses existing match callback; phone/camera show their instructions, with self-contained textual fallback if ArcadeBriefing is absent. Phone pairing is capability-gated; camera starts only after explicit permission succeeds. Keep recovery and menu access.
 - **Accept**: Follow scenes A, C–G in DOCS/TEST_RUBRIC.md with this entity's controls. All settings remain reachable, no lower settings obstruction, no implicit timing mapping or static API polling. Desktop/portrait/landscape and keyboard focus remain usable. No sibling-task dependency; implement simple instruction fallback within this item.
 

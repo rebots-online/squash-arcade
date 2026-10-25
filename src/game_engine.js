@@ -1,4 +1,6 @@
 import { syncRacketGrip } from './squash/RacketGrip.js';
+import { CourtHUD } from './squash/CourtHUD.js';
+import { ArcadeBriefing } from './squash/ArcadeBriefing.js';
 // ============================================================================
 // ARGON SQUASH — MAIN GAME ENGINE & MODULE ORCHESTRATOR
 // "Physical Chess, Wonder First" — Modular, Playable, Tunable
@@ -505,6 +507,7 @@ export class ArgonTennisEngine {
     this.pendingPointOutcome = null;
     for (const type of ['keydown','keyup','pointerdown','pointerup','pointercancel','click']) {
       window.addEventListener(type, event => {
+        if (this.arcadeBriefing?.active || event.target?.closest?.('#title-modal, #btn-mobile-menu, #btn-sound-gate')) return;
         const result=this.pointPresentation.input(event);
         if(result.consume){event.preventDefault();event.stopImmediatePropagation();}
         if(result.skip) this._finishPointPresentation();
@@ -583,6 +586,8 @@ export class ArgonTennisEngine {
     this._setupLightingAndSky();
     this._setupEffectsPools();
     this._initHudAndControllers();
+    this.courtHUD = new CourtHUD(this);
+    this.arcadeBriefing = new ArcadeBriefing(this);
 
     // 6. Initialize Skills-Demo IntroDirector & Live Tuning Lab Panel
     this.introDirector = new IntroDirector(this);
@@ -1158,14 +1163,7 @@ export class ArgonTennisEngine {
   }
 
   triggerNarratorUSPInvite({ manual = false } = {}) {
-    if (!this.audioEngine) return;
-    const item = this.audioEngine.playNarratorUSPInvite(manual ? undefined : null);
-    if (!item) return;
-    this.hud?.showTimingPopup({
-      grade: item.title,
-      detail: item.subText,
-      durationMs: 5400
-    });
+    this.arcadeBriefing?.open('placement', { manual });
   }
 
   openSquashRulesModal() {
@@ -1199,6 +1197,11 @@ export class ArgonTennisEngine {
   }
 
   toggleControlsGuideModal() {
+    if (this.arcadeBriefing) {
+      if (this.arcadeBriefing.active) this.arcadeBriefing.close();
+      else this.arcadeBriefing.open('placement', { manual: true });
+      return;
+    }
     const guideModal = document.getElementById('controls-guide-modal');
     if (!guideModal) return;
     guideModal.classList.toggle('hidden');
@@ -1495,8 +1498,7 @@ export class ArgonTennisEngine {
     openGuideBtns.forEach((b) =>
       b?.addEventListener('click', (e) => {
         e.stopPropagation();
-        guideModal?.classList.remove('hidden');
-        this._syncModalPauseState();
+        this.toggleControlsGuideModal();
       })
     );
     document.getElementById('btn-close-controls-guide')?.addEventListener('click', () => {
@@ -2116,7 +2118,7 @@ export class ArgonTennisEngine {
       this._syncScoreboardHUD();
       this._syncSpectatorModeUI();
       this._setupMidRallyShowcase();
-      this._setSetupMenuCollapsed(this._usesCompactHUD());
+      this._setSetupMenuCollapsed(true);
       this.hud.showTitleModal();
       this._snapCameraImmediate();
       this.audioEngine && this.audioEngine.playMusicForState('title');
@@ -2335,6 +2337,7 @@ export class ArgonTennisEngine {
   }
 
   startNewMatch({ showStartBanner = true } = {}) {
+    this.arcadeBriefing?.close();
     this.pointPresentation?.cancel();
     this.pendingPointOutcome = null;
     if (this.introDirector) {
@@ -3360,6 +3363,7 @@ export class ArgonTennisEngine {
   }
 
   update(dt) {
+    this.arcadeBriefing?.update(dt);
     if (this.isPausedForModal) {
       this._updateCameraRig(dt * 0.15);
       this._updateProjectedHUD();
@@ -3369,21 +3373,7 @@ export class ArgonTennisEngine {
     this.elapsedTime += dt;
     this.cameraTrauma = Math.max(0, this.cameraTrauma - dt * 1.4);
 
-    // Periodic Narrator Invitation & USP Showcase (every ~95s during AI vs AI / Side-Menu Showcase)
-    if (this.spectatorMatchMode || this.autoPlayMode) {
-      this.narratorInviteTimerSec += dt;
-      const thresholdSec = this.narratorFirstInviteDone ? 95 : 18;
-      if (
-        this.narratorInviteTimerSec >= thresholdSec &&
-        (this.phase === 'SERVE_STANCE' ||
-          this.phase === 'POINT_OVER' ||
-          (this.phase === 'RALLY' && this.phaseTimer > 2.5))
-      ) {
-        this.narratorInviteTimerSec = 0;
-        this.narratorFirstInviteDone = true;
-        this.triggerNarratorUSPInvite({ manual: false });
-      }
-    }
+    // ArcadeBriefing owns invitation timing independently of point transitions.
 
     // Update 3D Court Geometry overlays (wall impact rings & T-Zone guide)
     const ma = this.tuningStore.params.movementAndAI;
