@@ -286,6 +286,9 @@ export class AudioEngine {
     this.ttsAudioElements = new Map();
     this._activeVoiceAudio = null;
     this._voiceTimers = [];
+    this._voiceGeneration = 0;
+    this._briefingToken = 0;
+    this._briefingNarration = null;
     this.currentTrackId = null;
     this.desiredTrackId = 'argon_glass_overture';
     this.unlocked = false;
@@ -507,6 +510,10 @@ export class AudioEngine {
    */
   playWelcomeIntro({ force = false, withLoveAll = false } = {}) {
     if (this._welcomePlayed && !force) return;
+    if (this._briefingNarration) {
+      this._welcomePlayed = true;
+      return;
+    }
     if (this.muted) return;
 
     const ctx = this._ensureContext();
@@ -548,7 +555,7 @@ export class AudioEngine {
     const phrase = withLoveAll
       ? 'Welcome to Virtual Squash! Love all. Play!'
       : 'Welcome to Virtual Squash!';
-    this.playVoiceCallout(phrase, { delayMs: 90, clearQueue: true, forceReferee: true });
+    this.beginBriefingNarration(phrase, () => this.endBriefingNarration());
   }
 
   /**
@@ -559,6 +566,7 @@ export class AudioEngine {
    * - Keyboard & Mouse play + Press K for Complete Rules of Squash
    */
   playNarratorUSPInvite(customIndex = null) {
+    if (this._briefingNarration) return null;
     const idx =
       typeof customIndex === 'number'
         ? Math.abs(customIndex) % NARRATOR_USP_INVITES.length
@@ -575,11 +583,7 @@ export class AudioEngine {
       ) {
         return null;
       }
-      this.playVoiceCallout(item.speech, {
-        delayMs: 120,
-        clearQueue: Boolean(customIndex !== null),
-        forceReferee: true
-      });
+      this.beginBriefingNarration(item.speech, () => this.endBriefingNarration());
     }
     return item;
   }
@@ -1357,6 +1361,14 @@ export class AudioEngine {
 
   setMuted(muted) {
     this.muted = Boolean(muted);
+    if (this.muted) {
+      this._clearPendingVoiceCalls();
+      if (this._briefingNarration) {
+        this._stopBriefingUtterance(this._briefingNarration, true);
+      } else if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        try { window.speechSynthesis.cancel(); } catch {}
+      }
+    }
     if (this.masterGain && this.ctx) {
       this.masterGain.gain.setValueAtTime(this.muted ? 0 : 1, this.ctx.currentTime);
     }
@@ -1415,10 +1427,13 @@ export class AudioEngine {
 
   setRefereeVoiceEnabled(enabled) {
     this.refereeVoiceEnabled = Boolean(enabled);
-    if (!this.refereeVoiceEnabled && typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      try {
-        window.speechSynthesis.cancel();
-      } catch {}
+    if (!this.refereeVoiceEnabled) {
+      this._clearPendingVoiceCalls();
+      if (this._briefingNarration) {
+        this._stopBriefingUtterance(this._briefingNarration, true);
+      } else if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        try { window.speechSynthesis.cancel(); } catch {}
+      }
     }
     this._notifyTrackChange();
     return this.refereeVoiceEnabled;
@@ -1447,6 +1462,98 @@ export class AudioEngine {
   // ==========================================================================
   // DEEP MALE REFEREE VOICE & STADIUM PA FORMANT SYNTHESIS
   // ==========================================================================
+
+  _clearPendingVoiceCalls() {
+    this._voiceGeneration += 1;
+    this._voiceTimers.forEach((id) => clearTimeout(id));
+    this._voiceTimers = [];
+  }
+
+  /**
+   * Reserves speech for a briefing, including its silent reading time. Only an
+   * explicit end (or a replacement briefing) returns the channel to the referee.
+   * Completion may be synchronous when speech is muted or unavailable.
+   */
+  beginBriefingNarration(text, onComplete) {
+    this.endBriefingNarration();
+    this._clearPendingVoiceCalls();
+    const owner = {
+      token: ++this._briefingToken,
+      utterance: null,
+      completed: false,
+      onComplete: typeof onComplete === 'function' ? onComplete : null
+    };
+    this._briefingNarration = owner;
+
+    const speech = typeof window !== 'undefined' ? window.speechSynthesis : null;
+    // A new owner may preempt ordinary speech. Ordinary calls never cancel it.
+    if (speech) {
+      try { speech.cancel(); } catch {}
+    }
+    const spokenText = String(text ?? '').trim();
+    if (this.muted || !this.refereeVoiceEnabled || !spokenText || !speech ||
+        typeof SpeechSynthesisUtterance === 'undefined') {
+      this._finishBriefingNarration(owner);
+      return owner.token;
+    }
+
+    try {
+      const utterance = new SpeechSynthesisUtterance(spokenText);
+      const voice = this._cachedMaleVoice || this._selectDeepMaleVoice();
+      if (voice) {
+        this._cachedMaleVoice = voice;
+        utterance.voice = voice;
+      }
+      utterance.lang = voice?.lang || 'en-GB';
+      utterance.pitch = this.refereeVoicePitch;
+      utterance.rate = this.refereeVoiceRate;
+      utterance.volume = Math.min(1, this.sfxVolume * 0.98);
+      owner.utterance = utterance;
+      utterance.onend = () => this._finishBriefingNarration(owner);
+      utterance.onerror = () => this._finishBriefingNarration(owner);
+      speech.speak(utterance);
+    } catch {
+      this._finishBriefingNarration(owner);
+    }
+    return owner.token;
+  }
+
+  _finishBriefingNarration(owner) {
+    if (this._briefingNarration !== owner || owner.token !== this._briefingToken || owner.completed) return;
+    owner.completed = true;
+    if (owner.utterance) {
+      owner.utterance.onend = null;
+      owner.utterance.onerror = null;
+      owner.utterance = null;
+    }
+    const onComplete = owner.onComplete;
+    owner.onComplete = null;
+    // Keep ownership while the UI finishes its minimum reading time.
+    onComplete?.();
+  }
+
+  _stopBriefingUtterance(owner, complete = false) {
+    if (this._briefingNarration !== owner) return;
+    if (owner.utterance) {
+      owner.utterance.onend = null;
+      owner.utterance.onerror = null;
+      owner.utterance = null;
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        try { window.speechSynthesis.cancel(); } catch {}
+      }
+    }
+    if (complete) this._finishBriefingNarration(owner);
+  }
+
+  endBriefingNarration() {
+    const owner = this._briefingNarration;
+    if (!owner) return;
+    // Do not cancel any later ordinary speech when this owner already ended.
+    this._stopBriefingUtterance(owner);
+    owner.onComplete = null;
+    this._briefingNarration = null;
+    this._briefingToken += 1;
+  }
 
   /**
    * Plays a subtle low-baritone stadium PA vocal formant cadence so every
@@ -1496,7 +1603,7 @@ export class AudioEngine {
   }
 
   announceScore(text, { delayMs = 0, playChime = true, forceReferee = false } = {}) {
-    if (this.muted || !text) return;
+    if (this._briefingNarration || this.muted || !text) return;
     if (!this.refereeVoiceEnabled && !forceReferee) return;
 
     const raw = String(text).trim();
@@ -1543,17 +1650,15 @@ export class AudioEngine {
   }
 
   playVoiceCallout(text, { delayMs = 0, clearQueue = false, forceReferee = false } = {}) {
-    if (this.muted || !text) return;
+    if (this._briefingNarration || this.muted || !text) return;
     if (!this.refereeVoiceEnabled && !forceReferee) return;
 
     const norm = String(text).trim().toLowerCase();
-    if (clearQueue && this._voiceTimers.length > 0) {
-      this._voiceTimers.forEach((id) => clearTimeout(id));
-      this._voiceTimers = [];
-    }
+    if (clearQueue) this._clearPendingVoiceCalls();
+    const generation = this._voiceGeneration;
 
     const speakNow = () => {
-      if (this.muted) return;
+      if (this._briefingNarration || generation !== this._voiceGeneration || this.muted) return;
       if (!this.refereeVoiceEnabled && !forceReferee) return;
 
       let spokenText = String(text);
@@ -1581,6 +1686,8 @@ export class AudioEngine {
       if (typeof this.onRefereeCallout === 'function') {
         this.onRefereeCallout(spokenText);
       }
+      // A presentation listener can claim narration during the notification.
+      if (this._briefingNarration || generation !== this._voiceGeneration || this.muted) return;
 
       // Play subtle baritone PA backing resonance
       this._playRefereeBaritonePA(spokenText);
@@ -1605,7 +1712,10 @@ export class AudioEngine {
     };
 
     if (delayMs > 0) {
-      const timer = setTimeout(speakNow, delayMs);
+      const timer = setTimeout(() => {
+        this._voiceTimers = this._voiceTimers.filter((id) => id !== timer);
+        speakNow();
+      }, delayMs);
       this._voiceTimers.push(timer);
     } else {
       speakNow();
