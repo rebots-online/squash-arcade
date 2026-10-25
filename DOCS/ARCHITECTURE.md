@@ -1,9 +1,9 @@
 ---
 doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
-version: "2.6.4"
+version: "2.7.0"
 status: "TARGET — replay shadows follow recorded poses; volley tactics and serve repertoire queued"
-updated_at: "2026-10-22"
+updated_at: "2026-10-25"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
 kstore_namespace: "mba.robin.squasharcade"
 kstore_schema_version: "1.3"
@@ -428,6 +428,22 @@ The motion controller owns one cancellable request chain. Schedule the next requ
 Handedness selects the racket hand independently of forehand/backhand stroke side. Retain that hand through preparation, contact, follow-through and recovery; explicit user hand changes apply outside a committed stroke. Mirror the complete legacy right-handed grip trajectory once for left-handed play. One final grip synchronization after body and stroke posing aligns the selected hand with the real racket handle; the free hand balances away from the handle instead of copying its position during backhands. Backhand loading crosses the dominant arm in front of the torso while the existing shoulder turn and opposite-foot plant remain.
 
 Start each racket swing at its actual displayed position/orientation, not a forehand/backhand preset. Preparation uses the same actor-relative stroke side as StrokeMotion, and neutral ready position belongs to the selected hand rather than the previous court side. Keep continuous recovery into the neutral grip and preserve scheduled ball contact, reach, shot physics and replayed recorded transforms.
+
+### 4.20 Clear court and three entry methods (TASK-59)
+
+HUD-1: Keep the live court free of the bottom settings/music dock. Reparent existing controls into the hamburger menu, retaining their IDs, listeners and state. The menu is available at all viewport sizes, begins collapsed, scrolls independently, and exposes camera, replay, handedness, sound/music, referee, rules and setup. Preserve candy colour, gloss and red-player identity. Keep the five shot chips and Let directly accessible in a compact bottom strip; place red ownership/choice, shot continuum and last-shot information in a compact upper region. The continuum remains descriptive, not a new timing-to-direction control; do not promise automatic cross/boast/nick results. Preserve existing squash physics, camera envelope, stroke execution and shot-choice blinking.
+
+HUD-2: Lead setup with three equally explicit entry methods: keyboard/mouse (including touch shot chips), Wii-style phone racket, Kinect-style camera play. Keyboard starts the existing red-player match. Phone opens its focused animated instructions and offers pairing only when MotionController.relayAvailable is true; the static host displays an honest unavailable state with a keyboard alternative, without requests to absent APIs. Camera opens its focused instructions and only requests permission on the user's Start Camera action; successful activation starts red-player play, denial remains recoverable with retry/keyboard actions. Existing selected match options carry through. Handedness and front/back camera controls remain reachable in the menu. No new multiplayer/tournament promises or billing work.
+
+### 4.21 Protected arcade briefing presentation (TASK-60)
+
+BRIEF-1: After 18 seconds of unobstructed AI showcase, present a rounded, arcade-styled foreground card over a dimmed, still-running rally. Show brief squash-placement principles (tight rails, deep arcing length, interception when available, moving the opponent rather than relying on winners), then phone, then camera. Between complete sequences allow 95 seconds of gameplay. Do not launch over another modal, an open menu, skills demo, human match or hidden document. On-demand menu guides open the selected method immediately and remain until navigation/start/dismissal. Use one container for all chapters, clear Next/Back/Close and a chapter indicator; pause automatic progression while hidden. Explicit exit restores the court, releases speech ownership and focus, and restarts the showcase interval. Input within the briefing must not trigger gameplay or skip a background point replay.
+
+BRIEF-2: Short captions and narration convey the same instructions. AudioEngine.beginBriefingNarration(text, onComplete) and endBriefingNarration() own a tokenized speech channel. Ordinary score/voice calls and already-scheduled referee timers cannot cancel, replace or queue over it. Closing, changing chapter, muting or starting play cancels obsolete speech safely. Advance an automatic chapter only after its minimum readable display time and narration completion; silent/unsupported speech uses bounded reading time. Preserve normal referee calls outside briefings. Welcome and legacy USP invitations use the same protected briefing path. Dim gameplay notices beneath the card; prevent stale center banners flashing on dismissal.
+
+BRIEF-3: ArcadeSchematic exports createArcadeSchematic(mode), returning an accessible SVG string for placement, phone or camera. Show a recognizable red-shirt Mii-style character in an isometric room facing a TV/tablet. Phone chapter: an enlarged hinged foldable closes, floats into the racket hand, camera pulls back, arm swings and the red avatar on the TV mirrors the swing. Folding is optional for ordinary phones. Camera chapter: show camera field of view, full-body stance/arm pose tracking, then matched real-person/avatar swings. The diagram is instruction, not a representation of a connected device. Use locally authored SVG/CSS animation, no external asset or model dependency. Reduced-motion mode retains meaningful static diagrams and captions. Layout fits desktop, portrait phone and short landscape with scrolling available and reachable controls.
+
+Entity ownership: src/squash/CourtHUD.js owns layout relocation/menu entry wiring; public/court-hud.css owns responsive HUD rules. src/squash/ArcadeBriefing.js owns chapter content, lifecycle and start actions; src/squash/ArcadeSchematic.js owns diagrams; public/arcade-briefing.css owns card/diagram presentation. src/game_engine.js integrates lifecycle and existing game callbacks; src/audio_engine.js owns narration priority. New modules replace no gameplay owner: the existing minified HudUI and oversized game engine are unsuitable homes for independent diagram/lifecycle implementations. index.html loads both stylesheets. Existing IDs remain single instances.
 
 ## 5. Acceptance and release protocol
 

@@ -1,10 +1,28 @@
 # Squash Arcade — approved independent implementation checklist
 
-Architecture: DOCS/ARCHITECTURE.md v2.6.4. User approved initial implementation on 2026-10-21; later requests are identified per item. Initial baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
+Architecture: DOCS/ARCHITECTURE.md v2.7.0. User approved initial implementation on 2026-10-21; later requests are identified per item. Initial baseline: GitHub 7b1df9b. Historical tasks and operator gates remain in DOCS/HISTORY/CHECKLIST-before-smart-volleys.md; no older pending roadmap is silently included.
 
 Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with verification -> `✅` independently semantically validated. AP1–4 adopted; AP5 remains draft. No test-only sibling task and no external live service in coder Accept.
 
 Current operator override: no automated tests for follow-up work. TASK-40–45 test commands below are historical completed-release instructions, not current gates. TASK-46–48 are independent on release 178584f; each includes its own implementation and focused browser observation. No task requires another follow-up task.
+
+## TASK-59 — Clear the court and surface three play methods
+
+- **Status**: [/]
+- **Dependencies**: [] (78aec6d; independent of native packaging, billing and queued tactics).
+- **Requirements**: HUD-1, HUD-2 (§4.20).
+- **Files**: src/squash/CourtHUD.js; public/court-hud.css; index.html; src/game_engine.js. Read-only: existing HudUI IDs/callbacks, MotionController relayAvailable/enableWebcam and shot selectors.
+- **Do**: Reparent the existing bottom settings/music controls into the collapsed hamburger setup at every width. Put the existing red shot choice and descriptive continuum in the upper HUD, keep six usable shot/Let chips along the lower edge. Preserve IDs/listeners and camera/gameplay. Add three prominent start methods. Keyboard uses existing match callback; phone/camera show their instructions, with self-contained textual fallback if ArcadeBriefing is absent. Phone pairing is capability-gated; camera starts only after explicit permission succeeds. Keep recovery and menu access.
+- **Accept**: Follow scenes A, C–G in DOCS/TEST_RUBRIC.md with this entity's controls. All settings remain reachable, no lower settings obstruction, no implicit timing mapping or static API polling. Desktop/portrait/landscape and keyboard focus remain usable. No sibling-task dependency; implement simple instruction fallback within this item.
+
+## TASK-60 — Animated arcade briefings with protected narration
+
+- **Status**: [/]
+- **Dependencies**: [] (78aec6d; engine and original menu are sufficient).
+- **Requirements**: BRIEF-1–3 (§4.21).
+- **Files**: src/squash/ArcadeBriefing.js; src/squash/ArcadeSchematic.js; public/arcade-briefing.css; src/audio_engine.js; src/game_engine.js; index.html. Read-only: existing menu/start callbacks, MotionController and IntroDirector.
+- **Do**: Implement the full three-chapter lifecycle/content, narrated priority channel, local animated isometric diagrams and responsive accessible overlay specified in §4.21. Wire existing narrator invite and controls-guide entry even without TASK-59. Background scoring/replays stay live but cannot replace speech or foreground content. Include cleanup, reduced motion, silent reading time, focus/input isolation and mode start/recovery.
+- **Accept**: Follow scenes A–G in DOCS/TEST_RUBRIC.md, observing actual chapter animations, scoring beneath narration, automatic and requested flows, exits, browser visibility and capability recovery. Capture integrated evidence after both items; no intermediary test/reviewer gate. Source/build/publication markers do not certify physical phone or camera play.
 
 ## TASK-58 — Keep one racket hand and remove backhand grip jumps
 
