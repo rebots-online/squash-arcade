@@ -47,6 +47,9 @@ export class CourtHUD {
     // The three-way entry owns phone availability; retain the original pairing callback.
     phone?.classList.add('hidden');
     document.getElementById('btn-mobile-menu')?.setAttribute('aria-label', 'Open game menu');
+    for (const type of ['pointerdown', 'pointerup']) {
+      document.getElementById('btn-sound-gate')?.addEventListener(type, e => e.stopPropagation());
+    }
     const title = document.getElementById('title-modal');
     this.menuObserver = new MutationObserver(() => {
       document.getElementById('btn-mobile-menu')?.setAttribute('aria-expanded', String(engine._isSideMenuExpanded()));

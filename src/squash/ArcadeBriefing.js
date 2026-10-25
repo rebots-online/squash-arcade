@@ -58,8 +58,9 @@ export class ArcadeBriefing {
       if (action === 'keyboard') this.startMatch('mouse');
       if (action === 'sound') {
         const audio = this.engine.audioEngine;
+        const wasUnlocked = audio?.unlocked;
         audio?.unlock();
-        const muted = audio?.toggleMute();
+        const muted = wasUnlocked ? audio?.toggleMute() : (audio?.setMuted(false), false);
         if (!muted) this.showChapter(this.index);
         else this.updateSoundLabel();
       }
@@ -111,6 +112,8 @@ export class ArcadeBriefing {
     if (!this.active) this.restoreFocus = document.activeElement;
     this.manual = manual;
     this.active = true;
+    this.pausedMatch = !this.engine.spectatorMatchMode && !this.engine.autoPlayMode;
+    if (this.pausedMatch) this.engine.isPausedForModal = true;
     this.hasPresented = true;
     this.idleSeconds = 0;
     this.engine._setSetupMenuCollapsed(true);
@@ -185,7 +188,7 @@ export class ArcadeBriefing {
   }
 
   updateSoundLabel() {
-    const muted = this.engine.audioEngine?.muted;
+    const muted = this.engine.audioEngine?.muted || !this.engine.audioEngine?.unlocked;
     this.root.querySelector('[data-action=sound]').textContent = muted ? 'Enable sound' : 'Mute sound';
   }
 
@@ -204,6 +207,7 @@ export class ArcadeBriefing {
     this.sequence++;
     this.idleSeconds = 0;
     this.engine.audioEngine?.endBriefingNarration();
+    if (this.pausedMatch) this.engine._syncModalPauseState();
     this.root.classList.add('hidden');
     document.body.classList.remove('briefing-active');
     this.inertNodes?.forEach(n => { n.inert = false; });
