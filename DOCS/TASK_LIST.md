@@ -1,19 +1,28 @@
 ---
-title: Squash Arcade shot and swing corrections
-conversation_id: 01a15e0e-0b4c-7153-a123-1887270a7760
+title: Squash Arcade clear-court controls and arcade briefings
+conversation_id: 01a16140-0f26-79e3-a267-2ee9d3aae117
 created_at_utc: 2026-10-21T22:23:18Z
-updated_at_utc: 2026-10-21T23:54:00Z
-file_computer: msi4090
-file_absolute_path: /home/robin/Desktop/DevProjects/squash-arcade/DOCS/TASK_LIST.md
-authority_revision: 64a77201a3edfc3f8f6d13e89caf32b5978087b75231ed5c5f7f7d075b4f136a
+updated_at_utc: 2026-10-25T16:06:30Z
+file_computer: DESKTOP-CN0GDTR
+file_absolute_path: E:/devProjects/squash-arcade/DOCS/TASK_LIST.md
+authority_source: KStore Admin-Manual live document reads
 scope_locations:
-  arcade: msi4090:/home/robin/Desktop/DevProjects/squash-arcade
+  arcade: DESKTOP-CN0GDTR:E:/devProjects/squash-arcade
 ---
 
 # TASK LIST
 
-⚪ Squash Arcade — original repository only
-  🟢 Robin to judge revised shot feel and the clarity of the conventional side-on step-through
+⚪ Squash Arcade — E:\devProjects\squash-arcade
+  🟢 Operator/device evaluation of v1.11.82396; audible narration and physical motion controls remain unverified on this host
+  🟠 Queued TASK-50: opponent-aware volley placement
+  🟠 Queued TASK-51: experimental shot-chip serve choices
+  🟣 Queued existing monorepo/native packaging and RevenueCat/$ROCHE/Alby work
+
+TASK-59/60 are implemented and deployed as v1.11.82396. The court HUD is clear, three play methods lead to existing controls, and animated foreground briefings retain presentation/narration ownership over the AI demo. Evidence and exact limitations: [OBSERVED-RUN.md](VERIFICATION/arcade-briefing/OBSERVED-RUN.md). Source/release were committed and pushed as sensible sections; this ledger accompanies final evidence publication. Architecture and the four-state checklist remain the implementation authority for this repository; KStore alone supplies Admin-Manual authority.
+
+## Historical 2026-10-21 delivery record
+
+The following record came from conversation 01a15e0e-0b4c-7153-a123-1887270a7760 on msi4090. Its historical test requirements and main branch name do not supersede the current no-automated-tests instruction or master branch.
 
 Implementation tasks35–39 and controlled runtime observations are recorded in CHECKLIST.md and DOCS/VERIFICATION/shot-shape-step-20261021/OBSERVED-RUN.md. The29 regression tests, lint, repeated15/15 diagnostic and four inspected live stroke recordings passed. The requested evaluation deployment is complete: https://squash-arcade.surge.sh serves v1.1.77110;18/18 public files hash-match; bottom-right badge inspected on desktop/mobile and Play Match entered through the real UI. Evidence: DOCS/DEPLOYMENT/surge-20261021-v1.1.77110/. Gameplay acceptance is INCOMPLETE—pending-operator; native acceptance is outside scope. Mandatory turn archive/correction is KStore-mediated; the earlier failed retired task_event call was misclassified and is not a separate required ledger.
 

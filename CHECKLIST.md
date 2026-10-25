@@ -8,21 +8,23 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-59 — Clear the court and surface three play methods
 
-- **Status**: [/]
+- **Status**: [X]
 - **Dependencies**: [] (78aec6d; independent of native packaging, billing and queued tactics).
 - **Requirements**: HUD-1, HUD-2 (§4.20).
 - **Files**: src/squash/CourtHUD.js; public/court-hud.css; index.html; src/game_engine.js. Read-only: existing HudUI IDs/callbacks, MotionController RELAY_ENABLED/enableWebcam and shot selectors.
 - **Do**: Reparent the existing bottom settings/music controls into the collapsed hamburger setup at every width. Put the existing red shot choice and descriptive continuum in the upper HUD, keep six usable shot/Let chips along the lower edge. Preserve IDs/listeners and camera/gameplay. Add three prominent start methods. Keyboard uses existing match callback; phone/camera show their instructions, with self-contained textual fallback if ArcadeBriefing is absent. Phone pairing is capability-gated; camera starts only after explicit permission succeeds. Keep recovery and menu access.
 - **Accept**: Follow scenes A, C–G in DOCS/TEST_RUBRIC.md with this entity's controls. All settings remain reachable, no lower settings obstruction, no implicit timing mapping or static API polling. Desktop/portrait/landscape and keyboard focus remain usable. No sibling-task dependency; implement simple instruction fallback within this item.
+- **Observed delivery**: v1.11.82396 published to Surge. Menu/three methods, responsive layout, keyboard match entry, unavailable-camera recovery and zero static relay requests observed. Physical phone/camera play and the exhaustive camera sweep remain unobserved; see DOCS/VERIFICATION/arcade-briefing/OBSERVED-RUN.md. This marker records implementation with scoped runtime evidence, not independent semantic acceptance.
 
 ## TASK-60 — Animated arcade briefings with protected narration
 
-- **Status**: [/]
+- **Status**: [X]
 - **Dependencies**: [] (78aec6d; engine and original menu are sufficient).
 - **Requirements**: BRIEF-1–3 (§4.21).
 - **Files**: src/squash/ArcadeBriefing.js; src/squash/ArcadeSchematic.js; public/arcade-briefing.css; src/audio_engine.js; src/game_engine.js; index.html. Read-only: existing menu/start callbacks, MotionController and IntroDirector.
 - **Do**: Implement the full three-chapter lifecycle/content, narrated priority channel, local animated isometric diagrams and responsive accessible overlay specified in §4.21. Wire existing narrator invite and controls-guide entry even without TASK-59. Background scoring/replays stay live but cannot replace speech or foreground content. Include cleanup, reduced motion, silent reading time, focus/input isolation and mode start/recovery.
 - **Accept**: Follow scenes A–G in DOCS/TEST_RUBRIC.md, observing actual chapter animations, scoring beneath narration, automatic and requested flows, exits, browser visibility and capability recovery. Capture integrated evidence after both items; no intermediary test/reviewer gate. Source/build/publication markers do not certify physical phone or camera play.
+- **Observed delivery**: Public automatic placement/phone/camera sequence, moving diagrams and scoring behind the foreground, requested guide, reduced motion, focus/Escape, mute/unmute and human help pause/resume observed. Browser speech ended immediately on this host, so audible delivery is unverified. Screen captures contain no audio and do not certify every rubric scene continuously; see DOCS/VERIFICATION/arcade-briefing/OBSERVED-RUN.md.
 
 ## TASK-58 — Keep one racket hand and remove backhand grip jumps
 
