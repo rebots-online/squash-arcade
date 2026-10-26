@@ -8,21 +8,21 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-63 — Concurrent Windows, AppImage, Android and PWA release build
 
-- **Status**: [/]
+- **Status**: [X]
 - **Dependencies**: [] (aa2edb3; existing web game).
 - **Contract**: Architecture §4.23. Add Tauri 2 shell and one locked `npm run build` / `build:all` coordinator. Freeze and hash source/frontend, launch four isolated packaging workers concurrently, preserve logs/partial failures, require all artifacts, and write hashes and timings. Reuse shared Windows/Android and WSL tooling. Preserve existing gameplay; no separate Tauri-repository access.
 - **Accept**: Run the real coordinator; inspect four worker start times, exit codes, actual installer/AppImage/APK/AAB/PWA output and manifest hashes. Collect all five packages and a hash manifest under `dist/releases/<version>/` automatically. Verify Android fresh-snapshot bridge generation with shared caches. Report compilation and launch/device/signing limitations accurately. No automated tests.
 
 ## TASK-64 — Advance the source minor immediately after successful build
 
-- **Status**: [/]
+- **Status**: [X]
 - **Dependencies**: [] (aa2edb3).
 - **Contract**: Architecture §4.23. Replace the pre-build minor bump with metadata-only preparation. Freeze canonical version in artifacts; immediately bump source MINOR only after complete successful matrix, with edit-during-build detection and single-run locking. Advance this new source from the already published 1.12 version before compiling. Keep package/version/native configuration in agreement.
 - **Accept**: Observe real success retaining built N in artifacts and source at next minor; inspect failed-attempt behavior and lock cleanup without adding/running automated tests. Commit/push actual changes and receipts.
 
 ## TASK-65 — Red Mii favicon, app icons and installable offline PWA
 
-- **Status**: [/]
+- **Status**: [X]
 - **Dependencies**: [] (aa2edb3; existing red Mii SVG and web frontend).
 - **Contract**: Architecture §4.23. Reuse player1 identity in a slightly tilted composition, with held squash racquet tilted oppositely. Generate deterministic SVG/PNG/ICO sizes, including maskable safe-area icon. Wire favicon, PWA manifest/install metadata, production-only service worker with versioned local asset precache and safe updates, and native icon config.
 - **Accept**: Inspect actual icon at small and app sizes; observe manifest/service-worker/offline reload in the browser. Build and inspect native icon outputs. No automated tests; separate local offline game from remote optional features.

@@ -1,0 +1,6 @@
+{
+  "result": {
+    "type": "string",
+    "value": "{\"checkedAt\":\"2026-10-26T12:58:29.241Z\",\"online\":false,\"version\":\"v1.14.83639\",\"controller\":true,\"phase\":\"SERVE_STANCE\"}"
+  }
+}

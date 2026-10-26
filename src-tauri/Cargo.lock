@@ -2886,7 +2886,7 @@ dependencies = [
 
 [[package]]
 name = "squash-arcade"
-version = "1.14.83639"
+version = "1.15.83658"
 dependencies = [
  "log",
  "serde",
