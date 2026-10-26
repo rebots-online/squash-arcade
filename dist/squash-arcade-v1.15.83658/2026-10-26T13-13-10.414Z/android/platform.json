@@ -1,0 +1,6 @@
+{
+  "abi": "arm64-v8a",
+  "canonicalVersion": "1.15.83658",
+  "versionCode": 101583658,
+  "signing": "unsigned; production signing is a separate release step"
+}

@@ -1,0 +1,10 @@
+        Info Looking up installed tauri packages to check mismatched versions...
+   Compiling squash-arcade v1.15.83658 (/home/robin/.cache/squash-arcade/work/2026-10-26T13-06-09.194Z-linux/src-tauri)
+warning: squash-arcade@1.15.83658: STATIC_VCRUNTIME is deprecated; use build.windows.staticVCRuntime in tauri.conf.json or tauri_build::WindowsAttributes::static_vc_runtime instead.
+    Finished `release` profile [optimized] target(s) in 4m 07s
+       Built application at: /home/robin/.cache/squash-arcade/targets/linux/release/squash-arcade
+        Info Patching /home/robin/.cache/squash-arcade/targets/linux/release/squash-arcade with bundle type information: appimage
+    Bundling Squash Arcade_1.15.83658_amd64.AppImage (/home/robin/.cache/squash-arcade/targets/linux/release/bundle/appimage/Squash Arcade_1.15.83658_amd64.AppImage)
+    Finished 1 bundle at:
+        /home/robin/.cache/squash-arcade/targets/linux/release/bundle/appimage/Squash Arcade_1.15.83658_amd64.AppImage
+

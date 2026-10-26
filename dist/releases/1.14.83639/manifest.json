@@ -1,0 +1,37 @@
+{
+  "version": "1.14.83639",
+  "sourceCommit": "f135fdce1b104a68d7e995cf7de8e14d8aa457e8",
+  "sourceHash": "6f462ae178d9d9cff5f80ace9f728b490e9b4af857ba8d820b2b7d7ac4de37e8",
+  "artifacts": [
+    {
+      "platform": "windows",
+      "path": "releases/1.14.83639/SquashArcade-1.14.83639-windows-x64-setup.exe",
+      "bytes": 20858271,
+      "sha256": "ff4ffa42cb6b713b2d22748ea3687c01eaae5b1e2ee4d9650a4cd75d79e2c581"
+    },
+    {
+      "platform": "appimage",
+      "path": "releases/1.14.83639/SquashArcade-1.14.83639-linux-x86_64.AppImage",
+      "bytes": 96721400,
+      "sha256": "51793a4d64fc46787118932a3b265d6d67155e80022be7a267cc67b563016f52"
+    },
+    {
+      "platform": "android",
+      "path": "releases/1.14.83639/SquashArcade-1.14.83639-android-arm64-unsigned.aab",
+      "bytes": 24876882,
+      "sha256": "1f43158f8d3a0cf7fb1cb22f3c683d65a75f70fc28d0c6dbd76a2932bec77731"
+    },
+    {
+      "platform": "android",
+      "path": "releases/1.14.83639/SquashArcade-1.14.83639-android-arm64-unsigned.apk",
+      "bytes": 29908509,
+      "sha256": "5e3c379f4c148d7847afdfbbafddbef669c1198c1f66173ed91b577ac5ff10ad"
+    },
+    {
+      "platform": "pwa",
+      "path": "releases/1.14.83639/SquashArcade-1.14.83639-pwa.zip",
+      "bytes": 20588836,
+      "sha256": "2c9394215f67128708dc7e2e0b19447627bec43ebd440f9ed603e93d973e1358"
+    }
+  ]
+}

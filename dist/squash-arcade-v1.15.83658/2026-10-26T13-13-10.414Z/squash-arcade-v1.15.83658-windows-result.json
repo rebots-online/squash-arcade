@@ -1,0 +1,18 @@
+{
+  "startedAt": "2026-10-26T13:13:30.182Z",
+  "log": "dist\\squash-arcade-v1.15.83658\\2026-10-26T13-13-10.414Z\\squash-arcade-v1.15.83658-windows-build.log",
+  "exitCode": 0,
+  "artifacts": [
+    {
+      "path": "dist\\squash-arcade-v1.15.83658\\2026-10-26T13-13-10.414Z\\windows\\squash-arcade-v1.15.83658-windows-x64-setup.exe",
+      "bytes": 20861984,
+      "sha256": "5e1ec5e907ca47f94298042c35e9a13128254ba7b98aa116a12765983fedcc82"
+    }
+  ],
+  "finishedAt": "2026-10-26T13:16:47.017Z",
+  "platformMetadata": {
+    "canonicalVersion": "1.15.83658",
+    "signing": "unsigned",
+    "platformVersion": "1.15.18122"
+  }
+}

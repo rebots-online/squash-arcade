@@ -30,3 +30,10 @@ The 1.14 build's post-success copying into ignored dist/releases was not complia
 
 The previous scripted deployment published web 1.14.83639, but readback succeeded only on the Surge HTTPS domain (36/36 files); custom Host edge checks failed (0/36 each), so npm run deploy correctly returned exit 1. This is not a fully verified three-domain deployment.
 
+
+## Verified direct-dist build
+
+Attempt 2026-10-26T13-13-10.414Z, source commit 81d1dc6: npm run build exited 0 for version 1.15.83658. All four workers started within 26 ms, five packages were produced directly in tracked dist, and independent SHA-256 readback matched every artifact. Complete generated evidence: dist/squash-arcade-v1.15.83658-build-manifest.json and the per-attempt stamped verification. Earlier failed attempt retained its partial packages and failed inventory in dist. No dist rename/emptying occurred. Source advanced to 1.16.83680 automatically and the lock was removed. Signing and native/device acceptance remain separate.
+
+The latest standing override was saved and read back in KStore INFRASTRUCTURE.md revision 5 and TOOLING_CONVENTIONS/global-agent-rules.md revision 3. The configured available GitHub destination is used; no unavailable service is a dependency.
+

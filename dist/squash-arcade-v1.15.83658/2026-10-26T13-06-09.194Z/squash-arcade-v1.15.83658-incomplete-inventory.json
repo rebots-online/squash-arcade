@@ -1,0 +1,68 @@
+{
+  "version": "1.15.83658",
+  "sourceCommit": "e5b51b3d745f0d4cbd2eb3a577b655938e5ee012",
+  "sourceHash": "224b3e85985479bea339f775885df7a5b99d48372789f02b3edf126086788df7",
+  "startedAt": "2026-10-26T13:06:09.194Z",
+  "status": "failed",
+  "platforms": {
+    "windows": {
+      "startedAt": "2026-10-26T13:06:17.932Z",
+      "log": "dist\\squash-arcade-v1.15.83658\\2026-10-26T13-06-09.194Z\\squash-arcade-v1.15.83658-windows-build.log",
+      "exitCode": 0,
+      "artifacts": [
+        {
+          "path": "dist\\squash-arcade-v1.15.83658\\2026-10-26T13-06-09.194Z\\windows\\squash-arcade-v1.15.83658-windows-x64-setup.exe",
+          "bytes": 20861825,
+          "sha256": "b90a2231e5f56ff9bb923b91ab6c49752feabfba4d335e762ad5feec3f8fc939"
+        }
+      ],
+      "finishedAt": "2026-10-26T13:11:00.541Z",
+      "platformMetadata": {
+        "platformVersion": "1.15.18122",
+        "canonicalVersion": "1.15.83658",
+        "signing": "unsigned"
+      }
+    },
+    "appimage": {
+      "startedAt": "2026-10-26T13:06:17.938Z",
+      "log": "dist\\squash-arcade-v1.15.83658\\2026-10-26T13-06-09.194Z\\squash-arcade-v1.15.83658-appimage-build.log",
+      "exitCode": 0,
+      "artifacts": [
+        {
+          "path": "dist\\squash-arcade-v1.15.83658\\2026-10-26T13-06-09.194Z\\appimage\\squash-arcade-v1.15.83658-linux-x86_64.AppImage",
+          "bytes": 96717304,
+          "sha256": "a00e27b8b0c466558e8d537a62e2416d2fdc16c4b886b71619f55d7db20272a4"
+        }
+      ],
+      "finishedAt": "2026-10-26T13:12:43.767Z",
+      "platformMetadata": {
+        "canonicalVersion": "1.15.83658",
+        "baseline": "Ubuntu 24.04.4 LTS",
+        "signing": "unsigned"
+      }
+    },
+    "android": {
+      "startedAt": "2026-10-26T13:06:17.944Z",
+      "log": "dist\\squash-arcade-v1.15.83658\\2026-10-26T13-06-09.194Z\\squash-arcade-v1.15.83658-android-build.log",
+      "exitCode": 1,
+      "artifacts": [],
+      "finishedAt": "2026-10-26T13:11:36.179Z",
+      "error": "Required artifact missing: .apk"
+    },
+    "pwa": {
+      "startedAt": "2026-10-26T13:06:17.950Z",
+      "log": "dist\\squash-arcade-v1.15.83658\\2026-10-26T13-06-09.194Z\\squash-arcade-v1.15.83658-pwa-build.log",
+      "exitCode": 0,
+      "artifacts": [
+        {
+          "path": "dist\\squash-arcade-v1.15.83658\\2026-10-26T13-06-09.194Z\\pwa\\squash-arcade-v1.15.83658-pwa.zip",
+          "bytes": 20588837,
+          "sha256": "70111dfcd16289ea1469e0300af8cfde0d1823188ff61b27e9f0a170227917d3"
+        }
+      ],
+      "finishedAt": "2026-10-26T13:06:21.266Z"
+    }
+  },
+  "error": "Platform matrix incomplete. Source version has not advanced; inspect the retained per-platform logs.",
+  "finishedAt": "2026-10-26T13:12:43.980Z"
+}

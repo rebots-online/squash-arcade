@@ -1,0 +1,12 @@
+Pearl native Windows toolchain selected; shared tools and caches use E:\DevTools.
+        Info Looking up installed tauri packages to check mismatched versions...
+   Compiling squash-arcade v1.15.83658 (E:\devProjects\squash-arcade\dist\.work\1.15.83658\2026-10-26T13-06-09.194Z\windows\source\src-tauri)
+warning: squash-arcade@1.15.83658: STATIC_VCRUNTIME is deprecated; use build.windows.staticVCRuntime in tauri.conf.json or tauri_build::WindowsAttributes::static_vc_runtime instead.
+    Finished `release` profile [optimized] target(s) in 4m 11s
+       Built application at: E:\DevTools\caches\squash-arcade\windows\release\squash-arcade.exe
+        Info Patching E:\DevTools\caches\squash-arcade\windows\release\squash-arcade.exe with bundle type information: nsis
+        Info Target: x64
+     Running makensis to produce E:\DevTools\caches\squash-arcade\windows\release\bundle\nsis\Squash Arcade_1.15.18122_x64-setup.exe
+    Finished 1 bundle at:
+        E:\DevTools\caches\squash-arcade\windows\release\bundle\nsis\Squash Arcade_1.15.18122_x64-setup.exe
+

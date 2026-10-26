@@ -1,0 +1,70 @@
+Pearl native Windows toolchain selected; shared tools and caches use E:\DevTools.
+        Info Using installed NDK: E:\DevTools\android\sdk\ndk\29.0.14206865
+Generating Android Studio project...
+        Info "E:\\devProjects\\squash-arcade\\dist\\.work\\1.15.83658\\2026-10-26T13-06-09.194Z\\android\\source\\src-tauri" relative to "E:\\devProjects\\squash-arcade\\dist\\.work\\1.15.83658\\2026-10-26T13-06-09.194Z\\android\\source\\src-tauri\\gen/android\\squash_arcade" is "..\\..\\..\\"
+victory: Project generated successfully!
+    Make cool apps! 🌻 🐕 🎉
+android.permission.CAMERA
+android.hardware.camera.any
+false
+     Removed 208 files, 31.4MiB total
+        Info Using installed NDK: E:\DevTools\android\sdk\ndk\29.0.14206865
+        Info Looking up installed tauri packages to check mismatched versions...
+[1m[92m   Compiling[0m tauri v2.12.5
+[1m[92m   Compiling[0m wry v0.57.1
+[1m[92m   Compiling[0m squash-arcade v1.15.83658 (E:\devProjects\squash-arcade\dist\.work\1.15.83658\2026-10-26T13-06-09.194Z\android\source\src-tauri)
+[1m[92m   Compiling[0m tauri-runtime-wry v2.12.3
+[1m[92m   Compiling[0m tauri-plugin-log v2.10.1
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 4m 39s
+        Info symlinking lib "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" in jniLibs dir "E:\\devProjects\\squash-arcade\\dist\\.work\\1.15.83658\\2026-10-26T13-06-09.194Z\\android\\source\\src-tauri\\gen/android\\app/src/main/jniLibs/arm64-v8a"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "liblog.so"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libandroid.so"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libdl.so"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libm.so"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libc.so"
+        Info symlink at "E:\\devProjects\\squash-arcade\\dist\\.work\\1.15.83658\\2026-10-26T13-06-09.194Z\\android\\source\\src-tauri\\gen/android\\app/src/main/jniLibs/arm64-v8a\\libapp_lib.so" points to "E:\\DevTools\\caches\\squash-arcade\\android\\aarch64-linux-android\\release\\libapp_lib.so"
+w: file:///E:/devProjects/squash-arcade/dist/.work/1.15.83658/2026-10-26T13-06-09.194Z/android/source/src-tauri/gen/android/buildSrc/src/main/java/mba/robin/squash/kotlin/BuildTask.kt:53:17 'exec(Action<in ExecSpec!>): ExecResult' is deprecated. Deprecated in Java
+e: file:///E:/devProjects/squash-arcade/dist/.work/1.15.83658/2026-10-26T13-06-09.194Z/android/source/src-tauri/gen/android/app/build.gradle.kts:72:39: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+public fun Project.base(configure: Action<BasePluginExtension>): Unit defined in org.gradle.kotlin.dsl
+
+[Incubating] Problems report is available at: file:///E:/devProjects/squash-arcade/dist/.work/1.15.83658/2026-10-26T13-06-09.194Z/android/source/src-tauri/gen/android/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file 'E:\devProjects\squash-arcade\dist\.work\1.15.83658\2026-10-26T13-06-09.194Z\android\source\src-tauri\gen\android\app\build.gradle.kts' line: 72
+
+* What went wrong:
+Script compilation error:
+
+  Line 72: apply(from = "tauri.build.gradle.kts")base { archivesName.set("squash-arcade-v1.15.83658") }
+                                                 ^ Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
+                                                     public fun Project.base(configure: Action<BasePluginExtension>): Unit defined in org.gradle.kotlin.dsl
+
+1 error
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 19s
+       Error failed to build APK: Failed to assemble APK with Io(BeforeSpawn(<closure>), Io(StderrFile(OwnedHandle { handle: 0x27c }), Io(StdoutFile(OwnedHandle { handle: 0x270 }), Io(StdinFile(OwnedHandle { handle: 0x58 }), Io(Env("TEMP", "E:\\DevTools\\caches\\build-temp"), Io(Env("CARGO_TARGET_I686_LINUX_ANDROID_RUSTFLAGS", "-Clink-arg=-landroid -Clink-arg=-llog -Clink-arg=-lOpenSLES"), Io(Env("ANDROID_HOME", "E:\\DevTools\\android\\sdk"), Io(Env("CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER", "E:\\DevTools\\android\\sdk\\ndk\\29.0.14206865\\toolchains/llvm/prebuilt/windows-x86_64\\bin\\x86_64-linux-android24-clang.cmd"), Io(Env("TAURI_CLI_VERBOSITY", "0"), Io(Env("RUST_LOG", "warn"), Io(Env("CARGO_TARGET_I686_LINUX_ANDROID_LINKER", "E:\\DevTools\\android\\sdk\\ndk\\29.0.14206865\\toolchains/llvm/prebuilt/windows-x86_64\\bin\\i686-linux-android24-clang.cmd"), Io(Env("CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER", "E:\\DevTools\\android\\sdk\\ndk\\29.0.14206865\\toolchains/llvm/prebuilt/windows-x86_64\\bin\\aarch64-linux-android24-clang.cmd"), Io(Env("ProgramData", "C:\\ProgramData"), Io(Env("WRY_ANDROID_KOTLIN_FILES_OUT_DIR", "E:\\devProjects\\squash-arcade\\dist\\.work\\1.15.83658\\2026-10-26T13-06-09.194Z\\android\\source\\src-tauri\\gen/android\\app/src/main\\java/mba/robin/squash\\generated"), Io(Env("TMP", "E:\\DevTools\\caches\\build-temp"), Io(Env("PATH", "E:\\DevTools\\node\\node-v22.23.3-win-x64;E:\\DevTools\\go\\go1.26.5\\go\\bin;E:\\DevTools\\cargo\\bin;E:\\DevTools\\jdk\\jdk-21.0.12.1+1\\bin;E:\\DevTools\\mingw\\mingw64\\bin;E:\\DevTools\\NSIS;E:\\DevTools\\wix3-portable;E:\\DevTools\\android\\sdk\\cmdline-tools\\19.0\\bin;E:\\DevTools\\android\\sdk\\platform-tools;E:\\DevTools\\android\\sdk\\build-tools\\37.0.0;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64;E:\\DevTools\\VisualStudio\\BuildTools2022\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\VC\\VCPackages;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow;E:\\DevTools\\VisualStudio\\BuildTools2022\\MSBuild\\Current\\bin\\Roslyn;E:\\DevTools\\VisualStudio\\BuildTools2022\\Team Tools\\DiagnosticsHub\\Collector;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\Extensions\\Microsoft\\CodeCoverage.Console;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\\\x64;E:\\DevTools\\VisualStudio\\BuildTools2022\\\\MSBuild\\Current\\Bin\\amd64;C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\Tools\\;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;E:\\devProjects\\squash-arcade\\node_modules\\.bin;E:\\devProjects\\node_modules\\.bin;E:\\node_modules\\.bin;C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\@npmcli\\run-script\\lib\\node-gyp-bin;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\Admin\\.codex\\tmp\\arg0-windows\\codex-arg07E9BhU;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\libheif\\libheif\\bin;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\jxrlib\\jxrlib\\bin;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\override;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v13.3\\bin\\x64;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v13.3\\bin;;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\nodejs\\;C:\\Program Files\\CMake\\bin;C:\\Program Files\\GitHub CLI\\;C:\\Users\\Admin\\.cargo\\bin;C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\;C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python313\\;C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Launcher\\;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\Admin\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Admin\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Users\\Admin\\AppData\\Local\\GitHubCopilotCLI\\;C:\\Users\\Admin\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;C:\\Users\\Admin\\AppData\\Roaming\\npm;C:\\Users\\Admin\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe;C:\\Users\\Admin\\AppData\\Local\\Programs\\Microsoft VS Code Insiders\\bin;C:\\Users\\Admin\\AppData\\Local\\Programs\\Devin\\bin;C:\\Users\\Admin\\AppData\\Local\\Microsoft\\WinGet\\Packages\\CognitionAI.DevinCLI_Microsoft.Winget.Source_8wekyb3d8bbwe\\bin;C:\\Users\\Admin\\AppData\\Local\\Microsoft\\WinGet\\Packages\\ggml.llamacpp_Microsoft.Winget.Source_8wekyb3d8bbwe;F:\\WIN11-256gb-nvme\\Source\\llama.cpp\\build-cuda\\bin;C:\\Users\\Admin\\.local\\bin;C:\\Users\\Admin\\AppData\\Local\\Programs\\Ollama;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\fallback;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd;C:\\Users\\Admin\\AppData\\Local\\OpenAI\\Codex\\bin\\90ee5f622914d088;C:\\Users\\Admin\\AppData\\Local\\OpenAI\\Codex\\bin\\a96ca4c1eee0cf35;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe;E:\\DevTools\\VisualStudio\\BuildTools2022\\VC\\vcpkg;E:\\DevTools\\msys64\\usr\\bin;E:\\DevTools\\rustup\\toolchains\\1.94.1-x86_64-pc-windows-msvc\\bin"), Io(Env("CARGO_TARGET_DIR", "E:/DevTools/caches/squash-arcade/android"), Io(Env("TAURI_ANDROID_PROJECT_PATH", "E:\\devProjects\\squash-arcade\\dist\\.work\\1.15.83658\\2026-10-26T13-06-09.194Z\\android\\source\\src-tauri\\gen/android"), Io(Env("RUST_LOG_STYLE", "always"), Io(Env("SystemRoot", "C:\\Windows"), Io(Env("WRY_ANDROID_PACKAGE", "mba.robin.squash"), Io(Env("USERPROFILE", "C:\\Users\\Admin"), Io(Env("CARGO_TARGET_X86_64_LINUX_ANDROID_RUSTFLAGS", "-Clink-arg=-landroid -Clink-arg=-llog -Clink-arg=-lOpenSLES"), Io(Env("CARGO_TARGET_ARMV7_LINUX_ANDROIDEABI_LINKER", "E:\\DevTools\\android\\sdk\\ndk\\29.0.14206865\\toolchains/llvm/prebuilt/windows-x86_64\\bin\\armv7a-linux-androideabi24-clang.cmd"), Io(Env("CARGO_TARGET_AARCH64_LINUX_ANDROID_RUSTFLAGS", "-Clink-arg=-landroid -Clink-arg=-llog -Clink-arg=-lOpenSLES"), Io(Env("NDK_HOME", "E:\\DevTools\\android\\sdk\\ndk\\29.0.14206865"), Io(Env("PATHEXT", ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL"), Io(Env("RUST_RECURSION_COUNT", "1"), Io(Env("TAURI_ANDROID_PACKAGE_UNESCAPED", "mba.robin.squash"), Io(Env("WRY_ANDROID_LIBRARY", "app_lib"), Io(Env("CARGO_HOME", "E:\\DevTools\\cargo"), Io(Env("CARGO_TARGET_ARMV7_LINUX_ANDROIDEABI_RUSTFLAGS", "-Clink-arg=-landroid -Clink-arg=-llog -Clink-arg=-lOpenSLES"), Io(Env("TERM", "dumb"), Cmd(["E:\\devProjects\\squash-arcade\\dist\\.work\\1.15.83658\\2026-10-26T13-06-09.194Z\\android\\source\\src-tauri\\gen/android\\gradlew.bat", "--project-dir", "E:\\devProjects\\squash-arcade\\dist\\.work\\1.15.83658\\2026-10-26T13-06-09.194Z\\android\\source\\src-tauri\\gen/android"])))))))))))))))))))))))))))))))))): command ["E:\\devProjects\\squash-arcade\\dist\\.work\\1.15.83658\\2026-10-26T13-06-09.194Z\\android\\source\\src-tauri\\gen/android\\gradlew.bat", "--project-dir", "E:\\devProjects\\squash-arcade\\dist\\.work\\1.15.83658\\2026-10-26T13-06-09.194Z\\android\\source\\src-tauri\\gen/android"] exited with code 1
+file:///E:/devProjects/squash-arcade/dist/.work/1.15.83658/2026-10-26T13-06-09.194Z/android/source/scripts/build-platform.mjs:9
+  child.once('error',fail);child.once('exit',code=>code===0?done():fail(new Error(`${platform} worker exited ${code}`)));
+                                                                        ^
+
+Error: android worker exited 1
+    at ChildProcess.<anonymous> (file:///E:/devProjects/squash-arcade/dist/.work/1.15.83658/2026-10-26T13-06-09.194Z/android/source/scripts/build-platform.mjs:9:73)
+    at Object.onceWrapper (node:events:631:26)
+    at ChildProcess.emit (node:events:509:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:295:12)
+
+Node.js v24.19.0
