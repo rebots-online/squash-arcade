@@ -13,7 +13,6 @@ import { selectVolleyTargetCorner } from './VolleyPlanner.js';
 import * as THREE from 'three';
 import { COURT_SPECS } from './CourtGeometry.js';
 import { BallPhysics } from './BallPhysics.js';
-import { SHOT_CHARGE_ENVELOPES } from './TuningConfig.js';
 import { ShotTrajectorySolver } from './ShotTrajectorySolver.js';
 
 export const SQUASH_SHOT_TYPES = Object.freeze({
@@ -29,14 +28,11 @@ export const SQUASH_SHOT_TYPES = Object.freeze({
   SERVE: 'SERVE'
 });
 
-const LOB_ENVELOPE_FALLBACK = Object.freeze({ minPaceMps: 9.0, maxPaceMps: 15.5 });
-const LOB_CORNER_REF = Object.freeze({ x: 2.35, z: 4.2 }); // x is mirrored per corner
+const LOB_CORNER_REF = Object.freeze({ x: 2.75, z: 4.45 }); // x is mirrored per corner
 const LOB_T_BAND_Z = Object.freeze([0.5, 2.5]);
 const LOB_T_BAND_CLEARANCE_M = 2.6;
 const LOB_OVERHIT_PACE_SCALE = 1.14;
-const LOB_ELEVATIONS_DEG = Object.freeze([30, 35, 40, 45, 50, 55, 60, 65]);
-const LOB_DESCENT_TIE_DEG = 2;
-const LOB_WOULD_HAVE_ELEVATIONS_DEG = Object.freeze([30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80]);
+const LOB_FRONT_HEIGHTS = Object.freeze([4.42, 4.15, 3.8, 3.4, 3.0, 2.5, 1.9]);
 
 export class ShotController {
   constructor(randomSource = Math.random) {
@@ -279,9 +275,11 @@ export class ShotController {
       cutAngleDeg = Number(sm.lobLaunchAngleDeg ?? 38.0);
       forearmPronationDegPerSec = 240;
 
+      // The flight starts at the actual contact, including high reachable volleys.
+      contactPos.copy(ball.pos);
       const lobSol = this.solveCornerLob({
         contactPos,
-        chargeNormalized: prepCharge,
+        opponentPos: opponent?.pos,
         params
       });
       vel.copy(lobSol.vel);
@@ -480,97 +478,79 @@ export class ShotController {
     return ShotTrajectorySolver.solveDrive({ contactPos, spin, params, isCrossRequest });
   }
 
-  /**
-   * §5.9 lob solve. The GOAL is a steep first drop into one of the two back
-   * corners; the front-wall contact point is only the result of the solve.
-   * Both corners are searched from the current contact position. The best
-   * legal corner drop wins (LEGAL_CORNER). If no legal one exists, the shot is
-   * still played as the optimal corner attempt and classified by what the ball
-   * actually does (ATTEMPT_OUT / ATTEMPT_SHORT).
-   */
-  solveCornerLob({ contactPos, chargeNormalized, params }) {
-    const envelope = (SHOT_CHARGE_ENVELOPES && SHOT_CHARGE_ENVELOPES.LOB) || LOB_ENVELOPE_FALLBACK;
-    const minPaceMps = Number(envelope.minPaceMps ?? 9.0);
-    const maxPaceMps = Number(envelope.maxPaceMps ?? 15.5);
-    const charge = THREE.MathUtils.clamp(Number(chargeNormalized ?? 0.45), 0, 1);
-    const paceCenter = THREE.MathUtils.lerp(minPaceMps, maxPaceMps, charge);
-    const spin = new THREE.Vector3(-2.5, 0, 0);
-
-    const paces = [];
-    for (const delta of [-2.0, 0.0, 2.0]) {
-      const pace = THREE.MathUtils.clamp(paceCenter + delta, minPaceMps, maxPaceMps);
-      if (!paces.some((p) => Math.abs(p - pace) < 1e-9)) paces.push(pace);
-    }
-
-    const AIM_CALIBRATION_ELEV_DEG = 35;
-    const aims = [1, -1].map((cornerSign) => {
-      const corner = { x: cornerSign * LOB_CORNER_REF.x, z: LOB_CORNER_REF.z };
-      // Unfold the front-wall reflection: aim at the corner mirrored through the
-      // wall plane, then correct the lateral aim from the simulated landing.
-      let aimX = corner.x;
-      const mirrorZ = 2 * COURT_SPECS.FRONT_WALL_Z - corner.z;
-      for (let iter = 0; iter < 2; iter++) {
-        const probe = this._simulateLobCandidate(
-          contactPos,
-          this._lobLaunchVelocity(contactPos, aimX, mirrorZ, AIM_CALIBRATION_ELEV_DEG, paceCenter),
-          spin,
-          params
-        );
-        if (!probe.landingPos) break;
-        aimX -= probe.landingPos.x - corner.x;
-      }
-      return { cornerSign, corner, aimX, mirrorZ };
-    });
-
-    const scan = (elevations, scanPaces) => {
-      const out = [];
-      for (const { cornerSign, corner, aimX, mirrorZ } of aims) {
-        for (const elevDeg of elevations) {
-          for (const pace of scanPaces) {
-            const vel = this._lobLaunchVelocity(contactPos, aimX, mirrorZ, elevDeg, pace);
-            const sim = this._simulateLobCandidate(contactPos, vel, spin, params);
-            out.push({ vel, paceMps: pace, cornerSign, ...this._scoreLobCandidate(sim, corner) });
-          }
-        }
-      }
-      return out;
+  /** Goal-first inverse flight solve; architecture 4.22. Charge never shortens the goal. */
+  solveCornerLob({ contactPos, opponentPos, params = {} }) {
+    const receiverX = Number(opponentPos?.x ?? 0);
+    const cornerSign = Math.abs(receiverX) > 0.01 ? -Math.sign(receiverX) : contactPos.x >= 0 ? -1 : 1;
+    const corner = { x: cornerSign * LOB_CORNER_REF.x, z: LOB_CORNER_REF.z };
+    const spin = new THREE.Vector3(-2.5 * Number(params.shotMechanics?.spinMagnitudeScale ?? 1), 0, 0);
+    const bp = params.ballPhysics || {};
+    const radius = COURT_SPECS.BALL_RADIUS * 1.65;
+    const frontZ = COURT_SPECS.FRONT_WALL_Z + radius;
+    const d = Math.max(0.05, contactPos.z - frontZ);
+    const a = corner.z - frontZ;
+    const friction = Number(bp.surfaceFriction ?? 0.8);
+    const gravity = Number(bp.gravity ?? 9.81);
+    const magnus = Number(bp.magnusSpinCoupling ?? 0.012);
+    const g0 = gravity + spin.x * magnus * 8.5;
+    const g1 = gravity + spin.x * 0.68 * magnus * 8.5;
+    const k = a / (0.88 * d);
+    let best = null;
+    let bestLegal = null;
+    let closest = null;
+    const probe = (vel, height) => {
+      const sim = this._simulateLobCandidate(contactPos, vel, spin, params);
+      const scored = this._scoreLobCandidate(sim, corner);
+      const landing = sim.landingPos || sim.finalPos;
+      // Unfold an early glass rebound so the derivative points back into court.
+      const z = sim.backWallBeforeLanding ? 2 * (COURT_SPECS.BACK_WALL_Z - radius) - landing.z : landing.z;
+      const residual = [3 * ((sim.frontContact?.y ?? sim.finalPos.y) - height), landing.x - corner.x, z - corner.z];
+      const error = residual.reduce((sum, v) => sum + v * v, 0);
+      const candidate = { ...scored, vel: vel.clone(), residual, error };
+      if (!closest || error < closest.error) closest = candidate;
+      if (scored.isLegalContact && !sim.backWallBeforeLanding && (!bestLegal || scored.cornerDist < bestLegal.cornerDist)) bestLegal = candidate;
+      if (scored.inCornerZone && scored.isLegalContact && (!best || scored.descentDeg > best.descentDeg)) best = candidate;
+      return candidate;
     };
-    const closest = (pool) =>
-      pool.reduce((best, cand) => (best === null || cand.cornerDist < best.cornerDist ? cand : best), null);
-
-    // A lob is judged by how steeply it falls into the corner: among legal corner
-    // landings take the steepest drop, and the softer launch when two are within
-    // LOB_DESCENT_TIE_DEG of each other.
-    const steepest = (pool) =>
-      pool.reduce((best, c) => {
-        if (best === null) return c;
-        if (c.descentDeg > best.descentDeg + LOB_DESCENT_TIE_DEG) return c;
-        if (Math.abs(c.descentDeg - best.descentDeg) <= LOB_DESCENT_TIE_DEG && c.paceMps < best.paceMps) return c;
-        return best;
-      }, null);
-    const legalPick = (pool) => steepest(pool.filter((c) => c.inCornerZone && c.isLegalContact));
-
-    // 1–2. Search the whole LOB envelope (never full power) for legal corner landings:
-    //      steep ones are LEGAL_CORNER, flat ones from mid/back court CATCHABLE_CORNER.
-    const charged = scan(LOB_ELEVATIONS_DEG, paces);
-    const envelopePaces = [];
-    for (let pace = minPaceMps; pace < maxPaceMps; pace += 1.0) envelopePaces.push(pace);
-    envelopePaces.push(maxPaceMps);
-    const wide = scan(LOB_WOULD_HAVE_ELEVATIONS_DEG, envelopePaces);
-    let winner = legalPick([...charged, ...wide]);
-
-    // 3. No legal way into a corner anywhere in the envelope: the player aims at the
-    //    out location that WOULD have solved a back corner (legality ignored).
-    // 4. Last resort (no corner-reaching trajectory at all): closest landing.
-    const all = [...charged, ...wide];
-    winner = winner || closest(all.filter((c) => c.reachesCorner)) || closest(all);
-
+    for (const height of LOB_FRONT_HEIGHTS) {
+      // Ballistic seed includes wall friction/spin; live physics corrects drag and impacts.
+      const A = 0.5 * (friction * g0 * k + g1 * k * k);
+      const B = -spin.x * Number(bp.spinSurfaceBite ?? 0.024) * k;
+      const D = radius - height - friction * k * (height - contactPos.y);
+      const t = (-B + Math.sqrt(Math.max(0, B * B - 4 * A * D))) / (2 * A);
+      if (!Number.isFinite(t) || t <= 0) continue;
+      let current = probe(new THREE.Vector3(
+        (corner.x - contactPos.x) / (t * (1 + friction * k)),
+        (height - contactPos.y) / t + 0.5 * g0 * t,
+        -d / t
+      ).multiplyScalar(1.12), height);
+      for (let iteration = 0; iteration < 10; iteration++) {
+        if (current.error < 0.001) break;
+        const jacobian = [[], [], []];
+        for (let axis = 0; axis < 3; axis++) {
+          const vel = current.vel.clone();
+          vel.setComponent(axis, vel.getComponent(axis) + 0.08);
+          const shifted = probe(vel, height);
+          for (let row = 0; row < 3; row++) jacobian[row][axis] = (shifted.residual[row] - current.residual[row]) / 0.08;
+        }
+        const step = ShotTrajectorySolver._linearStep(jacobian, current.residual);
+        if (!step) break;
+        const delta = new THREE.Vector3(...step.map(v => THREE.MathUtils.clamp(v, -3, 3)));
+        let next = null;
+        for (const scale of [1, 0.5, 0.25]) {
+          const vel = current.vel.clone().addScaledVector(delta, scale);
+          if (vel.z >= -0.1 || vel.length() > 40) continue;
+          const candidate = probe(vel, height);
+          if (candidate.error < current.error) { next = candidate; break; }
+        }
+        if (!next) break;
+        current = next;
+      }
+    }
+    const winner = best || bestLegal || closest;
     return {
-      vel: winner.vel,
-      spin,
-      cornerSign: winner.cornerSign,
-      solvedContactY: winner.solvedContactY,
-      paceMps: winner.paceMps,
+      vel: winner.vel, spin, cornerSign,
+      solvedContactY: winner.solvedContactY, paceMps: winner.vel.length(),
       solveStatus: this._lobStatus(winner)
     };
   }
@@ -588,19 +568,7 @@ export class ShotController {
     };
   }
 
-  _lobLaunchVelocity(contactPos, aimX, aimZ, elevDeg, pace) {
-    const dx = aimX - contactPos.x;
-    const dz = aimZ - contactPos.z;
-    const horizLen = Math.max(0.8, Math.hypot(dx, dz));
-    const elevRad = (elevDeg * Math.PI) / 180;
-    const horiz = pace * Math.cos(elevRad);
-    return new THREE.Vector3((dx / horizLen) * horiz, pace * Math.sin(elevRad), (dz / horizLen) * horiz);
-  }
-
-  /**
-   * Steps the live ball physics only until the first floor contact — everything
-   * the lob objective needs — so the 52-candidate search stays cheap.
-   */
+  /** Integrate to first floor contact, retaining all wall legality and ordering. */
   _simulateLobCandidate(contactPos, vel, spin, params) {
     const dt = 1 / 120;
     const ball = {
@@ -616,15 +584,21 @@ export class ShotController {
     let postWallTBandMinY = Infinity;
     let descentDeg = -Infinity;
     let backWallBeforeLanding = false;
-    for (let i = 0; i < 3.0 / dt && !landingPos; i++) {
+    let illegalContact = false;
+    let sideWallBeforeLanding = false;
+    for (let i = 0; i < 6.0 / dt && !landingPos; i++) {
       const preVel = ball.vel.clone();
       BallPhysics.stepBallPhysics(ball, dt, params, null, {
         onCollision: (evt) => {
+          if (landingPos) return;
+          illegalContact ||= Boolean(evt.isOut || evt.isTin || evt.surface === 'tin');
+          sideWallBeforeLanding ||= evt.surface.startsWith('side_wall');
           if (!frontContact && (evt.surface === 'front_wall' || evt.surface === 'tin')) {
-            frontContact = { y: evt.pos.y, isTin: evt.surface === 'tin' };
+            frontContact = { x: evt.pos.x, y: evt.pos.y, isTin: evt.surface === 'tin', isOut: evt.isOut };
           } else if (!landingPos && evt.surface === 'back_wall') {
             backWallBeforeLanding = true;
           } else if (!landingPos && (evt.surface === 'floor' || evt.surface === 'nick')) {
+            illegalContact ||= !frontContact;
             landingPos = evt.pos.clone();
             // Angle of the drop into the floor: how steeply the lob falls into the corner.
             descentDeg = (Math.atan2(-preVel.y, Math.hypot(preVel.x, preVel.z)) * 180) / Math.PI;
@@ -635,7 +609,7 @@ export class ShotController {
         postWallTBandMinY = Math.min(postWallTBandMinY, ball.pos.y);
       }
     }
-    return { frontContact, landingPos, postWallTBandMinY, descentDeg, backWallBeforeLanding, finalPos: ball.pos.clone() };
+    return { frontContact, landingPos, postWallTBandMinY, descentDeg, backWallBeforeLanding, illegalContact, sideWallBeforeLanding, finalPos: ball.pos.clone() };
   }
 
   _scoreLobCandidate(sim, corner) {
@@ -644,14 +618,15 @@ export class ShotController {
     const inCornerZone =
       !!sim.landingPos &&
       !sim.backWallBeforeLanding &&
-      Math.abs(sim.landingPos.x) >= 1.6 &&
-      Math.sign(sim.landingPos.x) === Math.sign(corner.x) &&
-      sim.landingPos.z >= 3.0;
+      !sim.sideWallBeforeLanding &&
+      Math.abs(sim.landingPos.x - corner.x) <= 0.12 &&
+      Math.abs(sim.landingPos.z - corner.z) <= 0.10;
     const solvedContactY = sim.frontContact ? sim.frontContact.y : null;
     return {
       solvedContactY,
       isLegalContact:
-        !!sim.frontContact && !sim.frontContact.isTin && solvedContactY < COURT_SPECS.FRONT_WALL_OUT_Y,
+        !!sim.frontContact && !!sim.landingPos && !sim.illegalContact,
+      illegalContact: sim.illegalContact,
       inCornerZone,
       // Steep: the post-wall flight clears the T band, so it cannot be volleyed there.
       reachesCorner:
@@ -668,7 +643,7 @@ export class ShotController {
   }
 
   _classifyLobAttempt(scored) {
-    return scored.solvedContactY !== null && scored.solvedContactY >= COURT_SPECS.FRONT_WALL_OUT_Y
+    return scored.illegalContact || (scored.solvedContactY !== null && scored.solvedContactY >= COURT_SPECS.FRONT_WALL_OUT_Y)
       ? 'ATTEMPT_OUT'
       : 'ATTEMPT_SHORT';
   }

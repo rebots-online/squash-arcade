@@ -1,0 +1,24 @@
+{
+  "disabled": {
+    "pending": false,
+    "phase": "SERVE_STANCE",
+    "server": "player"
+  },
+  "initial": {
+    "phase": "SERVE_STANCE",
+    "server": "player",
+    "spin": false
+  },
+  "opted": {
+    "pending": false,
+    "phase": "RACKET_SPIN"
+  },
+  "restarted": {
+    "pending": false,
+    "phase": "RACKET_SPIN"
+  },
+  "zeroAll": {
+    "phase": "SERVE_STANCE",
+    "server": "player"
+  }
+}

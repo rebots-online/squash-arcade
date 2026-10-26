@@ -6,6 +6,20 @@ Four states: `[ ]` unstarted -> `[/]` undertaking -> `[X]` implemented with veri
 
 Current operator override: no automated tests for follow-up work. TASK-40–45 test commands below are historical completed-release instructions, not current gates. TASK-46–48 are independent on release 178584f; each includes its own implementation and focused browser observation. No task requires another follow-up task.
 
+## TASK-61 — Solve the lob to the rear corner away from the receiver
+
+- **Status**: [/]
+- **Dependencies**: [] (c6cc371).
+- **Contract**: Architecture §4.22. In src/squash/ShotController.js pass opponent.pos to solveCornerLob, choose its opposite side with contact-side tie-break, target (±2.75,0,4.45), and replace coarse charge-limited scanning with bounded continuous launch solves using existing ShotTrajectorySolver._linearStep. Probe front heights 4.42 through 1.9 m, score actual landing/descent, and preserve the steepest converged legal candidate. Track all collision legality and floor/front/back ordering in _simulateLobCandidate; reclassify actual AI overhit output. Preserve other shot families and live physics. No new test files.
+- **Accept**: Observe front/mid/rear contacts on both sides, both receiver sides and low/high contacts with the real physics; inspect front-to-floor event order, rear landing, out flags and descent. Observe rendered lob flight. Record limits without claiming exhaustive gameplay acceptance. Commit/push and verify publication; release with the requested entry changes.
+
+## TASK-62 — Immediate start, optional spin and spoken red identity
+
+- **Status**: [/]
+- **Dependencies**: [] (c6cc371).
+- **Contract**: Architecture §4.22. CourtHUD places #btn-start-match first in the menu, adds visible #btn-quick-start outside it and a persisted unchecked #setting-racket-spin under settings. CourtHUD.update shows quick start only for demo/title/intro/match-over, avoiding gameplay obstruction. All quick-start input stays out of shot handlers and unlocks existing audio. startNewMatch captures the opt-in once; _setupPointServe consumes it once; ceremony generation invalidates stale timers. RulesEngine's red-first score default remains. AudioEngine welcome and ArcadeBriefing placement narration contain the exact red-player sentence. Keep existing controls, camera/phone journeys and candy style. Retain START MATCH in HudUI difficulty updates. A bundled identity WAV plays through _playIdentityFallback if browser speech is missing/fails/ends without starting; cancellation/mute shares the narration owner.
+- **Accept**: Observe initial desktop and narrow portrait start without menu/scroll, click into red service with spin off, opt in/reload/spin, then disable/reload/red-first; inspect zero-all let handling. Observe the exact protected narration request and report actual audio availability separately. Build, commit/push, deploy and verify public bytes. No automated tests.
+
 ## TASK-59 — Clear the court and surface three play methods
 
 - **Status**: [X]

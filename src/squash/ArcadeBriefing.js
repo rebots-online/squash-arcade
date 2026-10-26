@@ -6,7 +6,7 @@ const CHAPTERS = [
     id: 'placement', kicker: 'PHYSICAL CHESS · A QUICK COURTSIDE BRIEFING', title: 'Make space. Then take it.',
     copy: 'Learn to see the court like a squash player.',
     steps: ['Keep rails tight to the wall.', 'Send drives and lobs deep, beyond the service box.', 'Volley when the opening is there. Move your opponent before you attack.'],
-    speech: 'Squash is physical chess. Keep rails tight to the wall. Send drives and lobs deep, beyond the service box. Volley when the opening is there. Move your opponent before you attack. Watch the red player, then try the shots yourself.',
+    speech: 'The user is always represented in the game as the red player. Squash is physical chess. Keep rails tight to the wall. Send drives and lobs deep, beyond the service box. Volley when the opening is there. Move your opponent before you attack. Watch the red player, then try the shots yourself.',
     minSeconds: 13
   },
   {
@@ -43,7 +43,7 @@ export class ArcadeBriefing {
       <button type="button" class="briefing-button" data-action="back">← Back</button>
       <button type="button" class="briefing-button" data-action="next">Next →</button>
       <button type="button" class="briefing-button primary" data-action="start">Play</button>
-      <button type="button" class="briefing-button" data-action="keyboard">Keyboard / mouse</button></div></footer></section>`;
+      <button type="button" class="briefing-button" data-action="keyboard">START MATCH · keys / mouse</button></div></footer></section>`;
     const sound = document.createElement('button');
     sound.type = 'button'; sound.className = 'briefing-button'; sound.dataset.action = 'sound';
     this.root.querySelector('.briefing-nav').append(sound);
@@ -143,7 +143,7 @@ export class ArcadeBriefing {
     this.root.querySelector('[data-action=next]').textContent = index === 2 ? 'Back to court' : 'Next →';
     const start = this.root.querySelector('[data-action=start]');
     start.disabled = false;
-    start.textContent = c.id === 'phone' ? 'Pair phone' : c.id === 'camera' ? 'Start camera' : 'Play with keys / mouse';
+    start.textContent = c.id === 'phone' ? 'Pair phone' : c.id === 'camera' ? 'Start camera' : 'START MATCH';
     this.root.querySelector('[data-action=keyboard]').hidden = c.id === 'placement';
     const status = this.root.querySelector('.briefing-status');
     status.textContent = '';

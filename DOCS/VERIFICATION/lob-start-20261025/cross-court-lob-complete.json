@@ -1,0 +1,52 @@
+{
+  "events": [
+    {
+      "isOut": false,
+      "isTin": false,
+      "pos": [
+        -0.5151902687534385,
+        4.445203956376613,
+        -4.875
+      ],
+      "surface": "front_wall"
+    },
+    {
+      "isOut": false,
+      "isTin": false,
+      "pos": [
+        2.7600748876947043,
+        0,
+        4.501825392507294
+      ],
+      "surface": "floor"
+    },
+    {
+      "isOut": false,
+      "isTin": false,
+      "pos": [
+        2.9022362510075266,
+        0.4731261428637286,
+        4.875
+      ],
+      "surface": "back_wall"
+    },
+    {
+      "isOut": false,
+      "isTin": false,
+      "pos": [
+        3.2,
+        0.9790317602400916,
+        4.636190551349766
+      ],
+      "surface": "side_wall_right"
+    }
+  ],
+  "finished": true,
+  "shot": {
+    "velocity": [
+      3.3532459816432048,
+      10.516510520591916,
+      -8.694768199139247
+    ]
+  }
+}

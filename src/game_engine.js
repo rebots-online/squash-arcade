@@ -507,7 +507,7 @@ export class ArgonTennisEngine {
     this.pendingPointOutcome = null;
     for (const type of ['keydown','keyup','pointerdown','pointerup','pointercancel','click']) {
       window.addEventListener(type, event => {
-        if (this.arcadeBriefing?.active || event.target?.closest?.('#title-modal, #btn-mobile-menu, #btn-sound-gate')) return;
+        if (this.arcadeBriefing?.active || event.target?.closest?.('#title-modal, #btn-mobile-menu, #btn-sound-gate, #btn-quick-start')) return;
         const result=this.pointPresentation.input(event);
         if(result.consume){event.preventDefault();event.stopImmediatePropagation();}
         if(result.skip) this._finishPointPresentation();
@@ -869,6 +869,7 @@ export class ArgonTennisEngine {
         this.startWonderIntro('SKILL_1_FEED');
       },
       onStartMatch: ({ gamesToWin, scoringSystem, courtTheme, inputMode, difficulty }) => {
+        this.audioEngine?.unlock();
         if (gamesToWin) this.matchConfig.gamesToWin = gamesToWin;
         if (scoringSystem) {
           this.matchConfig.scoringSystem = scoringSystem;
@@ -2338,6 +2339,11 @@ export class ArgonTennisEngine {
 
   startNewMatch({ showStartBanner = true } = {}) {
     this.arcadeBriefing?.close();
+    this._racketSpinGeneration = (this._racketSpinGeneration || 0) + 1;
+    this._racketSpinPending = this.matchConfig.racketSpin === true;
+    this._pendingServeOpts = null;
+    document.getElementById('racket-spin-overlay')?.classList.add('hidden');
+    document.getElementById('rs-racket')?.classList.remove('spinning');
     this.pointPresentation?.cancel();
     this.pendingPointOutcome = null;
     if (this.introDirector) {
@@ -2451,6 +2457,7 @@ export class ArgonTennisEngine {
     this._racketSpinWired = true;
 
     const finish = (serverRole) => {
+      if (this.phase !== 'RACKET_SPIN') return;
       this.score.server = serverRole;
       ov.classList.add('hidden');
       racket?.classList.remove('spinning');
@@ -2461,11 +2468,13 @@ export class ArgonTennisEngine {
 
     const resolveSpin = (call) => {
       if (callBtns?.classList.contains('hidden')) return; // already called
+      const generation = this._racketSpinGeneration;
       callBtns?.classList.add('hidden');
       if (prompt) prompt.textContent = '…';
       const landedUp = Math.random() < 0.5;
       const playerWon = (call === 'up') === landedUp;
       setTimeout(() => {
+        if (generation !== this._racketSpinGeneration || this.phase !== 'RACKET_SPIN') return;
         racket?.classList.remove('spinning');
         if (racket) racket.style.transform = landedUp ? 'rotateX(0deg)' : 'rotateX(180deg)';
         const landedLabel = landedUp ? 'UP' : 'DOWN';
@@ -2481,7 +2490,9 @@ export class ArgonTennisEngine {
             prompt.innerHTML =
               `It lands <b>${landedLabel}</b> — AI wins the spin and elects to serve.`;
           }
-          setTimeout(() => finish('opponent'), 1500);
+          setTimeout(() => {
+            if (generation === this._racketSpinGeneration) finish('opponent');
+          }, 1500);
         }
       }, 1200);
     };
@@ -2526,17 +2537,18 @@ export class ArgonTennisEngine {
     this.serveReadySec=0;
     this.serveTossToken=null;
     this.serveCorrectionReason=null;
-    // Racket-spin ceremony: first point of a fresh match in real play mode only
+    // Consume the explicit opt-in once; a zero-all let cannot repeat the spin.
     if (
+      this._racketSpinPending &&
       !this.spectatorMatchMode &&
       !this.autoPlayMode &&
       !this.isMultiplayer &&
-      this.phase !== 'RACKET_SPIN' &&
       this.score.playerPoints === 0 &&
       this.score.opponentPoints === 0 &&
       this.score.playerGames === 0 &&
       this.score.opponentGames === 0
     ) {
+      this._racketSpinPending = false;
       this._runRacketSpinCeremony({ showBanner, bannerText, bannerStyle, persistentBanner });
       return;
     }
@@ -3364,6 +3376,7 @@ export class ArgonTennisEngine {
 
   update(dt) {
     this.arcadeBriefing?.update(dt);
+    this.courtHUD?.update();
     if (this.isPausedForModal) {
       this._updateCameraRig(dt * 0.15);
       this._updateProjectedHUD();

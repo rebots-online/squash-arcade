@@ -553,7 +553,7 @@ export class AudioEngine {
     }
 
     const phrase = withLoveAll
-      ? 'Welcome to Virtual Squash! Love all. Play!'
+      ? 'Welcome to Virtual Squash! The user is always represented in the game as the red player. Love all. Play!'
       : 'Welcome to Virtual Squash!';
     this.beginBriefingNarration(phrase, () => this.endBriefingNarration());
   }
@@ -1491,9 +1491,12 @@ export class AudioEngine {
       try { speech.cancel(); } catch {}
     }
     const spokenText = String(text ?? '').trim();
-    if (this.muted || !this.refereeVoiceEnabled || !spokenText || !speech ||
-        typeof SpeechSynthesisUtterance === 'undefined') {
+    if (this.muted || !this.refereeVoiceEnabled || !spokenText) {
       this._finishBriefingNarration(owner);
+      return owner.token;
+    }
+    if (!speech || typeof SpeechSynthesisUtterance === 'undefined') {
+      this._playIdentityFallback(owner, spokenText);
       return owner.token;
     }
 
@@ -1509,18 +1512,40 @@ export class AudioEngine {
       utterance.rate = this.refereeVoiceRate;
       utterance.volume = Math.min(1, this.sfxVolume * 0.98);
       owner.utterance = utterance;
-      utterance.onend = () => this._finishBriefingNarration(owner);
-      utterance.onerror = () => this._finishBriefingNarration(owner);
+      let started = false;
+      utterance.onstart = () => { started = true; };
+      utterance.onend = () => started ? this._finishBriefingNarration(owner) : this._playIdentityFallback(owner, spokenText);
+      utterance.onerror = () => this._playIdentityFallback(owner, spokenText);
       speech.speak(utterance);
     } catch {
-      this._finishBriefingNarration(owner);
+      this._playIdentityFallback(owner, spokenText);
     }
     return owner.token;
+  }
+
+  // Some installed browser voices report end without ever starting. The identity
+  // instruction still has a real, bundled voice recording (architecture 4.22).
+  _playIdentityFallback(owner, text) {
+    if (this._briefingNarration !== owner || owner.completed) return;
+    if (owner.identityAudio || !text.includes('The user is always represented in the game as the red player.')) {
+      if (!owner.identityAudio) this._finishBriefingNarration(owner);
+      return;
+    }
+    const clip = new Audio('./assets/audio/red-player-identity.wav');
+    owner.identityAudio = clip;
+    clip.volume = Math.min(1, this.sfxVolume * 0.98);
+    clip.onended = clip.onerror = () => this._finishBriefingNarration(owner);
+    clip.play().catch(() => this._finishBriefingNarration(owner));
   }
 
   _finishBriefingNarration(owner) {
     if (this._briefingNarration !== owner || owner.token !== this._briefingToken || owner.completed) return;
     owner.completed = true;
+    if (owner.identityAudio) {
+      owner.identityAudio.onended = owner.identityAudio.onerror = null;
+      owner.identityAudio.pause();
+      owner.identityAudio = null;
+    }
     if (owner.utterance) {
       owner.utterance.onend = null;
       owner.utterance.onerror = null;
@@ -1534,6 +1559,11 @@ export class AudioEngine {
 
   _stopBriefingUtterance(owner, complete = false) {
     if (this._briefingNarration !== owner) return;
+    if (owner.identityAudio) {
+      owner.identityAudio.onended = owner.identityAudio.onerror = null;
+      owner.identityAudio.pause();
+      owner.identityAudio = null;
+    }
     if (owner.utterance) {
       owner.utterance.onend = null;
       owner.utterance.onerror = null;

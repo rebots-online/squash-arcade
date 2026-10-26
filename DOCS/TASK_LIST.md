@@ -1,5 +1,5 @@
 ---
-title: Squash Arcade clear-court controls and arcade briefings
+title: Squash Arcade rear-corner lobs and immediate match entry
 conversation_id: 01a16140-0f26-79e3-a267-2ee9d3aae117
 created_at_utc: 2026-10-21T22:23:18Z
 updated_at_utc: 2026-10-25T16:06:30Z
@@ -13,7 +13,7 @@ scope_locations:
 # TASK LIST
 
 ⚪ Squash Arcade — E:\devProjects\squash-arcade
-  🟢 Operator/device evaluation of v1.11.82396; audible narration and physical motion controls remain unverified on this host
+  🟢 TASK-61/62 implemented and locally observed; production publication in progress. Browser identity clip playback observed; speaker listening and physical motion controls remain operator gates.
   🟠 Queued TASK-50: opponent-aware volley placement
   🟠 Queued TASK-51: experimental shot-chip serve choices
   🟣 Queued existing monorepo/native packaging and RevenueCat/$ROCHE/Alby work

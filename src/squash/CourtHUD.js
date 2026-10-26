@@ -6,6 +6,19 @@ export class CourtHUD {
     const card = document.querySelector('#title-modal .side-docked-card');
     const header = document.querySelector('#title-modal .wii-logo-header');
     if (!card || !header) return;
+    // Match entry stays ahead of setup; preserve the existing button and callbacks.
+    const matchButton = document.getElementById('btn-start-match');
+    card.prepend(matchButton);
+    document.getElementById('btn-start-match-label').textContent = 'START MATCH';
+    this.quickStart = document.createElement('button');
+    this.quickStart.id = 'btn-quick-start';
+    this.quickStart.type = 'button';
+    this.quickStart.innerHTML = '<strong>START MATCH</strong><span>You play red · keyboard, mouse or touch</span>';
+    document.body.append(this.quickStart);
+    this.quickStart.addEventListener('click', e => { e.stopPropagation(); this.startMatch('mouse'); });
+    for (const type of ['pointerdown', 'pointerup', 'keydown', 'keyup']) {
+      this.quickStart.addEventListener(type, e => e.stopPropagation());
+    }
     const start = document.createElement('section');
     start.className = 'play-methods';
     start.innerHTML = `<h2>THREE WAYS TO PLAY</h2><p>You're the red player. Choose your controls.</p>
@@ -22,10 +35,20 @@ export class CourtHUD {
     });
     const tools = document.createElement('details');
     tools.className = 'court-menu-settings';
-    tools.open = true;
-    tools.innerHTML = '<summary>Sound, camera & controls</summary><div class="court-menu-controls"></div>';
+    tools.innerHTML = '<summary>Settings · sound, camera & controls</summary><div class="court-menu-controls"></div>';
     start.after(tools);
     const controls = tools.lastElementChild;
+    const spinSetting = document.createElement('label');
+    spinSetting.className = 'racket-spin-setting';
+    spinSetting.innerHTML = '<input type="checkbox" id="setting-racket-spin"><span>Racquet spin before a match<small>Off: you, the red player, serve first.</small></span>';
+    controls.append(spinSetting);
+    const spinToggle = spinSetting.querySelector('input');
+    try { spinToggle.checked = localStorage.getItem('squash-arcade-racket-spin') === 'true'; } catch {}
+    engine.matchConfig.racketSpin = spinToggle.checked;
+    spinToggle.addEventListener('change', () => {
+      engine.matchConfig.racketSpin = spinToggle.checked;
+      try { localStorage.setItem('squash-arcade-racket-spin', String(spinToggle.checked)); } catch {}
+    });
     for (const selector of ['.motion-buttons-col', '.top-hud-left-group', '.top-hud-right-group']) {
       const node = document.querySelector(selector);
       if (node) controls.append(node);
@@ -55,6 +78,11 @@ export class CourtHUD {
       document.getElementById('btn-mobile-menu')?.setAttribute('aria-expanded', String(engine._isSideMenuExpanded()));
     });
     this.menuObserver.observe(title, { attributes: true, attributeFilter: ['class', 'style'] });
+  }
+
+  update() {
+    const e = this.engine;
+    this.quickStart.hidden = !(e.spectatorMatchMode || e.autoPlayMode || e.introDirector?.active || ['TITLE', 'MATCH_OVER'].includes(e.phase)) || e._isSideMenuExpanded() || e.arcadeBriefing?.active || e.isPausedForModal;
   }
 
   startMatch(mode) {

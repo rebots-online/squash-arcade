@@ -1,0 +1,19 @@
+{
+  "result": {
+    "type": "object",
+    "value": {
+      "events": [
+        {
+          "duration": 4.493605,
+          "ended": 19473.900000035763,
+          "playing": 14932.400000035765,
+          "requested": 14902,
+          "src": "http://127.0.0.1:43827/assets/audio/red-player-identity.wav"
+        }
+      ],
+      "phase": "SERVE_STANCE",
+      "server": "player",
+      "spin": false
+    }
+  }
+}
