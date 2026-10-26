@@ -10,7 +10,7 @@ tools="$HOME/.cache/squash-arcade/tauri-cli"
 if [ ! -f "$tools/node_modules/@tauri-apps/cli/tauri.js" ]; then
   npm install --prefix "$tools" --save-exact @tauri-apps/cli@2.11.4 --no-audit --no-fund
 fi
-work="$HOME/.cache/squash-arcade/work/$(basename "$(dirname "$snapshot")")-linux"
+work="$HOME/.cache/squash-arcade/work/$(basename "$(dirname "$(dirname "$snapshot")")")-linux"
 mkdir -p "$work" "$output"
 cp -a "$snapshot/." "$work/"
 cd "$work"

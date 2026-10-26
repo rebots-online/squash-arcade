@@ -69,7 +69,8 @@ try {
     const record={startedAt:new Date().toISOString(),log:relative(root,logPath),exitCode:null,artifacts:[]};
     manifest.platforms[platform]=record;
     console.log(`[${platform}] started ${record.startedAt}`);
-    const child=spawn(process.execPath,[join(root,'scripts/build-platform.mjs'),platform,join(directory,'source'),output],{cwd:root,env,stdio:['ignore','pipe','pipe'],windowsHide:true});
+    const snapshot=join(directory,'source');
+    const child=spawn(process.execPath,[join(snapshot,'scripts/build-platform.mjs'),platform,snapshot,output],{cwd:snapshot,env,stdio:['ignore','pipe','pipe'],windowsHide:true});
     child.stdout.pipe(log);child.stderr.pipe(log);
     let completed=false;
     const finish=async(code,error)=>{
