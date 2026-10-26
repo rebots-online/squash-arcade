@@ -108,3 +108,5 @@ Focused observations (not an automated test suite):
 - node --check on all six changed JS files and git diff --check exited 0. No automated tests were added or run, following the current operator override. Production build/publication follows in the release record below.
 
 Authority: current Admin-Manual documents were read directly from KStore. Its /inject reminder request returned HTTP 500; direct reads are not represented as a successful reminder injection. The expected sesh skill was unavailable locally and through the queried KStore records; no archive-hook success is asserted. Gameplay feel and physical phone/controller acceptance remain operator observations.
+
+Release completed as v1.12.83046: source 038cb76, generated build 2ab0880; 21/21 public file hashes match. Public quick start entered red service, and the identity clip played to ended. Desktop/portrait entry and default unchecked spin settings inspected. Exact build/deployment limits and evidence: [release record](../DEPLOYMENT/lob-start-20261025/RELEASE.md).

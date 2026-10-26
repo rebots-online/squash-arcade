@@ -1,0 +1,181 @@
+{
+  "checkedAt": "2026-10-26T02:47:11.919Z",
+  "domain": "https://squash-arcade.surge.sh",
+  "surgeRevision": "1792982805785",
+  "releaseCommit": "2ab08806835b50e3618f4e2a8ad4954e4de3c531",
+  "metadata": {
+    "version": "1.12.83046",
+    "sourceCommit": "038cb76e11a9fe7c388bf88db73267e0fd725221",
+    "builtAt": "2026-10-26T02:46:22.275Z"
+  },
+  "results": [
+    {
+      "path": "arcade-briefing.css",
+      "status": 200,
+      "bytes": 11241,
+      "localSha256": "d6c003a129ec3ba13f5a8918fbc317177b98e941dbcbf570ede1fad1c2ee2a97",
+      "publicSha256": "d6c003a129ec3ba13f5a8918fbc317177b98e941dbcbf570ede1fad1c2ee2a97",
+      "matches": true
+    },
+    {
+      "path": "companion.html",
+      "status": 200,
+      "bytes": 8715,
+      "localSha256": "3fb6cc452a92a34ca2a099e47d1a2fe0bd8c015b15f6b93b84d6104b28bf4efb",
+      "publicSha256": "3fb6cc452a92a34ca2a099e47d1a2fe0bd8c015b15f6b93b84d6104b28bf4efb",
+      "matches": true
+    },
+    {
+      "path": "court-hud.css",
+      "status": 200,
+      "bytes": 8503,
+      "localSha256": "d43dd67a7fdb9b60013d711f43c5d24cba84a3e9e58e0f1073043fde375f743e",
+      "publicSha256": "d43dd67a7fdb9b60013d711f43c5d24cba84a3e9e58e0f1073043fde375f743e",
+      "matches": true
+    },
+    {
+      "path": "deployment.json",
+      "status": 200,
+      "bytes": 133,
+      "localSha256": "46862967f8560042959ca040a097c56624204cde690f95cb25f78153b66fff44",
+      "publicSha256": "46862967f8560042959ca040a097c56624204cde690f95cb25f78153b66fff44",
+      "matches": true
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "bytes": 51043,
+      "localSha256": "e24e1704dbbcb307709f9f1e7e62d90dcdfe9071052aae8dc481f897d8c3583e",
+      "publicSha256": "e24e1704dbbcb307709f9f1e7e62d90dcdfe9071052aae8dc481f897d8c3583e",
+      "matches": true
+    },
+    {
+      "path": "styles.css",
+      "status": 200,
+      "bytes": 56964,
+      "localSha256": "b31a7711231d2e8a92a44e7d7f11a606cc96abae0ed2167795517b1334f63bda",
+      "publicSha256": "b31a7711231d2e8a92a44e7d7f11a606cc96abae0ed2167795517b1334f63bda",
+      "matches": true
+    },
+    {
+      "path": "assets/index-C-jNk8Oe.js",
+      "status": 200,
+      "bytes": 1075718,
+      "localSha256": "2e8fe1bd0380ba78465725c455207f10e3f9a1796feae309795800bdef6c918f",
+      "publicSha256": "2e8fe1bd0380ba78465725c455207f10e3f9a1796feae309795800bdef6c918f",
+      "matches": true
+    },
+    {
+      "path": "assets/models/mii_crowd.glb",
+      "status": 200,
+      "bytes": 2297692,
+      "localSha256": "dc18bd9b109b7178f484c6c43758a2fbad95d911ef45a127b0eeff2689557e49",
+      "publicSha256": "dc18bd9b109b7178f484c6c43758a2fbad95d911ef45a127b0eeff2689557e49",
+      "matches": true
+    },
+    {
+      "path": "assets/models/mii_opponent.glb",
+      "status": 200,
+      "bytes": 1792764,
+      "localSha256": "4990efaac9296fe577e96e3add9a8cbb9224f6af1505a8986a3cc280f03cbde7",
+      "publicSha256": "4990efaac9296fe577e96e3add9a8cbb9224f6af1505a8986a3cc280f03cbde7",
+      "matches": true
+    },
+    {
+      "path": "assets/models/mii_player.glb",
+      "status": 200,
+      "bytes": 1777872,
+      "localSha256": "a1345a6fbcf7088f13d397f4eafff0675a722cc890426ee3e34499b47082489b",
+      "publicSha256": "a1345a6fbcf7088f13d397f4eafff0675a722cc890426ee3e34499b47082489b",
+      "matches": true
+    },
+    {
+      "path": "assets/models/stadium_court.glb",
+      "status": 200,
+      "bytes": 4497892,
+      "localSha256": "94a137e33c6b419f927d748b5611a21293ac0e72bb2f55f77d7a69f81d776da6",
+      "publicSha256": "94a137e33c6b419f927d748b5611a21293ac0e72bb2f55f77d7a69f81d776da6",
+      "matches": true
+    },
+    {
+      "path": "assets/models/tennis_ball.glb",
+      "status": 200,
+      "bytes": 95856,
+      "localSha256": "a7ea5f13e4f36dcca5f389e6d6ec392a43be72fa26f592ee11132d6f80939c73",
+      "publicSha256": "a7ea5f13e4f36dcca5f389e6d6ec392a43be72fa26f592ee11132d6f80939c73",
+      "matches": true
+    },
+    {
+      "path": "assets/models/tennis_net.glb",
+      "status": 200,
+      "bytes": 170724,
+      "localSha256": "94ea3a8a0a7183f8e0512abae1d735261fa0173dcd45f918d7a64928f7b88799",
+      "publicSha256": "94ea3a8a0a7183f8e0512abae1d735261fa0173dcd45f918d7a64928f7b88799",
+      "matches": true
+    },
+    {
+      "path": "assets/models/tennis_racket.glb",
+      "status": 200,
+      "bytes": 230516,
+      "localSha256": "dc478764925a35dad60b8df22a667a63dd01f40167651bddc169e8cade0d1bc1",
+      "publicSha256": "dc478764925a35dad60b8df22a667a63dd01f40167651bddc169e8cade0d1bc1",
+      "matches": true
+    },
+    {
+      "path": "assets/mediapipe/hands/hands.binarypb",
+      "status": 200,
+      "bytes": 550,
+      "localSha256": "ab76c4215fca99cc2db1b5885cb8398d210e59ebe685245f72e692b4b58421e4",
+      "publicSha256": "ab76c4215fca99cc2db1b5885cb8398d210e59ebe685245f72e692b4b58421e4",
+      "matches": true
+    },
+    {
+      "path": "assets/mediapipe/hands/hands_solution_packed_assets.data",
+      "status": 200,
+      "bytes": 4326731,
+      "localSha256": "bdce7b66bfc5b39ba86a47775c98e0b186fe73f8308c2279f852af4c89ffdf42",
+      "publicSha256": "bdce7b66bfc5b39ba86a47775c98e0b186fe73f8308c2279f852af4c89ffdf42",
+      "matches": true
+    },
+    {
+      "path": "assets/mediapipe/hands/hands_solution_simd_wasm_bin.wasm",
+      "status": 200,
+      "bytes": 6026259,
+      "localSha256": "78ef7eb86ebc6424ac06b13f89b9a1fc01ff35e07520e37de98887cf88c06653",
+      "publicSha256": "78ef7eb86ebc6424ac06b13f89b9a1fc01ff35e07520e37de98887cf88c06653",
+      "matches": true
+    },
+    {
+      "path": "assets/mediapipe/hands/hands_solution_wasm_bin.wasm",
+      "status": 200,
+      "bytes": 5917209,
+      "localSha256": "4e70eaf8063e0e9ac10e682d9d6b55c08d0788f0a8d49925e2e484636526e157",
+      "publicSha256": "4e70eaf8063e0e9ac10e682d9d6b55c08d0788f0a8d49925e2e484636526e157",
+      "matches": true
+    },
+    {
+      "path": "assets/mediapipe/hands/hand_landmark_full.tflite",
+      "status": 200,
+      "bytes": 5478688,
+      "localSha256": "8c026882c9ec059ce0f8e75266bee5a9a23c341a40e0000df755374d3d1b9b68",
+      "publicSha256": "8c026882c9ec059ce0f8e75266bee5a9a23c341a40e0000df755374d3d1b9b68",
+      "matches": true
+    },
+    {
+      "path": "assets/mediapipe/hands/hand_landmark_lite.tflite",
+      "status": 200,
+      "bytes": 2071408,
+      "localSha256": "d7fde8ac11f8ce03f8663775bfc323f4fc9f2a38062b4f4efa142874ef5b2a48",
+      "publicSha256": "d7fde8ac11f8ce03f8663775bfc323f4fc9f2a38062b4f4efa142874ef5b2a48",
+      "matches": true
+    },
+    {
+      "path": "assets/audio/red-player-identity.wav",
+      "status": 200,
+      "bytes": 198214,
+      "localSha256": "2b01e69d12366adc2810d89e86e0d30f773516bec6fe11d9d71ddff39938b590",
+      "publicSha256": "2b01e69d12366adc2810d89e86e0d30f773516bec6fe11d9d71ddff39938b590",
+      "matches": true
+    }
+  ]
+}

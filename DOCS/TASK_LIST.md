@@ -2,7 +2,7 @@
 title: Squash Arcade rear-corner lobs and immediate match entry
 conversation_id: 01a16140-0f26-79e3-a267-2ee9d3aae117
 created_at_utc: 2026-10-21T22:23:18Z
-updated_at_utc: 2026-10-25T16:06:30Z
+updated_at_utc: 2026-10-26T02:49:32Z
 file_computer: DESKTOP-CN0GDTR
 file_absolute_path: E:/devProjects/squash-arcade/DOCS/TASK_LIST.md
 authority_source: KStore Admin-Manual live document reads
@@ -13,12 +13,12 @@ scope_locations:
 # TASK LIST
 
 ⚪ Squash Arcade — E:\devProjects\squash-arcade
-  🟢 TASK-61/62 implemented and locally observed; production publication in progress. Browser identity clip playback observed; speaker listening and physical motion controls remain operator gates.
+  🟢 Operator evaluation of deployed v1.12.83046: TASK-61/62 complete with scoped runtime evidence. Browser identity clip playback observed; speaker listening and physical motion controls remain operator gates.
   🟠 Queued TASK-50: opponent-aware volley placement
   🟠 Queued TASK-51: experimental shot-chip serve choices
   🟣 Queued existing monorepo/native packaging and RevenueCat/$ROCHE/Alby work
 
-TASK-59/60 are implemented and deployed as v1.11.82396. The court HUD is clear, three play methods lead to existing controls, and animated foreground briefings retain presentation/narration ownership over the AI demo. Evidence and exact limitations: [OBSERVED-RUN.md](VERIFICATION/arcade-briefing/OBSERVED-RUN.md). Source/release were committed and pushed as sensible sections; this ledger accompanies final evidence publication. Architecture and the four-state checklist remain the implementation authority for this repository; KStore alone supplies Admin-Manual authority.
+TASK-61/62 are implemented and deployed as v1.12.83046. Source 038cb76, release 2ab0880, all 21 public files hash-matched, public desktop/portrait entry and complete identity clip playback observed. See [release evidence](DEPLOYMENT/lob-start-20261025/RELEASE.md). The prior TASK-59/60 release was v1.11.82396. The court HUD is clear, three play methods lead to existing controls, and animated foreground briefings retain presentation/narration ownership over the AI demo. Evidence and exact limitations: [OBSERVED-RUN.md](VERIFICATION/arcade-briefing/OBSERVED-RUN.md). Source/release were committed and pushed as sensible sections; this ledger accompanies final evidence publication. Architecture and the four-state checklist remain the implementation authority for this repository; KStore alone supplies Admin-Manual authority.
 
 ## Historical 2026-10-21 delivery record
 

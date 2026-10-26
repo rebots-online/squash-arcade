@@ -1,0 +1,30 @@
+{
+  "events": [
+    {
+      "src": "https://squash-arcade.surge.sh/assets/audio/red-player-identity.wav",
+      "time": 13919,
+      "type": "requested"
+    },
+    {
+      "currentTime": 0,
+      "duration": 4.493605,
+      "time": 14063.69999998808,
+      "type": "playing"
+    },
+    {
+      "currentTime": 4.493605,
+      "duration": 4.493605,
+      "time": 18605.60000002384,
+      "type": "pause"
+    },
+    {
+      "currentTime": 4.493605,
+      "duration": 4.493605,
+      "time": 18605.80000001192,
+      "type": "ended"
+    }
+  ],
+  "phase": "SERVE_STANCE",
+  "server": "player",
+  "spin": false
+}
