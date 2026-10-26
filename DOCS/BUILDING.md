@@ -41,15 +41,20 @@ split DNS. The deployment receipt records the route used for each domain.
    with. Publish the successful web tree to root `dist/`, retaining the old tree
    inside the attempt directory for rollback.
 
-Attempts and outputs live under `builds/<version>/<timestamp>/`. They are retained
-after failure. `builds/<version>/SUCCESS.json` exists only after the complete matrix
-succeeds. Missing/failed targets or edits during a build prevent the version bump.
+Durable packages are produced directly under tracked root `dist/` from worker
+launch: `dist/squash-arcade-v<version>/<attempt>/<platform>/`. Filenames start
+`squash-arcade-v<version>-`. They are never withheld outside dist pending matrix
+success. Failed targets retain available packages there and a stamped incomplete
+inventory records hashes, missing outputs and exit codes. A completed compiler
+matrix writes `dist/squash-arcade-v<version>-build-manifest.json`; this is not a
+production acceptance manifest or a public release pointer.
 
-The completed distribution is in `dist/`: the web game at its root, and all five
-packages (Windows installer, AppImage, APK, AAB and PWA ZIP) under
-`dist/releases/<built-version>/`, with a `manifest.json` containing their hashes.
-The coordinator copies and hash-verifies these files automatically. Native
-binaries are ignored by Git. Deployment stages only the verified frozen web tree.
+Root dist is never moved, emptied or ignored. Frozen source/frontend and
+intermediates are isolated under ignored `dist/.work/`; shared toolchain caches
+remain disposable. Existing package versions and web files are preserved. Large
+binary packages must use Forgejo-backed LFS (CC13), never GitHub LFS. Publication
+of binaries is incomplete until the Forgejo object upload and remote readback
+succeed. The deployment command reads the built version's durable PWA web tree.
 
 ## Working recipe details from the first runs
 

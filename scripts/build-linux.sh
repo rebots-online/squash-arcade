@@ -18,5 +18,5 @@ node "$tools/node_modules/@tauri-apps/cli/tauri.js" build --bundles appimage --c
 version="$(tr -d '\r\n' < version.txt)"
 artifact="$(find "$CARGO_TARGET_DIR/release/bundle/appimage" -maxdepth 1 -name '*.AppImage' -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)"
 test -n "$artifact"
-cp "$artifact" "$output/SquashArcade-$version-linux-x86_64.AppImage"
+cp "$artifact" "$output/squash-arcade-v$version-linux-x86_64.AppImage"
 printf '{"canonicalVersion":"%s","baseline":"%s","signing":"unsigned"}\n' "$version" "$(. /etc/os-release; printf '%s' "$PRETTY_NAME")" > "$output/platform.json"

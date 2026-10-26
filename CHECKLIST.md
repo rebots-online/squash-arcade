@@ -8,10 +8,10 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-63 — Concurrent Windows, AppImage, Android and PWA release build
 
-- **Status**: [X]
+- **Status**: [/]
 - **Dependencies**: [] (aa2edb3; existing web game).
 - **Contract**: Architecture §4.23. Add Tauri 2 shell and one locked `npm run build` / `build:all` coordinator. Freeze and hash source/frontend, launch four isolated packaging workers concurrently, preserve logs/partial failures, require all artifacts, and write hashes and timings. Reuse shared Windows/Android and WSL tooling. Preserve existing gameplay; no separate Tauri-repository access.
-- **Accept**: Run the real coordinator; inspect four worker start times, exit codes, actual installer/AppImage/APK/AAB/PWA output and manifest hashes. Collect all five packages and a hash manifest under `dist/releases/<version>/` automatically. Verify Android fresh-snapshot bridge generation with shared caches. Report compilation and launch/device/signing limitations accurately. No automated tests.
+- **Accept**: Run the real coordinator; inspect four worker start times, exit codes and installer/AppImage/APK/AAB/PWA hashes. Workers write durable packages directly into tracked root dist from launch; partial outputs remain there with stamped incomplete inventory. Never rename/empty dist or ignore release packages. Use slug-first versioned names and Forgejo LFS, never GitHub LFS. Verify Android fresh-snapshot bridge generation with shared caches. Report compilation and launch/device/signing limitations accurately. No automated tests.
 
 ## TASK-64 — Advance the source minor immediately after successful build
 

@@ -21,7 +21,7 @@ if($Platform -eq 'windows'){
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
   $installer=Get-ChildItem -LiteralPath "$env:CARGO_TARGET_DIR/release/bundle/nsis" -Filter '*.exe' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
   if(-not $installer){throw 'Windows installer was not produced.'}
-  Copy-Item -LiteralPath $installer.FullName -Destination (Join-Path $Output "SquashArcade-$version-windows-x64-setup.exe")
+  Copy-Item -LiteralPath $installer.FullName -Destination (Join-Path $Output "squash-arcade-v$version-windows-x64-setup.exe")
   @{canonicalVersion=$version;platformVersion=$nativeVersion;signing='unsigned'}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $Output 'platform.json')
 }else{
   $parts=$version.Split('.')
@@ -32,6 +32,8 @@ if($Platform -eq 'windows'){
   $config|ConvertTo-Json -Depth 20|Set-Content src-tauri/tauri.conf.json
   cargo tauri android init --ci
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
+  $gradlePath='src-tauri/gen/android/app/build.gradle.kts'
+  Add-Content -LiteralPath $gradlePath -Value ('base { archivesName.set("squash-arcade-v' + $version + '") }')
   $manifestPath=Join-Path $Snapshot 'src-tauri/gen/android/app/src/main/AndroidManifest.xml'
   [xml]$manifest=Get-Content -LiteralPath $manifestPath -Raw
   $androidNamespace='http://schemas.android.com/apk/res/android'
@@ -51,7 +53,7 @@ if($Platform -eq 'windows'){
   $apk=Get-ChildItem -LiteralPath src-tauri/gen/android/app/build/outputs -Recurse -Filter '*.apk' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
   $aab=Get-ChildItem -LiteralPath src-tauri/gen/android/app/build/outputs -Recurse -Filter '*.aab' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
   if(-not $apk -or -not $aab){throw 'Android APK and AAB are both required.'}
-  Copy-Item -LiteralPath $apk.FullName -Destination (Join-Path $Output "SquashArcade-$version-android-arm64-unsigned.apk")
-  Copy-Item -LiteralPath $aab.FullName -Destination (Join-Path $Output "SquashArcade-$version-android-arm64-unsigned.aab")
+  Copy-Item -LiteralPath $apk.FullName -Destination (Join-Path $Output "squash-arcade-v$version-android-arm64-unsigned.apk")
+  Copy-Item -LiteralPath $aab.FullName -Destination (Join-Path $Output "squash-arcade-v$version-android-arm64-unsigned.aab")
   @{canonicalVersion=$version;versionCode=$versionCode;signing='unsigned; production signing is a separate release step';abi='arm64-v8a'}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $Output 'platform.json')
 }

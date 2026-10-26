@@ -1,5 +1,5 @@
 import { spawn, execFileSync } from 'node:child_process';
-import { open, readdir, readFile, writeFile, mkdir, cp, rename, stat, unlink } from 'node:fs/promises';
+import { open, readdir, readFile, writeFile, mkdir, cp, stat, unlink } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { join, resolve, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -32,16 +32,21 @@ const run=(command,args,options={})=>new Promise((done,fail)=>{
   const child=spawn(command,args,{cwd:root,stdio:'inherit',windowsHide:true,...options});
   child.once('error',fail);child.once('exit',code=>code===0?done():fail(new Error(`${command} exited ${code}`)));
 });
-let manifest,runDirectory;
+let manifest,runDirectory,releaseDirectory,inventoryPath;
 try {
   const version=(await readFile('version.txt','utf8')).trim();
   const pkg=JSON.parse(await readFile('package.json','utf8'));
   if(pkg.version!==version)throw new Error('Canonical and package versions differ.');
-  const versionDirectory=join(root,'builds',version);
-  try {await stat(join(versionDirectory,'SUCCESS.json'));throw new Error(`Version ${version} already has a completed build; advance the source version.`);}catch(error){if(error.code!=='ENOENT')throw error;}
+  const versionDirectory=join(root,'dist');
+  const completePath=join(versionDirectory,`squash-arcade-v${version}-build-manifest.json`);
+  try {await stat(completePath);throw new Error(`Version ${version} already has a completed build; advance the source version.`);}catch(error){if(error.code!=='ENOENT')throw error;}
   const startedAt=new Date().toISOString();
-  runDirectory=join(versionDirectory,startedAt.replaceAll(':','-'));
+  const attempt=startedAt.replaceAll(':','-');
+  runDirectory=join(root,'dist','.work',version,attempt);
+  releaseDirectory=join(root,'dist',`squash-arcade-v${version}`,attempt);
+  inventoryPath=join(releaseDirectory,`squash-arcade-v${version}-incomplete-inventory.json`);
   await mkdir(runDirectory,{recursive:true});
+  await mkdir(releaseDirectory,{recursive:true});
   await run(process.execPath,['scripts/generate-icons.mjs']);
   await run(process.execPath,['scripts/download-assets.mjs']);
   const files=await sourceFiles();
@@ -58,12 +63,13 @@ try {
     await cp(base,join(runDirectory,platform,'source'),{recursive:true});
   }));
   manifest={version,sourceCommit,sourceHash,startedAt,status:'building',platforms:{}};
-  await writeFile(join(runDirectory,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');
+  await writeFile(inventoryPath,JSON.stringify(manifest,null,2)+'\n');
   console.log(`Launching all four platform workers for ${version}. Logs: ${runDirectory}`);
   const worker=async platform=>{
     const directory=join(runDirectory,platform);
-    const output=join(directory,'artifacts');
-    const logPath=join(directory,'build.log');
+    const output=join(releaseDirectory,platform);
+    await mkdir(output,{recursive:true});
+    const logPath=join(releaseDirectory,`squash-arcade-v${version}-${platform}-build.log`);
     // Direct file descriptors avoid pipes held open by SDK/Gradle background tools.
     const log=await open(logPath,'w');
     return new Promise(done=>{
@@ -76,7 +82,7 @@ try {
     const finish=async(code,error)=>{
       if(completed)return;completed=true;
       record.exitCode=code;record.finishedAt=new Date().toISOString();if(error)record.error=error.message;
-      if(code===0){
+      {
         try{
           for(const name of await readdir(output)){
             if(!/\.(exe|AppImage|apk|aab|zip)$/.test(name))continue;
@@ -90,7 +96,8 @@ try {
         }catch(error){record.exitCode=1;record.error=error.message;}
       }
       await log.close();
-      await writeFile(join(directory,'result.json'),JSON.stringify(record,null,2)+'\n');
+      await writeFile(join(releaseDirectory,`squash-arcade-v${version}-${platform}-result.json`),JSON.stringify(record,null,2)+'\n');
+      await writeFile(inventoryPath,JSON.stringify(manifest,null,2)+'\n');
       console.log(`[${platform}] ${record.exitCode===0?'succeeded':'FAILED'}; ${relative(root,logPath)}`);
       done(record);
     };
@@ -104,30 +111,15 @@ try {
   const next=`${major}.${minor+1}.${String(Math.floor(Date.now()/60000)%100000).padStart(5,'0')}`;
   await setSourceVersion(next);
   manifest.status='succeeded';manifest.finishedAt=new Date().toISOString();manifest.nextSourceVersion=next;
-  await writeFile(join(runDirectory,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');
-  await writeFile(join(versionDirectory,'SUCCESS.json'),JSON.stringify(manifest,null,2)+'\n');
-  // Preserve the previously deployed tree before publishing the completed web tree.
-  try{await rename(join(root,'dist'),join(runDirectory,'previous-dist'));}catch(error){if(error.code!=='ENOENT')throw error;}
+  await writeFile(completePath,JSON.stringify(manifest,null,2)+'\n');
+  await writeFile(inventoryPath,JSON.stringify({...manifest,status:'completed-inventory'},null,2)+'\n');
+  // Preserve the old root web tree without moving any part of durable dist.
   await cp(join(base,'dist'),join(root,'dist'),{recursive:true});
-  const releaseDirectory=join(root,'dist','releases',version);
-  await mkdir(releaseDirectory,{recursive:true});
-  const distribution={version,sourceCommit,sourceHash,artifacts:[]};
-  for(const [platform,record] of Object.entries(manifest.platforms)){
-    for(const artifact of record.artifacts){
-      const name=artifact.path.split(/[\\/]/).at(-1);
-      const destination=join(releaseDirectory,name);
-      await cp(join(root,artifact.path),destination);
-      const copiedHash=createHash('sha256').update(await readFile(destination)).digest('hex');
-      if(copiedHash!==artifact.sha256)throw new Error('Distribution copy hash mismatch: '+name);
-      distribution.artifacts.push({platform,path:`releases/${version}/${name}`,bytes:artifact.bytes,sha256:copiedHash});
-    }
-  }
-  await writeFile(join(releaseDirectory,'manifest.json'),JSON.stringify(distribution,null,2)+'\n');
   await cp(join(base,'public/deployment.json'),join(root,'public/deployment.json'));
-  console.log(`All five packages and hash manifest collected in ${relative(root,releaseDirectory)}.`);
+  console.log(`All packages were produced directly in ${relative(root,releaseDirectory)}.`);
   console.log(`All platforms built ${version}. Source immediately advanced to ${next}.`);
 }catch(error){
-  if(manifest){manifest.status='failed';manifest.error=error.message;manifest.finishedAt=new Date().toISOString();await writeFile(join(runDirectory,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');}
+  if(manifest){manifest.status='failed';manifest.error=error.message;manifest.finishedAt=new Date().toISOString();await writeFile(inventoryPath,JSON.stringify(manifest,null,2)+'\n');}
   console.error(error.message);process.exitCode=1;
 }finally{
   await lock.close();await unlink(lockPath);

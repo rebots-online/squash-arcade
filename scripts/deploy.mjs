@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 const root=resolve(import.meta.dirname,'..');
 process.chdir(root);
 const metadata=JSON.parse(await readFile('dist/deployment.json','utf8'));
-const build=JSON.parse(await readFile(`builds/${metadata.version}/SUCCESS.json`,'utf8'));
+const build=JSON.parse(await readFile(`dist/squash-arcade-v${metadata.version}-build-manifest.json`,'utf8'));
 if(build.status!=='succeeded'||build.sourceHash!==metadata.sourceHash)throw new Error('Deployment requires a complete successful platform build matching dist.');
 const pwaArtifact=build.platforms.pwa.artifacts.find(file=>file.path.endsWith('.zip'));
 const frozenWeb=join(root,pwaArtifact.path,'..','web');
@@ -20,14 +20,14 @@ async function walk(directory,prefix=''){
     else if(name!=='CNAME')files.push(name);
   }
 }
-await walk('dist');files.sort();
+await walk(frozenWeb);files.sort();
 const hashes=new Map();
 for(const file of files){
   const local=await readFile(join('dist',file));
   if(sha(local)!==sha(await readFile(join(frozenWeb,file))))throw new Error('dist differs from frozen build: '+file);
   hashes.set(file,sha(local));
 }
-const deployDirectory=join(root,'builds',metadata.version,'deploy-web');
+const deployDirectory=join(root,'dist','.work',metadata.version,'deploy-web');
 await cp(frozenWeb,deployDirectory,{recursive:true});
 await writeFile(join(deployDirectory,'CNAME'),'squash.robin.mba\n');
 const domains=['squash-arcade.surge.sh','squash.robin.mba','squash-arcade.robin.mba'];
