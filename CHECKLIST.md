@@ -8,8 +8,9 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-63 — Concurrent Windows, AppImage, Android and PWA release build
 
-- **Status**: [X]
+- **Status**: [/]
 - **Dependencies**: [] (aa2edb3; existing web game).
+- **Current correction**: Only root build_all.sh may start builds or deployment; helpers reject direct invocation. Five concurrent workers must produce twelve packages directly in dist: Windows standalone/installer EXEs, MSI/MSIX; Linux AppImage/DEB/RPM; Android APK/AAB/native-symbol ZIP; ordinary web ZIP and PWA ZIP. Generated Android resources must be replaced by the red Mii set and verified in the packaged APK. Run the shell entry, verify all output hashes, automatic source minor transition and three-domain deployment. No manual per-platform builds or automated tests.
 - **Contract**: Architecture §4.23. Add Tauri 2 shell and one locked `npm run build` / `build:all` coordinator. Freeze and hash source/frontend, launch four isolated packaging workers concurrently, preserve logs/partial failures, require all artifacts, and write hashes and timings. Reuse shared Windows/Android and WSL tooling. Preserve existing gameplay; no separate Tauri-repository access.
 - **Accept**: Run the real coordinator; inspect four worker start times, exit codes and installer/AppImage/APK/AAB/PWA hashes. Workers write durable packages directly into tracked root dist from launch; partial outputs remain there with stamped incomplete inventory. Never rename/empty dist or ignore release packages. Use slug-first versioned names, tracked binaries and the configured available remote; do not add an unavailable service dependency or GitHub LFS. Verify Android fresh-snapshot bridge generation with shared caches. Report compilation and launch/device/signing limitations accurately. No automated tests.
 

@@ -5,16 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
-    "build": "node scripts/build-all.mjs",
+    "build": "node scripts/build-entry.mjs",
     "lint": "tsc --noEmit && node scripts/lint-js.mjs",
     "preview": "vite preview --port=3000 --host=0.0.0.0",
-    "deploy": "node scripts/deploy.mjs",
+    "deploy": "node scripts/build-entry.mjs --deploy-existing",
     "predev": "[ -d node_modules/.bin ] || bun install || npm install",
     "prelint": "[ -d node_modules/.bin ] || bun install || npm install",
-    "build:all": "node scripts/build-all.mjs",
+    "build:all": "node scripts/build-entry.mjs",
     "icons": "node scripts/generate-icons.mjs",
     "tauri": "tauri",
-    "release": "npm run build && npm run deploy"
+    "release": "node scripts/build-entry.mjs"
   },
   "dependencies": {
     "react": "^19.2.7",

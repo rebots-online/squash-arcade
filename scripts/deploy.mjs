@@ -2,6 +2,9 @@ import { spawn } from 'node:child_process';
 import { readFile, writeFile, readdir, mkdir, cp } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
+import { request } from 'node:https';
+import { requireBuildAll } from './build-context.mjs';
+requireBuildAll();
 
 const root=resolve(import.meta.dirname,'..');
 process.chdir(root);
@@ -9,7 +12,8 @@ const metadata=JSON.parse(await readFile('dist/deployment.json','utf8'));
 const build=JSON.parse(await readFile(`dist/squash-arcade-v${metadata.version}-build-manifest.json`,'utf8'));
 if(build.status!=='succeeded'||build.sourceHash!==metadata.sourceHash)throw new Error('Deployment requires a complete successful platform build matching dist.');
 const pwaArtifact=build.platforms.pwa.artifacts.find(file=>file.path.endsWith('.zip'));
-const frozenWeb=join(root,pwaArtifact.path,'..','web');
+const flatWeb=join(root,'dist',`squash-arcade-v${metadata.version}-pwa`);
+const frozenWeb=await readdir(flatWeb).then(()=>flatWeb).catch(error=>{if(error.code==='ENOENT')return join(root,pwaArtifact.path,'..','web');throw error;});
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const files=[];
 async function walk(directory,prefix=''){
@@ -43,22 +47,28 @@ const dns=await(await fetch('https://dns.google/resolve?name=geo.surge.world&typ
 const edge=dns.Answer?.find(answer=>answer.type===1)?.data;
 if(!edge)throw new Error('Could not resolve the public Surge edge for readback.');
 const receipt={version:metadata.version,sourceCommit:metadata.sourceCommit,sourceHash:metadata.sourceHash,checkedAt:new Date().toISOString(),domains:{}};
+const readEdge=(domain,file)=>new Promise((done,fail)=>{
+  const req=request(`https://${domain}/${file}`,{lookup:(hostname,options,callback)=>options.all?callback(null,[{address:edge,family:4}]):callback(null,edge,4)},response=>{
+    const chunks=[];response.on('data',chunk=>chunks.push(chunk));response.on('end',()=>done({status:response.statusCode,bytes:Buffer.concat(chunks)}));response.on('error',fail);
+  });
+  req.setTimeout(30000,()=>req.destroy(new Error('HTTPS edge readback timed out')));req.on('error',fail);req.end();
+});
 for(const domain of domains){
   const results=[];
   // Bound verification concurrency; avoid sending every large asset at once.
   for(let offset=0;offset<files.length;offset+=6){
     results.push(...await Promise.all(files.slice(offset,offset+6).map(async file=>{
       const primary=domain.endsWith('.surge.sh');
-      const url=(primary?`https://${domain}`:`http://${edge}`)+'/'+file;
-      const response=await fetch(url,{headers:primary?{}:{Host:domain},signal:AbortSignal.timeout(30000)});
-      const publicSha256=sha(Buffer.from(await response.arrayBuffer()));
-      return {file,status:response.status,sha256:publicSha256,matches:response.ok&&publicSha256===hashes.get(file)};
+      const response=primary?await fetch(`https://${domain}/${file}`,{signal:AbortSignal.timeout(30000)}):null;
+      const result=primary?{status:response.status,bytes:Buffer.from(await response.arrayBuffer())}:await readEdge(domain,file);
+      const publicSha256=sha(result.bytes);
+      return {file,status:result.status,sha256:publicSha256,matches:result.status===200&&publicSha256===hashes.get(file)};
     })));
   }
-  receipt.domains[domain]={route:domain.endsWith('.surge.sh')?'public HTTPS':'public Surge HTTP edge with custom Host',results};
+  receipt.domains[domain]={route:domain.endsWith('.surge.sh')?'public HTTPS':'public HTTPS edge with original hostname/SNI and certificate validation',results};
   console.log(`${domain}: ${results.filter(result=>result.matches).length}/${results.length} public files match`);
 }
-const directory=`DOCS/DEPLOYMENT/platform-${metadata.version}`;
+const directory=`dist/squash-arcade-v${metadata.version}-deployment`;
 await mkdir(directory,{recursive:true});
 await writeFile(join(directory,'public-hashes.json'),JSON.stringify(receipt,null,2)+'\n');
 if(Object.values(receipt.domains).some(domain=>domain.results.some(result=>!result.matches)))throw new Error('Public file verification failed; see the deployment receipt.');

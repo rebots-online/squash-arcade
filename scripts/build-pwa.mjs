@@ -1,6 +1,8 @@
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve, relative, join } from 'node:path';
 import { createHash } from 'node:crypto';
+import { requireBuildAll } from './build-context.mjs';
+requireBuildAll();
 
 const directory = resolve(process.argv[2] || 'dist');
 const files = [];

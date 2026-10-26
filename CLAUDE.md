@@ -4,3 +4,6 @@ This checkout is the browser Squash Arcade project. `DOCS/ARCHITECTURE.md` defin
 
 Current operator override (2026-10-26): treat the unavailable Git service as permanently absent. Do not probe it, mention it, or make it a dependency. Use the configured available GitHub remote. Do not restore a superseded service dependency from older infrastructure/convention pages. Retain root dist as the tracked durable artifact home; never redirect workers to builds/ and collect only afterward. No automated tests for current follow-up work.
 
+
+Current build entry override (2026-10-26): ONLY ./build_all.sh may build or deploy. Never invoke npm build/deploy, node build helpers, Cargo/Tauri, Gradle or individual platform build commands directly. The entry's default action builds the complete matrix, advances source MINOR automatically on success, then deploys and verifies all three domains. ./build_all.sh --deploy-existing finishes deployment of already built bytes without rebuilding. Final package files belong directly in tracked root dist. The required matrix is enumerated in DOCS/ARCHITECTURE.md; previous five-package matrices were incomplete.
+

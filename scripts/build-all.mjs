@@ -4,6 +4,9 @@ import { createHash } from 'node:crypto';
 import { join, resolve, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setSourceVersion } from './source-version.mjs';
+import { requireBuildAll } from './build-context.mjs';
+import { artifactNames, targets } from './build-targets.mjs';
+requireBuildAll();
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 process.chdir(root);
@@ -11,7 +14,7 @@ if(process.platform!=='win32') throw new Error('This manual recipe coordinates t
 const lockPath=join(root,'.build-lock');
 const lock=await open(lockPath,'wx').catch(error=>{throw new Error(`A build is already locked at ${lockPath}: ${error.message}`);});
 await lock.writeFile(JSON.stringify({pid:process.pid,startedAt:new Date().toISOString()}));
-const roots=['src','public','scripts','src-tauri','index.html','package.json','package-lock.json','version.txt','tsconfig.json','vite.config.ts'];
+const roots=['build_all.sh','src','public','scripts','src-tauri','index.html','package.json','package-lock.json','version.txt','tsconfig.json','vite.config.ts'];
 async function sourceFiles(){
   const files=[];
   async function visit(path){
@@ -43,8 +46,8 @@ try {
   const startedAt=new Date().toISOString();
   const attempt=startedAt.replaceAll(':','-');
   runDirectory=join(root,'dist','.work',version,attempt);
-  releaseDirectory=join(root,'dist',`squash-arcade-v${version}`,attempt);
-  inventoryPath=join(releaseDirectory,`squash-arcade-v${version}-incomplete-inventory.json`);
+  releaseDirectory=join(root,'dist');
+  inventoryPath=join(releaseDirectory,`squash-arcade-v${version}-${attempt}-incomplete-inventory.json`);
   await mkdir(runDirectory,{recursive:true});
   await mkdir(releaseDirectory,{recursive:true});
   await run(process.execPath,['scripts/generate-icons.mjs']);
@@ -57,19 +60,29 @@ try {
   const env={...process.env,SQUASH_SOURCE_COMMIT:sourceCommit,SQUASH_SOURCE_HASH:sourceHash,SQUASH_BUILT_AT:startedAt};
   await run(process.execPath,[join(base,'scripts/stamp-build.mjs')],{cwd:base,env});
   await run(process.execPath,[join(root,'node_modules/vite/bin/vite.js'),'build'],{cwd:base,env});
-  await run(process.execPath,[join(base,'scripts/build-pwa.mjs'),join(base,'dist')],{cwd:base,env});
-  const platforms=['windows','appimage','android','pwa'];
+  const plain=join(base,'native-web');
+  await cp(join(base,'dist'),plain,{recursive:true,filter:path=>!/(^|[\\/])(manifest\.webmanifest|sw\.js)$/.test(path)});
+  const plainIndex=(await readFile(join(plain,'index.html'),'utf8')).replace(/<link\b[^>]*rel=["']manifest["'][^>]*>\s*/gi,'');
+  await writeFile(join(plain,'index.html'),plainIndex);
+  await cp(plain,join(base,'pwa-web'),{recursive:true});
+  await cp(join(base,'public/manifest.webmanifest'),join(base,'pwa-web/manifest.webmanifest'));
+  await writeFile(join(base,'pwa-web/index.html'),plainIndex.replace('<html','<html data-squash-pwa="true"').replace('</head>','<link rel="manifest" href="./manifest.webmanifest">\n</head>'));
+  await run(process.execPath,[join(base,'scripts/build-pwa.mjs'),join(base,'pwa-web')],{cwd:base,env});
+  const nativeConfig=JSON.parse(await readFile(join(base,'src-tauri/tauri.conf.json'),'utf8'));
+  nativeConfig.build.frontendDist='../native-web';
+  await writeFile(join(base,'src-tauri/tauri.conf.json'),JSON.stringify(nativeConfig,null,2)+'\n');
+  const platforms=Object.keys(targets);
   await Promise.all(platforms.map(async platform=>{
     await cp(base,join(runDirectory,platform,'source'),{recursive:true});
   }));
   manifest={version,sourceCommit,sourceHash,startedAt,status:'building',platforms:{}};
   await writeFile(inventoryPath,JSON.stringify(manifest,null,2)+'\n');
-  console.log(`Launching all four platform workers for ${version}. Logs: ${runDirectory}`);
+  console.log(`Launching all five platform workers for ${version}. Durable output: dist/`);
   const worker=async platform=>{
     const directory=join(runDirectory,platform);
-    const output=join(releaseDirectory,platform);
+    const output=releaseDirectory;
     await mkdir(output,{recursive:true});
-    const logPath=join(releaseDirectory,`squash-arcade-v${version}-${platform}-build.log`);
+    const logPath=join(releaseDirectory,`squash-arcade-v${version}-${attempt}-${platform}-build.log`);
     // Direct file descriptors avoid pipes held open by SDK/Gradle background tools.
     const log=await open(logPath,'w');
     return new Promise(done=>{
@@ -84,19 +97,18 @@ try {
       record.exitCode=code;record.finishedAt=new Date().toISOString();if(error)record.error=error.message;
       {
         try{
-          for(const name of await readdir(output)){
-            if(!/\.(exe|AppImage|apk|aab|zip)$/.test(name))continue;
+          for(const name of artifactNames(version,platform)){
+            try{await stat(join(output,name));}catch(error){if(error.code==='ENOENT')continue;throw error;}
             const path=join(output,name), bytes=await readFile(path);
             if(bytes.length===0)throw new Error('Empty artifact: '+name);
             record.artifacts.push({path:relative(root,path),bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});
           }
-          const required={windows:['.exe'],appimage:['.AppImage'],android:['.apk','.aab'],pwa:['.zip']}[platform];
-          for(const suffix of required)if(!record.artifacts.some(a=>a.path.endsWith(suffix)))throw new Error('Required artifact missing: '+suffix);
-          try{record.platformMetadata=JSON.parse(await readFile(join(output,'platform.json'),'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
+          for(const name of artifactNames(version,platform))if(!record.artifacts.some(a=>a.path.endsWith(name)))throw new Error('Required artifact missing: '+name);
+          try{record.platformMetadata=JSON.parse(await readFile(join(output,`squash-arcade-v${version}-${platform}-metadata.json`),'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
         }catch(error){record.exitCode=1;record.error=error.message;}
       }
       await log.close();
-      await writeFile(join(releaseDirectory,`squash-arcade-v${version}-${platform}-result.json`),JSON.stringify(record,null,2)+'\n');
+      await writeFile(join(releaseDirectory,`squash-arcade-v${version}-${attempt}-${platform}-result.json`),JSON.stringify(record,null,2)+'\n');
       await writeFile(inventoryPath,JSON.stringify(manifest,null,2)+'\n');
       console.log(`[${platform}] ${record.exitCode===0?'succeeded':'FAILED'}; ${relative(root,logPath)}`);
       done(record);
@@ -114,7 +126,7 @@ try {
   await writeFile(completePath,JSON.stringify(manifest,null,2)+'\n');
   await writeFile(inventoryPath,JSON.stringify({...manifest,status:'completed-inventory'},null,2)+'\n');
   // Preserve the old root web tree without moving any part of durable dist.
-  await cp(join(base,'dist'),join(root,'dist'),{recursive:true});
+  await cp(join(base,'pwa-web'),join(root,'dist'),{recursive:true});
   await cp(join(base,'public/deployment.json'),join(root,'public/deployment.json'));
   console.log(`All packages were produced directly in ${relative(root,releaseDirectory)}.`);
   console.log(`All platforms built ${version}. Source immediately advanced to ${next}.`);

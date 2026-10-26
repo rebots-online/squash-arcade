@@ -473,6 +473,41 @@ The favicon/app icon uses the existing red player1 Mii SVG, tilted slightly one 
 
 ## 5. Acceptance and release protocol
 
+### Operator build correction — 2026-10-26
+
+`build_all.sh` at repository root is the sole build/deployment entry. It owns the
+complete build then deployment, or `--deploy-existing` to finish delivery of an
+already completed build without manufacturing another version. Helpers reject
+execution outside its inherited build context. npm aliases enter this shell
+script through the platform launcher; none invokes a build/deploy helper directly.
+The source minor advances automatically immediately after complete compilation;
+failed matrices do not advance it. Deployment failure is retried through the same
+script's deploy-existing mode, without rebuilding accepted bytes.
+
+The closed output matrix, all stamped files directly in root dist, is: Windows
+standalone EXE, NSIS installer EXE, MSI and unsigned MSIX; Linux AppImage, DEB and
+RPM; Android APK, AAB and native debug-symbol ZIP; ordinary non-PWA web ZIP and
+separate installable PWA ZIP. Five workers (Windows, Linux, Android, web, PWA)
+start concurrently from one frozen frontend/source. Native and ordinary web
+frontends contain no manifest/service-worker registration; only the separate PWA
+variant has those features. Versioned web/PWA directories, stamped inventories,
+logs and verification evidence stay in dist. No root dist reset, nested final
+package archive or aggregate-success-only collection is allowed.
+
+Android init is followed by an explicit recursive copy of the generated red-Mii
+Android resource set into app/src/main/res. Every copied resource is hash-checked
+before packaging. Package verification must inspect launcher resources inside
+the resulting APK, not only generated source icons. Windows/MSIX and Linux use
+the same master. Standalone EXE is a real application binary, distinct from its
+installer; normal WebView2 requirements remain explicit. Native compilation does
+not imply installed-device, signing, Store or complete gameplay acceptance.
+
+Deployment is scripted to all three existing domains. Public verification uses
+HTTPS with hostname/SNI preserved and public edge lookup for custom domains,
+avoiding LAN split DNS. It preserves certificate validation and records exact
+routes and every file hash. Deployment and its verification are part of the
+shell entry's result; three successful uploader messages alone are insufficient.
+
 Operator correction 2026-10-26 / CC12: root `dist/` is durable and tracked, never renamed, emptied or ignored. Workers receive final output directories under `dist/squash-arcade-v<version>/<attempt>/<platform>/` from launch; no release package is first retained under `builds/` and copied only after aggregate success. Each worker stages any available output immediately, including failed/partial matrices, with slug-first `squash-arcade-v<version>-<qualifier>` filenames. Stamped incomplete inventories record hashes and failed/missing targets. Complete manifests are written only on aggregate success; no acceptance/public pointer is implied by compiler success. Frozen inputs and compiler intermediates under `dist/.work/` are explicitly disposable; durable output and evidence are outside that ignored boundary. Existing output is preserved. Latest operator override: the unavailable Git service is permanently absent and must not be mentioned, probed or made a dependency. Use the configured available GitHub remote. Current packages below its per-file limit are tracked as ordinary Git binaries, without GitHub LFS. Deployment reads the versioned PWA web directory, without traversing native packages or work trees. Fresh Android snapshots sharing Cargo caches regenerate Tauri's Kotlin bridge. Latest operator instruction retains immediate post-success source minor increment.
 
 DOCS/TEST_RUBRIC.md maps the six complete entities to behavior evidence. Each CHECKLIST item contains all production changes, tests and deterministic acceptance needed to stand alone on baseline 7b1df9b. Shared files are integrated serially; no task imports another task's new module or depends on another task's acceptance. Existing interfaces are explicit prerequisites, not hidden sibling tasks.

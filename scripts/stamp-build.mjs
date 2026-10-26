@@ -1,5 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
+import { requireBuildAll } from './build-context.mjs';
+requireBuildAll();
 
 // Metadata preparation inside the frozen build snapshot. build-all advances MINOR.
 const version = (await readFile('version.txt','utf8')).trim();

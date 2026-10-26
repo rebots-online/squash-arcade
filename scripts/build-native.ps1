@@ -4,6 +4,7 @@ param(
   [Parameter(Mandatory=$true)][string]$Output
 )
 $ErrorActionPreference='Stop'
+if($env:SQUASH_BUILD_ALL_CONTEXT -ne '1'){throw 'Only build_all.sh may invoke this helper.'}
 $toolchain=if($env:SQUASH_WINDOWS_ENV){$env:SQUASH_WINDOWS_ENV}else{'E:/DevTools/pearl-build-env.ps1'}
 . $toolchain
 Set-Location -LiteralPath $Snapshot
@@ -17,13 +18,25 @@ if($Platform -eq 'windows'){
   $parts=$version.Split('.')
   $nativeVersion=$parts[0]+'.'+$parts[1]+'.'+([int]$parts[2] % 65536)
   @{version=$nativeVersion}|ConvertTo-Json|Set-Content -LiteralPath windows-version.json
-  cargo tauri build --bundles nsis --ci --config windows-version.json
-  if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
+  cargo tauri build --bundles nsis,msi --ci --config windows-version.json
+  $nativeExit=$LASTEXITCODE
+  $binary=Join-Path $env:CARGO_TARGET_DIR 'release/squash-arcade.exe'
+  if(Test-Path -LiteralPath $binary){Copy-Item -LiteralPath $binary -Destination (Join-Path $Output "squash-arcade-v$version-windows-x64.exe")}
   $installer=Get-ChildItem -LiteralPath "$env:CARGO_TARGET_DIR/release/bundle/nsis" -Filter '*.exe' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-  if(-not $installer){throw 'Windows installer was not produced.'}
-  Copy-Item -LiteralPath $installer.FullName -Destination (Join-Path $Output "squash-arcade-v$version-windows-x64-setup.exe")
-  @{canonicalVersion=$version;platformVersion=$nativeVersion;signing='unsigned'}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $Output 'platform.json')
+  if($installer){Copy-Item -LiteralPath $installer.FullName -Destination (Join-Path $Output "squash-arcade-v$version-windows-x64-setup.exe")}
+  $msi=Get-ChildItem -LiteralPath "$env:CARGO_TARGET_DIR/release/bundle/msi" -Filter '*.msi' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+  if($msi){Copy-Item -LiteralPath $msi.FullName -Destination (Join-Path $Output "squash-arcade-v$version-windows-x64.msi")}
+  if($nativeExit -ne 0){exit $nativeExit}
+  $msixStage=Join-Path $Snapshot '.package-msix'
+  node scripts/package-msix.mjs $binary $msixStage $nativeVersion
+  if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
+  $makeAppx=Get-ChildItem -LiteralPath 'C:/Program Files (x86)/Windows Kits/10/bin' -Recurse -Filter makeappx.exe | Where-Object {$_.FullName -match '\\x64\\makeappx.exe$'} | Sort-Object FullName -Descending | Select-Object -First 1
+  if(-not $makeAppx){throw 'Windows SDK MakeAppx is required for MSIX.'}
+  & $makeAppx.FullName pack /d $msixStage /p (Join-Path $Output "squash-arcade-v$version-windows-x64.msix") /o
+  if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
+  @{canonicalVersion=$version;platformVersion=$nativeVersion;signing='unsigned';runtime='Microsoft Edge WebView2; standalone EXE is not an installer'}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $Output "squash-arcade-v$version-windows-metadata.json")
 }else{
+  $env:CARGO_PROFILE_RELEASE_DEBUG='2'
   $parts=$version.Split('.')
   $versionCode=[int64]$parts[0]*100000000+[int64]$parts[1]*100000+[int64]$parts[2]
   if($versionCode -gt 2147483647){throw 'Android versionCode exceeds the platform limit.'}
@@ -32,6 +45,15 @@ if($Platform -eq 'windows'){
   $config|ConvertTo-Json -Depth 20|Set-Content src-tauri/tauri.conf.json
   cargo tauri android init --ci
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
+  $iconSource=Join-Path $Snapshot 'src-tauri/icons/android'
+  $resourceRoot=Join-Path $Snapshot 'src-tauri/gen/android/app/src/main/res'
+  foreach($icon in Get-ChildItem -LiteralPath $iconSource -Recurse -File){
+    $relativeIcon=[IO.Path]::GetRelativePath($iconSource,$icon.FullName)
+    $destination=Join-Path $resourceRoot $relativeIcon
+    New-Item -ItemType Directory -Path (Split-Path $destination) -Force|Out-Null
+    Copy-Item -LiteralPath $icon.FullName -Destination $destination -Force
+    if((Get-FileHash -LiteralPath $icon.FullName).Hash -ne (Get-FileHash -LiteralPath $destination).Hash){throw "Android icon resource mismatch: $relativeIcon"}
+  }
   $gradlePath='src-tauri/gen/android/app/build.gradle.kts'
   Add-Content -LiteralPath $gradlePath -Value ("`n" + 'base { archivesName.set("squash-arcade-v' + $version + '") }')
   $manifestPath=Join-Path $Snapshot 'src-tauri/gen/android/app/src/main/AndroidManifest.xml'
@@ -55,5 +77,27 @@ if($Platform -eq 'windows'){
   if(-not $apk -or -not $aab){throw 'Android APK and AAB are both required.'}
   Copy-Item -LiteralPath $apk.FullName -Destination (Join-Path $Output "squash-arcade-v$version-android-arm64-unsigned.apk")
   Copy-Item -LiteralPath $aab.FullName -Destination (Join-Path $Output "squash-arcade-v$version-android-arm64-unsigned.aab")
-  @{canonicalVersion=$version;versionCode=$versionCode;signing='unsigned; production signing is a separate release step';abi='arm64-v8a'}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $Output 'platform.json')
+  $aapt=Get-ChildItem -LiteralPath "$env:ANDROID_HOME/build-tools" -Recurse -Filter aapt2.exe | Sort-Object FullName -Descending | Select-Object -First 1
+  if(-not $aapt){throw 'Android SDK aapt2 is required for packaged icon verification.'}
+  $resources=(& $aapt.FullName dump resources $apk.FullName) -join "`n"
+  Add-Type -AssemblyName System.IO.Compression.FileSystem
+  $archive=[IO.Compression.ZipFile]::OpenRead($apk.FullName)
+  try{
+    foreach($resourceName in @('ic_launcher','ic_launcher_foreground','ic_launcher_round')){
+      $block=[regex]::Match($resources,"(?ms)resource [^`n]+ mipmap/$resourceName`n(.*?)(?=\s+resource |\s+type |\z)").Groups[1].Value
+      $entryName=[regex]::Match($block,'\(xxxhdpi\) \(file\) ([^\s]+)').Groups[1].Value
+      if(-not $entryName){throw "Packaged icon resource is missing: $resourceName"}
+      $entry=$archive.GetEntry($entryName)
+      if(-not $entry){throw "Packaged icon file is missing: $entryName"}
+      $actualIcon=Join-Path $Output "squash-arcade-v$version-android-$resourceName.png"
+      [IO.Compression.ZipFileExtensions]::ExtractToFile($entry,$actualIcon,$true)
+      node scripts/verify-icon-pixels.mjs (Join-Path $iconSource "mipmap-xxxhdpi/$resourceName.png") $actualIcon (Join-Path $Output "squash-arcade-v$version-android-$resourceName-verification.json")
+      if($LASTEXITCODE -ne 0){throw "Packaged red Mii verification failed: $resourceName"}
+    }
+  }finally{$archive.Dispose()}
+  $symbols=Join-Path $Snapshot '.android-native-symbols'
+  New-Item -ItemType Directory -Path (Join-Path $symbols 'arm64-v8a') -Force|Out-Null
+  Copy-Item -LiteralPath (Join-Path $env:CARGO_TARGET_DIR 'aarch64-linux-android/release/libapp_lib.so') -Destination (Join-Path $symbols 'arm64-v8a/libapp_lib.so')
+  Compress-Archive -Path (Join-Path $symbols '*') -DestinationPath (Join-Path $Output "squash-arcade-v$version-android-arm64-debug-symbols.zip") -CompressionLevel Optimal -Force
+  @{canonicalVersion=$version;versionCode=$versionCode;signing='unsigned; production signing is a separate release step';abi='arm64-v8a';icon='red Mii; generated Android resources copied and hash-verified'}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $Output "squash-arcade-v$version-android-metadata.json")
 }

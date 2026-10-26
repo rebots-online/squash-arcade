@@ -1,0 +1,10 @@
+import sharp from 'sharp';
+import { writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { requireBuildAll } from './build-context.mjs';
+requireBuildAll();
+const [expected,actual,receipt]=process.argv.slice(2);
+const pixels=async path=>sharp(path).ensureAlpha().raw().toBuffer({resolveWithObject:true});
+const a=await pixels(expected),b=await pixels(actual);
+if(a.info.width!==b.info.width||a.info.height!==b.info.height||!a.data.equals(b.data))throw new Error('Packaged launcher icon differs from red Mii master resource: '+actual);
+await writeFile(receipt,JSON.stringify({expected,actual,width:b.info.width,height:b.info.height,pixelsMatch:true,rgbaSha256:createHash('sha256').update(b.data).digest('hex')},null,2)+'\n');
