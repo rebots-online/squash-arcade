@@ -33,7 +33,7 @@ if($Platform -eq 'windows'){
   cargo tauri android init --ci
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
   $gradlePath='src-tauri/gen/android/app/build.gradle.kts'
-  Add-Content -LiteralPath $gradlePath -Value ('base { archivesName.set("squash-arcade-v' + $version + '") }')
+  Add-Content -LiteralPath $gradlePath -Value ("`n" + 'base { archivesName.set("squash-arcade-v' + $version + '") }')
   $manifestPath=Join-Path $Snapshot 'src-tauri/gen/android/app/src/main/AndroidManifest.xml'
   [xml]$manifest=Get-Content -LiteralPath $manifestPath -Raw
   $androidNamespace='http://schemas.android.com/apk/res/android'
