@@ -1,6 +1,6 @@
 # Speech map — Virtual Squash
 
-Generated 2026-10-26T19:44:47.609Z. Source commit f953390117a53823db79a9038bcecdb9a58bb127; individual file hashes are in speech-catalog.json.
+Generated 2026-10-26T19:46:12.278Z. Source commit 9212ddc2d71b4cdaa6b05dcf27652d80b42db33a; individual file hashes are in speech-catalog.json.
 
 Found 16 speech call sites, 72 inventory records and 40 unique fixed texts including unconfirmed/legacy producers. The optional score bank contains 6800 full utterances through score 30.
 
