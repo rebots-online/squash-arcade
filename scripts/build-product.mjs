@@ -12,7 +12,7 @@ export async function assertProductIdentity(){
   const companion=await readFile('public/companion.html','utf8');
   if(/\bArgon\b|Remix:/i.test(companion.replace(/<[^>]+>/g,' ')))throw new Error('Deprecated companion branding remains.');
   const audio=await readFile('src/audio_engine.js','utf8');
-  if(/\b(?:title|shortTitle|genre)\s*:\s*['"][^'"\r\n]*\bArgon\b/i.test(audio))throw new Error('Deprecated soundtrack display branding remains.');
+  if(/\bArgon\b/i.test(audio))throw new Error('Deprecated audio/narration branding remains.');
   const tuning=await readFile('src/squash/TuningPanel.js','utf8');
   if(/(?:window\.prompt|a\.download)[^\r\n]*\bArgon\b/i.test(tuning))throw new Error('Deprecated tuning UI branding remains.');
 }

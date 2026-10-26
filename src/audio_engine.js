@@ -1,5 +1,5 @@
 // ============================================================================
-// ARGON SQUASH — AUDIO ENGINE, DEEP MALE REFEREE VOICE & MUSIC JUKEBOX
+// VIRTUAL SQUASH — AUDIO ENGINE, DEEP MALE REFEREE VOICE & MUSIC JUKEBOX
 // Features:
 //   1. "Welcome to Virtual Squash!" arcade announcer intro
 //   2. Deep Male WSF/PSA Squash Referee Voice ("Down! Handout, five-four", etc.)
@@ -10,7 +10,7 @@
 
 export const LYRIA_TRACKS = {
   // ==========================================================================
-  // TRACKS 1–7: NOVEL ORIGINAL ARGON SQUASH DEFAULT SOUNDTRACK
+  // TRACKS 1–7: NOVEL ORIGINAL VIRTUAL SQUASH DEFAULT SOUNDTRACK
   // ==========================================================================
   argon_glass_overture: {
     id: 'argon_glass_overture',
@@ -196,8 +196,8 @@ const TRACK_DRUM_KIT = {
 };
 
 const STATE_TO_TRACK = {
-  // Boot-visible states map to the 7 original Argon Squash soundtrack synths —
-  // deliberately NOT the legacy argon-tennis MP3s. (Synth = AudioContext, so
+  // Boot-visible states map to the 7 original Virtual Squash soundtrack synths —
+  // deliberately NOT the legacy virtual-tennis MP3s. (Synth = AudioContext, so
   // pre-gesture start is muted; audio-element muted-start stays for jukebox
   // 'audio' tracks which CAN start pre-gesture.)
   title: 'argon_glass_overture',
@@ -238,10 +238,10 @@ const STATE_TO_TRACK = {
 
 export const NARRATOR_USP_INVITES = [
   {
-    title: '🎙️ WELCOME TO ARGON SQUASH • CHOOSE YOUR WAY TO PLAY',
+    title: '🎙️ WELCOME TO VIRTUAL SQUASH • CHOOSE YOUR WAY TO PLAY',
     subText: '1P vs AI or 2-Human 1v1 • Webcam Kinect-Style, Phone Wii-Racket, or Mouse/Keys • Press K for Complete Rules',
     speech:
-      'Welcome to Argon Squash! You are watching two autonomous A.I. players battle live on the glass showcourt. Ready to jump in? Use the menu on the left to play One Player against Club or Pro A.I., or start a Two-Human-Player One-v-One match! Play with Webcam Kinect-style body pose and arm swings, pair your smartphone as a Wii-style inertial racket, or use Keyboard and Mouse. Press K at any time to review the complete rules of squash!'
+      'Welcome to Virtual Squash! You are watching two autonomous A.I. players battle live on the glass showcourt. Ready to jump in? Use the menu on the left to play One Player against Club or Pro A.I., or start a Two-Human-Player One-v-One match! Play with Webcam Kinect-style body pose and arm swings, pair your smartphone as a Wii-style inertial racket, or use Keyboard and Mouse. Press K at any time to review the complete rules of squash!'
   },
   {
     title: '📷 KINECT-STYLE WEBCAM POSE & 📱 WII-STYLE PHONE RACKET',
@@ -559,7 +559,7 @@ export class AudioEngine {
   }
 
   /**
-   * Plays a periodic or on-demand Narrator Invitation showcasing Argon Squash's USPs:
+   * Plays a periodic or on-demand Narrator Invitation showcasing Virtual Squash's USPs:
    * - 1P vs AI or 2-Human 1v1
    * - Webcam Kinect-style body pose & swing play (Front or Back Cam)
    * - Wii-style Smartphone Pocket Racket inertial play
@@ -769,7 +769,7 @@ export class AudioEngine {
         if (this.jukeboxMode === 'shuffle') {
           this.nextJukeboxTrack({ fromShuffle: true });
         } else if (this.jukeboxMode === 'auto' && ORIGINAL_DEFAULT_TRACK_IDS.includes(trackId)) {
-          // Rotate cleanly through the 7 original default Argon Squash tracks every 16 bars
+          // Rotate cleanly through the 7 original default Virtual Squash tracks every 16 bars
           this.nextJukeboxTrack({ onlyOriginalSeven: true });
         }
       }
@@ -907,7 +907,7 @@ export class AudioEngine {
     // 4. TRACK-SPECIFIC ORIGINAL MULTI-VOICE COMPOSITIONS
     // ========================================================================
     if (trackId === 'argon_glass_overture') {
-      // Track #1: Argon Glass Overture — C minor9 -> Ab maj7 -> Fm9 -> G7alt
+      // Track #1: Virtual Glass Overture — C minor9 -> Ab maj7 -> Fm9 -> G7alt
       const roots = [130.81, 103.83, 87.31, 98.0];
       const root = roots[bar];
       // Warm sustained chord pad on beat 0 of each bar
