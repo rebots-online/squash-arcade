@@ -473,6 +473,8 @@ The favicon/app icon uses the existing red player1 Mii SVG, tilted slightly one 
 
 ## 5. Acceptance and release protocol
 
+Operator correction 2026-10-26: the scripted distribution must collect every platform package under root `dist/releases/<built-version>/`, alongside the web game at root `dist/`. Include a release manifest with package paths and SHA-256 hashes. Keep attempt logs and frozen inputs under `builds/`. Deployment publishes the verified web tree separately, excluding native downloads. Fresh Android snapshots sharing Cargo caches must regenerate Tauri's Kotlin bridge rather than reuse code-generation side effects from a previous snapshot.
+
 DOCS/TEST_RUBRIC.md maps the six complete entities to behavior evidence. Each CHECKLIST item contains all production changes, tests and deterministic acceptance needed to stand alone on baseline 7b1df9b. Shared files are integrated serially; no task imports another task's new module or depends on another task's acceptance. Existing interfaces are explicit prerequisites, not hidden sibling tasks.
 
 For follow-up work the operator explicitly directs no automated tests: do not add or run them. Diagnose the reported behaviour, inspect the affected runtime paths, observe focused examples in the running game, and build for deployment. Older test instructions in completed tasks are historical evidence only. Implementation [X], independent semantic review ✅, rendered observation and human feel evaluation remain distinct; never imply that browser observation proves every possible rally.

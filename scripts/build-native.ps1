@@ -41,6 +41,11 @@ if($Platform -eq 'windows'){
   }
   $feature=$manifest.CreateElement('uses-feature');$feature.SetAttribute('name',$androidNamespace,'android.hardware.camera.any');$feature.SetAttribute('required',$androidNamespace,'false');[void]$manifest.manifest.AppendChild($feature)
   $manifest.Save($manifestPath)
+  # Tauri's build.rs generates Kotlin into the current snapshot but does not
+  # track that output-directory environment variable. Invalidate that package's
+  # cached Android build so fresh Gradle projects receive their TauriActivity.
+  cargo clean --manifest-path src-tauri/Cargo.toml --package tauri --release --target aarch64-linux-android
+  if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
   cargo tauri android build --target aarch64 --apk --aab --ci
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
   $apk=Get-ChildItem -LiteralPath src-tauri/gen/android/app/build/outputs -Recurse -Filter '*.apk' | Sort-Object LastWriteTime -Descending | Select-Object -First 1

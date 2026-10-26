@@ -5,6 +5,14 @@ Linux AppImage, Android and PWA together. `npm ci` installs the locked JavaScrip
 dependencies on a new checkout. No manual version edit, icon conversion, Gradle
 project generation or per-platform build command is required for subsequent runs.
 
+`npm run deploy` publishes the last complete matrix's web output to all three
+configured domains and verifies every public file hash. It refuses a web tree
+that differs from its frozen successful build. `npm run release` runs build then
+deployment. Build and deployment are distinct commands so local artifact builds
+do not implicitly publish. Public HTTPS is verified on the Surge domain; custom
+Host routing is verified directly at the public Surge edge to accommodate LAN
+split DNS. The deployment receipt records the route used for each domain.
+
 ## Provisioned host
 
 - Windows with PowerShell 7 (`pwsh.exe`), Node, Git and the shared
@@ -37,18 +45,35 @@ Attempts and outputs live under `builds/<version>/<timestamp>/`. They are retain
 after failure. `builds/<version>/SUCCESS.json` exists only after the complete matrix
 succeeds. Missing/failed targets or edits during a build prevent the version bump.
 
+The completed distribution is in `dist/`: the web game at its root, and all five
+packages (Windows installer, AppImage, APK, AAB and PWA ZIP) under
+`dist/releases/<built-version>/`, with a `manifest.json` containing their hashes.
+The coordinator copies and hash-verifies these files automatically. Native
+binaries are ignored by Git. Deployment stages only the verified frozen web tree.
+
 ## Working recipe details from the first runs
 
 - Use PowerShell 7: Windows PowerShell 5.1 rejected the script and archive module
   under this host's execution policy. No machine policy change was needed.
 - Execute the frozen worker scripts. Running a mutable shell script from the
   checkout can change a running build when that script is edited.
+- Redirect each worker directly to its log file. Piped logs may stay open when
+  SDK background processes inherit a pipe, leaving the coordinator alive after
+  artifact completion. The corrected recipe closes the parent file descriptor.
 - For AppImage, use the WSL ext4 working tree and persistent Cargo/CLI caches;
   `APPIMAGE_EXTRACT_AND_RUN=1` supports the bundler without a FUSE mount.
 - For Android, the script runs Tauri init, adds Internet/camera permissions with
   camera hardware optional, and requests both arm64 APK and AAB output.
+  It invalidates the cached Android `tauri` package before compilation: its
+  build script writes Kotlin into each fresh snapshot but does not track the
+  changing output-directory environment variable. Otherwise a reused Cargo
+  cache can leave the new project without `TauriActivity.kt`.
 - The icon master reuses `player1` from `src/mii_avatars.js`. It tilts the red Mii
   -13 degrees and the racquet +32 degrees. `npm run icons` generates the full set.
+  Unchanged, complete icon sets are reused; `npm run icons -- --force` regenerates.
+- Android versionCode is derived explicitly from the canonical version using
+  `MAJOR*100000000 + MINOR*100000 + BUILD`, with platform-limit validation. This
+  preserves ordering when the five-digit BUILD rolls over and MINOR advances.
 - A production service worker caches the local frontend/assets. Chrome's initial
   candidate reported zero installability errors and loaded/started a match with
   networking disabled. A force reload that explicitly bypasses service workers

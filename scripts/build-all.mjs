@@ -109,7 +109,22 @@ try {
   // Preserve the previously deployed tree before publishing the completed web tree.
   try{await rename(join(root,'dist'),join(runDirectory,'previous-dist'));}catch(error){if(error.code!=='ENOENT')throw error;}
   await cp(join(base,'dist'),join(root,'dist'),{recursive:true});
+  const releaseDirectory=join(root,'dist','releases',version);
+  await mkdir(releaseDirectory,{recursive:true});
+  const distribution={version,sourceCommit,sourceHash,artifacts:[]};
+  for(const [platform,record] of Object.entries(manifest.platforms)){
+    for(const artifact of record.artifacts){
+      const name=artifact.path.split(/[\\/]/).at(-1);
+      const destination=join(releaseDirectory,name);
+      await cp(join(root,artifact.path),destination);
+      const copiedHash=createHash('sha256').update(await readFile(destination)).digest('hex');
+      if(copiedHash!==artifact.sha256)throw new Error('Distribution copy hash mismatch: '+name);
+      distribution.artifacts.push({platform,path:`releases/${version}/${name}`,bytes:artifact.bytes,sha256:copiedHash});
+    }
+  }
+  await writeFile(join(releaseDirectory,'manifest.json'),JSON.stringify(distribution,null,2)+'\n');
   await cp(join(base,'public/deployment.json'),join(root,'public/deployment.json'));
+  console.log(`All five packages and hash manifest collected in ${relative(root,releaseDirectory)}.`);
   console.log(`All platforms built ${version}. Source immediately advanced to ${next}.`);
 }catch(error){
   if(manifest){manifest.status='failed';manifest.error=error.message;manifest.finishedAt=new Date().toISOString();await writeFile(join(runDirectory,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');}

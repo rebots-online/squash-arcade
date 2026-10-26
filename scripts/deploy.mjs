@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { readFile, writeFile, readdir, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, readdir, mkdir, cp } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 
@@ -15,6 +15,7 @@ const files=[];
 async function walk(directory,prefix=''){
   for(const entry of await readdir(directory,{withFileTypes:true})){
     const name=prefix+entry.name;
+    if(name==='releases')continue;
     if(entry.isDirectory())await walk(join(directory,entry.name),name+'/');
     else if(name!=='CNAME')files.push(name);
   }
@@ -26,11 +27,13 @@ for(const file of files){
   if(sha(local)!==sha(await readFile(join(frozenWeb,file))))throw new Error('dist differs from frozen build: '+file);
   hashes.set(file,sha(local));
 }
-await writeFile('dist/CNAME','squash.robin.mba\n');
+const deployDirectory=join(root,'builds',metadata.version,'deploy-web');
+await cp(frozenWeb,deployDirectory,{recursive:true});
+await writeFile(join(deployDirectory,'CNAME'),'squash.robin.mba\n');
 const domains=['squash-arcade.surge.sh','squash.robin.mba','squash-arcade.robin.mba'];
 for(const domain of domains){
   await new Promise((done,fail)=>{
-    const child=spawn(process.execPath,[join(root,'node_modules/surge/bin/surge'),'./dist',domain],{stdio:'inherit',windowsHide:true});
+    const child=spawn(process.execPath,[join(root,'node_modules/surge/bin/surge'),deployDirectory,domain],{stdio:'inherit',windowsHide:true});
     child.once('error',fail);child.once('exit',code=>code===0?done():fail(new Error(`Surge ${domain} exited ${code}`)));
   });
 }
