@@ -67,3 +67,6 @@ Observed 2026-10-26 full-matrix attempt: Windows four packages, Linux three pack
 
 Brand gate: the existing primary identity is Virtual Squash, with the existing ROCHE court wordmark. Legacy page/OpenGraph titles, companion text, soundtrack display labels and tuning prompts/exports are rejected before compilation. Native and PWA display names must agree with the page. PWA updates now activate and navigate legacy app clients automatically so a cached deprecated title is not left visible until the user forces a reload.
 
+
+BUILD is stamped automatically from current epoch minutes by build_all.sh before inputs freeze; MINOR still advances only after the complete matrix succeeds. This avoids a locked prior executable pathname without closing an operator's app. The voice inventory can be regenerated without compilation through build_all.sh --inventory-speech, and normal builds refresh it automatically. Web/PWA ZIP retries use Force after retained-byte copies are recorded.
+

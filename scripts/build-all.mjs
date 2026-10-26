@@ -39,7 +39,11 @@ const run=(command,args,options={})=>new Promise((done,fail)=>{
 let manifest,runDirectory,releaseDirectory,inventoryPath;
 try {
   await assertProductIdentity();
-  const version=(await readFile('version.txt','utf8')).trim();
+  await run(process.execPath,['scripts/catalog-speech.mjs']);
+  const pendingVersion=(await readFile('version.txt','utf8')).trim();
+  const [pendingMajor,pendingMinor]=pendingVersion.split('.');
+  const version=`${pendingMajor}.${pendingMinor}.${String(Math.floor(Date.now()/60000)%100000).padStart(5,'0')}`;
+  if(version!==pendingVersion)await setSourceVersion(version);
   const pkg=JSON.parse(await readFile('package.json','utf8'));
   if(pkg.version!==version)throw new Error('Canonical and package versions differ.');
   const versionDirectory=join(root,'dist');

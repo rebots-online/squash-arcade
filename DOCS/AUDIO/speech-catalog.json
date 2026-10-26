@@ -1,0 +1,1515 @@
+{
+  "generatedAt": "2026-10-26T19:44:47.609Z",
+  "sourceCommit": "f953390117a53823db79a9038bcecdb9a58bb127",
+  "scope": "Repository-defined speech sinks, producers and grammar; not an exhaustive literal set for open numeric/public-text domains.",
+  "sourceFiles": [
+    {
+      "file": "src/audio_engine.js",
+      "sha256": "b173f8d9946fc55a348de4798c18a3d74a91b521a6ebd796aeb38bcb4338c879"
+    },
+    {
+      "file": "src/build_version.js",
+      "sha256": "5177df6c9cac1bd7887c964adba88f9f153dbba438a7270af0b4a6667917a4fc"
+    },
+    {
+      "file": "src/game_engine.js",
+      "sha256": "6fd1c08223c611e10e47056bfc2120a30fac1fada93a352ca21ac15c2822593b"
+    },
+    {
+      "file": "src/hud_ui.js",
+      "sha256": "4734e2d910d49294741f38f93360a2f9b2477db6175df49cc9c9384fde36534b"
+    },
+    {
+      "file": "src/mii_avatars.js",
+      "sha256": "3bbc64c6065cab097742202005f96133d30a51eb8c29f42c6646534c71b4a2fb"
+    },
+    {
+      "file": "src/mii_body_animation.js",
+      "sha256": "05ba2f61bf4d78933fc786198bd5c11057939d57d4ff8783de2a1e8693ca1b4b"
+    },
+    {
+      "file": "src/mii_facial_fx.js",
+      "sha256": "aa136434b6c645c3b9606348ba134eefbc05df56fdca7ece0efc7f019e8d4f2f"
+    },
+    {
+      "file": "src/mii_model_overhaul.js",
+      "sha256": "4f1b11f85d55a56ab94776b32ce8a15930049303f0169b28c6c0ec86aa3a6356"
+    },
+    {
+      "file": "src/motion_controls.js",
+      "sha256": "070ec6580f1d6e8eb49288734cdcbb65c42b84d351ace5f7e315bdd2a526847c"
+    },
+    {
+      "file": "src/pwa.js",
+      "sha256": "86888edf1025fe1ff3f87891b08f0c8e3287fc930a064b26f9e07b269d2a4513"
+    },
+    {
+      "file": "src/racket_kinematics.js",
+      "sha256": "e23a097c23e69322d03399ac26cbab713b4b85a55ab9d82015674a4610850c38"
+    },
+    {
+      "file": "src/squash/ArcadeBriefing.js",
+      "sha256": "35519a870ad8923e40a8aa87a91c85ffb0b945bc0fa3b3bebcef7946d7813e91"
+    },
+    {
+      "file": "src/squash/ArcadeSchematic.js",
+      "sha256": "208820c32923a62e0e1c1aaeddac6119aa5d14a21a601ea11e67dd13e5c2f2ee"
+    },
+    {
+      "file": "src/squash/BallPhysics.js",
+      "sha256": "b1f9aa6e70742c63ca373e6aeca0e288725ea8ee041eba3bc199b06006e99d51"
+    },
+    {
+      "file": "src/squash/BiomechStrokeClassifier.js",
+      "sha256": "7dbf9ec61574d7c6a25d2f7e434fa873c94edd3b76d2afcbc5b6aad8aba0aea3"
+    },
+    {
+      "file": "src/squash/CourtCamera.js",
+      "sha256": "9b245be9a4242eb82fcff3b56c11f38e994f295b3ce932f5ed90f632d9c1e008"
+    },
+    {
+      "file": "src/squash/CourtGeometry.js",
+      "sha256": "e0abe90f34a58b064926de3a397632e781a059e433c9580ebae3f26f20697238"
+    },
+    {
+      "file": "src/squash/CourtHUD.js",
+      "sha256": "50dfa6180604c3fc24a899a4e3cdb654a68833a494ea3925d9505a5696e25b88"
+    },
+    {
+      "file": "src/squash/IntroDirector.js",
+      "sha256": "50d5a0b2ca9c3f25c83f66af51fe1119ae61d10b183494f3537bf618ecd9c6a3"
+    },
+    {
+      "file": "src/squash/NickCollisionModel.js",
+      "sha256": "b4a7a6ced6a2aff1dad2844d96f60ce9e78db503a8c18ad9d0fd17e3cc6a5041"
+    },
+    {
+      "file": "src/squash/OpponentAI.js",
+      "sha256": "0963d210e1dfabda1020067d3000b511298c0e11049a2960e054a1d9bf7c0f41"
+    },
+    {
+      "file": "src/squash/PlayerMovement.js",
+      "sha256": "625a2bea9b4682138f61b15f5f549e0dbd961a376dfdfbcfe8ad9be0ab6a4023"
+    },
+    {
+      "file": "src/squash/PointPresentation.js",
+      "sha256": "9415608e6a5a3890b8daa0c945a0b31be10e2730f3e58ea5542caad6b697e41a"
+    },
+    {
+      "file": "src/squash/RacketGrip.js",
+      "sha256": "eceb51a44710b2e81bc6c1293a21dc552566425bd3309987823f4e59c7900db8"
+    },
+    {
+      "file": "src/squash/RulesEngine.js",
+      "sha256": "ba0a2d13cba2062063998bf1a599859e28aef296451eac91f90dbe312c6423b3"
+    },
+    {
+      "file": "src/squash/ServeSetup.js",
+      "sha256": "ab3801ae740dad9fb4245f8bc8094cac0cbb6bcde0f5185aae553b82d7687936"
+    },
+    {
+      "file": "src/squash/ShotController.js",
+      "sha256": "6515a90199771df175df3ec2e755f9671608f82c91eee1f89348e936fc2bd642"
+    },
+    {
+      "file": "src/squash/ShotTrajectorySolver.js",
+      "sha256": "666876da26cc30830267dff175dc0468b5ecedd48d621d0b7da84e4b16283b86"
+    },
+    {
+      "file": "src/squash/StrokeMotion.js",
+      "sha256": "6550d8e910ebefa6b378a15ba1d795aa3f0a4ce62b34b170885bff59a093b6aa"
+    },
+    {
+      "file": "src/squash/TestHarness.js",
+      "sha256": "45e38debd154bdb7ce53759b734547bcbbc36aa20c41752fea59874f31740927"
+    },
+    {
+      "file": "src/squash/TuningConfig.js",
+      "sha256": "9eba7de0d9df32fe7a11bb957d1f6455929e4df9e8516229f21b588d911ac248"
+    },
+    {
+      "file": "src/squash/TuningPanel.js",
+      "sha256": "47f38819b635137ed517cdc84f71e0c3ac97800ed0dcfb94754bfd1433b4d4d9"
+    },
+    {
+      "file": "src/squash/VolleyPlanner.js",
+      "sha256": "8a55ad7179f77b06bce60b12f43c448f4678a5be5e918125902c646322e551b1"
+    },
+    {
+      "file": "src/swing_vfx.js",
+      "sha256": "9f0897039102a8738825171be551e1b953b5a8913fc776dcf9c6bd12c48ee38e"
+    },
+    {
+      "file": "index.html",
+      "sha256": "03fb5f5a75fb35799ae7e6684418f723bfe44e527f764f4b803c0be16e57ebec"
+    }
+  ],
+  "summary": {
+    "sourceFiles": 35,
+    "speechCallSites": 16,
+    "inventoryEntries": 72,
+    "uniqueFixedTextsIncludingUnconfirmedProducers": 40,
+    "fixedCharacters": 4246,
+    "scoreBankMaximum": 30,
+    "scoreBankUtterances": 6800,
+    "scoreBankCharacters": 194630
+  },
+  "closedGrammar": {
+    "scoreModes": [
+      "PAR_11",
+      "ARCADE_5",
+      "HIHO_9"
+    ],
+    "targets": [
+      11,
+      5,
+      9
+    ],
+    "winBy": {
+      "PAR_11": 2,
+      "ARCADE_5": 1,
+      "HIHO_9": 2
+    },
+    "numberDomain": "nonnegative integer; no configured maximum for win-by-two",
+    "serverRoles": [
+      "player",
+      "opponent"
+    ],
+    "serviceSides": [
+      "left",
+      "right"
+    ],
+    "faultPrefixes": [
+      "",
+      "Down!",
+      "Out!",
+      "Not up!",
+      "Nick!",
+      "Stroke!",
+      "Yes, let!",
+      "No let!",
+      "Foot fault!",
+      "Fault!"
+    ],
+    "handout": [
+      "",
+      "Handout, "
+    ],
+    "scoreForms": [
+      "{server} {receiver}.",
+      "{n} all."
+    ],
+    "stakes": [
+      "",
+      "Game Ball!",
+      "Match Ball!"
+    ],
+    "completions": [
+      "Game! {winner} {loser}.",
+      "Game and match! {winner} {loser}."
+    ],
+    "warnings": {
+      "namedPlayers": [
+        "Player 1",
+        "Player 2"
+      ],
+      "repeatClass": [
+        "first",
+        "SECOND SAFETY WARNING"
+      ]
+    },
+    "externalTextBoundary": "AudioEngine generic methods currently accept arbitrary text. Full closure requires future clip-ID/grammar enforcement; developer-console or external callers are not enumerated by this repo inventory."
+  },
+  "entries": [
+    {
+      "id": "cf23814111cad766",
+      "category": "legacy-USP",
+      "kind": "fixed",
+      "text": "Welcome to Virtual Squash! You are watching two autonomous A.I. players battle live on the glass showcourt. Ready to jump in? Use the menu on the left to play One Player against Club or Pro A.I., or start a Two-Human-Player One-v-One match! Play with Webcam Kinect-style body pose and arm swings, pair your smartphone as a Wii-style inertial racket, or use Keyboard and Mouse. Press K at any time to review the complete rules of squash!",
+      "source": {
+        "file": "src/audio_engine.js",
+        "line": 243,
+        "owner": "NARRATOR_USP_INVITES"
+      },
+      "expression": "'Welcome to Virtual Squash! You are watching two autonomous A.I. players battle live on the glass showcourt. Ready to jump in? Use the menu on the left to play One Player against Club or Pro A.I., or start a Two-Human-Player One-v-One match! Play with Webcam Kinect-style body pose and arm swings, pair your smartphone as a Wii-style inertial racket, or use Keyboard and Mouse. Press K at any time to review the complete rules of squash!'"
+    },
+    {
+      "id": "91e9cdceb9c55175",
+      "category": "legacy-USP",
+      "kind": "fixed",
+      "text": "Experience Physical Chess with full motion controls! For Kinect-style webcam play, click Enable Pose Cam in Step 4 to lunge and swing naturally in front of your camera—even using a back camera with a big-screen T.V.! For Wii-style motion play, scan the Pocket Racket QR code with your phone to swing and slice in 3D space. Or play immediately with mouse swipes and keys 1 through 5. Press K anytime to pause and view the complete rules of squash!",
+      "source": {
+        "file": "src/audio_engine.js",
+        "line": 249,
+        "owner": "NARRATOR_USP_INVITES"
+      },
+      "expression": "'Experience Physical Chess with full motion controls! For Kinect-style webcam play, click Enable Pose Cam in Step 4 to lunge and swing naturally in front of your camera—even using a back camera with a big-screen T.V.! For Wii-style motion play, scan the Pocket Racket QR code with your phone to swing and slice in 3D space. Or play immediately with mouse swipes and keys 1 through 5. Press K anytime to pause and view the complete rules of squash!'"
+    },
+    {
+      "id": "31cde53b6c9f2daf",
+      "category": "legacy-USP",
+      "kind": "fixed",
+      "text": "Ready to step on court? In Step 1 on the left menu, pick Club A.I. or Pro Chess A.I. for a solo match, or select One-v-One Match to invite a second human player! Even while watching this live A.I. exhibition, you can nudge their next shot with keys 1 through 5, or steer footwork with W, A, S, D. To review the official rules of squash, including Lets and Strokes, press K at any time!",
+      "source": {
+        "file": "src/audio_engine.js",
+        "line": 255,
+        "owner": "NARRATOR_USP_INVITES"
+      },
+      "expression": "'Ready to step on court? In Step 1 on the left menu, pick Club A.I. or Pro Chess A.I. for a solo match, or select One-v-One Match to invite a second human player! Even while watching this live A.I. exhibition, you can nudge their next shot with keys 1 through 5, or steer footwork with W, A, S, D. To review the official rules of squash, including Lets and Strokes, press K at any time!'"
+    },
+    {
+      "id": "7bc0525dc7b60dbf",
+      "category": "speech-input",
+      "kind": "fixed",
+      "text": "Welcome to Virtual Squash! The user is always represented in the game as the red player. Love all. Play!",
+      "source": {
+        "file": "src/audio_engine.js",
+        "line": 558,
+        "owner": "playWelcomeIntro"
+      },
+      "expression": "phrase"
+    },
+    {
+      "id": "e8fc77748f8d7017",
+      "category": "speech-input",
+      "kind": "fixed",
+      "text": "Welcome to Virtual Squash!",
+      "source": {
+        "file": "src/audio_engine.js",
+        "line": 558,
+        "owner": "playWelcomeIntro"
+      },
+      "expression": "phrase"
+    },
+    {
+      "id": "0e39b327938d9624",
+      "category": "speech-input",
+      "kind": "template",
+      "text": "{item.speech}",
+      "source": {
+        "file": "src/audio_engine.js",
+        "line": 586,
+        "owner": "playNarratorUSPInvite"
+      },
+      "expression": "item.speech"
+    },
+    {
+      "id": "8c25233d88f629a1",
+      "category": "speech-input",
+      "kind": "fixed",
+      "text": "Down! Handout, five-four.",
+      "source": {
+        "file": "src/audio_engine.js",
+        "line": 1445,
+        "owner": "toggleRefereeVoice"
+      },
+      "expression": "'Down! Handout, five-four.'"
+    },
+    {
+      "id": "7cf71ebcbb9cec7e",
+      "category": "transport-alias-or-normalization",
+      "kind": "fixed",
+      "text": "Love all. Play!",
+      "source": {
+        "file": "src/audio_engine.js",
+        "line": 1696,
+        "owner": "speakNow"
+      },
+      "expression": "this._welcomePlayed ? 'Love all. Play!' : 'Welcome to Virtual Squash! Love all. Play!'"
+    },
+    {
+      "id": "adc8d666eca5756c",
+      "category": "transport-alias-or-normalization",
+      "kind": "fixed",
+      "text": "Welcome to Virtual Squash! Love all. Play!",
+      "source": {
+        "file": "src/audio_engine.js",
+        "line": 1696,
+        "owner": "speakNow"
+      },
+      "expression": "this._welcomePlayed ? 'Love all. Play!' : 'Welcome to Virtual Squash! Love all. Play!'"
+    },
+    {
+      "id": "d44e6bb832e87d09",
+      "category": "transport-alias-or-normalization",
+      "kind": "fixed",
+      "text": "Welcome to Virtual Squash!",
+      "source": {
+        "file": "src/audio_engine.js",
+        "line": 1701,
+        "owner": "speakNow"
+      },
+      "expression": "'Welcome to Virtual Squash!'"
+    },
+    {
+      "id": "972abda5859e9d5e",
+      "category": "transport-alias-or-normalization",
+      "kind": "fixed",
+      "text": "Game and match!",
+      "source": {
+        "file": "src/audio_engine.js",
+        "line": 1704,
+        "owner": "speakNow"
+      },
+      "expression": "'Game and match!'"
+    },
+    {
+      "id": "e3f57f8bc4fd9891",
+      "category": "transport-alias-or-normalization",
+      "kind": "template",
+      "text": "{spokenText .replace(/\\b00\\b/g, 'love') .replace(/\\(Tin\\)/gi, '') .replace(/\\(Two Bounces\\)/gi, '') .replace(/\\(Missed Front Wall\\)/gi, '') .replace(/•/g, ',') .replace(/\\s*-\\s*/g, ' ')}",
+      "source": {
+        "file": "src/audio_engine.js",
+        "line": 1706,
+        "owner": "speakNow"
+      },
+      "expression": "spokenText .replace(/\\b00\\b/g, 'love') .replace(/\\(Tin\\)/gi, '') .replace(/\\(Two Bounces\\)/gi, '') .replace(/\\(Missed Front Wall\\)/gi, '') .replace(/•/g, ',') .replace(/\\s*-\\s*/g, ' ')"
+    },
+    {
+      "id": "d2a043b3a20fa568",
+      "category": "speech-input",
+      "kind": "template",
+      "text": "{btn.dataset.callout}",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 1440,
+        "owner": "_bindJukeboxAndRefereeControls"
+      },
+      "expression": "phrase"
+    },
+    {
+      "id": "83ce1d3526fed96d",
+      "category": "speech-input",
+      "kind": "fixed",
+      "text": "Down! Handout, five-four.",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 1440,
+        "owner": "_bindJukeboxAndRefereeControls"
+      },
+      "expression": "phrase"
+    },
+    {
+      "id": "ebf5d8a97348d6c3",
+      "category": "speech-input",
+      "kind": "fixed",
+      "text": "Stop play! Yes, Let. Safety reminder: always call a Let when obstructed instead of striking your opponent.",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 1473,
+        "owner": "_bindJukeboxAndRefereeControls"
+      },
+      "expression": "'Stop play! Yes, Let. Safety reminder: always call a Let when obstructed instead of striking your opponent.'"
+    },
+    {
+      "id": "2cd13ab690d6164d",
+      "category": "speech-input",
+      "kind": "fixed",
+      "text": "Down! Handout, five-four.",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 1645,
+        "owner": "toggleRefereeVoice"
+      },
+      "expression": "'Down! Handout, five-four.'"
+    },
+    {
+      "id": "ca1ef9082f4c2427",
+      "category": "speech-input",
+      "kind": "fixed",
+      "text": "Quick note — you don't run to the ball in this game; your player does that. Your only job is shot selection: keys one to five, a click, or spacebar. Call the spin!",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 2450,
+        "owner": "_runRacketSpinCeremony"
+      },
+      "expression": "\"Quick note — you don't run to the ball in this game; your player does that. \" + 'Your only job is shot selection: keys one to five, a click, or spacebar. Call the spin!'"
+    },
+    {
+      "id": "d40b2586d7b1619d",
+      "category": "speech-input",
+      "kind": "template",
+      "text": "{this.rulesEngine.getHighStakesLabel()}",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 2603,
+        "owner": "_setupPointServe"
+      },
+      "expression": "highStakes"
+    },
+    {
+      "id": "e34a418312a4b67b",
+      "category": "speech-input",
+      "kind": "template",
+      "text": "{letDecision.refereeCallout} {letDecision.safetyWarningText}",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 2771,
+        "owner": "_replayLetRally"
+      },
+      "expression": "voiceText"
+    },
+    {
+      "id": "b77e3332e78455d7",
+      "category": "speech-input",
+      "kind": "template",
+      "text": "{letDecision.refereeCallout}",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 2771,
+        "owner": "_replayLetRally"
+      },
+      "expression": "voiceText"
+    },
+    {
+      "id": "1cd0277970065bf1",
+      "category": "speech-input",
+      "kind": "fixed",
+      "text": "Yes, Let! Play a let.",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 2771,
+        "owner": "_replayLetRally"
+      },
+      "expression": "voiceText"
+    },
+    {
+      "id": "a43242060f2d7a35",
+      "category": "speech-input",
+      "kind": "fixed",
+      "text": "Server, use the left box.",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 2978,
+        "owner": "_updateServeReadiness"
+      },
+      "expression": "text"
+    },
+    {
+      "id": "b38910e139affe12",
+      "category": "speech-input",
+      "kind": "fixed",
+      "text": "Server, use the right box.",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 2978,
+        "owner": "_updateServeReadiness"
+      },
+      "expression": "text"
+    },
+    {
+      "id": "91fedb49bafc63fd",
+      "category": "speech-input",
+      "kind": "fixed",
+      "text": "Receiver, give the server room.",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 2978,
+        "owner": "_updateServeReadiness"
+      },
+      "expression": "text"
+    },
+    {
+      "id": "470a573fcbb6bcb0",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "⚠️ REFEREE REMINDER: You were obstructed by your opponent! Call \"Let, please!\" immediately (Press F / L, raise an open hand ✋, or hold phone upright) instead of letting the ball bounce twice.",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 3660,
+        "owner": "_stepPhysics"
+      },
+      "expression": "'⚠️ REFEREE REMINDER: You were obstructed by your opponent! Call \"Let, please!\" immediately (Press F / L, raise an open hand ✋, or hold phone upright) instead of letting the ball bounce twice.'"
+    },
+    {
+      "id": "c3332a5d80f7c1ad",
+      "category": "speech-input",
+      "kind": "template",
+      "text": "{this.rulesEngine.formatRefereeCallout(outcome,reason,decisionMeta)}",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 3950,
+        "owner": "_awardPoint"
+      },
+      "expression": "callout"
+    },
+    {
+      "id": "6f2ad24f38d07886",
+      "category": "speech-input",
+      "kind": "template",
+      "text": "{decisionMeta.refereeCallout} {decisionMeta.safetyWarningText}",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 4038,
+        "owner": "_showPointOutcome"
+      },
+      "expression": "refereeCallout"
+    },
+    {
+      "id": "1658587efdbb4483",
+      "category": "speech-input",
+      "kind": "template",
+      "text": "{this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)} {decisionMeta.safetyWarningText}",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 4038,
+        "owner": "_showPointOutcome"
+      },
+      "expression": "refereeCallout"
+    },
+    {
+      "id": "227708848043d526",
+      "category": "speech-input",
+      "kind": "template",
+      "text": "{decisionMeta.refereeCallout} {this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)}",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 4038,
+        "owner": "_showPointOutcome"
+      },
+      "expression": "refereeCallout"
+    },
+    {
+      "id": "d46720e4dc73b539",
+      "category": "speech-input",
+      "kind": "template",
+      "text": "{this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)}",
+      "source": {
+        "file": "src/game_engine.js",
+        "line": 4038,
+        "owner": "_showPointOutcome"
+      },
+      "expression": "refereeCallout"
+    },
+    {
+      "id": "0879e36699886290",
+      "category": "briefing",
+      "kind": "fixed",
+      "text": "The user is always represented in the game as the red player. Squash is physical chess. Keep rails tight to the wall. Send drives and lobs deep, beyond the service box. Volley when the opening is there. Move your opponent before you attack. Watch the red player, then try the shots yourself.",
+      "source": {
+        "file": "src/squash/ArcadeBriefing.js",
+        "line": 9,
+        "owner": "CHAPTERS"
+      },
+      "expression": "'The user is always represented in the game as the red player. Squash is physical chess. Keep rails tight to the wall. Send drives and lobs deep, beyond the service box. Volley when the opening is there. Move your opponent before you attack. Watch the red player, then try the shots yourself.'"
+    },
+    {
+      "id": "fecf5651dc474c27",
+      "category": "briefing",
+      "kind": "fixed",
+      "text": "Play with your phone as a Wii-style racket. Pair it with the court screen and allow motion sensors. Fold it if you have a foldable. Hold securely with room to swing. Your arm movement and racket face shape the on-screen stroke. Ordinary phones work too.",
+      "source": {
+        "file": "src/squash/ArcadeBriefing.js",
+        "line": 16,
+        "owner": "CHAPTERS"
+      },
+      "expression": "'Play with your phone as a Wii-style racket. Pair it with the court screen and allow motion sensors. Fold it if you have a foldable. Hold securely with room to swing. Your arm movement and racket face shape the on-screen stroke. Ordinary phones work too.'"
+    },
+    {
+      "id": "85648c639eb3da1c",
+      "category": "briefing",
+      "kind": "fixed",
+      "text": "For Kinect-style play, enable the camera on your court screen. Step back with your arms and body in view. Lunge and swing your racket arm. The red player follows your movement. Choose the front or back camera for your screen setup.",
+      "source": {
+        "file": "src/squash/ArcadeBriefing.js",
+        "line": 23,
+        "owner": "CHAPTERS"
+      },
+      "expression": "'For Kinect-style play, enable the camera on your court screen. Step back with your arms and body in view. Lunge and swing your racket arm. The red player follows your movement. Choose the front or back camera for your screen setup.'"
+    },
+    {
+      "id": "277146171b17abc0",
+      "category": "speech-input",
+      "kind": "template",
+      "text": "{c.speech}",
+      "source": {
+        "file": "src/squash/ArcadeBriefing.js",
+        "line": 158,
+        "owner": "showChapter"
+      },
+      "expression": "c.speech"
+    },
+    {
+      "id": "7940e005313bd109",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Stop play! Ball hit opponent! Stroke awarded, but SECOND SAFETY WARNING to Player 1: Never strike the ball when your opponent is in the line of fire! Hold your shot and call Let, please!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 109,
+        "owner": "evaluateBallPlayerBodyCollision"
+      },
+      "expression": "safetyCallout"
+    },
+    {
+      "id": "557a143b9ee987a8",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Stop play! Ball hit opponent! Stroke awarded, but SECOND SAFETY WARNING to Player 2: Never strike the ball when your opponent is in the line of fire! Hold your shot and call Let, please!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 109,
+        "owner": "evaluateBallPlayerBodyCollision"
+      },
+      "expression": "safetyCallout"
+    },
+    {
+      "id": "70333da190a078cc",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Stop play! Ball hit opponent! Stroke awarded, but Referee Safety Warning: Always stop and call Let, please instead of hitting an opponent!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 109,
+        "owner": "evaluateBallPlayerBodyCollision"
+      },
+      "expression": "safetyCallout"
+    },
+    {
+      "id": "bfdc0c17cc75aecd",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Stop play! Ball hit opponent after turning. Yes, let! Safety warning: Hold your swing and call Let, please when the court is blocked!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 125,
+        "owner": "evaluateBallPlayerBodyCollision"
+      },
+      "expression": "`Stop play! Ball hit opponent after turning. Yes, let! Safety warning: Hold your swing and call Let, please when the court is blocked!`"
+    },
+    {
+      "id": "ccceff942f228d56",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Stop play! Ball struck receiver after front wall. Stroke!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 141,
+        "owner": "evaluateBallPlayerBodyCollision"
+      },
+      "expression": "'Stop play! Ball struck receiver after front wall. Stroke!'"
+    },
+    {
+      "id": "ebcda32d32174456",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Down! (Tin)",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 164,
+        "owner": "evaluateCollision"
+      },
+      "expression": "'Down! (Tin)'"
+    },
+    {
+      "id": "7ced71245e4e9476",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Out!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 175,
+        "owner": "evaluateCollision"
+      },
+      "expression": "'Out!'"
+    },
+    {
+      "id": "9e4c6e78ae62de3c",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Not Up! (Missed Front Wall)",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 188,
+        "owner": "evaluateCollision"
+      },
+      "expression": "'Not Up! (Missed Front Wall)'"
+    },
+    {
+      "id": "a9c339c6058be5c5",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "NICK! Rolled Dead!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 199,
+        "owner": "evaluateCollision"
+      },
+      "expression": "'NICK! Rolled Dead!'"
+    },
+    {
+      "id": "e16ed968fdc88c4a",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Not up! Point to striker. Referee warning: You had interference, but you must call Let, please to stop play — otherwise you lose the point!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 215,
+        "owner": "evaluateCollision"
+      },
+      "expression": "'Not up! Point to striker. Referee warning: You had interference, but you must call Let, please to stop play — otherwise you lose the point!'"
+    },
+    {
+      "id": "ceb1b76091afa2e6",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "NICK ROLLER!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 224,
+        "owner": "evaluateCollision"
+      },
+      "expression": "isNickWinner ? 'NICK ROLLER!' : 'Not Up! (Two Bounces)'"
+    },
+    {
+      "id": "631e12eaff4ee1de",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Not Up! (Two Bounces)",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 224,
+        "owner": "evaluateCollision"
+      },
+      "expression": "isNickWinner ? 'NICK ROLLER!' : 'Not Up! (Two Bounces)'"
+    },
+    {
+      "id": "abf22974b5aaa142",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Stroke! Opponent in swing/front-wall cone!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 286,
+        "owner": "evaluateInterference"
+      },
+      "expression": "isDirectStroke ? 'Stroke! Opponent in swing/front-wall cone!' : 'Yes, Let! Crowded access to the ball.'"
+    },
+    {
+      "id": "674c506de34c1394",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Yes, Let! Crowded access to the ball.",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 286,
+        "owner": "evaluateInterference"
+      },
+      "expression": "isDirectStroke ? 'Stroke! Opponent in swing/front-wall cone!' : 'Yes, Let! Crowded access to the ball.'"
+    },
+    {
+      "id": "dc92b067c5fbeff2",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Yes, Let! Line of access obstructed.",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 313,
+        "owner": "evaluateInterference"
+      },
+      "expression": "'Yes, Let! Line of access obstructed.'"
+    },
+    {
+      "id": "c5f8cdd4cfbec071",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Stroke! Opponent failed to clear the shot cone. Good safety discipline holding your swing!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 365,
+        "owner": "resolveLetAppeal"
+      },
+      "expression": "'Stroke! Opponent failed to clear the shot cone. Good safety discipline holding your swing!'"
+    },
+    {
+      "id": "8a5ee33b9416e493",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Yes, let! Interference on access — replay the point.",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 374,
+        "owner": "resolveLetAppeal"
+      },
+      "expression": "'Yes, let! Interference on access — replay the point.'"
+    },
+    {
+      "id": "f6c8bd001788a69c",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "Yes, let! Close quarters on the T — replay the point.",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 394,
+        "owner": "resolveLetAppeal"
+      },
+      "expression": "'Yes, let! Close quarters on the T — replay the point.'"
+    },
+    {
+      "id": "37bd73a8e1c70d19",
+      "category": "rules-or-safety-producer",
+      "kind": "fixed",
+      "text": "No let! Opponent cleared the ball and there was no interference. Point to opponent!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 406,
+        "owner": "resolveLetAppeal"
+      },
+      "expression": "'No let! Opponent cleared the ball and there was no interference. Point to opponent!'"
+    },
+    {
+      "id": "7b3a3cbbc6fa5815",
+      "category": "score-fragment",
+      "kind": "template",
+      "text": "{{ NO_LET: 'No let!', YES_LET: 'Yes, let!', STROKE: 'Stroke!' }[decisionMeta?.decision]}",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 533,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "appealCallout"
+    },
+    {
+      "id": "c3bfa2387bc8efa9",
+      "category": "score-fragment",
+      "kind": "fixed",
+      "text": "No let!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 535,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "'No let!'"
+    },
+    {
+      "id": "f5d774530c0f4934",
+      "category": "score-fragment",
+      "kind": "fixed",
+      "text": "Foot fault!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 537,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "'Foot fault!'"
+    },
+    {
+      "id": "04e1fdd42eb4086d",
+      "category": "score-fragment",
+      "kind": "fixed",
+      "text": "Fault!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 539,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "'Fault!'"
+    },
+    {
+      "id": "0bc376d51876c43b",
+      "category": "score-fragment",
+      "kind": "fixed",
+      "text": "Down!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 541,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "'Down!'"
+    },
+    {
+      "id": "ce639d982b6d0eb2",
+      "category": "score-fragment",
+      "kind": "fixed",
+      "text": "Out!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 543,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "'Out!'"
+    },
+    {
+      "id": "0e2d659aafb3e113",
+      "category": "score-fragment",
+      "kind": "fixed",
+      "text": "Not up!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 545,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "'Not up!'"
+    },
+    {
+      "id": "2f4068da5a9059e7",
+      "category": "score-fragment",
+      "kind": "fixed",
+      "text": "Nick!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 547,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "'Nick!'"
+    },
+    {
+      "id": "e3e36f2f92cb3108",
+      "category": "score-fragment",
+      "kind": "fixed",
+      "text": "Stroke!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 549,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "'Stroke!'"
+    },
+    {
+      "id": "d780f0ec1df65871",
+      "category": "score-fragment",
+      "kind": "fixed",
+      "text": "Yes, let!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 551,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "'Yes, let!'"
+    },
+    {
+      "id": "002c3b7eadfb1246",
+      "category": "score-fragment",
+      "kind": "template",
+      "text": "Game and match! {numToWord(winnerPts)}-{numToWord(loserPts)}.",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 562,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "`Game and match! ${numToWord(winnerPts)}-${numToWord(loserPts)}.`"
+    },
+    {
+      "id": "18c5c0fc250e0b0d",
+      "category": "score-fragment",
+      "kind": "template",
+      "text": "Game! {numToWord(winnerPts)}-{numToWord(loserPts)}.",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 573,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "`Game! ${numToWord(winnerPts)}-${numToWord(loserPts)}.`"
+    },
+    {
+      "id": "4f9f355cb860e708",
+      "category": "score-fragment",
+      "kind": "template",
+      "text": "Handout, {numToWord(serverPts)} all.",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 588,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "`Handout, ${scorePhrase}.`"
+    },
+    {
+      "id": "d4a3af111f5efe29",
+      "category": "score-fragment",
+      "kind": "template",
+      "text": "Handout, {numToWord(serverPts)}-{numToWord(receiverPts)}.",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 588,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "`Handout, ${scorePhrase}.`"
+    },
+    {
+      "id": "1bb0df3f10cd7b58",
+      "category": "score-fragment",
+      "kind": "template",
+      "text": "{scorePhrase.charAt(0).toUpperCase()}{scorePhrase.slice(1)}.",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 590,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "`${scorePhrase.charAt(0).toUpperCase() + scorePhrase.slice(1)}.`"
+    },
+    {
+      "id": "5781ffbe71756352",
+      "category": "score-fragment",
+      "kind": "template",
+      "text": "{this.getHighStakesLabel()}!",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 596,
+        "owner": "formatRefereeCallout"
+      },
+      "expression": "`${highStakes}!`"
+    },
+    {
+      "id": "0b1b61696cbfd345",
+      "category": "manual-preview",
+      "kind": "fixed",
+      "text": "Down! Handout, five-four.",
+      "source": {
+        "file": "index.html",
+        "line": 693,
+        "owner": "jukebox-call-button"
+      }
+    },
+    {
+      "id": "afad241e9c378a0c",
+      "category": "manual-preview",
+      "kind": "fixed",
+      "text": "Nick! Ten-eight, match ball!",
+      "source": {
+        "file": "index.html",
+        "line": 694,
+        "owner": "jukebox-call-button"
+      }
+    },
+    {
+      "id": "identity-fallback",
+      "category": "bundled-fallback",
+      "kind": "fixed",
+      "text": "The user is always represented in the game as the red player.",
+      "source": {
+        "file": "src/audio_engine.js",
+        "line": 1531,
+        "owner": "_playIdentityFallback"
+      },
+      "asset": "public/assets/audio/red-player-identity.wav"
+    }
+  ],
+  "callSites": [
+    {
+      "file": "src/audio_engine.js",
+      "line": 558,
+      "owner": "playWelcomeIntro",
+      "sink": "beginBriefingNarration",
+      "argument": "phrase",
+      "resolved": [
+        {
+          "kind": "fixed",
+          "text": "Welcome to Virtual Squash! The user is always represented in the game as the red player. Love all. Play!"
+        },
+        {
+          "kind": "fixed",
+          "text": "Welcome to Virtual Squash!"
+        }
+      ]
+    },
+    {
+      "file": "src/audio_engine.js",
+      "line": 586,
+      "owner": "playNarratorUSPInvite",
+      "sink": "beginBriefingNarration",
+      "argument": "item.speech",
+      "resolved": [
+        {
+          "kind": "template",
+          "text": "{item.speech}"
+        }
+      ]
+    },
+    {
+      "file": "src/audio_engine.js",
+      "line": 1445,
+      "owner": "toggleRefereeVoice",
+      "sink": "playVoiceCallout",
+      "argument": "'Down! Handout, five-four.'",
+      "resolved": [
+        {
+          "kind": "fixed",
+          "text": "Down! Handout, five-four."
+        }
+      ]
+    },
+    {
+      "file": "src/audio_engine.js",
+      "line": 1675,
+      "owner": "announceScore",
+      "sink": "playVoiceCallout",
+      "argument": "raw",
+      "resolved": [
+        {
+          "kind": "template",
+          "text": "{String(text).trim()}"
+        }
+      ]
+    },
+    {
+      "file": "src/game_engine.js",
+      "line": 1440,
+      "owner": "_bindJukeboxAndRefereeControls",
+      "sink": "announceScore",
+      "argument": "phrase",
+      "resolved": [
+        {
+          "kind": "template",
+          "text": "{btn.dataset.callout}"
+        },
+        {
+          "kind": "fixed",
+          "text": "Down! Handout, five-four."
+        }
+      ]
+    },
+    {
+      "file": "src/game_engine.js",
+      "line": 1473,
+      "owner": "_bindJukeboxAndRefereeControls",
+      "sink": "announceScore",
+      "argument": "'Stop play! Yes, Let. Safety reminder: always call a Let when obstructed instead of striking your opponent.'",
+      "resolved": [
+        {
+          "kind": "fixed",
+          "text": "Stop play! Yes, Let. Safety reminder: always call a Let when obstructed instead of striking your opponent."
+        }
+      ]
+    },
+    {
+      "file": "src/game_engine.js",
+      "line": 1645,
+      "owner": "toggleRefereeVoice",
+      "sink": "announceScore",
+      "argument": "'Down! Handout, five-four.'",
+      "resolved": [
+        {
+          "kind": "fixed",
+          "text": "Down! Handout, five-four."
+        }
+      ]
+    },
+    {
+      "file": "src/game_engine.js",
+      "line": 2450,
+      "owner": "_runRacketSpinCeremony",
+      "sink": "announceScore",
+      "argument": "\"Quick note — you don't run to the ball in this game; your player does that. \" +\r\n        'Your only job is shot selection: keys one to five, a click, or spacebar. Call the spin!'",
+      "resolved": [
+        {
+          "kind": "fixed",
+          "text": "Quick note — you don't run to the ball in this game; your player does that. Your only job is shot selection: keys one to five, a click, or spacebar. Call the spin!"
+        }
+      ]
+    },
+    {
+      "file": "src/game_engine.js",
+      "line": 2603,
+      "owner": "_setupPointServe",
+      "sink": "announceScore",
+      "argument": "highStakes",
+      "resolved": [
+        {
+          "kind": "template",
+          "text": "{this.rulesEngine.getHighStakesLabel()}"
+        }
+      ]
+    },
+    {
+      "file": "src/game_engine.js",
+      "line": 2771,
+      "owner": "_replayLetRally",
+      "sink": "announceScore",
+      "argument": "voiceText",
+      "resolved": [
+        {
+          "kind": "template",
+          "text": "{letDecision.refereeCallout} {letDecision.safetyWarningText}"
+        },
+        {
+          "kind": "template",
+          "text": "{letDecision.refereeCallout}"
+        },
+        {
+          "kind": "fixed",
+          "text": "Yes, Let! Play a let."
+        }
+      ]
+    },
+    {
+      "file": "src/game_engine.js",
+      "line": 2978,
+      "owner": "_updateServeReadiness",
+      "sink": "playVoiceCallout",
+      "argument": "text",
+      "resolved": [
+        {
+          "kind": "fixed",
+          "text": "Server, use the left box."
+        },
+        {
+          "kind": "fixed",
+          "text": "Server, use the right box."
+        },
+        {
+          "kind": "fixed",
+          "text": "Receiver, give the server room."
+        }
+      ]
+    },
+    {
+      "file": "src/game_engine.js",
+      "line": 3950,
+      "owner": "_awardPoint",
+      "sink": "announceScore",
+      "argument": "callout",
+      "resolved": [
+        {
+          "kind": "template",
+          "text": "{this.rulesEngine.formatRefereeCallout(outcome,reason,decisionMeta)}"
+        }
+      ]
+    },
+    {
+      "file": "src/game_engine.js",
+      "line": 4000,
+      "owner": "_showPointOutcome",
+      "sink": "announceScore",
+      "argument": "refereeCallout",
+      "resolved": [
+        {
+          "kind": "template",
+          "text": "{decisionMeta.refereeCallout} {decisionMeta.safetyWarningText}"
+        },
+        {
+          "kind": "template",
+          "text": "{this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)} {decisionMeta.safetyWarningText}"
+        },
+        {
+          "kind": "template",
+          "text": "{decisionMeta.refereeCallout} {this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)}"
+        },
+        {
+          "kind": "template",
+          "text": "{this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)}"
+        }
+      ]
+    },
+    {
+      "file": "src/game_engine.js",
+      "line": 4016,
+      "owner": "_showPointOutcome",
+      "sink": "announceScore",
+      "argument": "refereeCallout",
+      "resolved": [
+        {
+          "kind": "template",
+          "text": "{decisionMeta.refereeCallout} {decisionMeta.safetyWarningText}"
+        },
+        {
+          "kind": "template",
+          "text": "{this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)} {decisionMeta.safetyWarningText}"
+        },
+        {
+          "kind": "template",
+          "text": "{decisionMeta.refereeCallout} {this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)}"
+        },
+        {
+          "kind": "template",
+          "text": "{this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)}"
+        }
+      ]
+    },
+    {
+      "file": "src/game_engine.js",
+      "line": 4038,
+      "owner": "_showPointOutcome",
+      "sink": "announceScore",
+      "argument": "refereeCallout",
+      "resolved": [
+        {
+          "kind": "template",
+          "text": "{decisionMeta.refereeCallout} {decisionMeta.safetyWarningText}"
+        },
+        {
+          "kind": "template",
+          "text": "{this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)} {decisionMeta.safetyWarningText}"
+        },
+        {
+          "kind": "template",
+          "text": "{decisionMeta.refereeCallout} {this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)}"
+        },
+        {
+          "kind": "template",
+          "text": "{this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)}"
+        }
+      ]
+    },
+    {
+      "file": "src/squash/ArcadeBriefing.js",
+      "line": 158,
+      "owner": "showChapter",
+      "sink": "beginBriefingNarration",
+      "argument": "c.speech",
+      "resolved": [
+        {
+          "kind": "template",
+          "text": "{c.speech}"
+        }
+      ]
+    }
+  ],
+  "backendSinks": [
+    {
+      "file": "src/audio_engine.js",
+      "line": 1504,
+      "owner": "utterance",
+      "argument": "spokenText"
+    },
+    {
+      "file": "src/audio_engine.js",
+      "line": 1729,
+      "owner": "utter",
+      "argument": "spokenText"
+    }
+  ],
+  "manualButtons": [
+    {
+      "value": "USP_INVITE",
+      "source": {
+        "file": "index.html",
+        "line": 691
+      },
+      "kind": "control-token"
+    },
+    {
+      "value": "WELCOME",
+      "source": {
+        "file": "index.html",
+        "line": 692
+      },
+      "kind": "control-token"
+    },
+    {
+      "value": "Down! Handout, five-four.",
+      "source": {
+        "file": "index.html",
+        "line": 693
+      },
+      "kind": "fixed-speech"
+    },
+    {
+      "value": "Nick! Ten-eight, match ball!",
+      "source": {
+        "file": "index.html",
+        "line": 694
+      },
+      "kind": "fixed-speech"
+    }
+  ],
+  "lexicons": [
+    {
+      "kind": "number-words",
+      "source": {
+        "file": "src/squash/RulesEngine.js",
+        "line": 514
+      },
+      "values": [
+        {
+          "value": 0,
+          "text": "love"
+        },
+        {
+          "value": 1,
+          "text": "one"
+        },
+        {
+          "value": 2,
+          "text": "two"
+        },
+        {
+          "value": 3,
+          "text": "three"
+        },
+        {
+          "value": 4,
+          "text": "four"
+        },
+        {
+          "value": 5,
+          "text": "five"
+        },
+        {
+          "value": 6,
+          "text": "six"
+        },
+        {
+          "value": 7,
+          "text": "seven"
+        },
+        {
+          "value": 8,
+          "text": "eight"
+        },
+        {
+          "value": 9,
+          "text": "nine"
+        },
+        {
+          "value": 10,
+          "text": "ten"
+        },
+        {
+          "value": 11,
+          "text": "eleven"
+        },
+        {
+          "value": 12,
+          "text": "twelve"
+        },
+        {
+          "value": 13,
+          "text": "thirteen"
+        },
+        {
+          "value": 14,
+          "text": "fourteen"
+        },
+        {
+          "value": 15,
+          "text": "fifteen"
+        },
+        {
+          "value": 16,
+          "text": "sixteen"
+        },
+        {
+          "value": 17,
+          "text": "seventeen"
+        },
+        {
+          "value": 18,
+          "text": "eighteen"
+        },
+        {
+          "value": 19,
+          "text": "nineteen"
+        },
+        {
+          "value": 20,
+          "text": "twenty"
+        }
+      ]
+    }
+  ],
+  "existingAssets": [
+    {
+      "path": "public/assets/audio/red-player-identity.wav",
+      "text": "The user is always represented in the game as the red player.",
+      "backend": "bundled Microsoft David recording; source differs from browser-selected voice"
+    }
+  ],
+  "knownGaps": [
+    "NARRATOR_USP_INVITES remains defined, but current engine triggerNarratorUSPInvite opens ArcadeBriefing; mark the three old invitations retained/legacy rather than automatically generating outdated left-menu instructions.",
+    "RulesEngine.evaluateBallPlayerBodyCollision expects positional arguments/returns hitPlayer, while game_engine passes an object and checks rallyEnded; body-warning producer text is not proven reachable through this mismatched wiring.",
+    "RulesEngine.resolveLetAppeal returns callout, but _replayLetRally reads refereeCallout; the current route can fall back to the generic Yes, Let! Play a let. rather than the detailed reason.",
+    "Speech normalization strips parenthetical reasons, bullets and hyphens only on the ordinary referee path; briefing narration uses raw text.",
+    "Point award and post-replay completion can announce the same result twice. A replacement pack must retain event/owner identity and avoid duplicate/interrupted playback.",
+    "The browser fallback covers only the identity sentence, not complete narration; generic unmapped speech cannot silently reintroduce device voice variation."
+  ]
+}

@@ -8,6 +8,14 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-63 — Concurrent Windows, AppImage, Android and PWA release build
 
+## TASK-66 — Complete speech inventory and current OpenRouter TTS research
+
+- **Status**: [X]
+- **Contract**: Architecture speech inventory/research correction. Implement scripts/catalog-speech.mjs and invoke only via build_all.sh --inventory-speech or its normal preparation. Produce exact fixed text, dynamic templates, source links/hashes, current sink/caller coverage, retired/uncertain wiring and a bounded score bank generated from the actual RulesEngine. Record the unbounded win-by-two/open API domains explicitly. Recover the older voice-pack proposal and removal event from Git, and audit interrupted build state without claiming completion.
+- **Accept**: Inspect generated JSON/Markdown coverage and counts; confirm exact red-player identity sentence and all fixed briefing scripts. Research the November 30 promotion against current OpenRouter model metadata and official TTS docs, recording model/voices/date/pricing/format/control limitations and naturalness-listening status. Recommend fixed pre-rendered voice assets for device consistency. Do not silently replace runtime synthesis, generate paid audio, or claim listening/device acceptance. No automated tests.
+
+## TASK-63 — Concurrent Windows, AppImage, Android and PWA release build
+
 - **Status**: [/]
 - **Dependencies**: [] (aa2edb3; existing web game).
 - **Current correction**: Only root build_all.sh may start builds or deployment; helpers reject direct invocation. Five concurrent workers must produce twelve packages directly in dist: Windows standalone/installer EXEs, MSI/MSIX; Linux AppImage/DEB/RPM; Android APK/AAB/native-symbol ZIP; ordinary web ZIP and PWA ZIP. Generated Android resources must be replaced by the red Mii set and verified in the packaged APK. Run the shell entry, verify all output hashes, automatic source minor transition and three-domain deployment. No manual per-platform builds or automated tests.

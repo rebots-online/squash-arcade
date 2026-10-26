@@ -17,7 +17,7 @@ if(platform==='pwa'||platform==='web'){
   const web=join(output,`squash-arcade-v${version}-${platform}`);
   await cp(join(snapshot,platform==='pwa'?'pwa-web':'native-web'),web,{recursive:true});
   await run(powershell,['-NoProfile','-NonInteractive','-Command',
-    "Compress-Archive -Path (Join-Path $env:SQUASH_PWA_DIR '*') -DestinationPath $env:SQUASH_PWA_ZIP -CompressionLevel Optimal"],
+    "Compress-Archive -Path (Join-Path $env:SQUASH_PWA_DIR '*') -DestinationPath $env:SQUASH_PWA_ZIP -CompressionLevel Optimal -Force"],
     {SQUASH_PWA_DIR:web,SQUASH_PWA_ZIP:join(output,`squash-arcade-v${version}-${platform}.zip`)});
 }else if(platform==='linux'){
   await run('wsl.exe',['-d',process.env.SQUASH_WSL_DISTRO||'Ubuntu-24.04','--exec','env','SQUASH_BUILD_ALL_CONTEXT=1','bash',

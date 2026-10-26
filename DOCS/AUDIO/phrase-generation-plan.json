@@ -1,0 +1,1891 @@
+{
+  "status": "generation proposal; no provider synthesis performed",
+  "numberWindow": [
+    0,
+    30
+  ],
+  "fixedCandidates": [
+    {
+      "id": "fixed-b8660ca03c1edfb5",
+      "text": "Down! Handout, five-four."
+    },
+    {
+      "id": "fixed-3d70faea9d93f048",
+      "text": "For Kinect-style play, enable the camera on your court screen. Step back with your arms and body in view. Lunge and swing your racket arm. The red player follows your movement. Choose the front or back camera for your screen setup."
+    },
+    {
+      "id": "fixed-c028d9d29fe82108",
+      "text": "Game and match!"
+    },
+    {
+      "id": "fixed-e5e3283fe7ba41b8",
+      "text": "Love all. Play!"
+    },
+    {
+      "id": "fixed-909c9abbb855bc2a",
+      "text": "Nick! Ten-eight, match ball!"
+    },
+    {
+      "id": "fixed-55cabe6eef92a31e",
+      "text": "Play with your phone as a Wii-style racket. Pair it with the court screen and allow motion sensors. Fold it if you have a foldable. Hold securely with room to swing. Your arm movement and racket face shape the on-screen stroke. Ordinary phones work too."
+    },
+    {
+      "id": "fixed-6eafa2e6e7f3a9a8",
+      "text": "Quick note — you don't run to the ball in this game; your player does that. Your only job is shot selection: keys one to five, a click, or spacebar. Call the spin!"
+    },
+    {
+      "id": "fixed-d53ee735094e4077",
+      "text": "Receiver, give the server room."
+    },
+    {
+      "id": "fixed-e688c7fd14a85661",
+      "text": "Server, use the left box."
+    },
+    {
+      "id": "fixed-0183eb26b74e2625",
+      "text": "Server, use the right box."
+    },
+    {
+      "id": "fixed-1faa612e13308eb6",
+      "text": "Stop play! Yes, Let. Safety reminder: always call a Let when obstructed instead of striking your opponent."
+    },
+    {
+      "id": "fixed-b792e29bafe68729",
+      "text": "The user is always represented in the game as the red player."
+    },
+    {
+      "id": "fixed-b5f6c30bc5e5843b",
+      "text": "The user is always represented in the game as the red player. Squash is physical chess. Keep rails tight to the wall. Send drives and lobs deep, beyond the service box. Volley when the opening is there. Move your opponent before you attack. Watch the red player, then try the shots yourself."
+    },
+    {
+      "id": "fixed-009dc94f0d322934",
+      "text": "Welcome to Virtual Squash!"
+    },
+    {
+      "id": "fixed-03516c05f921546b",
+      "text": "Welcome to Virtual Squash! Love all. Play!"
+    },
+    {
+      "id": "fixed-e3d5b6f27562a4a0",
+      "text": "Welcome to Virtual Squash! The user is always represented in the game as the red player. Love all. Play!"
+    },
+    {
+      "id": "fixed-2d82471065b3e0b3",
+      "text": "Yes, Let! Play a let."
+    }
+  ],
+  "scoreClauses": [
+    {
+      "id": "clause-14d0638a1b3e04b7",
+      "text": "21 22."
+    },
+    {
+      "id": "clause-3e3c608f85d5ec30",
+      "text": "21 all."
+    },
+    {
+      "id": "clause-846ad4c7089ab513",
+      "text": "21 twenty."
+    },
+    {
+      "id": "clause-0f5d1346f12b4b8f",
+      "text": "22 21."
+    },
+    {
+      "id": "clause-9e39485f9ca3b72b",
+      "text": "22 23."
+    },
+    {
+      "id": "clause-d20bc193d1658fdf",
+      "text": "22 all."
+    },
+    {
+      "id": "clause-1c338f4c453320e4",
+      "text": "23 22."
+    },
+    {
+      "id": "clause-9f3765211b31feaa",
+      "text": "23 24."
+    },
+    {
+      "id": "clause-6f60ac9981102ee1",
+      "text": "23 all."
+    },
+    {
+      "id": "clause-8568b1d1c6d408bf",
+      "text": "24 23."
+    },
+    {
+      "id": "clause-fd93f70a12623607",
+      "text": "24 25."
+    },
+    {
+      "id": "clause-d1f975ba2a5ed6a7",
+      "text": "24 all."
+    },
+    {
+      "id": "clause-c0108bb249f6ec6f",
+      "text": "25 24."
+    },
+    {
+      "id": "clause-201bc364304ac899",
+      "text": "25 26."
+    },
+    {
+      "id": "clause-905a73578069bdd9",
+      "text": "25 all."
+    },
+    {
+      "id": "clause-f9dcb77f01a5d833",
+      "text": "26 25."
+    },
+    {
+      "id": "clause-0aa9dc8117fc547d",
+      "text": "26 27."
+    },
+    {
+      "id": "clause-36784104f642fa89",
+      "text": "26 all."
+    },
+    {
+      "id": "clause-b3ef62c921beaf0a",
+      "text": "27 26."
+    },
+    {
+      "id": "clause-d9ee571996e6c7ee",
+      "text": "27 28."
+    },
+    {
+      "id": "clause-67374ae4332af791",
+      "text": "27 all."
+    },
+    {
+      "id": "clause-0073bc041c34e826",
+      "text": "28 27."
+    },
+    {
+      "id": "clause-27c653c20e9b5361",
+      "text": "28 29."
+    },
+    {
+      "id": "clause-31dc72f03acb6c03",
+      "text": "28 all."
+    },
+    {
+      "id": "clause-0b9005c090e1e9d7",
+      "text": "29 28."
+    },
+    {
+      "id": "clause-e6f790c6cd012206",
+      "text": "29 30."
+    },
+    {
+      "id": "clause-df900843ed8926ac",
+      "text": "29 all."
+    },
+    {
+      "id": "clause-f1e90e28327544a2",
+      "text": "30 29."
+    },
+    {
+      "id": "clause-0ddc7c5e6257b8ae",
+      "text": "30 all."
+    },
+    {
+      "id": "clause-4272d638828b5c84",
+      "text": "Eight all."
+    },
+    {
+      "id": "clause-6942bd5c25f732ce",
+      "text": "Eight five."
+    },
+    {
+      "id": "clause-4f04cc1ccfda0d81",
+      "text": "Eight four."
+    },
+    {
+      "id": "clause-d8bd0f472415a24d",
+      "text": "Eight love."
+    },
+    {
+      "id": "clause-1028cef4008661d3",
+      "text": "Eight nine."
+    },
+    {
+      "id": "clause-e885f5da776f435e",
+      "text": "Eight one."
+    },
+    {
+      "id": "clause-1114c4d2ec70000c",
+      "text": "Eight seven."
+    },
+    {
+      "id": "clause-902bcc968cfa69b7",
+      "text": "Eight six."
+    },
+    {
+      "id": "clause-34ccbf11afbb7590",
+      "text": "Eight ten."
+    },
+    {
+      "id": "clause-3d0b4f2fd9338fd9",
+      "text": "Eight three."
+    },
+    {
+      "id": "clause-53a9d9939cd4bd9b",
+      "text": "Eight two."
+    },
+    {
+      "id": "clause-3df68303ac83e007",
+      "text": "Eighteen all."
+    },
+    {
+      "id": "clause-0556017e64a4b391",
+      "text": "Eighteen nineteen."
+    },
+    {
+      "id": "clause-c7a60a5540f04aae",
+      "text": "Eighteen seventeen."
+    },
+    {
+      "id": "clause-23474983ce3ea794",
+      "text": "Eleven all."
+    },
+    {
+      "id": "clause-3f80e112051d404a",
+      "text": "Eleven ten."
+    },
+    {
+      "id": "clause-3e1ed10bebcb4ba3",
+      "text": "Eleven twelve."
+    },
+    {
+      "id": "clause-4e841517600dacdf",
+      "text": "Fifteen all."
+    },
+    {
+      "id": "clause-020ec9caf2839d17",
+      "text": "Fifteen fourteen."
+    },
+    {
+      "id": "clause-932792afcac0c93c",
+      "text": "Fifteen sixteen."
+    },
+    {
+      "id": "clause-f495111f72a22fc1",
+      "text": "Five all."
+    },
+    {
+      "id": "clause-672340e3640fb8df",
+      "text": "Five eight."
+    },
+    {
+      "id": "clause-e9e15e17f629e508",
+      "text": "Five four."
+    },
+    {
+      "id": "clause-c97776dfa93ea1ca",
+      "text": "Five love."
+    },
+    {
+      "id": "clause-d4fa1128e719bed1",
+      "text": "Five nine."
+    },
+    {
+      "id": "clause-7e7b995f806555b4",
+      "text": "Five one."
+    },
+    {
+      "id": "clause-d01acc99284c8f29",
+      "text": "Five seven."
+    },
+    {
+      "id": "clause-0f2ff4bee8786de5",
+      "text": "Five six."
+    },
+    {
+      "id": "clause-34980bd38a1aedf6",
+      "text": "Five ten."
+    },
+    {
+      "id": "clause-274d94b354fcf304",
+      "text": "Five three."
+    },
+    {
+      "id": "clause-d360df1a9d3dd4d3",
+      "text": "Five two."
+    },
+    {
+      "id": "clause-a067ffcac3ca00e0",
+      "text": "Four all."
+    },
+    {
+      "id": "clause-efca273bd8f71594",
+      "text": "Four eight."
+    },
+    {
+      "id": "clause-854de6f7db4b01ce",
+      "text": "Four five."
+    },
+    {
+      "id": "clause-23d8aadd6903cafb",
+      "text": "Four love."
+    },
+    {
+      "id": "clause-d3acc262b80a9eeb",
+      "text": "Four nine."
+    },
+    {
+      "id": "clause-4cdda115c081ed57",
+      "text": "Four one."
+    },
+    {
+      "id": "clause-8f1b261fea5d4d90",
+      "text": "Four seven."
+    },
+    {
+      "id": "clause-634c7e0cde88ccb4",
+      "text": "Four six."
+    },
+    {
+      "id": "clause-c4962adcdbe6213a",
+      "text": "Four ten."
+    },
+    {
+      "id": "clause-6ec402a3c5a64571",
+      "text": "Four three."
+    },
+    {
+      "id": "clause-e98fbcbbfee39351",
+      "text": "Four two."
+    },
+    {
+      "id": "clause-e1d8b826c1661ed3",
+      "text": "Fourteen all."
+    },
+    {
+      "id": "clause-e4efbf8343ec0556",
+      "text": "Fourteen fifteen."
+    },
+    {
+      "id": "clause-ed7c98da3a14541c",
+      "text": "Fourteen thirteen."
+    },
+    {
+      "id": "clause-6c00e5975e59b922",
+      "text": "Game and match! 21 nineteen."
+    },
+    {
+      "id": "clause-2a01f3b7b03069c2",
+      "text": "Game and match! 22 twenty."
+    },
+    {
+      "id": "clause-818fae19792535e4",
+      "text": "Game and match! 23 21."
+    },
+    {
+      "id": "clause-f478e4080165c586",
+      "text": "Game and match! 24 22."
+    },
+    {
+      "id": "clause-b4ae6a4903d21c35",
+      "text": "Game and match! 25 23."
+    },
+    {
+      "id": "clause-10d9fd494d7b37b4",
+      "text": "Game and match! 26 24."
+    },
+    {
+      "id": "clause-a112812b61f821e6",
+      "text": "Game and match! 27 25."
+    },
+    {
+      "id": "clause-418cc62ac64027e7",
+      "text": "Game and match! 28 26."
+    },
+    {
+      "id": "clause-356ce4ce4d89d79c",
+      "text": "Game and match! 29 27."
+    },
+    {
+      "id": "clause-014e92b960e89b93",
+      "text": "Game and match! 30 28."
+    },
+    {
+      "id": "clause-db6bde8d5244b83e",
+      "text": "Game and match! eighteen sixteen."
+    },
+    {
+      "id": "clause-3e72f5fcac31a16a",
+      "text": "Game and match! eleven eight."
+    },
+    {
+      "id": "clause-be0399ff5ddeeaf1",
+      "text": "Game and match! eleven five."
+    },
+    {
+      "id": "clause-d8e2d62b601ade13",
+      "text": "Game and match! eleven four."
+    },
+    {
+      "id": "clause-a45762de947d7fb6",
+      "text": "Game and match! eleven love."
+    },
+    {
+      "id": "clause-732e53b348a657f2",
+      "text": "Game and match! eleven nine."
+    },
+    {
+      "id": "clause-41669c1fa829aa78",
+      "text": "Game and match! eleven one."
+    },
+    {
+      "id": "clause-d2246423bb5c9bb3",
+      "text": "Game and match! eleven seven."
+    },
+    {
+      "id": "clause-dbf17f71b06c347f",
+      "text": "Game and match! eleven six."
+    },
+    {
+      "id": "clause-3edba700078e59ca",
+      "text": "Game and match! eleven three."
+    },
+    {
+      "id": "clause-a0b520552a476209",
+      "text": "Game and match! eleven two."
+    },
+    {
+      "id": "clause-751e76d224efda41",
+      "text": "Game and match! fifteen thirteen."
+    },
+    {
+      "id": "clause-e67a482a8b5433f1",
+      "text": "Game and match! five four."
+    },
+    {
+      "id": "clause-3c0ae302d1f02064",
+      "text": "Game and match! five love."
+    },
+    {
+      "id": "clause-34b93c826da82e57",
+      "text": "Game and match! five one."
+    },
+    {
+      "id": "clause-9d8148c249813116",
+      "text": "Game and match! five three."
+    },
+    {
+      "id": "clause-552d71ddcd33aec5",
+      "text": "Game and match! five two."
+    },
+    {
+      "id": "clause-c8d8e804a1b9dbcc",
+      "text": "Game and match! fourteen twelve."
+    },
+    {
+      "id": "clause-eb1646c2df335d82",
+      "text": "Game and match! nine five."
+    },
+    {
+      "id": "clause-07a2bcd5b3056570",
+      "text": "Game and match! nine four."
+    },
+    {
+      "id": "clause-f75edfb91a85f8ab",
+      "text": "Game and match! nine love."
+    },
+    {
+      "id": "clause-0767677293cf6235",
+      "text": "Game and match! nine one."
+    },
+    {
+      "id": "clause-41a21c634966382b",
+      "text": "Game and match! nine seven."
+    },
+    {
+      "id": "clause-97f0f551043638dc",
+      "text": "Game and match! nine six."
+    },
+    {
+      "id": "clause-40539ed68b39b429",
+      "text": "Game and match! nine three."
+    },
+    {
+      "id": "clause-bf647026454829a3",
+      "text": "Game and match! nine two."
+    },
+    {
+      "id": "clause-d34240ebee4a910c",
+      "text": "Game and match! nineteen seventeen."
+    },
+    {
+      "id": "clause-59fe96a30e2502a2",
+      "text": "Game and match! seventeen fifteen."
+    },
+    {
+      "id": "clause-71ae533cbf64ca86",
+      "text": "Game and match! sixteen fourteen."
+    },
+    {
+      "id": "clause-42af1fc9eac143ba",
+      "text": "Game and match! ten eight."
+    },
+    {
+      "id": "clause-dc8ef264349e0ada",
+      "text": "Game and match! thirteen eleven."
+    },
+    {
+      "id": "clause-18e17ed16f3fd4a9",
+      "text": "Game and match! twelve ten."
+    },
+    {
+      "id": "clause-f8bbcbd4f6077274",
+      "text": "Game and match! twenty eighteen."
+    },
+    {
+      "id": "clause-ab7eeb96b2f07a8e",
+      "text": "Game! 21 nineteen."
+    },
+    {
+      "id": "clause-baa7db2501225e42",
+      "text": "Game! 22 twenty."
+    },
+    {
+      "id": "clause-1a832d90cc3fa528",
+      "text": "Game! 23 21."
+    },
+    {
+      "id": "clause-6e40109bb84105b4",
+      "text": "Game! 24 22."
+    },
+    {
+      "id": "clause-f74f4783c5dabb85",
+      "text": "Game! 25 23."
+    },
+    {
+      "id": "clause-f833981acc8e613b",
+      "text": "Game! 26 24."
+    },
+    {
+      "id": "clause-deb1fdb5edbaf5cf",
+      "text": "Game! 27 25."
+    },
+    {
+      "id": "clause-1aedac20e4a8fa1e",
+      "text": "Game! 28 26."
+    },
+    {
+      "id": "clause-d69543406a74c24e",
+      "text": "Game! 29 27."
+    },
+    {
+      "id": "clause-08c43ddd70f9a571",
+      "text": "Game! 30 28."
+    },
+    {
+      "id": "clause-f736e41ac9961abc",
+      "text": "Game! eighteen sixteen."
+    },
+    {
+      "id": "clause-096babf599e4f538",
+      "text": "Game! eleven eight."
+    },
+    {
+      "id": "clause-6bda2e402b31a113",
+      "text": "Game! eleven five."
+    },
+    {
+      "id": "clause-7c62690f2d943931",
+      "text": "Game! eleven four."
+    },
+    {
+      "id": "clause-240b31a82235ab67",
+      "text": "Game! eleven love."
+    },
+    {
+      "id": "clause-8265c8280d24a69e",
+      "text": "Game! eleven nine."
+    },
+    {
+      "id": "clause-1100877b0f78a28a",
+      "text": "Game! eleven one."
+    },
+    {
+      "id": "clause-762ce9cf0e670567",
+      "text": "Game! eleven seven."
+    },
+    {
+      "id": "clause-1ec6e80e6a88063f",
+      "text": "Game! eleven six."
+    },
+    {
+      "id": "clause-39f119fe1321ac75",
+      "text": "Game! eleven three."
+    },
+    {
+      "id": "clause-9e2ba8828fe35e3b",
+      "text": "Game! eleven two."
+    },
+    {
+      "id": "clause-67e56f167b37cd45",
+      "text": "Game! fifteen thirteen."
+    },
+    {
+      "id": "clause-d2bebccb35cfcc17",
+      "text": "Game! five four."
+    },
+    {
+      "id": "clause-22bbcdc3d24a4a72",
+      "text": "Game! five love."
+    },
+    {
+      "id": "clause-040ed32df4a6931f",
+      "text": "Game! five one."
+    },
+    {
+      "id": "clause-0df62708f83d8656",
+      "text": "Game! five three."
+    },
+    {
+      "id": "clause-3e310260ec8f8fe3",
+      "text": "Game! five two."
+    },
+    {
+      "id": "clause-41eee54a48a67e13",
+      "text": "Game! fourteen twelve."
+    },
+    {
+      "id": "clause-3733ee3d2b51f77a",
+      "text": "Game! nine five."
+    },
+    {
+      "id": "clause-00dcd6849f92b3d8",
+      "text": "Game! nine four."
+    },
+    {
+      "id": "clause-d4ad2f46e70c2c3f",
+      "text": "Game! nine love."
+    },
+    {
+      "id": "clause-05d5cbf9b348cb1d",
+      "text": "Game! nine one."
+    },
+    {
+      "id": "clause-5b5dba24444764e9",
+      "text": "Game! nine seven."
+    },
+    {
+      "id": "clause-e6a7b5dbecd0b2e4",
+      "text": "Game! nine six."
+    },
+    {
+      "id": "clause-cf71899c10e48dd6",
+      "text": "Game! nine three."
+    },
+    {
+      "id": "clause-e5652446657be51a",
+      "text": "Game! nine two."
+    },
+    {
+      "id": "clause-b6ab73bc05ff9f91",
+      "text": "Game! nineteen seventeen."
+    },
+    {
+      "id": "clause-dfa83392973a15d1",
+      "text": "Game! seventeen fifteen."
+    },
+    {
+      "id": "clause-fbcdf396be2c580c",
+      "text": "Game! sixteen fourteen."
+    },
+    {
+      "id": "clause-b98c0e7f69048403",
+      "text": "Game! ten eight."
+    },
+    {
+      "id": "clause-a99eaee90c2ff5c8",
+      "text": "Game! thirteen eleven."
+    },
+    {
+      "id": "clause-59c75ecd7e5a016c",
+      "text": "Game! twelve ten."
+    },
+    {
+      "id": "clause-8cc574798d77fd57",
+      "text": "Game! twenty eighteen."
+    },
+    {
+      "id": "clause-20b0b45890c3c37d",
+      "text": "Handout, 21 22."
+    },
+    {
+      "id": "clause-b848c3f62cb8a5c1",
+      "text": "Handout, 21 all."
+    },
+    {
+      "id": "clause-88163045c65d73aa",
+      "text": "Handout, 21 twenty."
+    },
+    {
+      "id": "clause-c9824731cf97bf9d",
+      "text": "Handout, 22 21."
+    },
+    {
+      "id": "clause-05df4b9bb8050d28",
+      "text": "Handout, 22 23."
+    },
+    {
+      "id": "clause-8667b43a256f3480",
+      "text": "Handout, 22 all."
+    },
+    {
+      "id": "clause-b9fb0ca9369d7aaf",
+      "text": "Handout, 23 22."
+    },
+    {
+      "id": "clause-dd492a8c82642c07",
+      "text": "Handout, 23 24."
+    },
+    {
+      "id": "clause-6afe94336d6d403a",
+      "text": "Handout, 23 all."
+    },
+    {
+      "id": "clause-508beb0dd1795cd6",
+      "text": "Handout, 24 23."
+    },
+    {
+      "id": "clause-a0b9c0c70db16960",
+      "text": "Handout, 24 25."
+    },
+    {
+      "id": "clause-b14182c3169b0f5f",
+      "text": "Handout, 24 all."
+    },
+    {
+      "id": "clause-c5bcd861bd0ae9c6",
+      "text": "Handout, 25 24."
+    },
+    {
+      "id": "clause-d740abf6cb738755",
+      "text": "Handout, 25 26."
+    },
+    {
+      "id": "clause-cd84fe6c415fd0d1",
+      "text": "Handout, 25 all."
+    },
+    {
+      "id": "clause-bd2fcdee084d84be",
+      "text": "Handout, 26 25."
+    },
+    {
+      "id": "clause-0fdb84f7bae82e75",
+      "text": "Handout, 26 27."
+    },
+    {
+      "id": "clause-b027a0027f820b1a",
+      "text": "Handout, 26 all."
+    },
+    {
+      "id": "clause-6b15377e4b8bb5a8",
+      "text": "Handout, 27 26."
+    },
+    {
+      "id": "clause-e93b534089c34aba",
+      "text": "Handout, 27 28."
+    },
+    {
+      "id": "clause-394c325a91aa320c",
+      "text": "Handout, 27 all."
+    },
+    {
+      "id": "clause-a0e97f06116d5f35",
+      "text": "Handout, 28 27."
+    },
+    {
+      "id": "clause-880ace4504d0b5f9",
+      "text": "Handout, 28 29."
+    },
+    {
+      "id": "clause-6a56e5fe6e54a6b0",
+      "text": "Handout, 28 all."
+    },
+    {
+      "id": "clause-b91a7cc99f2a7138",
+      "text": "Handout, 29 28."
+    },
+    {
+      "id": "clause-767634ae802bf628",
+      "text": "Handout, 29 30."
+    },
+    {
+      "id": "clause-6b33e62c8957c5de",
+      "text": "Handout, 29 all."
+    },
+    {
+      "id": "clause-4e3fb2e16aaee2f5",
+      "text": "Handout, 30 29."
+    },
+    {
+      "id": "clause-fa02b97266dd33cf",
+      "text": "Handout, 30 all."
+    },
+    {
+      "id": "clause-172837ba085fb7c3",
+      "text": "Handout, eight all."
+    },
+    {
+      "id": "clause-0960d43458c11e65",
+      "text": "Handout, eight five."
+    },
+    {
+      "id": "clause-b9a39c697cfc1c0a",
+      "text": "Handout, eight four."
+    },
+    {
+      "id": "clause-8579a4028fe219f9",
+      "text": "Handout, eight love."
+    },
+    {
+      "id": "clause-dc6a47cae59f5071",
+      "text": "Handout, eight nine."
+    },
+    {
+      "id": "clause-ceb2ef739c4cc7dc",
+      "text": "Handout, eight one."
+    },
+    {
+      "id": "clause-dbc110966a884f94",
+      "text": "Handout, eight seven."
+    },
+    {
+      "id": "clause-d9f20be7ce58f8bb",
+      "text": "Handout, eight six."
+    },
+    {
+      "id": "clause-39c18ab7aaa26898",
+      "text": "Handout, eight ten."
+    },
+    {
+      "id": "clause-9d8e254e5eae2563",
+      "text": "Handout, eight three."
+    },
+    {
+      "id": "clause-223db8c824062ca0",
+      "text": "Handout, eight two."
+    },
+    {
+      "id": "clause-4715468927788d40",
+      "text": "Handout, eighteen all."
+    },
+    {
+      "id": "clause-cb29e47083ba67c9",
+      "text": "Handout, eighteen nineteen."
+    },
+    {
+      "id": "clause-86bf58c01cd2d562",
+      "text": "Handout, eighteen seventeen."
+    },
+    {
+      "id": "clause-66b0ab2e77d0acb8",
+      "text": "Handout, eleven all."
+    },
+    {
+      "id": "clause-7c2973ff3f07edda",
+      "text": "Handout, eleven ten."
+    },
+    {
+      "id": "clause-e8c6fc30125a0409",
+      "text": "Handout, eleven twelve."
+    },
+    {
+      "id": "clause-ca2b4110534c7dc2",
+      "text": "Handout, fifteen all."
+    },
+    {
+      "id": "clause-e4b2764792dab16b",
+      "text": "Handout, fifteen fourteen."
+    },
+    {
+      "id": "clause-0f6085e2f623b8a5",
+      "text": "Handout, fifteen sixteen."
+    },
+    {
+      "id": "clause-7f331d14691d8e38",
+      "text": "Handout, five all."
+    },
+    {
+      "id": "clause-7b07c756a2944e48",
+      "text": "Handout, five eight."
+    },
+    {
+      "id": "clause-a520fb14f972adb4",
+      "text": "Handout, five four."
+    },
+    {
+      "id": "clause-d8ae903ff17dba19",
+      "text": "Handout, five love."
+    },
+    {
+      "id": "clause-42ff5032d2fb0ff0",
+      "text": "Handout, five nine."
+    },
+    {
+      "id": "clause-975a6b5a8680824a",
+      "text": "Handout, five one."
+    },
+    {
+      "id": "clause-690aed5477d82231",
+      "text": "Handout, five seven."
+    },
+    {
+      "id": "clause-5a8b72b86e474f1f",
+      "text": "Handout, five six."
+    },
+    {
+      "id": "clause-62d408371761902c",
+      "text": "Handout, five ten."
+    },
+    {
+      "id": "clause-a80c12bbdc703029",
+      "text": "Handout, five three."
+    },
+    {
+      "id": "clause-defce7c62a2b318d",
+      "text": "Handout, five two."
+    },
+    {
+      "id": "clause-b4a110c9c14b1c53",
+      "text": "Handout, four all."
+    },
+    {
+      "id": "clause-c637236f803ed5d7",
+      "text": "Handout, four eight."
+    },
+    {
+      "id": "clause-0e46328b4a35f08c",
+      "text": "Handout, four five."
+    },
+    {
+      "id": "clause-e2ea69bbe5319d44",
+      "text": "Handout, four love."
+    },
+    {
+      "id": "clause-0bc48524a1cffbe7",
+      "text": "Handout, four nine."
+    },
+    {
+      "id": "clause-fd6066f0b7b415da",
+      "text": "Handout, four one."
+    },
+    {
+      "id": "clause-c9b04f02721c99cb",
+      "text": "Handout, four seven."
+    },
+    {
+      "id": "clause-b19e2ddb2f30db4e",
+      "text": "Handout, four six."
+    },
+    {
+      "id": "clause-1660d5abf0afc02c",
+      "text": "Handout, four ten."
+    },
+    {
+      "id": "clause-8bc98c281c44f7d0",
+      "text": "Handout, four three."
+    },
+    {
+      "id": "clause-a62f25a9b2d4f1fa",
+      "text": "Handout, four two."
+    },
+    {
+      "id": "clause-17cd8bd68cfb0d4b",
+      "text": "Handout, fourteen all."
+    },
+    {
+      "id": "clause-56e3daf38775c433",
+      "text": "Handout, fourteen fifteen."
+    },
+    {
+      "id": "clause-cbb96328e6423ed7",
+      "text": "Handout, fourteen thirteen."
+    },
+    {
+      "id": "clause-5d65a89d346b7e5e",
+      "text": "Handout, love all."
+    },
+    {
+      "id": "clause-5e142e7e55acf545",
+      "text": "Handout, love eight."
+    },
+    {
+      "id": "clause-59b084fb508858b3",
+      "text": "Handout, love five."
+    },
+    {
+      "id": "clause-c98c3f61e95f101a",
+      "text": "Handout, love four."
+    },
+    {
+      "id": "clause-c1972b8fc03c7e07",
+      "text": "Handout, love nine."
+    },
+    {
+      "id": "clause-cedabf151745aa73",
+      "text": "Handout, love one."
+    },
+    {
+      "id": "clause-68f9518ef4901c78",
+      "text": "Handout, love seven."
+    },
+    {
+      "id": "clause-a1a6aa1cd09093b6",
+      "text": "Handout, love six."
+    },
+    {
+      "id": "clause-b69b67748c091e83",
+      "text": "Handout, love ten."
+    },
+    {
+      "id": "clause-b52487baf8d650ec",
+      "text": "Handout, love three."
+    },
+    {
+      "id": "clause-2bd3b107da37ceee",
+      "text": "Handout, love two."
+    },
+    {
+      "id": "clause-3aa9b4bd41b5374f",
+      "text": "Handout, nine all."
+    },
+    {
+      "id": "clause-7ddfca64347553b5",
+      "text": "Handout, nine eight."
+    },
+    {
+      "id": "clause-21d49564e7b7c1c3",
+      "text": "Handout, nine five."
+    },
+    {
+      "id": "clause-08e5472d55c6435f",
+      "text": "Handout, nine four."
+    },
+    {
+      "id": "clause-7b76519ef490bdff",
+      "text": "Handout, nine love."
+    },
+    {
+      "id": "clause-742b16311c6824e5",
+      "text": "Handout, nine one."
+    },
+    {
+      "id": "clause-3af0868fa6473c6f",
+      "text": "Handout, nine seven."
+    },
+    {
+      "id": "clause-4a3a4c841a1b3ae6",
+      "text": "Handout, nine six."
+    },
+    {
+      "id": "clause-bac70b7ecec1b8aa",
+      "text": "Handout, nine ten."
+    },
+    {
+      "id": "clause-2f4c52e268e1152c",
+      "text": "Handout, nine three."
+    },
+    {
+      "id": "clause-d5426b6292d87489",
+      "text": "Handout, nine two."
+    },
+    {
+      "id": "clause-5e171b6a08ff8864",
+      "text": "Handout, nineteen all."
+    },
+    {
+      "id": "clause-7640b46f866406a8",
+      "text": "Handout, nineteen eighteen."
+    },
+    {
+      "id": "clause-59268689fb6bd87a",
+      "text": "Handout, nineteen twenty."
+    },
+    {
+      "id": "clause-c36f8ae1fd6451e2",
+      "text": "Handout, one all."
+    },
+    {
+      "id": "clause-47e8a4e06fa82d2d",
+      "text": "Handout, one eight."
+    },
+    {
+      "id": "clause-da50372da9507e42",
+      "text": "Handout, one five."
+    },
+    {
+      "id": "clause-da430533fd0e2f16",
+      "text": "Handout, one four."
+    },
+    {
+      "id": "clause-e30fc5b5687271df",
+      "text": "Handout, one love."
+    },
+    {
+      "id": "clause-81395ea233f80b1a",
+      "text": "Handout, one nine."
+    },
+    {
+      "id": "clause-fc037eb4b88e69f1",
+      "text": "Handout, one seven."
+    },
+    {
+      "id": "clause-eb43461a0b592391",
+      "text": "Handout, one six."
+    },
+    {
+      "id": "clause-df3beeee6a42a2a2",
+      "text": "Handout, one ten."
+    },
+    {
+      "id": "clause-dee7afbc79e0466d",
+      "text": "Handout, one three."
+    },
+    {
+      "id": "clause-c5a6ca2106d26f0c",
+      "text": "Handout, one two."
+    },
+    {
+      "id": "clause-aa59af57b834f120",
+      "text": "Handout, seven all."
+    },
+    {
+      "id": "clause-4410b9ae0cf537a1",
+      "text": "Handout, seven eight."
+    },
+    {
+      "id": "clause-a5b978bf10412bdd",
+      "text": "Handout, seven five."
+    },
+    {
+      "id": "clause-adfef4d5d34e4ed2",
+      "text": "Handout, seven four."
+    },
+    {
+      "id": "clause-e96d0ea75a1d3704",
+      "text": "Handout, seven love."
+    },
+    {
+      "id": "clause-7016426ae7a2f4a2",
+      "text": "Handout, seven nine."
+    },
+    {
+      "id": "clause-2b995a0812921532",
+      "text": "Handout, seven one."
+    },
+    {
+      "id": "clause-df11e87926107480",
+      "text": "Handout, seven six."
+    },
+    {
+      "id": "clause-a126bc9cd53f7307",
+      "text": "Handout, seven ten."
+    },
+    {
+      "id": "clause-07a7a2f6a84aa003",
+      "text": "Handout, seven three."
+    },
+    {
+      "id": "clause-bae907321d333db5",
+      "text": "Handout, seven two."
+    },
+    {
+      "id": "clause-eaf27997ef887f5b",
+      "text": "Handout, seventeen all."
+    },
+    {
+      "id": "clause-09ed8db635c14530",
+      "text": "Handout, seventeen eighteen."
+    },
+    {
+      "id": "clause-aa1340411423ed18",
+      "text": "Handout, seventeen sixteen."
+    },
+    {
+      "id": "clause-b0c6a597c5cb4b20",
+      "text": "Handout, six all."
+    },
+    {
+      "id": "clause-a5c202c33c8d428d",
+      "text": "Handout, six eight."
+    },
+    {
+      "id": "clause-e1e41a745f13f65e",
+      "text": "Handout, six five."
+    },
+    {
+      "id": "clause-73afeae50b8633ee",
+      "text": "Handout, six four."
+    },
+    {
+      "id": "clause-3526e4ee4cb0718b",
+      "text": "Handout, six love."
+    },
+    {
+      "id": "clause-36b669321cc95dca",
+      "text": "Handout, six nine."
+    },
+    {
+      "id": "clause-300a4a835c7f6650",
+      "text": "Handout, six one."
+    },
+    {
+      "id": "clause-6d6f4d831314be8b",
+      "text": "Handout, six seven."
+    },
+    {
+      "id": "clause-c14debb2e6a0ba2a",
+      "text": "Handout, six ten."
+    },
+    {
+      "id": "clause-b6e57e377565a397",
+      "text": "Handout, six three."
+    },
+    {
+      "id": "clause-19fa7a2c04092177",
+      "text": "Handout, six two."
+    },
+    {
+      "id": "clause-f884f608b2ff23b6",
+      "text": "Handout, sixteen all."
+    },
+    {
+      "id": "clause-4a5d60894d2904f6",
+      "text": "Handout, sixteen fifteen."
+    },
+    {
+      "id": "clause-c33fc179381e9dab",
+      "text": "Handout, sixteen seventeen."
+    },
+    {
+      "id": "clause-8fe8cc12ecddeb94",
+      "text": "Handout, ten all."
+    },
+    {
+      "id": "clause-0a84f4f634304fe8",
+      "text": "Handout, ten eight."
+    },
+    {
+      "id": "clause-40b46a745442074f",
+      "text": "Handout, ten eleven."
+    },
+    {
+      "id": "clause-eb6c3782e4587a34",
+      "text": "Handout, ten five."
+    },
+    {
+      "id": "clause-f03341f9c4e43b99",
+      "text": "Handout, ten four."
+    },
+    {
+      "id": "clause-0971e36938c1649f",
+      "text": "Handout, ten love."
+    },
+    {
+      "id": "clause-9a5dbf75e1621937",
+      "text": "Handout, ten nine."
+    },
+    {
+      "id": "clause-ce1ba9dc0d3e7a73",
+      "text": "Handout, ten one."
+    },
+    {
+      "id": "clause-234160b21682f5a3",
+      "text": "Handout, ten seven."
+    },
+    {
+      "id": "clause-b0ff484b80e8e924",
+      "text": "Handout, ten six."
+    },
+    {
+      "id": "clause-3d2a2bb27d197d14",
+      "text": "Handout, ten three."
+    },
+    {
+      "id": "clause-4ab473ed9b7a75eb",
+      "text": "Handout, ten two."
+    },
+    {
+      "id": "clause-bfc44a8b178fa400",
+      "text": "Handout, thirteen all."
+    },
+    {
+      "id": "clause-6f9cf5262532b33a",
+      "text": "Handout, thirteen fourteen."
+    },
+    {
+      "id": "clause-25154fe9e9d866f6",
+      "text": "Handout, thirteen twelve."
+    },
+    {
+      "id": "clause-f28c2b495b406fbd",
+      "text": "Handout, three all."
+    },
+    {
+      "id": "clause-2215938285fa2643",
+      "text": "Handout, three eight."
+    },
+    {
+      "id": "clause-cbe93f536629b253",
+      "text": "Handout, three five."
+    },
+    {
+      "id": "clause-c241c882972461c9",
+      "text": "Handout, three four."
+    },
+    {
+      "id": "clause-7af83332bd3cbd9e",
+      "text": "Handout, three love."
+    },
+    {
+      "id": "clause-8acb5cbc35768c78",
+      "text": "Handout, three nine."
+    },
+    {
+      "id": "clause-856660fd4df770a9",
+      "text": "Handout, three one."
+    },
+    {
+      "id": "clause-8b3eccd714d389c9",
+      "text": "Handout, three seven."
+    },
+    {
+      "id": "clause-988bcb28d1de3fab",
+      "text": "Handout, three six."
+    },
+    {
+      "id": "clause-e4170a3296701f67",
+      "text": "Handout, three ten."
+    },
+    {
+      "id": "clause-3f23920f5f7fc281",
+      "text": "Handout, three two."
+    },
+    {
+      "id": "clause-56fcd9ebe09f894c",
+      "text": "Handout, twelve all."
+    },
+    {
+      "id": "clause-3be7158217a7d90b",
+      "text": "Handout, twelve eleven."
+    },
+    {
+      "id": "clause-3b2cdd0b27951951",
+      "text": "Handout, twelve thirteen."
+    },
+    {
+      "id": "clause-789e4e77adfcd98e",
+      "text": "Handout, twenty 21."
+    },
+    {
+      "id": "clause-4888c537db817f54",
+      "text": "Handout, twenty all."
+    },
+    {
+      "id": "clause-d05e4d6ac4e6932c",
+      "text": "Handout, twenty nineteen."
+    },
+    {
+      "id": "clause-e1278097013b8b5a",
+      "text": "Handout, two all."
+    },
+    {
+      "id": "clause-031a31ed3eab1473",
+      "text": "Handout, two eight."
+    },
+    {
+      "id": "clause-2fbcaba2ba2996e2",
+      "text": "Handout, two five."
+    },
+    {
+      "id": "clause-cfbc41a893de0c41",
+      "text": "Handout, two four."
+    },
+    {
+      "id": "clause-d994126bd92ea5a5",
+      "text": "Handout, two love."
+    },
+    {
+      "id": "clause-06d8ecd893f86c09",
+      "text": "Handout, two nine."
+    },
+    {
+      "id": "clause-c77c54c9efee2744",
+      "text": "Handout, two one."
+    },
+    {
+      "id": "clause-e47813cd17420951",
+      "text": "Handout, two seven."
+    },
+    {
+      "id": "clause-0fd66f0980e19fef",
+      "text": "Handout, two six."
+    },
+    {
+      "id": "clause-c5f4513faa665166",
+      "text": "Handout, two ten."
+    },
+    {
+      "id": "clause-dcd7f78963e1b506",
+      "text": "Handout, two three."
+    },
+    {
+      "id": "clause-d92ed8caeeb23748",
+      "text": "Love all."
+    },
+    {
+      "id": "clause-b57ebfea18e26491",
+      "text": "Love eight."
+    },
+    {
+      "id": "clause-ab82f89ccb8237fa",
+      "text": "Love five."
+    },
+    {
+      "id": "clause-a55477d2a89017a8",
+      "text": "Love four."
+    },
+    {
+      "id": "clause-4e1df51cb3d3d1e3",
+      "text": "Love nine."
+    },
+    {
+      "id": "clause-d874e6a5f8382223",
+      "text": "Love one."
+    },
+    {
+      "id": "clause-7c5b35e14521fd6e",
+      "text": "Love seven."
+    },
+    {
+      "id": "clause-83a48da115afc096",
+      "text": "Love six."
+    },
+    {
+      "id": "clause-7c84705c477dabad",
+      "text": "Love ten."
+    },
+    {
+      "id": "clause-1189d61e3f899bd5",
+      "text": "Love three."
+    },
+    {
+      "id": "clause-e094deb87d841290",
+      "text": "Love two."
+    },
+    {
+      "id": "clause-875af4fd34ed853a",
+      "text": "Nine all."
+    },
+    {
+      "id": "clause-995e560d8f56ebd7",
+      "text": "Nine eight."
+    },
+    {
+      "id": "clause-a28dda175ad32cda",
+      "text": "Nine five."
+    },
+    {
+      "id": "clause-fea80c324a2e4ab6",
+      "text": "Nine four."
+    },
+    {
+      "id": "clause-3d6aaf665440ee87",
+      "text": "Nine love."
+    },
+    {
+      "id": "clause-beeff5751cffaece",
+      "text": "Nine one."
+    },
+    {
+      "id": "clause-2a2bd3cc6f232cb7",
+      "text": "Nine seven."
+    },
+    {
+      "id": "clause-22c3f56c46ebf1bf",
+      "text": "Nine six."
+    },
+    {
+      "id": "clause-0638278a3d49d54a",
+      "text": "Nine ten."
+    },
+    {
+      "id": "clause-5530d14982ce5d82",
+      "text": "Nine three."
+    },
+    {
+      "id": "clause-b63c52df46d15f85",
+      "text": "Nine two."
+    },
+    {
+      "id": "clause-aa969055c7f88763",
+      "text": "Nineteen all."
+    },
+    {
+      "id": "clause-129919dc96f17075",
+      "text": "Nineteen eighteen."
+    },
+    {
+      "id": "clause-dff54bf2a147610a",
+      "text": "Nineteen twenty."
+    },
+    {
+      "id": "clause-b866b2149d30ece1",
+      "text": "One all."
+    },
+    {
+      "id": "clause-85bb6e5b5d47c31e",
+      "text": "One eight."
+    },
+    {
+      "id": "clause-02bde32f761fdf9f",
+      "text": "One five."
+    },
+    {
+      "id": "clause-1d11649143a72911",
+      "text": "One four."
+    },
+    {
+      "id": "clause-0f6086f097f49cfd",
+      "text": "One love."
+    },
+    {
+      "id": "clause-614dad19ff9b43d3",
+      "text": "One nine."
+    },
+    {
+      "id": "clause-995870d6f7a3e941",
+      "text": "One seven."
+    },
+    {
+      "id": "clause-15ccecdf1a344fb2",
+      "text": "One six."
+    },
+    {
+      "id": "clause-c1840c7faa1d7b69",
+      "text": "One ten."
+    },
+    {
+      "id": "clause-460938f1c2882cbc",
+      "text": "One three."
+    },
+    {
+      "id": "clause-677caa608fd08e0c",
+      "text": "One two."
+    },
+    {
+      "id": "clause-af87756666740677",
+      "text": "Seven all."
+    },
+    {
+      "id": "clause-8b6b5b746a620a1b",
+      "text": "Seven eight."
+    },
+    {
+      "id": "clause-1d9e436010fbdaad",
+      "text": "Seven five."
+    },
+    {
+      "id": "clause-2ee9318063cb8e3e",
+      "text": "Seven four."
+    },
+    {
+      "id": "clause-e2f94d43ed57c781",
+      "text": "Seven love."
+    },
+    {
+      "id": "clause-0158ba8a5e5bc834",
+      "text": "Seven nine."
+    },
+    {
+      "id": "clause-5d4d0d3e39446b79",
+      "text": "Seven one."
+    },
+    {
+      "id": "clause-031756ee4c1c1651",
+      "text": "Seven six."
+    },
+    {
+      "id": "clause-0f6a615fd350b04c",
+      "text": "Seven ten."
+    },
+    {
+      "id": "clause-2187c0436ed2db3c",
+      "text": "Seven three."
+    },
+    {
+      "id": "clause-aa3100ca4a9c3e38",
+      "text": "Seven two."
+    },
+    {
+      "id": "clause-46f0a2c00fdedfd9",
+      "text": "Seventeen all."
+    },
+    {
+      "id": "clause-5c590d696fbb176f",
+      "text": "Seventeen eighteen."
+    },
+    {
+      "id": "clause-6c766e5b0c9f0e01",
+      "text": "Seventeen sixteen."
+    },
+    {
+      "id": "clause-cba418b692771cca",
+      "text": "Six all."
+    },
+    {
+      "id": "clause-51169dcbde7bf30b",
+      "text": "Six eight."
+    },
+    {
+      "id": "clause-0ac114035dfd0223",
+      "text": "Six five."
+    },
+    {
+      "id": "clause-8f31437bdc2ad4f6",
+      "text": "Six four."
+    },
+    {
+      "id": "clause-294c0a56e7b312bd",
+      "text": "Six love."
+    },
+    {
+      "id": "clause-56be0af52a507377",
+      "text": "Six nine."
+    },
+    {
+      "id": "clause-38ad9d2f32e2ebb0",
+      "text": "Six one."
+    },
+    {
+      "id": "clause-f2eee56550e8ff81",
+      "text": "Six seven."
+    },
+    {
+      "id": "clause-6123a24c9d357959",
+      "text": "Six ten."
+    },
+    {
+      "id": "clause-31f2a45c80491e8f",
+      "text": "Six three."
+    },
+    {
+      "id": "clause-b4dd3043b6a56ec8",
+      "text": "Six two."
+    },
+    {
+      "id": "clause-e5ed50e9b0f40c96",
+      "text": "Sixteen all."
+    },
+    {
+      "id": "clause-0d91e78439d366f6",
+      "text": "Sixteen fifteen."
+    },
+    {
+      "id": "clause-87aa29edc1eb1261",
+      "text": "Sixteen seventeen."
+    },
+    {
+      "id": "clause-1c18df3504365ae4",
+      "text": "Ten all."
+    },
+    {
+      "id": "clause-a7a3b7078be80446",
+      "text": "Ten eight."
+    },
+    {
+      "id": "clause-6bcc91f5d9239131",
+      "text": "Ten eleven."
+    },
+    {
+      "id": "clause-daa9c58f962cd98b",
+      "text": "Ten five."
+    },
+    {
+      "id": "clause-def6c57efe1076b5",
+      "text": "Ten four."
+    },
+    {
+      "id": "clause-02fef0d5c246afd9",
+      "text": "Ten love."
+    },
+    {
+      "id": "clause-9db84afda0929a89",
+      "text": "Ten nine."
+    },
+    {
+      "id": "clause-a8eaec1e43df0635",
+      "text": "Ten one."
+    },
+    {
+      "id": "clause-f0d21ede0665c212",
+      "text": "Ten seven."
+    },
+    {
+      "id": "clause-01aa822242424179",
+      "text": "Ten six."
+    },
+    {
+      "id": "clause-6b061ae3becbbb2d",
+      "text": "Ten three."
+    },
+    {
+      "id": "clause-af5f825927759874",
+      "text": "Ten two."
+    },
+    {
+      "id": "clause-375ad0caf06677a4",
+      "text": "Thirteen all."
+    },
+    {
+      "id": "clause-f3e18e9985065bbc",
+      "text": "Thirteen fourteen."
+    },
+    {
+      "id": "clause-5ef0276aecd7c6e6",
+      "text": "Thirteen twelve."
+    },
+    {
+      "id": "clause-ed2a4435cf6e815f",
+      "text": "Three all."
+    },
+    {
+      "id": "clause-dd04169bf5defed6",
+      "text": "Three eight."
+    },
+    {
+      "id": "clause-21475a8177186070",
+      "text": "Three five."
+    },
+    {
+      "id": "clause-e9abfe3d59146f3f",
+      "text": "Three four."
+    },
+    {
+      "id": "clause-845f6d52ce899188",
+      "text": "Three love."
+    },
+    {
+      "id": "clause-546ccf1f38b7d3ac",
+      "text": "Three nine."
+    },
+    {
+      "id": "clause-82982a2c4b58656b",
+      "text": "Three one."
+    },
+    {
+      "id": "clause-f0807a9ede599122",
+      "text": "Three seven."
+    },
+    {
+      "id": "clause-a3797c7d1201324a",
+      "text": "Three six."
+    },
+    {
+      "id": "clause-e461dc905545e418",
+      "text": "Three ten."
+    },
+    {
+      "id": "clause-a6a5732046b3bf1a",
+      "text": "Three two."
+    },
+    {
+      "id": "clause-016aed97414cfb99",
+      "text": "Twelve all."
+    },
+    {
+      "id": "clause-747c0a452ad730b5",
+      "text": "Twelve eleven."
+    },
+    {
+      "id": "clause-91c74925184e4245",
+      "text": "Twelve thirteen."
+    },
+    {
+      "id": "clause-35b8f45ee4dded9e",
+      "text": "Twenty 21."
+    },
+    {
+      "id": "clause-11b6d8dc694b6e44",
+      "text": "Twenty all."
+    },
+    {
+      "id": "clause-fb1aad96e7afc356",
+      "text": "Twenty nineteen."
+    },
+    {
+      "id": "clause-cc03ea787c9767d1",
+      "text": "Two all."
+    },
+    {
+      "id": "clause-7a8a9b88dcd6c5fd",
+      "text": "Two eight."
+    },
+    {
+      "id": "clause-30c2d75ecd244e6c",
+      "text": "Two five."
+    },
+    {
+      "id": "clause-39245c4fc4128315",
+      "text": "Two four."
+    },
+    {
+      "id": "clause-baf29a42ecf49ac4",
+      "text": "Two love."
+    },
+    {
+      "id": "clause-d1095d5a690c7924",
+      "text": "Two nine."
+    },
+    {
+      "id": "clause-d9ecd7bb3f40afa6",
+      "text": "Two one."
+    },
+    {
+      "id": "clause-719d0210a98e4852",
+      "text": "Two seven."
+    },
+    {
+      "id": "clause-fef7b61ef8286a0c",
+      "text": "Two six."
+    },
+    {
+      "id": "clause-1383e083b626823d",
+      "text": "Two ten."
+    },
+    {
+      "id": "clause-364ec988b5a896e1",
+      "text": "Two three."
+    }
+  ],
+  "faultClips": [
+    "Down!",
+    "Out!",
+    "Not up!",
+    "Nick!",
+    "Stroke!",
+    "Yes, let!",
+    "No let!",
+    "Foot fault!",
+    "Fault!"
+  ],
+  "stakesClips": [
+    "Game Ball!",
+    "Match Ball!"
+  ],
+  "policy": "Use complete naturally spoken score clauses, not individual number-word stitching. Prefix/stakes clips join at real sentence pauses. Keep fixed instructions whole. Exclude legacy invitations and disconnected safety producers until content/wiring is resolved. Scores beyond the bank remain an explicit same-voice prefetch/offline-caption design decision; never fall back to an arbitrary device voice.",
+  "summary": {
+    "candidateClips": 476,
+    "characters": 8720
+  }
+}

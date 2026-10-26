@@ -1,0 +1,76 @@
+{
+  "source": "https://openrouter.ai/api/v1/models?output_modalities=speech",
+  "checkedAt": "2026-10-26T19:44:46.4453175Z",
+  "models": [
+    {
+      "id": "heygen/heygen-voice-1-turbo",
+      "canonical_slug": "heygen/heygen-voice-1-turbo-20261009",
+      "pricing": {
+        "prompt": "0.000004",
+        "completion": "0"
+      },
+      "supported_voices": [
+        "nadine",
+        "tabitha",
+        "bram",
+        "gareth",
+        "noelle",
+        "meredith",
+        "sabrina",
+        "lucian",
+        "weston",
+        "vincent"
+      ],
+      "supported_parameters": [],
+      "expiration_date": null,
+      "per_request_limits": null
+    },
+    {
+      "id": "heygen/heygen-voice-1-turbo:free",
+      "canonical_slug": "heygen/heygen-voice-1-turbo-20261009",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "supported_voices": [
+        "nadine",
+        "tabitha",
+        "bram",
+        "gareth",
+        "noelle",
+        "meredith",
+        "sabrina",
+        "lucian",
+        "weston",
+        "vincent"
+      ],
+      "supported_parameters": [],
+      "expiration_date": "2026-11-30",
+      "per_request_limits": null
+    },
+    {
+      "id": "fish-audio/drama-3",
+      "canonical_slug": "fish-audio/drama-3-20261013",
+      "pricing": {
+        "prompt": "0.000002",
+        "completion": "0"
+      },
+      "supported_voices": null,
+      "supported_parameters": [],
+      "expiration_date": null,
+      "per_request_limits": null
+    },
+    {
+      "id": "fish-audio/s2.1-pro-free:free",
+      "canonical_slug": "fish-audio/s2.1-pro-free-20260729",
+      "pricing": {
+        "prompt": "0",
+        "completion": "0"
+      },
+      "supported_voices": null,
+      "supported_parameters": [],
+      "expiration_date": null,
+      "per_request_limits": null
+    }
+  ]
+}

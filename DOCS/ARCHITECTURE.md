@@ -475,6 +475,33 @@ The favicon/app icon uses the existing red player1 Mii SVG, tilted slightly one 
 
 ### Operator build correction — 2026-10-26
 
+Speech inventory/research correction (operator, 2026-10-26): root build_all.sh
+has an --inventory-speech mode, which runs scripts/catalog-speech.mjs without
+compiling, deploying or minting a version. The same inventory is refreshed before
+normal builds. It parses all source speech sinks/producers and manual HTML callout
+buttons, records exact text/templates/source locations plus file hashes, and writes
+DOCS/AUDIO/speech-catalog.json and SPEECH_MAP.md. It records current fixed narration,
+welcome/identity, aliases, serve correction, referee score grammar, appeal/fault/
+safety producers, manual demos and retained legacy narration separately. A bounded
+generation bank may enumerate actual RulesEngine formatting through score 30, but
+the game has no configured cap under win-by-two: the map must explicitly represent
+the numeric grammar/open domain and never label a bounded bank an exhaustive literal
+set. Public generic speech APIs are also open-text surfaces until clip-ID enforcement.
+Historical proposal/removal evidence, interruption audit and primary-source TTS
+offer/voice/output-format research live alongside the inventory. No provider calls
+or runtime voice replacement are implied by creating this map. Proposed generation
+uses fixed provider/voice identities and bundled clips to eliminate OS voice choice;
+natural full utterances are preferred over robotic word-by-word token assembly.
+
+Each compilation attempt stamps BUILD from current epoch minutes through the
+canonical source-version writer before freezing inputs; MINOR still advances only
+after complete compilation. This prevents reusing an old versioned executable path
+when an earlier build is open/locked, and keeps the filename's BUILD truthful to
+the attempt. Failed attempts retain their stamped BUILD and do not advance MINOR.
+Retry ZIP writers use Force only after the coordinator has retained the previous
+versioned bytes and their hashes; otherwise a failed-version retry cannot package
+already-existing web/PWA filenames. Failed matrices never deploy or advance MINOR.
+
 Brand correction: use the existing primary title and narrator identity, Virtual
 Squash, consistently in page/OpenGraph titles, visible labels, companion page,
 PWA name/short name, native product/window metadata and icon accessibility text.
