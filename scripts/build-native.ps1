@@ -81,7 +81,31 @@ if($Platform -eq 'windows'){
   $apk=Get-ChildItem -LiteralPath src-tauri/gen/android/app/build/outputs -Recurse -Filter '*.apk' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
   $aab=Get-ChildItem -LiteralPath src-tauri/gen/android/app/build/outputs -Recurse -Filter '*.aab' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
   if(-not $apk -or -not $aab){throw 'Android APK and AAB are both required.'}
-  Copy-Item -LiteralPath $apk.FullName -Destination (Join-Path $Output "squash-arcade-v$version-android-arm64-unsigned.apk")
+  # Keep the full native symbols in their separate ZIP, not in the install APK.
+  # Tauri's generated Gradle packaging can retain the original Rust ELF.
+  $stripTool=Get-ChildItem -LiteralPath "$env:ANDROID_HOME/ndk" -Recurse -Filter llvm-strip.exe | Sort-Object FullName -Descending | Select-Object -First 1
+  $zipAlign=Get-ChildItem -LiteralPath "$env:ANDROID_HOME/build-tools" -Recurse -Filter zipalign.exe | Sort-Object FullName -Descending | Select-Object -First 1
+  if(-not $stripTool -or -not $zipAlign){throw 'Android llvm-strip and zipalign are required.'}
+  $packedLibrary=Join-Path $Snapshot '.android-stripped-libapp_lib.so'
+  Copy-Item -LiteralPath (Join-Path $env:CARGO_TARGET_DIR 'aarch64-linux-android/release/libapp_lib.so') -Destination $packedLibrary
+  & $stripTool.FullName --strip-debug $packedLibrary
+  if($LASTEXITCODE -ne 0){throw 'Android native debug stripping failed.'}
+  $unalignedApk=Join-Path $Snapshot '.android-unaligned.apk'
+  Copy-Item -LiteralPath $apk.FullName -Destination $unalignedApk
+  Add-Type -AssemblyName System.IO.Compression.FileSystem
+  $apkPackage=[IO.Compression.ZipFile]::Open($unalignedApk,[IO.Compression.ZipArchiveMode]::Update)
+  try{
+    $oldLibrary=$apkPackage.GetEntry('lib/arm64-v8a/libapp_lib.so')
+    if(-not $oldLibrary){throw 'Android arm64 native library is missing from APK.'}
+    $oldLibrary.Delete()
+    [void][IO.Compression.ZipFileExtensions]::CreateEntryFromFile($apkPackage,$packedLibrary,'lib/arm64-v8a/libapp_lib.so',[IO.Compression.CompressionLevel]::NoCompression)
+  }finally{$apkPackage.Dispose()}
+  $finalApk=Join-Path $Output "squash-arcade-v$version-android-arm64-unsigned.apk"
+  & $zipAlign.FullName -P 16 -f 4 $unalignedApk $finalApk
+  if($LASTEXITCODE -ne 0){throw 'Android APK alignment failed.'}
+  & $zipAlign.FullName -c -P 16 4 $finalApk
+  if($LASTEXITCODE -ne 0){throw 'Android APK alignment verification failed.'}
+  if((Get-Item -LiteralPath $finalApk).Length -ge 100MB){throw 'APK exceeds the tracked release-file limit.'}
   Copy-Item -LiteralPath $aab.FullName -Destination (Join-Path $Output "squash-arcade-v$version-android-arm64-unsigned.aab")
   $aapt=Get-ChildItem -LiteralPath "$env:ANDROID_HOME/build-tools" -Recurse -Filter aapt2.exe | Sort-Object FullName -Descending | Select-Object -First 1
   if(-not $aapt){throw 'Android SDK aapt2 is required for packaged icon verification.'}
