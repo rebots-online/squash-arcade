@@ -199,15 +199,19 @@ This is a source audit, **not** a billing-account inspection, exhaustive securit
 
 ## Scripted multiplatform build
 
-Run `npm ci`, then `npm run build` (or `npm run build:all`) on the provisioned Windows host. The coordinator uses the shared `E:/DevTools/pearl-build-env.ps1` environment for Windows/Android and the `Ubuntu-24.04` WSL distribution for AppImage. Override these with `SQUASH_WINDOWS_ENV`, `SQUASH_WSL_DISTRO` and `SQUASH_LINUX_NODE` when needed. Shared caches are reused.
+Only ./build_all.sh may build or deploy. On Windows use Git Bash. The default
+command starts Windows, Linux, Android, ordinary web and PWA workers together,
+requires the complete twelve-package matrix, automatically advances source
+minor after success, then deploys and verifies all three configured domains.
+./build_all.sh --deploy-existing retries delivery without another build/version.
+Helpers reject direct invocation.
 
-One source/frontend snapshot feeds four concurrently started workers: Windows NSIS installer, Linux AppImage, Android arm64 APK/AAB, and a PWA ZIP plus deployable web directory. Results, logs, SHA-256 hashes and start/end times are retained under tracked `dist/squash-arcade-v<version>/<attempt>/`. The build fails if any target fails or lacks its required artifacts. Android and Windows release outputs are unsigned until the separate production-signing step; installing/running on target devices is a separate acceptance gate. The current Linux build baseline is Ubuntu 24.04; older-distribution compatibility is not asserted.
-
-All five platform packages are produced directly under tracked `dist/squash-arcade-v<version>/<attempt>/<platform>/` from worker launch, including partial attempts. Stamped inventories contain hashes and validation state. Root dist is never moved or emptied. The current packages are tracked as ordinary Git binaries through the configured available remote; no unavailable service is a build dependency. `npm run deploy` publishes and verifies the web game; `npm run release` builds every platform and then deploys it. The detailed working recipe is in [DOCS/BUILDING.md](DOCS/BUILDING.md).
-
-The successful artifacts retain the version they were built with. Immediately after all workers succeed and the source fingerprint is rechecked, the source MINOR advances in version.txt, package.json/package-lock.json and Cargo metadata. Failed attempts retain the source version. `public/deployment.json` and `dist/` describe the last successful build; the source version describes the next build. A lock prevents overlapping coordinators.
-
-`npm run icons` regenerates the favicon/PWA/native icon sets from the existing red Mii SVG and the opposing-diagonal squash racquet. The production PWA caches local game files for offline startup; camera models, remote music and phone/multiplayer services retain their existing network requirements.
+All final files are directly in tracked root dist: standalone/installer EXEs,
+MSI/MSIX, AppImage/DEB/RPM, APK/AAB/native symbols, web ZIP and PWA ZIP. Partial
+attempts retain stamped inventories there. Root dist is never emptied/renamed.
+Android launcher resources are copied after project init and inspected in the
+packaged APK. See [the working recipe](DOCS/BUILDING.md). Signing, installation
+and physical-device gameplay remain distinct acceptance gates.
 
 ## Testing and known limitations
 
