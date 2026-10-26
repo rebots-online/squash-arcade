@@ -1,0 +1,373 @@
+Pearl native Windows toolchain selected; shared tools and caches use E:\DevTools.
+        Info Using installed NDK: E:\DevTools\android\sdk\ndk\29.0.14206865
+Generating Android Studio project...
+        Info "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.83680\\2026-10-26T15-07-20.641Z\\android\\source\\src-tauri" relative to "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.83680\\2026-10-26T15-07-20.641Z\\android\\source\\src-tauri\\gen/android\\squash_arcade" is "..\\..\\..\\"
+victory: Project generated successfully!
+    Make cool apps! 🌻 🐕 🎉
+android.permission.CAMERA
+android.hardware.camera.any
+false
+     Removed 208 files, 31.4MiB total
+        Info Using installed NDK: E:\DevTools\android\sdk\ndk\29.0.14206865
+        Info Looking up installed tauri packages to check mismatched versions...
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m   Compiling[0m proc-macro2 v1.0.107
+[1m[92m   Compiling[0m quote v1.0.47
+[1m[92m   Compiling[0m unicode-ident v1.0.27
+[1m[92m   Compiling[0m serde_core v1.0.229
+[1m[92m   Compiling[0m libc v0.2.191
+[1m[92m   Compiling[0m siphasher v1.0.4
+[1m[92m   Compiling[0m fastrand v2.5.0
+[1m[92m   Compiling[0m icu_properties_data v2.4.0
+[1m[92m   Compiling[0m icu_normalizer_data v2.4.0
+[1m[92m   Compiling[0m cfg-if v1.0.5
+[1m[92m   Compiling[0m parking_lot_core v0.9.12
+[1m[92m   Compiling[0m stable_deref_trait v1.2.1
+[1m[92m   Compiling[0m zmij v1.0.23
+[1m[92m   Compiling[0m windows-link v0.2.1
+[1m[92m   Compiling[0m serde v1.0.229
+[1m[92m   Compiling[0m phf_shared v0.13.1
+[1m[92m   Compiling[0m smallvec v1.16.4
+[1m[92m   Compiling[0m winnow v1.0.4
+[1m[92m   Compiling[0m phf_generator v0.13.1
+[1m[92m   Compiling[0m memchr v2.8.3
+[1m[92m   Compiling[0m phf_codegen v0.13.1
+[1m[92m   Compiling[0m thiserror v2.0.21
+[1m[92m   Compiling[0m typeid v1.0.3
+[1m[92m   Compiling[0m time-core v0.1.9
+[1m[92m   Compiling[0m hashbrown v0.17.1
+[1m[92m   Compiling[0m num-conv v0.2.2
+[1m[92m   Compiling[0m equivalent v1.0.3
+[1m[92m   Compiling[0m version_check v0.9.5
+[1m[92m   Compiling[0m litemap v0.8.3
+[1m[92m   Compiling[0m ident_case v1.0.1
+[1m[92m   Compiling[0m erased-serde v0.4.11
+[1m[92m   Compiling[0m itoa v1.0.18
+[1m[92m   Compiling[0m writeable v0.6.4
+[1m[92m   Compiling[0m strsim v0.11.1
+[1m[92m   Compiling[0m selectors v0.38.0
+[1m[92m   Compiling[0m windows-sys v0.61.2
+[1m[92m   Compiling[0m utf8_iter v1.0.4
+[1m[92m   Compiling[0m new_debug_unreachable v1.0.6
+[1m[92m   Compiling[0m anyhow v1.0.104
+[1m[92m   Compiling[0m indexmap v2.14.2
+[1m[92m   Compiling[0m scopeguard v1.2.0
+[1m[92m   Compiling[0m lock_api v0.4.14
+[1m[92m   Compiling[0m toml_parser v1.1.5+spec-1.1.0
+[1m[92m   Compiling[0m getrandom v0.4.3
+[1m[92m   Compiling[0m serde_json v1.0.154
+[1m[92m   Compiling[0m precomputed-hash v0.1.1
+[1m[92m   Compiling[0m generic-array v0.14.7
+[1m[92m   Compiling[0m autocfg v1.5.1
+[1m[92m   Compiling[0m log v0.4.34
+[1m[92m   Compiling[0m bitflags v2.13.2
+[1m[92m   Compiling[0m percent-encoding v2.3.2
+[1m[92m   Compiling[0m toml_datetime v1.1.2+spec-1.1.0
+[1m[92m   Compiling[0m semver v1.0.28
+[1m[92m   Compiling[0m parking_lot v0.12.5
+[1m[92m   Compiling[0m serde_spanned v1.1.2
+[1m[92m   Compiling[0m toml_writer v1.1.3+spec-1.1.0
+[1m[92m   Compiling[0m dtoa v1.0.11
+[1m[92m   Compiling[0m indexmap v1.9.3
+[1m[92m   Compiling[0m string_cache v0.9.0
+[1m[92m   Compiling[0m dtoa-short v0.3.5
+[1m[92m   Compiling[0m toml v1.1.8+spec-1.1.0
+[1m[92m   Compiling[0m syn v3.0.9
+[1m[92m   Compiling[0m syn v2.0.119
+[1m[92m   Compiling[0m string_cache_codegen v0.6.1
+[1m[92m   Compiling[0m uuid v1.29.0
+[1m[92m   Compiling[0m form_urlencoded v1.2.2
+[1m[92m   Compiling[0m tendril v0.5.1
+[1m[92m   Compiling[0m aho-corasick v1.1.5
+[1m[92m   Compiling[0m alloc-no-stdlib v3.0.0
+[1m[92m   Compiling[0m camino v1.2.6
+[1m[92m   Compiling[0m regex-syntax v0.8.11
+[1m[92m   Compiling[0m alloc-stdlib v0.3.0
+[1m[92m   Compiling[0m winapi-util v0.1.11
+[1m[92m   Compiling[0m servo_arc v0.4.3
+[1m[92m   Compiling[0m deranged v0.5.9
+[1m[92m   Compiling[0m schemars v0.8.22
+[1m[92m   Compiling[0m web-time v1.1.0
+[1m[92m   Compiling[0m rustc-hash v2.1.3
+[1m[92m   Compiling[0m powerfmt v0.2.1
+[1m[92m   Compiling[0m web_atoms v0.2.6
+[1m[92m   Compiling[0m hashbrown v0.12.3
+[1m[92m   Compiling[0m fnv v1.0.7
+[1m[92m   Compiling[0m bit-vec v0.8.0
+[1m[92m   Compiling[0m find-msvc-tools v0.1.15
+[1m[92m   Compiling[0m shlex v2.0.1
+[1m[92m   Compiling[0m cfb v0.14.0
+[1m[92m   Compiling[0m same-file v1.0.6
+[1m[92m   Compiling[0m bit-set v0.8.0
+[1m[92m   Compiling[0m brotli-decompressor v6.2.0
+[1m[92m   Compiling[0m quick-xml v0.42.0
+[1m[92m   Compiling[0m time v0.3.55
+[1m[92m   Compiling[0m foldhash v0.2.0
+[1m[92m   Compiling[0m dunce v1.0.5
+[1m[92m   Compiling[0m base64 v0.23.1
+[1m[92m   Compiling[0m dyn-clone v1.0.20
+[1m[92m   Compiling[0m tauri-utils v2.10.2
+[1m[92m   Compiling[0m cc v1.10.0
+[1m[92m   Compiling[0m bytes v1.12.1
+[1m[92m   Compiling[0m infer v0.22.0
+[1m[92m   Compiling[0m regex-automata v0.4.18
+[1m[92m   Compiling[0m synstructure v0.14.0
+[1m[92m   Compiling[0m darling_core v0.24.1
+[1m[92m   Compiling[0m serde_derive_internals v0.29.1
+[1m[92m   Compiling[0m brotli v9.1.0
+[1m[92m   Compiling[0m http v1.5.0
+[1m[92m   Compiling[0m serde-untagged v0.1.9
+[1m[92m   Compiling[0m walkdir v2.5.0
+[1m[92m   Compiling[0m glob v0.3.4
+[1m[92m   Compiling[0m ctor v1.0.13
+[1m[92m   Compiling[0m pin-project-lite v0.2.17
+[1m[92m   Compiling[0m futures-core v0.3.34
+[1m[92m   Compiling[0m jni-sys v0.3.1
+[1m[92m   Compiling[0m regex v1.13.1
+[1m[92m   Compiling[0m winreg v0.56.0
+[1m[92m   Compiling[0m rustc_version v0.4.1
+[1m[92m   Compiling[0m vswhom-sys v0.1.3
+[1m[92m   Compiling[0m thiserror v1.0.69
+[1m[92m   Compiling[0m simd-adler32 v0.3.10
+[1m[92m   Compiling[0m option-ext v0.2.0
+[1m[92m   Compiling[0m zerofrom-derive v0.1.8
+[1m[92m   Compiling[0m serde_derive v1.0.229
+[1m[92m   Compiling[0m yoke-derive v0.8.4
+[1m[92m   Compiling[0m zerovec-derive v0.11.7
+[1m[92m   Compiling[0m displaydoc v0.2.7
+[1m[92m   Compiling[0m phf_macros v0.13.1
+[1m[92m   Compiling[0m thiserror-impl v2.0.21
+[1m[92m   Compiling[0m derive_more-impl v2.1.1
+[1m[92m   Compiling[0m cssparser-macros v0.7.1
+[1m[92m   Compiling[0m schemars_derive v0.8.22
+[1m[92m   Compiling[0m jni-sys-macros v0.4.1
+[1m[92m   Compiling[0m darling_macro v0.24.1
+[1m[92m   Compiling[0m phf v0.13.1
+[1m[92m   Compiling[0m jni-sys v0.4.1
+[1m[92m   Compiling[0m thiserror-impl v1.0.69
+[1m[92m   Compiling[0m darling v0.24.1
+[1m[92m   Compiling[0m cssparser v0.37.0
+[1m[92m   Compiling[0m derive_more v2.1.1
+[1m[92m   Compiling[0m dirs-sys v0.5.0
+[1m[92m   Compiling[0m toml_edit v0.25.17+spec-1.1.0
+[1m[92m   Compiling[0m zerofrom v0.1.8
+[1m[92m   Compiling[0m serde_with_macros v3.24.0
+[1m[92m   Compiling[0m yoke v0.8.4
+[1m[92m   Compiling[0m socket2 v0.6.5
+[1m[92m   Compiling[0m mio v1.2.4
+[1m[92m   Compiling[0m time-macros v0.2.32
+[1m[92m   Compiling[0m markup5ever v0.39.0
+[1m[92m   Compiling[0m zerovec v0.11.9
+[1m[92m   Compiling[0m zerotrie v0.2.5
+[1m[92m   Compiling[0m tinystr v0.8.5
+[1m[92m   Compiling[0m potential_utf v0.1.6
+[1m[92m   Compiling[0m cargo-platform v0.1.9
+[1m[92m   Compiling[0m icu_collections v2.4.0
+[1m[92m   Compiling[0m jsonptr v0.7.1
+[1m[92m   Compiling[0m icu_locale_core v2.4.0
+[1m[92m   Compiling[0m html5ever v0.39.0
+[1m[92m   Compiling[0m serde_with v3.24.0
+[1m[92m   Compiling[0m cargo_metadata v0.19.2
+[1m[92m   Compiling[0m plist v1.10.3
+[1m[92m   Compiling[0m json-patch v4.2.0
+[1m[92m   Compiling[0m typenum v1.20.1
+[1m[92m   Compiling[0m num_threads v0.1.8
+[1m[92m   Compiling[0m dom_query v0.28.0
+[1m[92m   Compiling[0m vswhom v0.1.0
+[1m[92m   Compiling[0m icu_provider v2.4.0
+[1m[92m   Compiling[0m embed-resource v3.0.12
+[1m[92m   Compiling[0m crc32fast v1.5.3
+[1m[92m   Compiling[0m icu_normalizer v2.4.0
+[1m[92m   Compiling[0m icu_properties v2.4.0
+[1m[92m   Compiling[0m heck v0.5.0
+[1m[92m   Compiling[0m rustversion v1.0.23
+[1m[92m   Compiling[0m adler2 v2.0.1
+[1m[92m   Compiling[0m tauri-winres v0.3.7
+[1m[92m   Compiling[0m tokio v1.54.1
+[1m[92m   Compiling[0m proc-macro-crate v3.5.0
+[1m[92m   Compiling[0m cargo_toml v1.0.1
+[1m[92m   Compiling[0m dirs v7.0.0
+[1m[92m   Compiling[0m idna_adapter v1.2.2
+[1m[92m   Compiling[0m idna v1.1.0
+[1m[92m   Compiling[0m static_vcruntime v3.0.0
+[1m[92m   Compiling[0m crossbeam-utils v0.8.23
+[1m[92m   Compiling[0m num_enum_derive v0.7.6
+[1m[92m   Compiling[0m url v2.5.8
+[1m[92m   Compiling[0m miniz_oxide v0.9.1
+[1m[92m   Compiling[0m http-body v1.1.0
+[1m[92m   Compiling[0m combine v4.6.9
+[1m[92m   Compiling[0m urlpattern v0.6.0
+[1m[92m   Compiling[0m cookie v0.18.2
+[1m[92m   Compiling[0m cesu8 v1.1.0
+[1m[92m   Compiling[0m httparse v1.10.1
+[1m[92m   Compiling[0m slab v0.4.12
+[1m[92m   Compiling[0m raw-window-handle v0.6.2
+[1m[92m   Compiling[0m futures-task v0.3.34
+[1m[92m   Compiling[0m num_enum v0.7.6
+[1m[92m   Compiling[0m futures-util v0.3.34
+[1m[92m   Compiling[0m flate2 v1.1.10
+[1m[92m   Compiling[0m crypto-common v0.1.7
+[1m[92m   Compiling[0m block-buffer v0.10.4
+[1m[92m   Compiling[0m miniz_oxide v0.8.9
+[1m[92m   Compiling[0m dpi v0.1.2
+[1m[92m   Compiling[0m ndk-sys v0.6.0+11769913
+[1m[92m   Compiling[0m fdeflate v0.3.7
+[1m[92m   Compiling[0m tower-service v0.3.3
+[1m[92m   Compiling[0m try-lock v0.2.5
+[1m[92m   Compiling[0m once_cell v1.21.4
+[1m[92m   Compiling[0m want v0.3.2
+[1m[92m   Compiling[0m ndk v0.9.0
+[1m[92m   Compiling[0m tracing-core v0.1.36
+[1m[92m   Compiling[0m jni v0.21.1
+[1m[92m   Compiling[0m png v0.18.1
+[1m[92m   Compiling[0m digest v0.10.7
+[1m[92m   Compiling[0m crossbeam-channel v0.5.17
+[1m[92m   Compiling[0m tao-macros v0.1.4
+[1m[92m   Compiling[0m sync_wrapper v1.0.2
+[1m[92m   Compiling[0m cpufeatures v0.2.17
+[1m[92m   Compiling[0m tauri-runtime v2.12.2
+[1m[92m   Compiling[0m tower-layer v0.3.3
+[1m[92m   Compiling[0m wry v0.57.1
+[1m[92m   Compiling[0m atomic-waker v1.1.2
+[1m[92m   Compiling[0m byteorder v1.5.0
+[1m[92m   Compiling[0m tauri-build v2.7.4
+[1m[92m   Compiling[0m tauri-plugin v2.7.2
+[1m[92m   Compiling[0m hyper v1.12.0
+[1m[92m   Compiling[0m ico v0.6.0
+[1m[92m   Compiling[0m sha2 v0.10.9
+[1m[92m   Compiling[0m tower v0.5.3
+[1m[92m   Compiling[0m tracing v0.1.44
+[1m[92m   Compiling[0m futures-channel v0.3.34
+[1m[92m   Compiling[0m ipnet v2.12.2
+[1m[92m   Compiling[0m tauri-runtime-wry v2.12.3
+[1m[92m   Compiling[0m ndk-context v0.1.1
+[1m[92m   Compiling[0m getrandom v0.3.4
+[1m[92m   Compiling[0m futures-sink v0.3.34
+[1m[92m   Compiling[0m tokio-util v0.7.20
+[1m[92m   Compiling[0m hyper-util v0.1.21
+[1m[92m   Compiling[0m tao v0.37.2
+[1m[92m   Compiling[0m tower-http v0.6.11
+[1m[92m   Compiling[0m tauri-codegen v2.7.4
+[1m[92m   Compiling[0m http-body-util v0.1.5
+[1m[92m   Compiling[0m serialize-to-javascript-impl v0.1.2
+[1m[92m   Compiling[0m reqwest v0.13.5
+[1m[92m   Compiling[0m env_filter v0.1.4
+[1m[92m   Compiling[0m serde_repr v0.1.21
+[1m[92m   Compiling[0m serialize-to-javascript v0.1.2
+[1m[92m   Compiling[0m android_log-sys v0.3.2
+[1m[92m   Compiling[0m mime v0.3.17
+[1m[92m   Compiling[0m android_logger v0.15.1
+[1m[92m   Compiling[0m fern v0.7.1
+[1m[92m   Compiling[0m tauri v2.12.5
+[1m[92m   Compiling[0m tauri-plugin-log v2.10.1
+[1m[92m   Compiling[0m tauri-macros v2.7.4
+[1m[92m   Compiling[0m squash-arcade v1.16.83680 (E:\devProjects\squash-arcade\dist\.work\1.16.83680\2026-10-26T15-07-20.641Z\android\source\src-tauri)
+[1m[92m    Finished[0m `release` profile [optimized + debuginfo] target(s) in 6m 26s
+        Info symlinking lib "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" in jniLibs dir "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.83680\\2026-10-26T15-07-20.641Z\\android\\source\\src-tauri\\gen/android\\app/src/main/jniLibs/arm64-v8a"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "liblog.so"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libandroid.so"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libdl.so"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libm.so"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libc.so"
+        Info symlink at "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.83680\\2026-10-26T15-07-20.641Z\\android\\source\\src-tauri\\gen/android\\app/src/main/jniLibs/arm64-v8a\\libapp_lib.so" points to "E:\\DevTools\\caches\\squash-arcade\\android\\aarch64-linux-android\\release\\libapp_lib.so"
+w: file:///E:/devProjects/squash-arcade/dist/.work/1.16.83680/2026-10-26T15-07-20.641Z/android/source/src-tauri/gen/android/buildSrc/src/main/java/mba/robin/squash/kotlin/BuildTask.kt:53:17 'exec(Action<in ExecSpec!>): ExecResult' is deprecated. Deprecated in Java
+        Info connection; remote_addr=127.0.0.1:64036 conn_id=0
+[1m[32m        Info[0m Using installed NDK: E:\DevTools\android\sdk\ndk\29.0.14206865
+[1m[92m   Compiling[0m tauri v2.12.5
+[1m[92m   Compiling[0m wry v0.57.1
+[1m[92m   Compiling[0m tauri-plugin-log v2.10.1
+[1m[92m   Compiling[0m squash-arcade v1.16.83680 (E:\devProjects\squash-arcade\dist\.work\1.16.83680\2026-10-26T15-07-20.641Z\android\source\src-tauri)
+[1m[92m   Compiling[0m tauri-runtime-wry v2.12.3
+[1m[92m    Finished[0m `release` profile [optimized + debuginfo] target(s) in 2m 07s
+[1m[32m        Info[0m symlinking lib "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" in jniLibs dir "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.83680\\2026-10-26T15-07-20.641Z\\android\\source\\src-tauri\\gen/android\\app/src/main/jniLibs/arm64-v8a"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "liblog.so"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libandroid.so"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libdl.so"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libm.so"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libc.so"
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/AppPlugin.kt:35:37 'onBackPressed(): Unit' is deprecated. Deprecated in Java
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/plugin/Plugin.kt:125:5 'onDestroy(): Unit' is deprecated. use onDestroy(activity: AppCompatActivity) instead
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/plugin/Plugin.kt:130:5 'onRestart(): Unit' is deprecated. use onRestart(activity: AppCompatActivity) instead
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/plugin/Plugin.kt:135:5 'onPause(): Unit' is deprecated. use onPause(activity: AppCompatActivity) instead
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/plugin/Plugin.kt:140:5 'onResume(): Unit' is deprecated. use onResume(activity: AppCompatActivity) instead
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/plugin/Plugin.kt:145:5 'onStop(): Unit' is deprecated. use onStop(activity: AppCompatActivity) instead
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/plugin/PluginMethodData.kt:11:23 Parameter 'methodDecorator' is never used
+Java compiler version 21 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+w: file:///E:/devProjects/squash-arcade/dist/.work/1.16.83680/2026-10-26T15-07-20.641Z/android/source/src-tauri/gen/android/app/src/main/java/mba/robin/squash/generated/RustWebView.kt:26:18 'setter for databaseEnabled: Boolean' is deprecated. Deprecated in Java
+w: file:///E:/devProjects/squash-arcade/dist/.work/1.16.83680/2026-10-26T15-07-20.641Z/android/source/src-tauri/gen/android/app/src/main/java/mba/robin/squash/generated/WryActivity.kt:69:46 'onBackPressed(): Unit' is deprecated. This method has been deprecated in favor of using the
+      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.
+      The OnBackPressedDispatcher controls how back button events are dispatched
+      to one or more {@link OnBackPressedCallback} objects.
+Java compiler version 21 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+The message received from the daemon indicates that the daemon has disappeared.
+Build request sent: Build{id=886d7c77-8711-4cce-a02d-cc241766f0db, currentDir=E:\devProjects\squash-arcade\dist\.work\1.16.83680\2026-10-26T15-07-20.641Z\android\source\src-tauri}
+Attempting to read last messages from the daemon log...
+Daemon pid: 43188
+  log file: E:\DevTools\caches\gradle\daemon\8.14.3\daemon-43188.out.log
+----- Last 20 lines from daemon log file - daemon-43188.out.log -----
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+w: file:///E:/devProjects/squash-arcade/dist/.work/1.16.83680/2026-10-26T15-07-20.641Z/android/source/src-tauri/gen/android/app/src/main/java/mba/robin/squash/generated/RustWebView.kt:26:18 'setter for databaseEnabled: Boolean' is deprecated. Deprecated in Java
+w: file:///E:/devProjects/squash-arcade/dist/.work/1.16.83680/2026-10-26T15-07-20.641Z/android/source/src-tauri/gen/android/app/src/main/java/mba/robin/squash/generated/WryActivity.kt:69:46 'onBackPressed(): Unit' is deprecated. This method has been deprecated in favor of using the
+      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.
+      The OnBackPressedDispatcher controls how back button events are dispatched
+      to one or more {@link OnBackPressedCallback} objects.
+Java compiler version 21 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings----- End of the daemon log -----
+
+JVM crash log found: file:///E:/devProjects/squash-arcade/dist/.work/1.16.83680/2026-10-26T15-07-20.641Z/android/source/src-tauri/hs_err_pid43188.log
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Gradle build daemon disappeared unexpectedly (it may have been killed or may have crashed)
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+       Error failed to build APK: Failed to assemble APK with Io(BeforeSpawn(<closure>), Io(StderrFile(OwnedHandle { handle: 0x2fc }), Io(StdoutFile(OwnedHandle { handle: 0x2f8 }), Io(StdinFile(OwnedHandle { handle: 0x258 }), Io(Env("PATHEXT", ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL"), Io(Env("WRY_ANDROID_LIBRARY", "app_lib"), Io(Env("CARGO_TARGET_DIR", "E:/DevTools/caches/squash-arcade/android"), Io(Env("WRY_ANDROID_KOTLIN_FILES_OUT_DIR", "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.83680\\2026-10-26T15-07-20.641Z\\android\\source\\src-tauri\\gen/android\\app/src/main\\java/mba/robin/squash\\generated"), Io(Env("NDK_HOME", "E:\\DevTools\\android\\sdk\\ndk\\29.0.14206865"), Io(Env("SystemRoot", "C:\\Windows"), Io(Env("ProgramData", "C:\\ProgramData"), Io(Env("PATH", "E:\\DevTools\\node\\node-v22.23.3-win-x64;E:\\DevTools\\go\\go1.26.5\\go\\bin;E:\\DevTools\\cargo\\bin;E:\\DevTools\\jdk\\jdk-21.0.12.1+1\\bin;E:\\DevTools\\mingw\\mingw64\\bin;E:\\DevTools\\NSIS;E:\\DevTools\\wix3-portable;E:\\DevTools\\android\\sdk\\cmdline-tools\\19.0\\bin;E:\\DevTools\\android\\sdk\\platform-tools;E:\\DevTools\\android\\sdk\\build-tools\\37.0.0;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64;E:\\DevTools\\VisualStudio\\BuildTools2022\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\VC\\VCPackages;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow;E:\\DevTools\\VisualStudio\\BuildTools2022\\MSBuild\\Current\\bin\\Roslyn;E:\\DevTools\\VisualStudio\\BuildTools2022\\Team Tools\\DiagnosticsHub\\Collector;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\Extensions\\Microsoft\\CodeCoverage.Console;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\\\x64;C:\\Program Files (x86)\\Windows Kits\\10\\bin\\\\x64;E:\\DevTools\\VisualStudio\\BuildTools2022\\\\MSBuild\\Current\\Bin\\amd64;C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\Tools\\;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Program Files\\Git\\mingw64\\bin;C:\\Program Files\\Git\\usr\\bin;C:\\Users\\Admin\\bin;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\Admin\\.codex\\tmp\\arg0-windows\\codex-arg07E9BhU;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\libheif\\libheif\\bin;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\jxrlib\\jxrlib\\bin;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\poppler\\Library\\bin;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\override;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v13.3\\bin\\x64;C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v13.3\\bin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0;C:\\Windows\\System32\\OpenSSH;C:\\Program Files\\Git\\cmd;C:\\Program Files\\nodejs;C:\\Program Files\\CMake\\bin;C:\\Program Files\\GitHub CLI;C:\\Users\\Admin\\.cargo\\bin;C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python313\\Scripts;C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python313;C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Launcher;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell;C:\\Users\\Admin\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Admin\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Users\\Admin\\AppData\\Local\\GitHubCopilotCLI;C:\\Users\\Admin\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;C:\\Users\\Admin\\AppData\\Roaming\\npm;C:\\Users\\Admin\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe;C:\\Users\\Admin\\AppData\\Local\\Programs\\Microsoft VS Code Insiders\\bin;C:\\Users\\Admin\\AppData\\Local\\Programs\\Devin\\bin;C:\\Users\\Admin\\AppData\\Local\\Microsoft\\WinGet\\Packages\\CognitionAI.DevinCLI_Microsoft.Winget.Source_8wekyb3d8bbwe\\bin;C:\\Users\\Admin\\AppData\\Local\\Microsoft\\WinGet\\Packages\\ggml.llamacpp_Microsoft.Winget.Source_8wekyb3d8bbwe;F:\\WIN11-256gb-nvme\\Source\\llama.cpp\\build-cuda\\bin;C:\\Users\\Admin\\.local\\bin;C:\\Users\\Admin\\AppData\\Local\\Programs\\Ollama;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\bin\\fallback;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin;C:\\Users\\Admin\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\git\\cmd;C:\\Users\\Admin\\AppData\\Local\\OpenAI\\Codex\\bin\\90ee5f622914d088;C:\\Users\\Admin\\AppData\\Local\\OpenAI\\Codex\\bin\\a96ca4c1eee0cf35;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja;E:\\DevTools\\VisualStudio\\BuildTools2022\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe;E:\\DevTools\\VisualStudio\\BuildTools2022\\VC\\vcpkg;E:\\DevTools\\msys64\\usr\\bin;E:\\DevTools\\rustup\\toolchains\\1.94.1-x86_64-pc-windows-msvc\\bin"), Io(Env("CARGO_TARGET_I686_LINUX_ANDROID_LINKER", "E:\\DevTools\\android\\sdk\\ndk\\29.0.14206865\\toolchains/llvm/prebuilt/windows-x86_64\\bin\\i686-linux-android24-clang.cmd"), Io(Env("RUST_LOG_STYLE", "always"), Io(Env("ANDROID_HOME", "E:\\DevTools\\android\\sdk"), Io(Env("CARGO_TARGET_X86_64_LINUX_ANDROID_RUSTFLAGS", "-Clink-arg=-landroid -Clink-arg=-llog -Clink-arg=-lOpenSLES"), Io(Env("CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER", "E:\\DevTools\\android\\sdk\\ndk\\29.0.14206865\\toolchains/llvm/prebuilt/windows-x86_64\\bin\\x86_64-linux-android24-clang.cmd"), Io(Env("TAURI_CLI_VERBOSITY", "0"), Io(Env("TAURI_ANDROID_PACKAGE_UNESCAPED", "mba.robin.squash"), Io(Env("RUST_RECURSION_COUNT", "1"), Io(Env("TAURI_ANDROID_PROJECT_PATH", "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.83680\\2026-10-26T15-07-20.641Z\\android\\source\\src-tauri\\gen/android"), Io(Env("CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER", "E:\\DevTools\\android\\sdk\\ndk\\29.0.14206865\\toolchains/llvm/prebuilt/windows-x86_64\\bin\\aarch64-linux-android24-clang.cmd"), Io(Env("CARGO_HOME", "E:\\DevTools\\cargo"), Io(Env("CARGO_TARGET_I686_LINUX_ANDROID_RUSTFLAGS", "-Clink-arg=-landroid -Clink-arg=-llog -Clink-arg=-lOpenSLES"), Io(Env("TMP", "E:\\DevTools\\caches\\build-temp"), Io(Env("CARGO_TARGET_AARCH64_LINUX_ANDROID_RUSTFLAGS", "-Clink-arg=-landroid -Clink-arg=-llog -Clink-arg=-lOpenSLES"), Io(Env("CARGO_TARGET_ARMV7_LINUX_ANDROIDEABI_RUSTFLAGS", "-Clink-arg=-landroid -Clink-arg=-llog -Clink-arg=-lOpenSLES"), Io(Env("WRY_ANDROID_PACKAGE", "mba.robin.squash"), Io(Env("TEMP", "E:\\DevTools\\caches\\build-temp"), Io(Env("USERPROFILE", "C:\\Users\\Admin"), Io(Env("CARGO_PROFILE_RELEASE_DEBUG", "2"), Io(Env("TERM", "dumb"), Io(Env("RUST_LOG", "warn"), Io(Env("CARGO_TARGET_ARMV7_LINUX_ANDROIDEABI_LINKER", "E:\\DevTools\\android\\sdk\\ndk\\29.0.14206865\\toolchains/llvm/prebuilt/windows-x86_64\\bin\\armv7a-linux-androideabi24-clang.cmd"), Cmd(["E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.83680\\2026-10-26T15-07-20.641Z\\android\\source\\src-tauri\\gen/android\\gradlew.bat", "--project-dir", "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.83680\\2026-10-26T15-07-20.641Z\\android\\source\\src-tauri\\gen/android"]))))))))))))))))))))))))))))))))))): command ["E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.83680\\2026-10-26T15-07-20.641Z\\android\\source\\src-tauri\\gen/android\\gradlew.bat", "--project-dir", "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.83680\\2026-10-26T15-07-20.641Z\\android\\source\\src-tauri\\gen/android"] exited with code 1
+file:///E:/devProjects/squash-arcade/dist/.work/1.16.83680/2026-10-26T15-07-20.641Z/android/source/scripts/build-platform.mjs:11
+  child.once('error',fail);child.once('exit',code=>code===0?done():fail(new Error(`${platform} worker exited ${code}`)));
+                                                                        ^
+
+Error: android worker exited 1
+    at ChildProcess.<anonymous> (file:///E:/devProjects/squash-arcade/dist/.work/1.16.83680/2026-10-26T15-07-20.641Z/android/source/scripts/build-platform.mjs:11:73)
+    at Object.onceWrapper (node:events:631:26)
+    at ChildProcess.emit (node:events:509:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:295:12)
+
+Node.js v24.19.0

@@ -1,0 +1,12 @@
+Compress-Archive: The archive file E:\devProjects\squash-arcade\dist\squash-arcade-v1.16.83680-pwa.zip already exists. Use the -Update parameter to update the existing archive file or use the -Force parameter to overwrite the existing archive file.
+file:///E:/devProjects/squash-arcade/dist/.work/1.16.83680/2026-10-26T19-22-18.161Z/pwa/source/scripts/build-platform.mjs:11
+  child.once('error',fail);child.once('exit',code=>code===0?done():fail(new Error(`${platform} worker exited ${code}`)));
+                                                                        ^
+
+Error: pwa worker exited 1
+    at ChildProcess.<anonymous> (file:///E:/devProjects/squash-arcade/dist/.work/1.16.83680/2026-10-26T19-22-18.161Z/pwa/source/scripts/build-platform.mjs:11:73)
+    at Object.onceWrapper (node:events:631:26)
+    at ChildProcess.emit (node:events:509:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:295:12)
+
+Node.js v24.19.0

@@ -1,0 +1,8 @@
+{
+  "startedAt": "2026-10-26T15:07:29.920Z",
+  "log": "dist\\squash-arcade-v1.16.83680-2026-10-26T15-07-20.641Z-android-build.log",
+  "exitCode": 1,
+  "artifacts": [],
+  "finishedAt": "2026-10-26T15:19:22.438Z",
+  "error": "Required artifact missing: squash-arcade-v1.16.83680-android-arm64-unsigned.apk"
+}

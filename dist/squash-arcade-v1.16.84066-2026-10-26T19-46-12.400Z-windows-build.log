@@ -1,0 +1,32 @@
+Pearl native Windows toolchain selected; shared tools and caches use E:\DevTools.
+        Info Looking up installed tauri packages to check mismatched versions...
+    Blocking waiting for file lock on package cache
+   Compiling squash-arcade v1.16.84066 (E:\devProjects\squash-arcade\dist\.work\1.16.84066\2026-10-26T19-46-12.400Z\windows\source\src-tauri)
+warning: squash-arcade@1.16.84066: STATIC_VCRUNTIME is deprecated; use build.windows.staticVCRuntime in tauri.conf.json or tauri_build::WindowsAttributes::static_vc_runtime instead.
+    Finished `release` profile [optimized] target(s) in 3m 40s
+       Built application at: E:\DevTools\caches\squash-arcade\windows\release\squash-arcade.exe
+        Info Patching E:\DevTools\caches\squash-arcade\windows\release\squash-arcade.exe with bundle type information: nsis
+        Info Target: x64
+     Running makensis to produce E:\DevTools\caches\squash-arcade\windows\release\bundle\nsis\Virtual Squash_1.16.18530_x64-setup.exe
+        Info Patching E:\DevTools\caches\squash-arcade\windows\release\squash-arcade.exe with bundle type information: msi
+        Info Target: x64
+     Running candle for "E:/DevTools/caches/squash-arcade/windows\\release\\wix\\x64\\main.wxs"
+     Running light to produce E:\DevTools\caches\squash-arcade\windows\release\bundle\msi\Virtual Squash_1.16.18530_x64_en-US.msi
+    Finished 2 bundles at:
+        E:\DevTools\caches\squash-arcade\windows\release\bundle\nsis\Virtual Squash_1.16.18530_x64-setup.exe
+        E:\DevTools\caches\squash-arcade\windows\release\bundle\msi\Virtual Squash_1.16.18530_x64_en-US.msi
+
+Microsoft (R) MakeAppx Tool
+Copyright (C) 2013 Microsoft.  All rights reserved.
+
+The path (/p) parameter is: "\\?\E:\devProjects\squash-arcade\dist\squash-arcade-v1.16.84066-windows-x64.msix"
+The content directory (/d) parameter is: "\\?\E:\devProjects\squash-arcade\dist\.work\1.16.84066\2026-10-26T19-46-12.400Z\windows\source\.package-msix"
+Enumerating files from directory "\\?\E:\devProjects\squash-arcade\dist\.work\1.16.84066\2026-10-26T19-46-12.400Z\windows\source\.package-msix"
+Packing 5 file(s) in "\\?\E:\devProjects\squash-arcade\dist\.work\1.16.84066\2026-10-26T19-46-12.400Z\windows\source\.package-msix" (content directory) to "\\?\E:\devProjects\squash-arcade\dist\squash-arcade-v1.16.84066-windows-x64.msix" (output file name).
+Memory limit defaulting to 17141411840 bytes.
+Using "\\?\E:\devProjects\squash-arcade\dist\.work\1.16.84066\2026-10-26T19-46-12.400Z\windows\source\.package-msix\AppxManifest.xml" as the manifest for the package.
+Processing "\\?\E:\devProjects\squash-arcade\dist\.work\1.16.84066\2026-10-26T19-46-12.400Z\windows\source\.package-msix\squash-arcade.exe" as a payload file.  Its path in the package will be "squash-arcade.exe".
+Processing "\\?\E:\devProjects\squash-arcade\dist\.work\1.16.84066\2026-10-26T19-46-12.400Z\windows\source\.package-msix\Assets\Logo44.png" as a payload file.  Its path in the package will be "Assets\Logo44.png".
+Processing "\\?\E:\devProjects\squash-arcade\dist\.work\1.16.84066\2026-10-26T19-46-12.400Z\windows\source\.package-msix\Assets\Logo50.png" as a payload file.  Its path in the package will be "Assets\Logo50.png".
+Processing "\\?\E:\devProjects\squash-arcade\dist\.work\1.16.84066\2026-10-26T19-46-12.400Z\windows\source\.package-msix\Assets\Logo150.png" as a payload file.  Its path in the package will be "Assets\Logo150.png".
+Package creation succeeded.

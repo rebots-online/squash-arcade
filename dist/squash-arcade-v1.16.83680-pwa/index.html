@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html data-squash-pwa="true" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#e83b28" />
+  <link rel="icon" href="./favicon.ico" sizes="any" />
+  <link rel="icon" type="image/svg+xml" href="./icons/red-mii-racquet.svg" />
+  <link rel="apple-touch-icon" href="./icons/icon-180.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="3D arcade squash game with realistic physics and support for all shot types from back wall boasts to the volley drop. Swing forearm rotation development and racket head cut angle, frantic racket kinematics, expressive Mii characters, webcam &amp; phone motion controls, and Lyria 3 audio. Even use pose estimation to 'play' against your opponents with the front cam or output to the big screen and use a back cam!" />
+  <meta property="og:title" content="Virtual Squash" />
+  <meta property="og:description" content="3D arcade squash game with realistic physics and support for all shot types from back wall boasts to the volley drop. Swing forearm rotation development and racket head cut angle, frantic racket kinematics, expressive Mii characters, webcam &amp; phone motion controls, and Lyria 3 audio." />
+  <title>Virtual Squash</title>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('play') || params.has('state')) {
+        document.documentElement.classList.add('autoplay-mode');
+      }
+      const stateParam = (params.get('state') || '').toLowerCase();
+      if (stateParam) {
+        document.documentElement.setAttribute('data-url-state', stateParam);
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./court-hud.css" />
+  <link rel="stylesheet" href="./arcade-briefing.css" />
+  <script type="module" crossorigin src="/assets/index-C621vYNQ.js"></script>
+<link rel="manifest" href="./manifest.webmanifest">
+</head>
+<body>
+  <div id="root" class="hidden" aria-hidden="true"></div>
+  <div id="canvas-container" aria-label="Virtual Squash 3D Glass Show-Court Viewport">
+    <canvas id="game-canvas"></canvas>
+  </div>
+
+  <div id="hud-root">
+    <header id="top-hud-bar">
+      <div class="top-hud-left-group">
+        <div id="games-pill-player" class="wii-games-pill" title="Player Games Won">
+          <span class="game-bubble" data-slot="0"></span>
+          <span class="game-bubble" data-slot="1"></span>
+          <span class="game-bubble extra-slot hidden" data-slot="2"></span>
+        </div>
+        <button id="btn-auto-t-toggle" class="hud-tactical-pill active" type="button" title="Shot-Select Mode: we move you to the ball &amp; back to the T — you just pick shots. OFF = manual WASD footwork (advanced). (Key: G)">
+          <span class="tactical-dot" id="auto-t-dot"></span>
+          <span id="auto-t-label">SHOT-SELECT: ON</span>
+        </button>
+        <button id="btn-spectator-toggle" class="hud-tactical-pill spectator-pill" type="button" title="Watch Continuous AI vs AI Match with Real Physics — or Click/Press P to Take Control (Key: P)">
+          <span class="tactical-dot" id="spectator-dot"></span>
+          <span id="spectator-label">🤖 WATCH AI vs AI (P)</span>
+        </button>
+      </div>
+
+      <div id="scoreboard-pill" class="wii-scoreboard-pill">
+        <div class="mii-side mii-side-player">
+          <div class="mii-avatar-badge player-tint">
+            <canvas id="mii-icon-player" width="192" height="192"></canvas>
+          </div>
+          <div class="mii-avatar-badge player-tint secondary-mii hidden">
+            <canvas id="mii-icon-player-2" width="192" height="192"></canvas>
+          </div>
+          <span class="you-chip">YOU · RED</span>
+        </div>
+        <div id="score-center-display" class="score-center-display">
+          <span id="score-player-text" class="score-digits">00</span>
+          <span id="score-separator" class="score-dash">-</span>
+          <span id="score-opponent-text" class="score-digits">00</span>
+        </div>
+        <div class="mii-side mii-side-opponent">
+          <div class="mii-avatar-badge opponent-tint secondary-mii hidden">
+            <canvas id="mii-icon-opponent-2" width="192" height="192"></canvas>
+          </div>
+          <div class="mii-avatar-badge opponent-tint">
+            <canvas id="mii-icon-opponent" width="192" height="192"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="top-hud-right-group">
+        <button id="btn-top-camera-cycle" class="hud-tactical-pill camera-pill" type="button" title="Cycle Camera Angle (Back Glass, PSA Front Wall, High Gallery, Corner Nick, Overhead T) (Key: C)">
+          <span class="pill-icon">🎥</span>
+          <span class="camera-pill-label">Cam: <strong class="camera-mode-label" id="camera-mode-label-top">Back Glass</strong></span>
+        </button>
+        <button id="btn-top-replay-trigger" class="hud-tactical-pill replay-pill btn-replay-pill" type="button" title="Automatic Point Replays / Skills Demo Replay (Key: R)">
+          <span class="pill-icon">⏪</span>
+          <span>Replay</span>
+        </button>
+        <button id="btn-wonder-intro" class="hud-tactical-pill wonder-pill" type="button" title="Play the 8-Part Squash Skills Demonstration (Serve → Nick Finish)">
+          <span>🎓 Skills Demo</span>
+        </button>
+        <button id="btn-rules-modal" class="hud-tactical-pill rules-pill" type="button" title="Pause Play &amp; View Complete Official Rules of Squash (Key: K)">
+          <span>📜 Rules (K)</span>
+        </button>
+        <button id="btn-controls-guide" class="hud-tactical-pill guide-pill" type="button" title="How to Play, Swing Controls &amp; Pose Cam Guide (Key: H)">
+          <span>❓ Controls (H)</span>
+        </button>
+        <button id="btn-tuning-lab-toggle" class="hud-tactical-pill lab-pill" type="button" title="Open Live Squash Tuning Lab &amp; Nick Cannon (Key: Shift+L)">
+          <span>⚗️ Tune Lab</span>
+        </button>
+        <button id="btn-exit-menu" class="hud-tactical-pill menu-exit-pill" type="button" title="Exit Back to Main Menu (Keys: Esc or Q)">
+          <span>🏠 Menu (Esc/Q)</span>
+        </button>
+        <div id="games-pill-opponent" class="wii-games-pill" title="Opponent Games Won">
+          <span class="game-bubble" data-slot="0"></span>
+          <span class="game-bubble" data-slot="1"></span>
+          <span class="game-bubble extra-slot hidden" data-slot="2"></span>
+        </div>
+      </div>
+      <button id="btn-mobile-menu" class="hud-tactical-pill mobile-only" type="button" aria-label="Setup menu" aria-controls="title-modal">☰ Menu</button>
+    </header>
+
+    <div id="opponent-presence-pill" class="opponent-presence-pill hidden" aria-live="polite">
+      <span id="opponent-presence-dot" class="presence-dot"></span>
+      <span id="opponent-presence-text">Waiting for Player 2…</span>
+    </div>
+
+    <div id="world-labels-layer">
+      <div id="server-tag" class="wii-server-tag hidden">
+        <span class="server-tag-text">Server (R)</span>
+      </div>
+      <div id="player-nameplate" class="wii-court-nameplate player-plate hidden">
+        <canvas id="plate-mii-player" width="192" height="192"></canvas>
+        <div class="plate-info"> <span class="plate-you">YOU</span>
+          <div class="plate-name">YOU</div>
+          <div class="plate-skill">T-Control</div>
+        </div>
+      </div>
+      <div id="timing-popup" class="wii-timing-popup hidden">
+        <span id="timing-popup-grade" class="timing-grade">PERFECT</span>
+        <span id="timing-popup-detail" class="timing-detail">TIGHT RAIL DRIVE • 178 KM/H</span>
+      </div>
+    </div>
+
+    <div id="racket-spin-overlay" class="racket-spin-overlay hidden">
+      <div class="rs-card">
+        <div class="rs-title">RACKET SPIN — WHO SERVES FIRST?</div>
+        <div id="rs-racket" class="rs-racket">
+          <svg viewBox="0 0 60 100" width="62" height="104" aria-hidden="true">
+            <defs><clipPath id="rs-head-clip"><ellipse cx="30" cy="30" rx="19" ry="25"/></clipPath></defs>
+            <ellipse cx="30" cy="30" rx="19" ry="25" fill="none" stroke="#eaf0ff" stroke-width="4"/>
+            <g clip-path="url(#rs-head-clip)" stroke="#5a6a8f" stroke-width="1.5" opacity=".85">
+              <path d="M30 4 v52" fill="none"/><path d="M22 6 v48" fill="none"/><path d="M38 6 v48" fill="none"/><path d="M14 10 v40" fill="none"/><path d="M46 10 v40" fill="none"/>
+              <path d="M8 18 h44" fill="none"/><path d="M8 26 h44" fill="none"/><path d="M8 34 h44" fill="none"/><path d="M8 42 h44" fill="none"/>
+            </g>
+            <path d="M21 51 L28 70 M39 51 L32 70" stroke="#eaf0ff" stroke-width="3" fill="none"/>
+            <rect x="27" y="68" width="6" height="26" rx="3" fill="#eaf0ff"/>
+          </svg>
+        </div>
+        <div id="rs-prompt" class="rs-prompt">Call it in the air —</div>
+        <div id="rs-call-btns" class="rs-btns">
+          <button id="rs-call-up" class="rs-btn" type="button">CALL: UP ⬆</button>
+          <button id="rs-call-down" class="rs-btn" type="button">CALL: DOWN ⬇</button>
+        </div>
+        <div id="rs-choice" class="rs-btns hidden">
+          <button id="rs-serve" class="rs-btn rs-serve" type="button" title="Why give up the only shot you control completely?">I'LL SERVE</button>
+          <button id="rs-receive" class="rs-btn" type="button">I'LL RECEIVE</button>
+        </div>
+        <div class="rs-note">
+          <b>YOU DON'T RUN — YOU PICK SHOTS.</b><br />
+          Your Mii chases the ball &amp; recovers to the T on its own. Your only job: choose the shot — <kbd>1</kbd>–<kbd>5</kbd>, click, or <kbd>Space</kbd>.<br />
+          <small>(<kbd>WASD</kbd> footwork exists for advanced play — ignore it for now.)</small>
+        </div>
+      </div>
+    </div>
+
+    <div id="point-replay-toast" class="point-replay-toast hidden" role="status">
+      <strong>⏪ Instant replay</strong>
+      <span>Any key or tap to skip</span>
+    </div>
+    <div id="center-banner-layer" class="center-banner-layer hidden">
+      <div id="center-banner-streak" class="center-banner-streak"></div>
+      <div id="center-banner-text" class="center-banner-text style-gold">Match Ball</div>
+      <div id="center-banner-sub" class="center-banner-sub hidden"></div>
+    </div>
+
+    <div id="replay-badge" class="wii-replay-badge hidden">
+      <span class="replay-dots">
+        <i class="dot dot-1"></i>
+        <i class="dot dot-2"></i>
+        <i class="dot dot-3"></i>
+      </span>
+      <span class="replay-label" id="replay-badge-text">Slow-Mo Nick Replay</span>
+    </div>
+
+    <div id="wonder-intro-overlay" class="wonder-intro-overlay hidden" role="region" aria-label="Squash Skills Demonstration">
+      <div class="wonder-intro-header">
+        <span class="wonder-intro-kicker" id="wonder-intro-title">SKILLS DEMONSTRATION</span>
+        <div class="wonder-intro-actions">
+          <button type="button" id="btn-intro-slowmo" class="hud-mini-btn hidden">🔍 Slow-Mo Corner Replay</button>
+          <button type="button" id="btn-intro-next" class="hud-mini-btn wonder-next-btn">Skip to Match ▸</button>
+        </div>
+      </div>
+      <p class="wonder-intro-commentary" id="wonder-intro-commentary">
+        An eight-shot walkthrough of the core squash skills, each resolved through live physics.
+      </p>
+    </div>
+
+    <div id="bottom-right-dock" class="hud-corner-dock bottom-right-dock">
+      <div id="let-advisory-banner" class="let-advisory-banner hidden" role="status" aria-live="polite">
+        ⚠️ OBSTRUCTED! Press <kbd>F</kbd> / <kbd>L</kbd>, Raise Open Hand ✋, or Hold Phone Upright to Call <strong>LET!</strong>
+      </div>
+      <div class="red-control-card">
+        <strong id="red-control-hint">YOU influence RED · tap a shot or press 1–5</strong>
+        <span id="red-shot-choice">RED: Drive</span>
+      </div>
+      <div class="squash-shot-selector-row" aria-label="Red player's shot choice">
+        <button type="button" class="shot-chip active" data-shot-type="topspin" title="Drive / Rail (Key 1 or Hold Space)">1: Drive</button>
+        <button type="button" class="shot-chip" data-shot-type="drop" title="Open-Face Cut / Drop (Key 2 or Shift+Swing / Right-Click)">2: Cut Drop</button>
+        <button type="button" class="shot-chip" data-shot-type="boast" title="2-Wall Boast (Key 3 or B)">3: Boast</button>
+        <button type="button" class="shot-chip" data-shot-type="lob" title="High Lob (Key 4)">4: Lob</button>
+        <button type="button" class="shot-chip" data-shot-type="smash" title="Volley Kill (Key 5)">5: Kill</button>
+        <button type="button" id="btn-call-let" class="shot-chip let-call-chip" title="Stop Play &amp; Appeal for a Let / Stroke when Obstructed (Key: F or L, Webcam: Raise Open Hand ✋, Phone: Hold Upright)">✋ Let (F)</button>
+      </div>
+
+      <div id="timing-gauge-card" class="timing-gauge-card">
+        <div class="gauge-header">
+          <span id="gauge-mode-title">PREP &amp; RACKET FACE</span>
+          <span id="gauge-speed-readout">SQUARE • READY</span>
+        </div>
+        <div class="timing-bar-track">
+          <div class="timing-zone zone-early">EARLY (Cross)</div>
+          <div class="timing-zone zone-sweet">TIGHT RAIL / NICK</div>
+          <div class="timing-zone zone-late">LATE (Boast)</div>
+          <div id="timing-cursor" class="timing-cursor" style="left: 50%;"></div>
+        </div>
+      </div>
+
+      <div class="motion-controls-row">
+        <div id="webcam-pip-card" class="webcam-pip-card hidden">
+          <video id="webcam-video" autoplay playsinline muted></video>
+          <canvas id="webcam-canvas" width="160" height="120"></canvas>
+          <div class="pip-badge">
+            <span class="pip-live-dot"></span>
+            <span id="pip-motion-label">Pose + Swing</span>
+          </div>
+        </div>
+        <div class="motion-buttons-col">
+          <div class="webcam-btn-group">
+            <button id="btn-webcam-toggle" class="hud-mini-btn motion-btn" type="button">
+              <span class="btn-dot" id="webcam-status-dot"></span>
+              <span id="webcam-btn-label">Webcam Pose</span>
+            </button>
+            <button id="btn-camera-facing" class="hud-mini-btn hidden" type="button" title="Switch Front / Back Camera for Big-Screen Output">
+              <span id="camera-facing-label">Front Cam</span>
+            </button>
+            <button id="btn-handedness-toggle" class="hud-mini-btn" type="button" title="Toggle Right-Handed / Left-Handed Player Stance">
+              <span id="handedness-btn-label">🤚 Right-Handed</span>
+            </button>
+          </div>
+          <button id="btn-phone-racket" class="hud-mini-btn motion-btn hidden" type="button">
+            <span class="btn-dot" id="phone-status-dot"></span>
+            <span id="phone-status-label">Pocket Racket</span>
+          </button>
+          <div id="bottom-left-dock" class="hud-corner-dock bottom-left-dock">
+            <div class="dock-pill-row">
+              <button id="btn-audio-toggle" class="hud-mini-btn" type="button" title="Mute / Unmute Music &amp; Squash SFX (Key: M)">
+                <span class="btn-dot music-on" id="audio-status-dot"></span>
+                <span id="audio-track-label">♪ Virtual Glass Overture</span>
+              </button>
+              <button id="btn-jukebox-next" class="hud-mini-btn" type="button" title="Next Music Track in Jukebox (Key: N)">
+                <span>⏭</span>
+              </button>
+              <button id="btn-jukebox-open" class="hud-mini-btn jukebox-pill-btn" type="button" title="Open 14-Track Music Jukebox (7 Original Default + 7 Classic) &amp; Referee Voice Mixer (Key: J)">
+                <span>🎵 Jukebox</span>
+              </button>
+              <button id="btn-ref-voice-toggle" class="hud-mini-btn active" type="button" title="Toggle Deep Male Squash Referee Voice ('Down! Handout, five-four') (Key: V)">
+                <span class="btn-dot active" id="ref-voice-dot"></span>
+                <span id="ref-voice-label">🎙️ Ref: ON</span>
+              </button>
+              <button id="btn-court-theme" class="hud-mini-btn" type="button" title="Switch 3D Squash Court Environment">
+                <span>Court:</span>
+                <strong id="court-theme-label">Glass Show</strong>
+              </button>
+              <button id="btn-camera-cycle" class="hud-mini-btn" type="button" title="Cycle Camera Angle (C)">
+                <span>Cam:</span>
+                <strong id="camera-mode-label">Back Glass</strong>
+              </button>
+              <button id="btn-replay-trigger" class="hud-mini-btn" type="button" title="Automatic Point Replays / Skills Demo Replay (R)">
+                <span>Replay</span>
+              </button>
+              <button id="btn-multiplayer-modal" class="hud-mini-btn hidden" type="button" title="Open 1v1 Multiplayer &amp; Companion Links">
+                <span>💬 1v1</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TITLE MODAL (DOCKED OFF TO THE LEFT SIDE SO CRYSTAL-CLEAR AI VS AI PLAY IS FEATURED) -->
+  <div id="title-modal" class="wii-modal-backdrop side-docked-menu menu-collapsed">
+    <div class="wii-title-card progressive-menu-card side-docked-card">
+      <div class="wii-logo-header">
+        <div class="side-menu-top-bar">
+          <span class="live-ai-showcase-pill" title="Two Pro AI players are playing an automated squash match with full physics on court right now">
+            <span class="live-ai-dot"></span>
+            <span>LIVE AI vs AI SHOWCASE</span>
+          </span>
+          <button type="button" id="btn-collapse-side-menu" class="side-menu-collapse-btn" title="Minimize or Expand Side Menu to watch full-screen AI vs AI">
+            <span id="collapse-side-menu-label">▶ Setup Menu</span>
+          </button>
+        </div>
+        <h1 class="argon-logo-title">
+          <span class="logo-word-argon">Virtual</span>
+          <span class="logo-word-tennis">Squash</span>
+        </h1>
+        <p class="squash-subtitle-tag">
+          Virtual Squash • Physical Chess, Disguise &amp; The Four Walls<br />
+          <span class="squash-copyright-notice">Copyright (C)2026 Robin L. M. Cheung. All rights reserved.</span>
+        </p>
+        <div class="welcome-announcer-row">
+          <button type="button" id="btn-narrator-usp-invite" class="welcome-callout-pill" title="Hear the Narrator explain 1P vs AI, 2P 1v1, Webcam Kinect-Style, Phone Wii-Racket &amp; Mouse/Keyboard Play">
+            <span>🎙️ Modes &amp; USPs</span>
+          </button>
+          <button type="button" id="btn-setup-jukebox" class="welcome-callout-pill jukebox-tag-pill" title="Open 14-Track Music Jukebox (7 Original Default Tracks + 7 Classic) (Key: J)">
+            <span>🎵 Jukebox (J)</span>
+          </button>
+          <button type="button" id="btn-setup-rules" class="welcome-callout-pill rules-tag-pill" title="View Complete Official Rules of Squash &amp; WSF Reference (Key: K)">
+            <span>📜 Rules (K)</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="court-preview-diagram squash-preview-diagram compact-preview-diagram">
+        <div class="mini-squash-court">
+          <div class="mini-front-wall-bar" title="Front Wall &amp; 0.48m Tin">FRONT WALL + TIN</div>
+          <div class="mini-short-line"></div>
+          <div class="mini-half-court-line"></div>
+          <div class="mini-t-zone-glow" title="The T Position">THE "T"</div>
+          <div class="mini-service-box left"></div>
+          <div class="mini-service-box right"></div>
+          <div class="court-slot-marker opponent-marker">
+            <canvas id="setup-mii-opponent" width="192" height="192"></canvas>
+            <div id="setup-opponent-label" class="slot-tag cpu-tag">Tactical AI</div>
+          </div>
+          <div class="court-slot-marker player-marker">
+            <canvas id="setup-mii-player" width="192" height="192"></canvas>
+            <div id="setup-player-label" class="slot-tag you-tag">You</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mobile-menu-tools mobile-only" aria-label="More game controls">
+        <button type="button" class="welcome-callout-pill" data-hud-action="btn-top-camera-cycle">🎥 Camera</button>
+        <button type="button" class="welcome-callout-pill" data-hud-action="btn-top-replay-trigger">⏪ Replay</button>
+        <button type="button" class="welcome-callout-pill" data-hud-action="btn-tuning-lab-toggle">⚗️ Tune Lab</button>
+        <button type="button" class="welcome-callout-pill" data-hud-action="btn-handedness-toggle">✋ Left / right hand</button>
+      </div>
+      <div class="setup-step-hint">
+        Hover over any step or select an option to reveal the next step's choices:
+      </div>
+
+      <div class="setup-section setup-step step-active" id="setup-step-1" data-step="1">
+        <div class="setup-label-row">
+          <span class="step-title-text"><span class="step-badge">1</span> Opponent &amp; Mode</span>
+          <span class="step-summary-pill" id="step-summary-1">Club AI</span>
+        </div>
+        <div class="setup-step-body">
+          <div class="wii-green-btn-row" id="difficulty-mode-group" style="grid-template-columns: repeat(4, 1fr);">
+            <button type="button" class="wii-green-choice selected" data-difficulty="casual">
+              <span class="choice-main">Club AI</span>
+            </button>
+            <button type="button" class="wii-green-choice" data-difficulty="pro">
+              <span class="choice-main">Pro Chess AI</span>
+            </button>
+            <button type="button" class="wii-green-choice" data-difficulty="ai_vs_ai" title="Continuous Spectator Mode: Both players controlled by Pro Tactical AI with full physics">
+              <span class="choice-main">🤖 AI vs AI</span>
+            </button>
+            <button type="button" class="wii-green-choice" data-difficulty="1v1">
+              <span class="choice-main">1v1 Match</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="setup-section setup-step" id="setup-step-2" data-step="2">
+        <div class="setup-label-row">
+          <span class="step-title-text"><span class="step-badge">2</span> Court Environment</span>
+          <span class="step-summary-pill" id="step-summary-2">Glass Arena</span>
+        </div>
+        <div class="setup-step-body">
+          <div class="wii-green-btn-row" id="court-theme-group">
+            <button type="button" class="wii-green-choice selected" data-theme="glass_showcourt">
+              <span class="choice-main">Glass Arena</span>
+            </button>
+            <button type="button" class="wii-green-choice" data-theme="classic_hardwood">
+              <span class="choice-main">Hardwood Club</span>
+            </button>
+            <button type="button" class="wii-green-choice" data-theme="neon_cyber">
+              <span class="choice-main">Neon Cube</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="setup-section setup-step" id="match-length-section" data-step="3">
+        <div class="setup-label-row">
+          <span class="step-title-text"><span class="step-badge">3</span> Scoring &amp; Match Format</span>
+          <span class="step-summary-pill" id="step-summary-3">PAR 11 (Bo3)</span>
+        </div>
+        <div class="setup-step-body">
+          <div class="wii-green-btn-row" id="match-length-group">
+            <button type="button" class="wii-green-choice" data-games="1" data-scoring="ARCADE_5">
+              <span class="choice-main">Arcade 5-Pt</span>
+            </button>
+            <button type="button" class="wii-green-choice selected" data-games="3" data-scoring="PAR_11">
+              <span class="choice-main">PAR 11 (Bo3)</span>
+            </button>
+            <button type="button" class="wii-green-choice" data-games="5" data-scoring="HIHO_9">
+              <span class="choice-main">Hi-Ho 9 (Bo5)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="setup-section setup-step" id="setup-step-4" data-step="4">
+        <div class="setup-label-row">
+          <span class="step-title-text"><span class="step-badge">4</span> Footwork, Referee, Pose Cam &amp; Rules</span>
+          <span class="step-summary-pill" id="step-summary-4">Shot-Select: ON • Ref: ON</span>
+        </div>
+        <div class="setup-step-body">
+          <div class="wii-green-btn-row" style="grid-template-columns: repeat(2, 1fr);">
+            <button type="button" id="btn-setup-auto-t" class="wii-green-choice selected" title="DEFAULT &amp; RECOMMENDED: Your Mii moves to the ball &amp; recovers to the T automatically — you only pick the shot and its timing. OFF = manual WASD footwork (advanced).">
+              <span class="choice-main" id="setup-auto-t-text">Shot-Select Mode: ON (we move you)</span>
+            </button>
+            <button type="button" id="btn-setup-ref-voice" class="wii-green-choice selected" title="Toggle Deep Male Referee Voice calling out 'Down! Handout, five-four', 'Not Up!', etc.">
+              <span class="choice-main" id="setup-ref-voice-text">🎙️ Referee Voice: ON (Deep)</span>
+            </button>
+            <button type="button" id="btn-setup-pose-cam" class="wii-green-choice" title="Use Front Cam or Back Cam (Big Screen TV) for full-body lunges + forearm swing tracking">
+              <span class="choice-main">📷 Enable Pose Cam (Front/Back)</span>
+            </button>
+            <button type="button" id="btn-setup-open-guide" class="wii-green-choice" title="View full Swing, Off-Back-Wall Drive &amp; Pose Cam instructions">
+              <span class="choice-main">❓ Controls Guide (H)</span>
+            </button>
+          </div>
+          <div class="setup-quick-controls-strip" style="margin-top: 8px;">
+            <div><strong>Swing &amp; Disguise:</strong> Hold &amp; release <kbd>Spacebar</kbd> / <kbd>Left-Click</kbd> for Drive • Hold <kbd>Shift</kbd> / <kbd>Right-Click</kbd> on release for Open-Face Drop</div>
+            <div><strong>Shots &amp; Calling Lets:</strong> <kbd>1</kbd> Drive · <kbd>2</kbd> Drop · <kbd>3</kbd>/<kbd>B</kbd> Boast · <kbd>4</kbd> Lob · <kbd>5</kbd> Kill · <kbd>F</kbd> or <kbd>L</kbd> (or Raise Open Hand ✋ / Upright Phone) = <strong>Call Let!</strong></div>
+            <div><strong>Menu &amp; Rules:</strong> <kbd>K</kbd> Pause &amp; Complete Squash Rules • <kbd>Esc</kbd> or <kbd>Q</kbd> Return to Menu • <kbd>J</kbd> Music Jukebox</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wii-modal-actions squash-modal-actions">
+        <button id="btn-start-intro" type="button" class="wii-ok-btn wonder-start-btn">
+          <span class="hand-cursor-icon">🎓</span>
+          <span>Skills Demo</span>
+        </button>
+        <button id="btn-watch-ai-match" type="button" class="wii-ok-btn watch-ai-start-btn" title="Watch a continuous AI vs AI match with real physics, boasts, drops &amp; referee voice (Key: P)">
+          <span class="hand-cursor-icon">🤖</span>
+          <span>Watch AI vs AI</span>
+        </button>
+        <button id="btn-start-match" type="button" class="wii-ok-btn">
+          <span class="hand-cursor-icon">🎾</span>
+          <span id="btn-start-match-label">Play Match Now</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLS & HOW TO PLAY GUIDE MODAL -->
+  <div id="controls-guide-modal" class="wii-modal-backdrop hidden" role="dialog" aria-labelledby="controls-guide-title">
+    <div class="wii-title-card controls-guide-card">
+      <div class="controls-guide-header">
+        <div>
+          <div class="tuning-lab-kicker">PHYSICAL CHESS • HOW TO PLAY</div>
+          <h2 id="controls-guide-title" class="controls-guide-heading">Controls, Calling Lets, Off-Back-Wall Drives &amp; Pose Cam</h2>
+        </div>
+        <button type="button" id="btn-close-controls-guide" class="tuning-lab-close-btn" title="Close (H or Esc)">✕</button>
+      </div>
+
+      <div class="controls-guide-grid">
+        <div class="guide-box">
+          <h3>1. Do I Have to Move My Player?</h3>
+          <p><strong>No — and that's the point.</strong> Squash's appeal is shot selection &amp; timing, not keyboard gymnastics. The default is <strong>Shot-Select Mode</strong> (toggle with <kbd>G</kbd> or the top-left pill):</p>
+          <ul>
+            <li><strong>SHOT-SELECT MODE (Default — everyone starts here):</strong> You never run. Your Mii automatically moves to intercept the ball (including stepping into the back pocket to let deep drives come <em>off the back glass wall</em>) and recovers to the <strong>T-Position</strong> after each shot. Your entire job is choosing the shot and its timing.</li>
+            <li><strong>MANUAL FOOTWORK (Advanced):</strong> Turn it off to control every step yourself with <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or <kbd>Arrow Keys</kbd> (or Webcam Body Lunges) — adding footwork on top of shot selection is a steep curve, so come here once the shots feel natural.</li>
+            <li><strong>AI vs AI Spectator Nudges:</strong> While watching AI vs AI, pressing <kbd>1</kbd>–<kbd>5</kbd> or <kbd>WASD</kbd>/<kbd>Arrows</kbd> nudges the next shot or footwork step without turning off autonomous AI play!</li>
+          </ul>
+        </div>
+
+        <div class="guide-box">
+          <h3>2. How Do I Swing &amp; Shape Shots?</h3>
+          <ul>
+            <li><strong>Hold &amp; Release (<kbd>Spacebar</kbd> or <kbd>Left-Click</kbd>):</strong>
+              <ul>
+                <li><strong>Hold down</strong> as the ball approaches to coil your backswing preparation.</li>
+                <li><strong>Release normally</strong> → <strong>Tight Straight / Cross-Court Drive</strong>.</li>
+                <li><strong>Hold <kbd>Shift</kbd> (or <kbd>Right-Click</kbd>) on release</strong> → Opens the racket face (<code>+34° cut</code>) for a <strong>Disguised Soft Drop</strong> into the front nick!</li>
+              </ul>
+            </li>
+            <li><strong>Direct Shot Hotkeys (Instant Swing):</strong>
+              <kbd>1</kbd> Drive · <kbd>2</kbd> Cut Drop · <kbd>3</kbd> or <kbd>B</kbd> 2-Wall Boast (<kbd>Shift+B</kbd> Back-Wall Boast) · <kbd>4</kbd> High Lob · <kbd>5</kbd> Volley Kill · <kbd>F</kbd> or <kbd>L</kbd> Call Let · <kbd>K</kbd> Complete Rules · <kbd>Esc</kbd>/<kbd>Q</kbd> Menu.</li>
+          </ul>
+        </div>
+
+        <div class="guide-box highlight-box">
+          <h3>3. Calling Lets, Strokes &amp; On-Court Safety</h3>
+          <p>In real squash, players share the same physical space and must <strong>never</strong> strike the ball when it risks hitting the opponent:</p>
+          <ul>
+            <li><strong>How to Call a Let Immediately:</strong> Press <kbd>F</kbd> or <kbd>L</kbd>, click <strong>✋ Let (F)</strong>, <strong>Raise an Open Palm ✋</strong> in front of the Webcam, or <strong>Hold your Phone Vertically Upright</strong> (or tap <em>Call Let</em> on the phone pad).</li>
+            <li><strong>Don't Hit Your Opponent!</strong> If you swing and hit your opponent with the ball, the Referee stops play, awards the Stroke/Let under WSF Rule 9, and issues a <strong>Formal Safety Warning</strong> to build safe real-life habits.</li>
+            <li><strong>Call It or Lose It:</strong> If you are clearly obstructed and hold back your swing without calling a Let before the ball bounces twice, you lose the point (<em>"Not Up!"</em>) and receive a Referee reminder!</li>
+          </ul>
+        </div>
+
+        <div class="guide-box">
+          <h3>4. Webcam Pose &amp; Phone Inertial Racket</h3>
+          <p>Click <strong>📷 Pose Cam</strong> or <strong>📱 Pocket Racket</strong> to play with motion sensors:</p>
+          <ul>
+            <li><strong>Webcam Swing &amp; Let Signal:</strong> Whip your hand/forearm to strike; hold an <strong>Open Hand ✋ raised high</strong> for ~0.25s to appeal `"Let, please!"`.</li>
+            <li><strong>Phone Inertial / Spatial Racket:</strong> Swing your phone to hit Drives/Drops/Boasts; hold the phone <strong>vertically upright (Pitch ≥ 58°)</strong> or tap the gold <strong>✋ CALL LET!</strong> button to stop play safely.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="wii-modal-actions" style="margin-top: 12px;">
+        <button id="btn-guide-open-rules" type="button" class="wii-ok-btn watch-ai-start-btn">
+          <span>📜 View Complete Squash Rules (K)</span>
+        </button>
+        <button id="btn-guide-toggle-cam" type="button" class="wii-ok-btn wonder-start-btn">
+          <span>📷 Toggle Pose Cam Now</span>
+        </button>
+        <button id="btn-guide-resume" type="button" class="wii-ok-btn">
+          <span>Got It — Back to Court</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPLETE RULES OF THE GAME OF SQUASH MODAL (PAUSES PLAY) -->
+  <div id="squash-rules-modal" class="wii-modal-backdrop hidden" role="dialog" aria-labelledby="squash-rules-title">
+    <div class="wii-title-card controls-guide-card squash-rules-card">
+      <div class="controls-guide-header">
+        <div>
+          <div class="tuning-lab-kicker">WORLD SQUASH FEDERATION (WSF) • OFFICIAL SINGLES REFERENCE</div>
+          <h2 id="squash-rules-title" class="controls-guide-heading">📜 Complete Rules of the Game of Squash (Play Paused)</h2>
+        </div>
+        <button type="button" id="btn-close-squash-rules" class="tuning-lab-close-btn" title="Resume Play (K or Esc)">✕</button>
+      </div>
+
+      <div class="rules-official-links-bar">
+        <span><strong>Official Rules &amp; Public Reference URLs:</strong></span>
+        <a href="https://www.worldsquash.org/rules-of-squash/" target="_blank" rel="noopener noreferrer" class="rules-ext-link">🌐 World Squash (WSF) Official Rules Portal ↗</a>
+        <a href="https://www.worldsquash.org/wp-content/uploads/2023/11/240102_Squash-Rules-2023-V1.2.pdf" target="_blank" rel="noopener noreferrer" class="rules-ext-link">📄 WSF Singles Rules PDF (Full Text) ↗</a>
+        <a href="https://ussquash.org/rules/" target="_blank" rel="noopener noreferrer" class="rules-ext-link">📘 US Squash Official Rules Guide ↗</a>
+      </div>
+
+      <div class="controls-guide-grid squash-rules-scroll-grid">
+        <div class="guide-box">
+          <h3>1. The Court &amp; Boundary Lines (Rule 1)</h3>
+          <ul>
+            <li><strong>Dimensions:</strong> 9.75m long × 6.40m wide. Front Wall Out Line at 4.57m high; Back Wall Out Line at 2.13m high; sloped Side Wall Out Lines connecting them.</li>
+            <li><strong>The Tin (0.48m Club / 0.43m PSA Pro):</strong> Runs across the bottom of the Front Wall. Any ball hitting the Tin or floor after the Front Wall is failed is <strong>"Down!"</strong>.</li>
+            <li><strong>Floor Markings:</strong> The <strong>Short Line</strong> (4.26m from Back Wall) and <strong>Half-Court Line</strong> form the <strong>"T"</strong> intersection. Two <strong>Service Boxes</strong> (1.60m × 1.60m) sit behind the Short Line.</li>
+            <li><strong>Line Balls are OUT:</strong> A ball touching any Out Line, the Service Line (on serve), or the Tin bevel is Fault/Out.</li>
+          </ul>
+        </div>
+
+        <div class="guide-box">
+          <h3>2. Scoring Systems &amp; Match Format (Rule 2)</h3>
+          <ul>
+            <li><strong>PAR-11 (Point-A-Rally to 11 — Official WSF Standard):</strong> A point is scored by the winner of <em>every</em> rally, whether serving or receiving. Games are played to <strong>11 points</strong> (must win by 2 clear points, e.g., 12–10). Matches are Best of 3 or Best of 5 games.</li>
+            <li><strong>Hi-Ho 9 (Hand-In / Hand-Out to 9 — Traditional):</strong> Only the <strong>Server</strong> can score a point. When the Receiver wins a rally, they win the right to serve (<em>"Handout"</em>) without the score changing. At 8–8, the Receiver chooses to play to 9 (Set 1) or 10 (Set 2).</li>
+          </ul>
+        </div>
+
+        <div class="guide-box">
+          <h3>3. The Serve &amp; Service Faults (Rule 4)</h3>
+          <ul>
+            <li><strong>Server's Position:</strong> At least one foot must be fully inside the Service Box (not touching any line) at the moment the racket strikes the ball (otherwise <strong>"Foot Fault!"</strong>).</li>
+            <li><strong>Legal Serve Trajectory:</strong> The ball must be dropped/tossed from the hand or racket and struck directly onto the <strong>Front Wall above the Service Line (1.78m) and below the Out Line (4.57m)</strong> so that—unless volleyed by the Receiver—its first floor bounce lands inside the <strong>opposite rear quarter-court</strong> behind the Short Line without hitting the Back Wall out line.</li>
+            <li><strong>Alternating Boxes:</strong> When the Server wins a point, they switch to the other Service Box for the next serve. Upon winning a Handout, the new Server may choose either box.</li>
+          </ul>
+        </div>
+
+        <div class="guide-box">
+          <h3>4. A Good Return &amp; Rally Play (Rules 5–7)</h3>
+          <ul>
+            <li><strong>Before Second Bounce:</strong> To make a good return, the ball must be struck before it bounces twice on the floor (otherwise <strong>"Not Up!"</strong>).</li>
+            <li><strong>Reaching the Front Wall:</strong> A struck ball must reach the Front Wall above the Tin and below the Out Line. It may hit the Side Walls and/or Back Wall <em>before</em> or <em>after</em> hitting the Front Wall (e.g., 2-Wall Boast, 3-Wall Boast, Back-Wall Boast), provided it does not touch the floor or any Out Line first.</li>
+          </ul>
+        </div>
+
+        <div class="guide-box highlight-box">
+          <h3>5. Interference: Calling Lets &amp; Strokes (Rule 8)</h3>
+          <p>Because both players share the same court, the player who just struck the ball must immediately make every effort to clear so the opponent has:</p>
+          <ol style="margin: 4px 0 6px 18px; font-size: 12px; line-height: 1.45;">
+            <li>A fair view of the ball on its rebound from the front wall;</li>
+            <li>Unobstructed direct access to the ball;</li>
+            <li>Freedom to strike the ball with a reasonable backswing and follow-through;</li>
+            <li>Freedom to play the ball directly to any part of the front wall.</li>
+          </ol>
+          <ul>
+            <li><strong>How to Request a Let:</strong> The obstructed player must stop play immediately and say <em>"Let, please!"</em> (Press <kbd>F</kbd> or <kbd>L</kbd>, click <strong>✋ Let</strong>, raise an <strong>Open Palm ✋</strong> on Webcam, or <strong>Hold Phone Upright</strong>). If you fail to call a clear Let and let the ball bounce twice, you lose the point!</li>
+            <li><strong>No Let (Point to Non-Striker):</strong> Interference was minimal, the striker could not have reached the ball to make a good return, or the striker played past the interference and accepted it.</li>
+            <li><strong>Yes, Let (Replay Rally):</strong> There was interference that the opponent made every effort to avoid, and the striker could have made a good return; OR the striker reasonably held back out of fear of hitting the opponent.</li>
+            <li><strong>Stroke Awarded (Point to Striker):</strong> The opponent failed to make every effort to clear, stood inside the striker's reasonable swing arc, or stood directly in the front-wall shot triangle when the striker was poised to make a winning return.</li>
+          </ul>
+        </div>
+
+        <div class="guide-box highlight-box">
+          <h3>6. Ball Hitting a Player &amp; Safety Discipline (Rule 9)</h3>
+          <ul>
+            <li><strong>Mandatory Safety Rule:</strong> A player must <strong>NEVER</strong> strike the ball if there is any risk of hitting the opponent with the ball or racket. Always stop play and appeal for a Let/Stroke!</li>
+            <li><strong>Ball Hits Non-Striker Going Directly to Front Wall:</strong> It is a <strong>Stroke to the Striker</strong>—<em>unless</em> the striker had "turned" (let the ball pass behind their body and swung around the other side) or made a further attempt, in which case it is a <strong>Stroke to the Non-Striker</strong>.</li>
+            <li><strong>Ball Hits Non-Striker via Another Wall (Boast):</strong> If the ball hits a side or back wall first before hitting the non-striker on its way to the front wall, it is a <strong>Yes, Let</strong> (unless it would have been a winning return, in which case a Stroke may be awarded).</li>
+            <li><strong>Referee Safety Warning (Conduct Rule 15):</strong> Even when a player wins a Stroke because their ball hit an obstructing opponent, the Referee issues a <strong>Formal Safety Warning</strong> reminding the striker to stop and call a Let instead of hitting the opponent. Deliberate or dangerous play can result in a Conduct Stroke or Conduct Game!</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="wii-modal-actions" style="margin-top: 10px;">
+        <button id="btn-rules-test-let" type="button" class="wii-ok-btn wonder-start-btn" title="Hear the Deep Referee Call a Let &amp; Safety Warning">
+          <span>🎙️ Hear Referee Let &amp; Safety Call</span>
+        </button>
+        <button id="btn-rules-resume" type="button" class="wii-ok-btn">
+          <span>▶ Resume Match (K / Esc)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MUSIC JUKEBOX & DEEP MALE REFEREE VOICE MODAL -->
+  <div id="jukebox-modal" class="wii-modal-backdrop hidden" role="dialog" aria-labelledby="jukebox-modal-title">
+    <div class="wii-title-card controls-guide-card jukebox-modal-card">
+      <div class="controls-guide-header">
+        <div>
+          <div class="tuning-lab-kicker">7 NOVEL ORIGINAL SQUASH TRACKS (DEFAULT) + 7 LEGACY TRACKS • WSF REFEREE PA</div>
+          <h2 id="jukebox-modal-title" class="controls-guide-heading">🎵 14-Track Music Jukebox &amp; Deep Referee Voice</h2>
+        </div>
+        <button type="button" id="btn-close-jukebox" class="tuning-lab-close-btn" title="Close Jukebox (J or Esc)">✕</button>
+      </div>
+
+      <div class="jukebox-now-playing-bar">
+        <div class="jukebox-eq-bars" id="jukebox-eq-bars">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="jukebox-now-meta">
+          <div class="jukebox-now-kicker" id="jukebox-now-genre">NOW PLAYING • VIRTUAL SQUASH ORIGINAL SOUNDTRACK</div>
+          <div class="jukebox-now-title" id="jukebox-now-title">Virtual Glass Overture (Original #1)</div>
+          <div class="jukebox-now-sub" id="jukebox-now-sub">Original Showcourt Menu &amp; AI Rally Theme • 118 BPM</div>
+        </div>
+        <div class="jukebox-transport-btns">
+          <button type="button" id="btn-jukebox-prev-modal" class="jukebox-ctrl-btn" title="Previous Track">⏮</button>
+          <button type="button" id="btn-jukebox-mute-modal" class="jukebox-ctrl-btn" title="Mute / Unmute">🔊</button>
+          <button type="button" id="btn-jukebox-next-modal" class="jukebox-ctrl-btn" title="Next Track">⏭</button>
+        </div>
+      </div>
+
+      <div class="jukebox-mode-row">
+        <span class="jukebox-mode-label">Playback Mode:</span>
+        <div class="jukebox-mode-pills">
+          <button type="button" class="jukebox-mode-chip active" data-jmode="auto">Auto (Original 7 Default)</button>
+          <button type="button" class="jukebox-mode-chip" data-jmode="locked">Lock Selected Track</button>
+          <button type="button" class="jukebox-mode-chip" data-jmode="shuffle">🔀 Shuffle All 14 Tracks</button>
+        </div>
+      </div>
+
+      <div class="jukebox-layout-grid">
+        <div class="jukebox-tracklist-box">
+          <div class="jukebox-section-title">Tracks 1–7: Original Virtual Squash Default • 8–14: Classic</div>
+          <div id="jukebox-tracks-container" class="jukebox-tracks-list"></div>
+        </div>
+
+        <div class="jukebox-referee-box">
+          <div class="jukebox-section-title">🎙️ Deep Male Squash Referee &amp; Narrator</div>
+          <p class="jukebox-ref-desc">
+            Calls out official WSF/PSA squash decisions and periodic narrator invitations explaining Webcam Kinect-style, Phone Wii-Racket, and 1P/2P modes.
+          </p>
+
+          <button type="button" id="btn-jukebox-ref-toggle" class="jukebox-ref-toggle-btn active">
+            <span class="btn-dot active" id="jukebox-ref-dot"></span>
+            <span id="jukebox-ref-label">Referee Voice: ON (Deep Male Baritone)</span>
+          </button>
+
+          <div class="jukebox-slider-group">
+            <div class="jukebox-slider-row">
+              <span>Referee Voice Pitch (Baritone Depth)</span>
+              <strong id="jukebox-pitch-val">0.72x</strong>
+            </div>
+            <input type="range" id="jukebox-pitch-slider" class="tuning-range-input" min="0.55" max="1.05" step="0.02" value="0.72" />
+          </div>
+
+          <div class="jukebox-test-calls-title">Test Live Referee &amp; Narrator Callouts:</div>
+          <div class="jukebox-test-calls-grid">
+            <button type="button" class="jukebox-call-btn" data-callout="USP_INVITE">🎙️ Hear Narrator USPs &amp; Modes</button>
+            <button type="button" class="jukebox-call-btn" data-callout="WELCOME">🔊 "Welcome to Virtual Squash!"</button>
+            <button type="button" class="jukebox-call-btn" data-callout="Down! Handout, five-four.">🔊 "Down! Handout, five-four"</button>
+            <button type="button" class="jukebox-call-btn" data-callout="Nick! Ten-eight, match ball!">🔊 "Nick! Ten-eight, match ball!"</button>
+          </div>
+
+          <div class="jukebox-section-title" style="margin-top: 6px;">🎚️ Master Audio Mixer</div>
+          <div class="jukebox-slider-group">
+            <div class="jukebox-slider-row">
+              <span>Music Volume</span>
+              <strong id="jukebox-music-vol-val">65%</strong>
+            </div>
+            <input type="range" id="jukebox-music-vol" class="tuning-range-input" min="0" max="1" step="0.02" value="0.65" />
+          </div>
+          <div class="jukebox-slider-group">
+            <div class="jukebox-slider-row">
+              <span>Court SFX &amp; Referee Volume</span>
+              <strong id="jukebox-sfx-vol-val">88%</strong>
+            </div>
+            <input type="range" id="jukebox-sfx-vol" class="tuning-range-input" min="0" max="1" step="0.02" value="0.88" />
+          </div>
+        </div>
+      </div>
+
+      <div class="wii-modal-actions" style="margin-top: 8px;">
+        <button id="btn-jukebox-resume" type="button" class="wii-ok-btn">
+          <span>Back to Court</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPANION MODAL -->
+  <div id="companion-modal" class="wii-modal-backdrop hidden">
+    <div class="wii-dialog-box wii-companion-clean-dialog">
+      <div class="mp-dialog-header">
+        <h2 class="dialog-title">📱 Phone Controller</h2>
+        <span id="mp-active-status" class="mp-conn-tag">Scan QR</span>
+      </div>
+      <p class="dialog-desc">Scan with your phone camera</p>
+      <div id="mp-card-p1" class="mp-clean-qr-wrap">
+        <span id="mp-p1-status" class="hidden"></span>
+        <img id="companion-qr" src="https://www.gstatic.com/aistudio/starter-apps/tennis/qr/player1_qr.png" alt="Phone Controller QR" width="200" height="200" class="mp-qr-img" />
+        <a id="companion-link" href="/companion.html?room=default&role=p1" target="_blank" rel="noopener" class="mp-subtle-link">Open controller link ↗</a>
+      </div>
+      <div id="mp-card-p2" class="mp-clean-qr-wrap hidden">
+        <span id="mp-p2-status" class="hidden"></span>
+        <img id="companion-qr-p2" src="https://www.gstatic.com/aistudio/starter-apps/tennis/qr/player2_qr.png" alt="Phone Controller QR" width="200" height="200" class="mp-qr-img" />
+        <a id="companion-link-p2" href="/companion.html?room=default&role=p2" target="_blank" rel="noopener" class="mp-subtle-link">Open controller link ↗</a>
+      </div>
+      <div class="dialog-actions">
+        <button id="btn-close-companion" type="button" class="wii-pill-btn">Back to Court</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VICTORY MODAL -->
+  <div id="victory-modal" class="wii-modal-backdrop hidden">
+    <div class="wii-skill-card">
+      <div class="skill-card-header">Squash Tactical Rating</div>
+      <div class="skill-card-body">
+        <div class="skill-chart-frame">
+          <canvas id="skill-graph-canvas" width="280" height="200"></canvas>
+        </div>
+        <div class="skill-mii-summary">
+          <div id="victory-result-banner" class="victory-result-banner">YOU WIN!</div>
+          <div class="skill-score-pill">
+            <canvas id="victory-mii-icon" width="192" height="192"></canvas>
+            <div class="skill-score-meta">
+              <div class="skill-rating-number" id="skill-rating-value">1120</div>
+              <div class="skill-rating-caption">YOUR TACTICAL RATING</div>
+              <div class="skill-player-name">YOU — points grow with each match</div>
+            </div>
+          </div>
+          <div id="victory-match-score" class="victory-match-score">Final Games: 2 - 0</div>
+        </div>
+      </div>
+      <div class="skill-card-footer">
+        <button id="btn-play-again" type="button" class="wii-footer-btn primary">Play again</button>
+        <button id="btn-return-title" type="button" class="wii-footer-btn secondary">Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gesture gate: browsers block AudioContext until a user gesture, so the
+       soundtrack can't self-start. This button IS the gesture — one click
+       unlocks audio and starts the current track. Native Android builds don't
+       need it (WebView mediaPlaybackRequiresUserGesture=false). -->
+  <button id="btn-sound-gate" type="button" aria-label="Enable sound">🔊 CLICK HERE FOR SOUND</button>
+
+  <output id="build-version" aria-label="Application version"></output>
+</body>
+</html>

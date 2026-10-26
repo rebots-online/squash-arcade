@@ -1,0 +1,28 @@
+{
+  "startedAt": "2026-10-26T15:07:29.913Z",
+  "log": "dist\\squash-arcade-v1.16.83680-2026-10-26T15-07-20.641Z-linux-build.log",
+  "exitCode": 0,
+  "artifacts": [
+    {
+      "path": "dist\\squash-arcade-v1.16.83680-linux-x86_64.AppImage",
+      "bytes": 96713208,
+      "sha256": "b7a81e3051a354fb8454accc17bb4f56eead6c6fed9ea65c150e54f02660ecec"
+    },
+    {
+      "path": "dist\\squash-arcade-v1.16.83680-linux-amd64.deb",
+      "bytes": 21679160,
+      "sha256": "e71a55ca2fb4e6e5775eee483e80c1311a5b63e59834fcccbbd74cd231451e6b"
+    },
+    {
+      "path": "dist\\squash-arcade-v1.16.83680-linux-x86_64.rpm",
+      "bytes": 21680367,
+      "sha256": "c8445324081c82759209621fe73ec7af5575d5445dad28c16cacbe070e649b3a"
+    }
+  ],
+  "finishedAt": "2026-10-26T15:14:33.103Z",
+  "platformMetadata": {
+    "canonicalVersion": "1.16.83680",
+    "baseline": "Ubuntu 24.04.4 LTS",
+    "signing": "unsigned"
+  }
+}

@@ -1,0 +1,138 @@
+Pearl native Windows toolchain selected; shared tools and caches use E:\DevTools.
+        Info Using installed NDK: E:\DevTools\android\sdk\ndk\29.0.14206865
+Generating Android Studio project...
+        Info "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.84066\\2026-10-26T19-46-12.400Z\\android\\source\\src-tauri" relative to "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.84066\\2026-10-26T19-46-12.400Z\\android\\source\\src-tauri\\gen/android\\squash_arcade" is "..\\..\\..\\"
+victory: Project generated successfully!
+    Make cool apps! 🌻 🐕 🎉
+android.permission.CAMERA
+android.hardware.camera.any
+false
+     Removed 208 files, 158.1MiB total
+        Info Using installed NDK: E:\DevTools\android\sdk\ndk\29.0.14206865
+        Info Looking up installed tauri packages to check mismatched versions...
+[1m[92m    Blocking[0m waiting for file lock on package cache
+[1m[92m   Compiling[0m tauri v2.12.5
+[1m[92m   Compiling[0m wry v0.57.1
+[1m[92m   Compiling[0m tauri-runtime-wry v2.12.3
+[1m[92m   Compiling[0m squash-arcade v1.16.84066 (E:\devProjects\squash-arcade\dist\.work\1.16.84066\2026-10-26T19-46-12.400Z\android\source\src-tauri)
+[1m[92m   Compiling[0m tauri-plugin-log v2.10.1
+[1m[92m    Finished[0m `release` profile [optimized + debuginfo] target(s) in 3m 57s
+        Info symlinking lib "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" in jniLibs dir "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.84066\\2026-10-26T19-46-12.400Z\\android\\source\\src-tauri\\gen/android\\app/src/main/jniLibs/arm64-v8a"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "liblog.so"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libandroid.so"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libdl.so"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libm.so"
+        Info "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libc.so"
+        Info symlink at "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.84066\\2026-10-26T19-46-12.400Z\\android\\source\\src-tauri\\gen/android\\app/src/main/jniLibs/arm64-v8a\\libapp_lib.so" points to "E:\\DevTools\\caches\\squash-arcade\\android\\aarch64-linux-android\\release\\libapp_lib.so"
+        Info connection; remote_addr=127.0.0.1:52477 conn_id=0
+Unable to receive command from client socket connection from /127.0.0.1:52475 to /127.0.0.1:52478. Discarding connection.
+org.gradle.internal.remote.internal.MessageIOException: Could not read message from '/127.0.0.1:52478'.
+	at org.gradle.internal.remote.internal.inet.SocketConnection.receive(SocketConnection.java:96)
+	at org.gradle.launcher.daemon.server.SynchronizedDispatchConnection.receive(SynchronizedDispatchConnection.java:70)
+	at org.gradle.launcher.daemon.server.DefaultDaemonConnection$1.run(DefaultDaemonConnection.java:74)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.lang.IllegalArgumentException: Unexpected type tag 70 found.
+	at org.gradle.internal.serialize.DefaultSerializerRegistry$TaggedTypeSerializer.read(DefaultSerializerRegistry.java:162)
+	at org.gradle.internal.serialize.Serializers$StatefulSerializerAdapter$1.read(Serializers.java:36)
+	at org.gradle.internal.remote.internal.inet.SocketConnection.receive(SocketConnection.java:83)
+	... 7 more
+        Info connection; remote_addr=127.0.0.1:52484 conn_id=1
+w: file:///E:/devProjects/squash-arcade/dist/.work/1.16.84066/2026-10-26T19-46-12.400Z/android/source/src-tauri/gen/android/buildSrc/src/main/java/mba/robin/squash/kotlin/BuildTask.kt:53:17 'exec(Action<in ExecSpec!>): ExecResult' is deprecated. Deprecated in Java
+        Info connection; remote_addr=127.0.0.1:57218 conn_id=2
+[1m[32m        Info[0m Using installed NDK: E:\DevTools\android\sdk\ndk\29.0.14206865
+[1m[92m   Compiling[0m wry v0.57.1
+[1m[92m   Compiling[0m tauri v2.12.5
+[1m[92m   Compiling[0m tauri-plugin-log v2.10.1
+[1m[92m   Compiling[0m squash-arcade v1.16.84066 (E:\devProjects\squash-arcade\dist\.work\1.16.84066\2026-10-26T19-46-12.400Z\android\source\src-tauri)
+[1m[92m   Compiling[0m tauri-runtime-wry v2.12.3
+[1m[92m    Finished[0m `release` profile [optimized + debuginfo] target(s) in 2m 02s
+[1m[32m        Info[0m symlinking lib "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" in jniLibs dir "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.84066\\2026-10-26T19-46-12.400Z\\android\\source\\src-tauri\\gen/android\\app/src/main/jniLibs/arm64-v8a"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "liblog.so"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libandroid.so"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libdl.so"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libm.so"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libc.so"
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/AppPlugin.kt:35:37 'onBackPressed(): Unit' is deprecated. Deprecated in Java
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/plugin/Plugin.kt:125:5 'onDestroy(): Unit' is deprecated. use onDestroy(activity: AppCompatActivity) instead
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/plugin/Plugin.kt:130:5 'onRestart(): Unit' is deprecated. use onRestart(activity: AppCompatActivity) instead
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/plugin/Plugin.kt:135:5 'onPause(): Unit' is deprecated. use onPause(activity: AppCompatActivity) instead
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/plugin/Plugin.kt:140:5 'onResume(): Unit' is deprecated. use onResume(activity: AppCompatActivity) instead
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/plugin/Plugin.kt:145:5 'onStop(): Unit' is deprecated. use onStop(activity: AppCompatActivity) instead
+w: file:///E:/DevTools/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tauri-2.12.5/mobile/android/src/main/java/app/tauri/plugin/PluginMethodData.kt:11:23 Parameter 'methodDecorator' is never used
+Java compiler version 21 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+w: file:///E:/devProjects/squash-arcade/dist/.work/1.16.84066/2026-10-26T19-46-12.400Z/android/source/src-tauri/gen/android/app/src/main/java/mba/robin/squash/generated/RustWebView.kt:26:18 'setter for databaseEnabled: Boolean' is deprecated. Deprecated in Java
+w: file:///E:/devProjects/squash-arcade/dist/.work/1.16.84066/2026-10-26T19-46-12.400Z/android/source/src-tauri/gen/android/app/src/main/java/mba/robin/squash/generated/WryActivity.kt:69:46 'onBackPressed(): Unit' is deprecated. This method has been deprecated in favor of using the
+      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.
+      The OnBackPressedDispatcher controls how back button events are dispatched
+      to one or more {@link OnBackPressedCallback} objects.
+Java compiler version 21 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+
+[Incubating] Problems report is available at: file:///E:/devProjects/squash-arcade/dist/.work/1.16.84066/2026-10-26T19-46-12.400Z/android/source/src-tauri/gen/android/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+Unable to receive command from client socket connection from /127.0.0.1:62220 to /127.0.0.1:62236. Discarding connection.
+org.gradle.internal.remote.internal.MessageIOException: Could not read message from '/127.0.0.1:62236'.
+	at org.gradle.internal.remote.internal.inet.SocketConnection.receive(SocketConnection.java:96)
+	at org.gradle.launcher.daemon.server.SynchronizedDispatchConnection.receive(SynchronizedDispatchConnection.java:70)
+	at org.gradle.launcher.daemon.server.DefaultDaemonConnection$1.run(DefaultDaemonConnection.java:74)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: java.lang.IllegalArgumentException: Unexpected type tag 70 found.
+	at org.gradle.internal.serialize.DefaultSerializerRegistry$TaggedTypeSerializer.read(DefaultSerializerRegistry.java:162)
+	at org.gradle.internal.serialize.Serializers$StatefulSerializerAdapter$1.read(Serializers.java:36)
+	at org.gradle.internal.remote.internal.inet.SocketConnection.receive(SocketConnection.java:83)
+	... 7 more
+        Info connection; remote_addr=127.0.0.1:62309 conn_id=3
+[1m[32m        Info[0m Using installed NDK: E:\DevTools\android\sdk\ndk\29.0.14206865
+[1m[92m    Finished[0m `release` profile [optimized + debuginfo] target(s) in 0.94s
+[1m[32m        Info[0m symlinking lib "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" in jniLibs dir "E:\\devProjects\\squash-arcade\\dist\\.work\\1.16.84066\\2026-10-26T19-46-12.400Z\\android\\source\\src-tauri\\gen/android\\app/src/main/jniLibs/arm64-v8a"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "liblog.so"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libandroid.so"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libdl.so"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libm.so"
+[1m[32m        Info[0m "E:/DevTools/caches/squash-arcade/android\\aarch64-linux-android\\release\\libapp_lib.so" requires shared lib "libc.so"
+
+[Incubating] Problems report is available at: file:///E:/devProjects/squash-arcade/dist/.work/1.16.84066/2026-10-26T19-46-12.400Z/android/source/src-tauri/gen/android/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+    Finished 1 APK at:
+        E:\devProjects\squash-arcade\dist\.work\1.16.84066\2026-10-26T19-46-12.400Z\android\source\src-tauri\gen/android\app/build/outputs/apk/universal/release/app-universal-release.apk
+
+    Finished 1 AAB at:
+        E:\devProjects\squash-arcade\dist\.work\1.16.84066\2026-10-26T19-46-12.400Z\android\source\src-tauri\gen/android\app/build/outputs/bundle/universalRelease/app-universal-release.aab
+

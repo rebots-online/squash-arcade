@@ -1,0 +1,175 @@
+/* Foreground instruction theatre; the real rally continues beneath it. */
+.arcade-briefing {
+  position: fixed;
+  inset: 0;
+  z-index: 9500;
+  display: grid;
+  place-items: center;
+  padding: max(14px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+  background: rgba(2, 8, 20, .76);
+  backdrop-filter: blur(3px);
+  pointer-events: auto;
+  overscroll-behavior: contain;
+  color: #f2fbff;
+  font-family: var(--wii-font, system-ui, sans-serif);
+}
+.arcade-briefing[hidden] { display: none; }
+.briefing-card {
+  position: relative;
+  width: min(880px, 100%);
+  max-height: 100%;
+  max-height: calc(100dvh - 28px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #57dfff #0a1a30;
+  border: 3px solid #ffe76d;
+  border-radius: 30px;
+  padding: clamp(16px, 3vw, 28px);
+  background: radial-gradient(ellipse at 30% -20%, #1a6385 0, transparent 60%), linear-gradient(155deg, #122d49, #07182d 70%);
+  box-shadow: 0 0 0 5px #1683a77a, 0 0 40px #3bdcff25, 0 22px 80px #000a, inset 0 2px 1px #ffffff60;
+  animation: briefing-arrive .24s ease-out both;
+}
+.briefing-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.briefing-kicker { color: #83e9ff; font-size: 11px; font-weight: 900; letter-spacing: .15em; text-transform: uppercase; }
+.briefing-title { margin: 6px 0 0; color: #fff5b7; font-size: clamp(25px, 4.2vw, 40px); font-weight: 900; letter-spacing: -.03em; line-height: 1.07; text-shadow: 0 2px 0 #66400c; }
+.briefing-close {
+  flex: 0 0 auto;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1.5px solid #99c9e4;
+  border-radius: 50%;
+  color: white;
+  background: linear-gradient(#294b67, #12273f);
+  box-shadow: inset 0 1px 1px #ffffff60, 0 3px 0 #020a15;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 900;
+  cursor: pointer;
+}
+.briefing-diagram {
+  margin: 14px 0 12px;
+  overflow: hidden;
+  border: 1px solid #72d7ef4d;
+  border-radius: 22px;
+  background: radial-gradient(ellipse at 55% 55%, #15516b66, #061426b3 80%);
+  box-shadow: inset 0 1px 12px #0004;
+}
+.arcade-schematic { display: block; width: 100%; height: auto; max-height: 340px; overflow: hidden; }
+.arcade-schematic text { font-family: var(--wii-font, system-ui, sans-serif); font-weight: 900; font-size: 13px; fill: #defaff; letter-spacing: .04em; }
+.arcade-schematic text[fill="#fff073"] { fill: #fff073; }
+.arcade-schematic text[fill="#74f1ff"] { fill: #74f1ff; }
+.arcade-schematic .schematic-character text { fill: white; }
+.arcade-schematic .schematic-caption { font-size: 12px; fill: #91bdce; letter-spacing: .12em; }
+.arcade-schematic .schematic-room-label text { font-size: 10px; }
+.briefing-copy { color: #e3f5ff; font-size: clamp(14px, 1.7vw, 17px); line-height: 1.45; margin: 0 0 12px; }
+.briefing-copy strong { color: #fff195; }
+.briefing-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; gap: 10px; margin: 0; padding: 0; counter-reset: briefing-step; }
+.briefing-step { counter-increment: briefing-step; position: relative; padding: 12px 12px 12px 40px; border: 1px solid #79d6ef38; border-radius: 14px; background: #24486355; color: #d6ecfa; font-size: 12px; line-height: 1.35; }
+.briefing-step::before { content: counter(briefing-step); position: absolute; top: 10px; left: 10px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(#68e5ff, #1486b5); color: #052037; font-size: 12px; font-weight: 900; box-shadow: inset 0 1px 1px #fff8; }
+.briefing-step strong { display: block; margin-bottom: 3px; color: #fff; font-size: 13px; }
+.briefing-footer { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-top: 17px; border-top: 1px solid #97e8ff30; padding-top: 14px; }
+.briefing-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.briefing-button { min-height: 44px; padding: 10px 17px; border: 1.5px solid #81cce7; border-radius: 18px; color: #f1fcff; background: linear-gradient(#294e69, #12283f); box-shadow: 0 3px 0 #020d1f, inset 0 1px 1px #ffffff60; font: inherit; font-size: 13px; font-weight: 900; cursor: pointer; }
+.briefing-button.primary { color: #102239; border-color: #fff8b7; background: linear-gradient(#fff69c, #ffe04d 55%, #f7ba35); box-shadow: 0 3px 0 #9b5d13, inset 0 1px 1px #fff, 0 0 18px #ffe34c25; }
+.briefing-button:hover, .briefing-close:hover { filter: brightness(1.16); }
+.briefing-button:active, .briefing-close:active { transform: translateY(2px); }
+.briefing-button:focus-visible, .briefing-close:focus-visible { outline: 3px solid white; outline-offset: 4px; }
+.briefing-button:disabled { cursor: default; opacity: .5; filter: none; transform: none; }
+.briefing-status { width: 100%; color: #a8c6d8; font-size: 11px; line-height: 1.4; }
+.briefing-progress { color: #7ee8ff; font-size: 11px; letter-spacing: .08em; font-weight: 900; white-space: nowrap; }
+.briefing-progress span { display: inline-block; margin-right: 5px; width: 7px; height: 7px; background: #456174; border-radius: 50%; }
+.briefing-progress span.active, .briefing-progress span[aria-current="step"] { background: #ffe76d; box-shadow: 0 0 7px #ffe76d99; }
+
+/* A 12-second instructional sequence: close-up, fold, float, pull back, swing. */
+.schematic-phone .schematic-phone-camera { transform-origin: 280px 172px; animation: schematic-camera-pullback 12s ease-in-out infinite; }
+.schematic-phone-flight { transform: translate(51px, -34px) scale(.46); animation: schematic-phone-to-hand 12s ease-in-out infinite; }
+.schematic-phone-hinge { transform-box: view-box; transform-origin: -17px 0; animation: schematic-fold 12s ease-in-out infinite; }
+.schematic-swing-arm { transform-origin: 0 0; transform-box: view-box; }
+.schematic-phone .schematic-swing-arm { animation: schematic-phone-swing 12s ease-in-out infinite; }
+.schematic-phone .schematic-sync-link, .schematic-phone .schematic-room-label { animation: schematic-linked 12s ease-in-out infinite; }
+.schematic-phone-label { animation: schematic-phone-caption 12s ease-in-out infinite; }
+.schematic-camera .schematic-swing-arm { animation: schematic-body-swing 5s ease-in-out infinite; }
+.schematic-camera-cone { animation: schematic-camera-field 5s ease-in-out infinite; }
+.schematic-pose-bone { fill: none; stroke: #9dffd7; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.schematic-pose-joint { fill: #062635; stroke: #a6ffdb; stroke-width: 2; }
+.schematic-camera-light { animation: schematic-camera-field 2s ease-in-out infinite; }
+.schematic-camera .schematic-sync-link { animation: schematic-signal 1.4s linear infinite; }
+.schematic-rail-path { stroke-dasharray: 10 6; animation: schematic-signal 1.7s linear infinite; }
+.schematic-length-path { animation: schematic-signal 2.2s linear infinite reverse; }
+.schematic-target { transform-box: fill-box; transform-origin: center; animation: schematic-target-pulse 2s ease-in-out infinite; }
+.schematic-rail-ball { animation: schematic-rail-ball 5s ease-in-out infinite; }
+@keyframes briefing-arrive { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes schematic-camera-pullback {
+  0%, 21% { transform: translate(-65px, 35px) scale(1.45); }
+  43%, 92% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-65px, 35px) scale(1.45); }
+}
+@keyframes schematic-phone-to-hand {
+  0%, 22% { transform: translate(105px, -64px) scale(1.5); }
+  43%, 92% { transform: translate(51px, -34px) scale(.46); }
+  100% { transform: translate(105px, -64px) scale(1.5); }
+}
+@keyframes schematic-fold {
+  0%, 8%, 100% { transform: scaleX(1); }
+  23%, 92% { transform: scaleX(-1); }
+}
+@keyframes schematic-phone-swing {
+  0%, 47%, 92%, 100% { transform: rotate(0); }
+  55%, 77% { transform: rotate(-32deg); }
+  64%, 86% { transform: rotate(62deg); }
+  72% { transform: rotate(0); }
+}
+@keyframes schematic-linked { 0%, 33%, 100% { opacity: .15; } 45%, 92% { opacity: 1; } }
+@keyframes schematic-phone-caption { 0%, 26%, 100% { opacity: 1; } 44%, 91% { opacity: .35; } }
+@keyframes schematic-body-swing {
+  0%, 100% { transform: rotate(0); }
+  22%, 32% { transform: rotate(-35deg); }
+  55%, 67% { transform: rotate(58deg); }
+  84% { transform: rotate(0); }
+}
+@keyframes schematic-camera-field { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+@keyframes schematic-signal { to { stroke-dashoffset: -32; } }
+@keyframes schematic-target-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+@keyframes schematic-rail-ball {
+  0%, 100% { transform: translate(155px, 75px); }
+  45% { transform: translate(0, 0); }
+  85% { transform: translate(213px, -60px); }
+}
+@media (max-width: 540px) {
+  .arcade-briefing { padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
+  .briefing-card { max-height: calc(100dvh - 20px); border-radius: 24px; padding: 16px; }
+  .briefing-title { font-size: 27px; }
+  .briefing-kicker { font-size: 9px; letter-spacing: .12em; }
+  .briefing-diagram { margin: 12px -5px; border-radius: 16px; }
+  .briefing-copy { font-size: 14px; }
+  .briefing-steps { grid-template-columns: 1fr; gap: 6px; }
+  .briefing-step { padding: 9px 10px 9px 40px; font-size: 12px; }
+  .briefing-step::before { top: 8px; }
+  .briefing-step strong { display: inline; margin-right: 4px; }
+  .briefing-footer { gap: 10px; margin-top: 12px; padding-top: 12px; }
+  .briefing-nav { flex: 1 1 100%; gap: 7px; }
+  .briefing-button { flex: 1 1 auto; padding: 10px 12px; font-size: 12px; }
+}
+@media (max-height: 500px) and (min-width: 541px) {
+  .arcade-briefing { padding: 10px; }
+  .briefing-card { max-height: calc(100dvh - 20px); padding: 17px 22px; border-radius: 22px; }
+  .briefing-title { font-size: 27px; }
+  .briefing-diagram { float: left; width: 48%; margin: 13px 16px 12px 0; }
+  .briefing-copy { padding-top: 12px; font-size: 13px; }
+  .briefing-steps { display: grid; grid-template-columns: 1fr; gap: 5px; }
+  .briefing-step { padding: 7px 9px 7px 36px; font-size: 11px; }
+  .briefing-step::before { top: 6px; left: 8px; width: 20px; height: 20px; }
+  .briefing-step strong { display: inline; margin-right: 3px; font-size: 12px; }
+  .briefing-footer { clear: both; margin-top: 10px; padding-top: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arcade-briefing *, .arcade-briefing *::before, .arcade-briefing *::after { animation: none !important; transition: none !important; }
+  .schematic-phone .schematic-phone-camera { transform: none; }
+  .schematic-phone-flight { transform: translate(51px, -34px) scale(.46); }
+  .schematic-phone-hinge { transform: scaleX(-1); }
+  .schematic-swing-arm { transform: rotate(-18deg); }
+  .schematic-phone .schematic-room-label, .schematic-phone .schematic-sync-link, .schematic-phone-label { opacity: 1; }
+  .schematic-camera-cone { opacity: .8; }
+}

@@ -1,0 +1,186 @@
+{
+  "version": "1.16.83680",
+  "sourceCommit": "f953390117a53823db79a9038bcecdb9a58bb127",
+  "sourceHash": "2e4e2d2a1a927e8b39f770d2065732c90489622fd7064a942cef50ff3d5bd355",
+  "startedAt": "2026-10-26T19:22:18.161Z",
+  "status": "failed",
+  "retained": [
+    {
+      "original": "dist\\squash-arcade-v1.16.83680-windows-x64.exe",
+      "retained": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-retained-windows-x64.exe",
+      "sha256": "52573c92301a0cf8f96eb558ca358d113da7a27e79b08edccab5ed94e0d907c7"
+    },
+    {
+      "original": "dist\\squash-arcade-v1.16.83680-windows-x64-setup.exe",
+      "retained": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-retained-windows-x64-setup.exe",
+      "sha256": "400a37cfbc4f6ac03c6fa5d83504aa2701df5b9c64fcf8c9df03ffa600186b23"
+    },
+    {
+      "original": "dist\\squash-arcade-v1.16.83680-windows-x64.msi",
+      "retained": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-retained-windows-x64.msi",
+      "sha256": "d6bfb8de532bc8894fdd854f9a1b56c82a029da629b54715b9200e99c0e7e69f"
+    },
+    {
+      "original": "dist\\squash-arcade-v1.16.83680-windows-x64.msix",
+      "retained": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-retained-windows-x64.msix",
+      "sha256": "f177d2c1e3201a150c89a408affed49b9141956934f96e71689643e8aa78ead7"
+    },
+    {
+      "original": "dist\\squash-arcade-v1.16.83680-windows-metadata.json",
+      "retained": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-retained-windows-metadata.json",
+      "sha256": "1ca8a2e80eea6be152a35271ea918234060af4c0026cb1dab9ddc5a4bf93153f"
+    },
+    {
+      "original": "dist\\squash-arcade-v1.16.83680-linux-x86_64.AppImage",
+      "retained": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-retained-linux-x86_64.AppImage",
+      "sha256": "b7a81e3051a354fb8454accc17bb4f56eead6c6fed9ea65c150e54f02660ecec"
+    },
+    {
+      "original": "dist\\squash-arcade-v1.16.83680-linux-amd64.deb",
+      "retained": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-retained-linux-amd64.deb",
+      "sha256": "e71a55ca2fb4e6e5775eee483e80c1311a5b63e59834fcccbbd74cd231451e6b"
+    },
+    {
+      "original": "dist\\squash-arcade-v1.16.83680-linux-x86_64.rpm",
+      "retained": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-retained-linux-x86_64.rpm",
+      "sha256": "c8445324081c82759209621fe73ec7af5575d5445dad28c16cacbe070e649b3a"
+    },
+    {
+      "original": "dist\\squash-arcade-v1.16.83680-linux-metadata.json",
+      "retained": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-retained-linux-metadata.json",
+      "sha256": "a21920f5fe5008a919577ed3a73b85b606b0ecf18bb7b4a7bf12f23d82a2ad9b"
+    },
+    {
+      "original": "dist\\squash-arcade-v1.16.83680-web.zip",
+      "retained": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-retained-web.zip",
+      "sha256": "ddc6798064150d5a1f37fb2d18e0291a10c49997fc791d6089b9c593f1709cd8"
+    },
+    {
+      "original": "dist\\squash-arcade-v1.16.83680-pwa.zip",
+      "retained": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-retained-pwa.zip",
+      "sha256": "2bf1cf05316ac46543756936284cf2fd75e54258f490f021c1369b34e4dbfca5"
+    }
+  ],
+  "platforms": {
+    "windows": {
+      "startedAt": "2026-10-26T19:22:33.150Z",
+      "log": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-windows-build.log",
+      "exitCode": 1,
+      "artifacts": [
+        {
+          "path": "dist\\squash-arcade-v1.16.83680-windows-x64.exe",
+          "bytes": 27643904,
+          "sha256": "52573c92301a0cf8f96eb558ca358d113da7a27e79b08edccab5ed94e0d907c7"
+        },
+        {
+          "path": "dist\\squash-arcade-v1.16.83680-windows-x64-setup.exe",
+          "bytes": 20856223,
+          "sha256": "400a37cfbc4f6ac03c6fa5d83504aa2701df5b9c64fcf8c9df03ffa600186b23"
+        },
+        {
+          "path": "dist\\squash-arcade-v1.16.83680-windows-x64.msi",
+          "bytes": 21762048,
+          "sha256": "d6bfb8de532bc8894fdd854f9a1b56c82a029da629b54715b9200e99c0e7e69f"
+        },
+        {
+          "path": "dist\\squash-arcade-v1.16.83680-windows-x64.msix",
+          "bytes": 21504079,
+          "sha256": "f177d2c1e3201a150c89a408affed49b9141956934f96e71689643e8aa78ead7"
+        }
+      ],
+      "finishedAt": "2026-10-26T19:30:07.131Z",
+      "platformMetadata": {
+        "canonicalVersion": "1.16.83680",
+        "runtime": "Microsoft Edge WebView2; standalone EXE is not an installer",
+        "platformVersion": "1.16.18144",
+        "signing": "unsigned"
+      }
+    },
+    "linux": {
+      "startedAt": "2026-10-26T19:22:33.156Z",
+      "log": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-linux-build.log",
+      "exitCode": 0,
+      "artifacts": [
+        {
+          "path": "dist\\squash-arcade-v1.16.83680-linux-x86_64.AppImage",
+          "bytes": 96713208,
+          "sha256": "3179c47bd11b78589c168e7eb54a69880651303e47bac057970242ea3b671a73"
+        },
+        {
+          "path": "dist\\squash-arcade-v1.16.83680-linux-amd64.deb",
+          "bytes": 21679156,
+          "sha256": "e4a183c14daf5c8d28f0c2e342190bb9d2318b034c34a06d701a2c6d289067f1"
+        },
+        {
+          "path": "dist\\squash-arcade-v1.16.83680-linux-x86_64.rpm",
+          "bytes": 21679137,
+          "sha256": "72a657991a0c90434adb0bec749cb5e3438c5a47dc3519c583396d4eec497625"
+        }
+      ],
+      "finishedAt": "2026-10-26T19:30:23.477Z",
+      "platformMetadata": {
+        "canonicalVersion": "1.16.83680",
+        "baseline": "Ubuntu 24.04.4 LTS",
+        "signing": "unsigned"
+      }
+    },
+    "android": {
+      "startedAt": "2026-10-26T19:22:33.161Z",
+      "log": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-android-build.log",
+      "exitCode": 0,
+      "artifacts": [
+        {
+          "path": "dist\\squash-arcade-v1.16.83680-android-arm64-unsigned.apk",
+          "bytes": 175846133,
+          "sha256": "2b46727dff9c9a4c4f4a17b8679c4ccd054219a6e1e90e844b421e478a7ccbb7"
+        },
+        {
+          "path": "dist\\squash-arcade-v1.16.83680-android-arm64-unsigned.aab",
+          "bytes": 54990400,
+          "sha256": "159aaca1026aafec9955f79bcc6ffbe13e274d19c4c7c33daaf2fc4f4c522751"
+        },
+        {
+          "path": "dist\\squash-arcade-v1.16.83680-android-arm64-debug-symbols.zip",
+          "bytes": 51514964,
+          "sha256": "a8ddaf3b1ea050cd54e7f3afd5462f9c5acab6030eadf2c98d60276fc700b7e5"
+        }
+      ],
+      "finishedAt": "2026-10-26T19:38:40.855Z",
+      "platformMetadata": {
+        "versionCode": 101683680,
+        "abi": "arm64-v8a",
+        "icon": "red Mii; generated Android resources copied and hash-verified",
+        "signing": "unsigned; production signing is a separate release step",
+        "canonicalVersion": "1.16.83680"
+      }
+    },
+    "web": {
+      "startedAt": "2026-10-26T19:22:33.166Z",
+      "log": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-web-build.log",
+      "exitCode": 1,
+      "artifacts": [
+        {
+          "path": "dist\\squash-arcade-v1.16.83680-web.zip",
+          "bytes": 20587573,
+          "sha256": "ddc6798064150d5a1f37fb2d18e0291a10c49997fc791d6089b9c593f1709cd8"
+        }
+      ],
+      "finishedAt": "2026-10-26T19:22:34.710Z"
+    },
+    "pwa": {
+      "startedAt": "2026-10-26T19:22:33.171Z",
+      "log": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-pwa-build.log",
+      "exitCode": 1,
+      "artifacts": [
+        {
+          "path": "dist\\squash-arcade-v1.16.83680-pwa.zip",
+          "bytes": 20588881,
+          "sha256": "2bf1cf05316ac46543756936284cf2fd75e54258f490f021c1369b34e4dbfca5"
+        }
+      ],
+      "finishedAt": "2026-10-26T19:22:34.606Z"
+    }
+  },
+  "error": "Platform matrix incomplete. Source version has not advanced; inspect the retained per-platform logs.",
+  "finishedAt": "2026-10-26T19:38:41.142Z"
+}

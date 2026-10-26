@@ -1,0 +1,38 @@
+Pearl native Windows toolchain selected; shared tools and caches use E:\DevTools.
+        Info Looking up installed tauri packages to check mismatched versions...
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling squash-arcade v1.16.83680 (E:\devProjects\squash-arcade\dist\.work\1.16.83680\2026-10-26T19-22-18.161Z\windows\source\src-tauri)
+warning: squash-arcade@1.16.83680: STATIC_VCRUNTIME is deprecated; use build.windows.staticVCRuntime in tauri.conf.json or tauri_build::WindowsAttributes::static_vc_runtime instead.
+    Finished `release` profile [optimized] target(s) in 5m 52s
+       Built application at: E:\DevTools\caches\squash-arcade\windows\release\squash-arcade.exe
+        Info Patching E:\DevTools\caches\squash-arcade\windows\release\squash-arcade.exe with bundle type information: nsis
+        Info Target: x64
+     Running makensis to produce E:\DevTools\caches\squash-arcade\windows\release\bundle\nsis\Virtual Squash_1.16.18144_x64-setup.exe
+        Info Patching E:\DevTools\caches\squash-arcade\windows\release\squash-arcade.exe with bundle type information: msi
+        Info Target: x64
+     Running candle for "E:/DevTools/caches/squash-arcade/windows\\release\\wix\\x64\\main.wxs"
+     Running light to produce E:\DevTools\caches\squash-arcade\windows\release\bundle\msi\Virtual Squash_1.16.18144_x64_en-US.msi
+    Finished 2 bundles at:
+        E:\DevTools\caches\squash-arcade\windows\release\bundle\nsis\Virtual Squash_1.16.18144_x64-setup.exe
+        E:\DevTools\caches\squash-arcade\windows\release\bundle\msi\Virtual Squash_1.16.18144_x64_en-US.msi
+
+Copy-Item: E:\devProjects\squash-arcade\dist\.work\1.16.83680\2026-10-26T19-22-18.161Z\windows\source\scripts\build-native.ps1:25
+Line |
+  25 |  … th $binary){Copy-Item -LiteralPath $binary -Destination (Join-Path $O …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | The process cannot access the file
+     | 'E:\devProjects\squash-arcade\dist\squash-arcade-v1.16.83680-windows-x64.exe' because it is
+     | being used by another process.
+file:///E:/devProjects/squash-arcade/dist/.work/1.16.83680/2026-10-26T19-22-18.161Z/windows/source/scripts/build-platform.mjs:11
+  child.once('error',fail);child.once('exit',code=>code===0?done():fail(new Error(`${platform} worker exited ${code}`)));
+                                                                        ^
+
+Error: windows worker exited 1
+    at ChildProcess.<anonymous> (file:///E:/devProjects/squash-arcade/dist/.work/1.16.83680/2026-10-26T19-22-18.161Z/windows/source/scripts/build-platform.mjs:11:73)
+    at Object.onceWrapper (node:events:631:26)
+    at ChildProcess.emit (node:events:509:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:295:12)
+
+Node.js v24.19.0

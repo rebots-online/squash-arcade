@@ -1,0 +1,13 @@
+{
+  "startedAt": "2026-10-26T19:22:33.166Z",
+  "log": "dist\\squash-arcade-v1.16.83680-2026-10-26T19-22-18.161Z-web-build.log",
+  "exitCode": 1,
+  "artifacts": [
+    {
+      "path": "dist\\squash-arcade-v1.16.83680-web.zip",
+      "bytes": 20587573,
+      "sha256": "ddc6798064150d5a1f37fb2d18e0291a10c49997fc791d6089b9c593f1709cd8"
+    }
+  ],
+  "finishedAt": "2026-10-26T19:22:34.710Z"
+}

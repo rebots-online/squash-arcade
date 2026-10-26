@@ -1,0 +1,30 @@
+{
+  "startedAt": "2026-10-26T19:46:19.738Z",
+  "log": "dist\\squash-arcade-v1.16.84066-2026-10-26T19-46-12.400Z-android-build.log",
+  "exitCode": 0,
+  "artifacts": [
+    {
+      "path": "dist\\squash-arcade-v1.16.84066-android-arm64-unsigned.apk",
+      "bytes": 175877117,
+      "sha256": "fe4b0bd04a48b57b9a24f76c0f0dc504b0add0d0e3f9c210f02db506c581ff46"
+    },
+    {
+      "path": "dist\\squash-arcade-v1.16.84066-android-arm64-unsigned.aab",
+      "bytes": 54993551,
+      "sha256": "7ac00cebab6e164b2b67f61c41194ee0d1ec8c07fad22de8a9ed54654e5ea084"
+    },
+    {
+      "path": "dist\\squash-arcade-v1.16.84066-android-arm64-debug-symbols.zip",
+      "bytes": 51521254,
+      "sha256": "db3bc265eb778eabba925c7da421da33ae27189ea333e37b8f1b1f5f2b885a0b"
+    }
+  ],
+  "finishedAt": "2026-10-26T19:56:46.546Z",
+  "platformMetadata": {
+    "abi": "arm64-v8a",
+    "canonicalVersion": "1.16.84066",
+    "versionCode": 101684066,
+    "icon": "red Mii; generated Android resources copied and hash-verified",
+    "signing": "unsigned; production signing is a separate release step"
+  }
+}
