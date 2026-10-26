@@ -11,6 +11,7 @@ Set-Location -LiteralPath $Snapshot
 $version=(Get-Content -LiteralPath version.txt -Raw).Trim()
 $env:CARGO_TARGET_DIR="E:/DevTools/caches/squash-arcade/$Platform"
 $env:CI='true'
+$env:CARGO_BUILD_JOBS=if($env:SQUASH_BUILD_JOBS){$env:SQUASH_BUILD_JOBS}else{'2'}
 New-Item -ItemType Directory -Path $Output -Force | Out-Null
 if($Platform -eq 'windows'){
   # Windows VERSIONINFO fields are 16-bit; canonical identity stays in the UI,
@@ -55,6 +56,11 @@ if($Platform -eq 'windows'){
     if((Get-FileHash -LiteralPath $icon.FullName).Hash -ne (Get-FileHash -LiteralPath $destination).Hash){throw "Android icon resource mismatch: $relativeIcon"}
   }
   $gradlePath='src-tauri/gen/android/app/build.gradle.kts'
+  $propertiesPath='src-tauri/gen/android/gradle.properties'
+  $properties=Get-Content -LiteralPath $propertiesPath -Raw
+  $properties=[regex]::Replace($properties,'(?m)^org\.gradle\.jvmargs=.*$','org.gradle.jvmargs=-Xmx1536m -XX:ActiveProcessorCount=2 -XX:CICompilerCount=2 -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=256m -Dfile.encoding=UTF-8')
+  $properties+="`norg.gradle.daemon=false`norg.gradle.parallel=false`norg.gradle.workers.max=2`nkotlin.compiler.execution.strategy=in-process`n"
+  Set-Content -LiteralPath $propertiesPath -Value $properties
   Add-Content -LiteralPath $gradlePath -Value ("`n" + 'base { archivesName.set("squash-arcade-v' + $version + '") }')
   $manifestPath=Join-Path $Snapshot 'src-tauri/gen/android/app/src/main/AndroidManifest.xml'
   [xml]$manifest=Get-Content -LiteralPath $manifestPath -Raw

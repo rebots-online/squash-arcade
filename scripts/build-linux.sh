@@ -7,6 +7,7 @@ export PATH="${SQUASH_LINUX_NODE:-/home/robin/.nvm/versions/node/v24.19.0/bin}:$
 export CARGO_TARGET_DIR="$HOME/.cache/squash-arcade/targets/linux"
 export APPIMAGE_EXTRACT_AND_RUN=1
 export CI=true
+export CARGO_BUILD_JOBS="${SQUASH_BUILD_JOBS:-2}"
 tools="$HOME/.cache/squash-arcade/tauri-cli"
 if [ ! -f "$tools/node_modules/@tauri-apps/cli/tauri.js" ]; then
   npm install --prefix "$tools" --save-exact @tauri-apps/cli@2.11.4 --no-audit --no-fund

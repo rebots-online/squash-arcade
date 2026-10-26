@@ -55,6 +55,16 @@ try {
   const files=await sourceFiles();
   const sourceHash=await fingerprint(files);
   const sourceCommit=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+  const retained=[];
+  for(const platform of Object.keys(targets)){
+    for(const name of [...artifactNames(version,platform),`squash-arcade-v${version}-${platform}-metadata.json`]){
+      const original=join(releaseDirectory,name);
+      try{await stat(original);}catch(error){if(error.code==='ENOENT')continue;throw error;}
+      const saved=join(releaseDirectory,name.replace(`squash-arcade-v${version}-`,`squash-arcade-v${version}-${attempt}-retained-`));
+      await cp(original,saved);
+      retained.push({original:relative(root,original),retained:relative(root,saved),sha256:createHash('sha256').update(await readFile(saved)).digest('hex')});
+    }
+  }
   const base=join(runDirectory,'source');
   for(const file of files){await mkdir(dirname(join(base,file)),{recursive:true});await cp(file,join(base,file));}
   const env={...process.env,SQUASH_SOURCE_COMMIT:sourceCommit,SQUASH_SOURCE_HASH:sourceHash,SQUASH_BUILT_AT:startedAt};
@@ -75,7 +85,7 @@ try {
   await Promise.all(platforms.map(async platform=>{
     await cp(base,join(runDirectory,platform,'source'),{recursive:true});
   }));
-  manifest={version,sourceCommit,sourceHash,startedAt,status:'building',platforms:{}};
+  manifest={version,sourceCommit,sourceHash,startedAt,status:'building',retained,platforms:{}};
   await writeFile(inventoryPath,JSON.stringify(manifest,null,2)+'\n');
   console.log(`Launching all five platform workers for ${version}. Durable output: dist/`);
   const worker=async platform=>{

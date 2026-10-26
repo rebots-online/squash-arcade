@@ -61,3 +61,6 @@ publication path, never an unapproved storage service.
 No automated tests are added/run under the operator override. Compiler output,
 package inspection, icon pixels, hashes and browser observation are distinct
 evidence; none alone establishes installed-device or production acceptance.
+
+Observed 2026-10-26 full-matrix attempt: Windows four packages, Linux three packages and both web variants succeeded. Android's reused Java daemon (2h43m lifetime) crashed on native allocation; its crash log showed 1.2GB physical RAM free. The recipe now uses a fresh single-use Gradle JVM, two workers/active processors, a 1536MB heap with bounded metaspace/code cache and in-process Kotlin, plus bounded Cargo jobs. All targets still start together. Failed-version retries copy prior packages to stamped retained paths in root dist before replacing current files; the inventory correlates hashes. No manual platform retry is allowed.
+

@@ -502,6 +502,13 @@ the same master. Standalone EXE is a real application binary, distinct from its
 installer; normal WebView2 requirements remain explicit. Native compilation does
 not imply installed-device, signing, Store or complete gameplay acceptance.
 
+Concurrent workers use bounded Cargo jobs; Android uses a fresh single-use
+Gradle JVM, two workers/processors and bounded heap/code cache rather than a
+long-lived daemon accumulating JIT/native memory across builds. Retrying a
+failed canonical version preserves previous package bytes in stamped retained
+files directly in dist before producers replace their current paths. The new
+inventory correlates original paths, retained paths and prior hashes.
+
 Deployment is scripted to all three existing domains. Public verification uses
 HTTPS with hostname/SNI preserved and public edge lookup for custom domains,
 avoiding LAN split DNS. It preserves certificate validation and records exact
