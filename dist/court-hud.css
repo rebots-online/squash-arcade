@@ -1,4 +1,13 @@
 /* Persistent court chrome. Settings keep their original live control elements. */
+#btn-quick-start,#title-modal #btn-start-match { border:3px solid #fff29a;border-radius:18px;background:linear-gradient(160deg,#ffdc51,#fa841e);color:#472000;box-shadow:inset 0 2px 1px #ffffffb0,0 4px 0 #9a450a,0 0 22px #ffc94745;font-weight:900;cursor:pointer; }
+#btn-quick-start { position:fixed;z-index:125;right:24px;bottom:110px;padding:16px 24px;min-height:64px; }
+#btn-quick-start[hidden] { display:none; }
+#btn-quick-start strong { display:block;font-size:23px;letter-spacing:.04em; }
+#btn-quick-start span { display:block;font-size:11px;margin-top:4px; }
+#title-modal #btn-start-match { width:100%;min-height:60px;margin:0 0 14px;padding:12px;font-size:24px;flex-shrink:0; }
+.racket-spin-setting { display:flex;align-items:center;gap:10px;padding:10px 0;cursor:pointer;font-size:14px; }
+.racket-spin-setting input { width:22px;height:22px;accent-color:#ffad28; }
+.racket-spin-setting small { display:block;font-size:11px;margin-top:4px; }
 #top-hud-bar { top:max(8px,env(safe-area-inset-top));left:12px;right:12px;display:flex;align-items:center;gap:12px; }
 #scoreboard-pill { height:62px;max-width:340px;min-width:220px;padding:3px 12px;gap:10px;box-sizing:border-box; }
 #scoreboard-pill .mii-avatar-badge { width:36px;height:36px;flex:0 0 36px; }
@@ -50,6 +59,7 @@
 button:focus-visible,summary:focus-visible { outline:3px solid #ffc929;outline-offset:3px; }
 .briefing-active #center-banner-layer,.briefing-active #timing-popup,.briefing-active #point-replay-toast,.briefing-active #wonder-intro-overlay { visibility:hidden!important; }
 @media(max-width:600px) {
+  #btn-quick-start { right:12px;left:12px;bottom:125px;padding:12px; }
   #top-hud-bar { left:8px;right:8px;gap:8px; }
   #scoreboard-pill { flex:1;min-width:0;max-width:270px;height:58px; }
   #court-upper-readout { top:74px;left:8px;width:calc(100vw - 16px); }
