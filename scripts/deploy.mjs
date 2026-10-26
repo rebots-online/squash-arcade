@@ -1,0 +1,62 @@
+import { spawn } from 'node:child_process';
+import { readFile, writeFile, readdir, mkdir } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
+import { createHash } from 'node:crypto';
+
+const root=resolve(import.meta.dirname,'..');
+process.chdir(root);
+const metadata=JSON.parse(await readFile('dist/deployment.json','utf8'));
+const build=JSON.parse(await readFile(`builds/${metadata.version}/SUCCESS.json`,'utf8'));
+if(build.status!=='succeeded'||build.sourceHash!==metadata.sourceHash)throw new Error('Deployment requires a complete successful platform build matching dist.');
+const pwaArtifact=build.platforms.pwa.artifacts.find(file=>file.path.endsWith('.zip'));
+const frozenWeb=join(root,pwaArtifact.path,'..','web');
+const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
+const files=[];
+async function walk(directory,prefix=''){
+  for(const entry of await readdir(directory,{withFileTypes:true})){
+    const name=prefix+entry.name;
+    if(entry.isDirectory())await walk(join(directory,entry.name),name+'/');
+    else if(name!=='CNAME')files.push(name);
+  }
+}
+await walk('dist');files.sort();
+const hashes=new Map();
+for(const file of files){
+  const local=await readFile(join('dist',file));
+  if(sha(local)!==sha(await readFile(join(frozenWeb,file))))throw new Error('dist differs from frozen build: '+file);
+  hashes.set(file,sha(local));
+}
+await writeFile('dist/CNAME','squash.robin.mba\n');
+const domains=['squash-arcade.surge.sh','squash.robin.mba','squash-arcade.robin.mba'];
+for(const domain of domains){
+  await new Promise((done,fail)=>{
+    const child=spawn(process.execPath,[join(root,'node_modules/surge/bin/surge'),'./dist',domain],{stdio:'inherit',windowsHide:true});
+    child.once('error',fail);child.once('exit',code=>code===0?done():fail(new Error(`Surge ${domain} exited ${code}`)));
+  });
+}
+// Verify custom Host routing directly at the public edge: LAN split DNS may
+// deliberately route *.robin.mba to the operator's local proxy.
+const dns=await(await fetch('https://dns.google/resolve?name=geo.surge.world&type=A')).json();
+const edge=dns.Answer?.find(answer=>answer.type===1)?.data;
+if(!edge)throw new Error('Could not resolve the public Surge edge for readback.');
+const receipt={version:metadata.version,sourceCommit:metadata.sourceCommit,sourceHash:metadata.sourceHash,checkedAt:new Date().toISOString(),domains:{}};
+for(const domain of domains){
+  const results=[];
+  // Bound verification concurrency; avoid sending every large asset at once.
+  for(let offset=0;offset<files.length;offset+=6){
+    results.push(...await Promise.all(files.slice(offset,offset+6).map(async file=>{
+      const primary=domain.endsWith('.surge.sh');
+      const url=(primary?`https://${domain}`:`http://${edge}`)+'/'+file;
+      const response=await fetch(url,{headers:primary?{}:{Host:domain},signal:AbortSignal.timeout(30000)});
+      const publicSha256=sha(Buffer.from(await response.arrayBuffer()));
+      return {file,status:response.status,sha256:publicSha256,matches:response.ok&&publicSha256===hashes.get(file)};
+    })));
+  }
+  receipt.domains[domain]={route:domain.endsWith('.surge.sh')?'public HTTPS':'public Surge HTTP edge with custom Host',results};
+  console.log(`${domain}: ${results.filter(result=>result.matches).length}/${results.length} public files match`);
+}
+const directory=`DOCS/DEPLOYMENT/platform-${metadata.version}`;
+await mkdir(directory,{recursive:true});
+await writeFile(join(directory,'public-hashes.json'),JSON.stringify(receipt,null,2)+'\n');
+if(Object.values(receipt.domains).some(domain=>domain.results.some(result=>!result.matches)))throw new Error('Public file verification failed; see the deployment receipt.');
+console.log(`Published and verified ${metadata.version}; source pending version is unchanged.`);

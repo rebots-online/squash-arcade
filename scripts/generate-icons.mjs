@@ -1,4 +1,4 @@
-import { mkdir, writeFile, copyFile } from 'node:fs/promises';
+import { mkdir, writeFile, copyFile, readFile, stat } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import sharp from 'sharp';
 import { getMiiAvatarSVG } from '../src/mii_avatars.js';
@@ -26,6 +26,19 @@ ${Array.from({length:12},(_,i)=>`<path d="M-111 ${-420+i*27}H111"/>`).join('')}<
 </g>
 <ellipse cx="608" cy="676" rx="33" ry="28" fill="#ffdfc4" stroke="#c9825b" stroke-width="6" transform="rotate(-20 608 676)"/>
 </svg>`;
+const required=['public/favicon.ico','src-tauri/icons/icon.ico','src-tauri/icons/icon.png',
+  ...[16,32,48,64,128,180,192,256,512,1024].map(size=>`public/icons/icon-${size}.png`),
+  'public/icons/maskable-512.png',
+  ...['hdpi','mdpi','xhdpi','xxhdpi','xxxhdpi'].map(dpi=>`src-tauri/icons/android/mipmap-${dpi}/ic_launcher.png`)];
+const nativeConfig=JSON.parse(await readFile('src-tauri/tauri.conf.json','utf8'));
+required.push(...nativeConfig.bundle.icon.map(file=>'src-tauri/'+file));
+let current=false;
+try{current=await readFile('public/icons/red-mii-racquet.svg','utf8')===svg;
+  for(const file of required)await stat(file);
+}catch{current=false;}
+if(current&&!process.argv.includes('--force')){
+  console.log('Red Mii icon master and generated set are current.');
+}else{
 await mkdir('public/icons', { recursive: true });
 await writeFile('public/icons/red-mii-racquet.svg', svg);
 for (const size of [16,32,48,64,128,180,192,256,512,1024]) {
@@ -36,3 +49,4 @@ await copyFile('public/icons/icon-512.png', 'public/icons/maskable-512.png');
 execFileSync(process.execPath, ['node_modules/@tauri-apps/cli/tauri.js', 'icon', 'public/icons/icon-1024.png', '--output', 'src-tauri/icons'], { stdio: 'inherit' });
 await copyFile('src-tauri/icons/icon.ico', 'public/favicon.ico');
 console.log('Generated red Mii / opposing-diagonal racquet icons.');
+}

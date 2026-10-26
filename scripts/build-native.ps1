@@ -24,6 +24,12 @@ if($Platform -eq 'windows'){
   Copy-Item -LiteralPath $installer.FullName -Destination (Join-Path $Output "SquashArcade-$version-windows-x64-setup.exe")
   @{canonicalVersion=$version;platformVersion=$nativeVersion;signing='unsigned'}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $Output 'platform.json')
 }else{
+  $parts=$version.Split('.')
+  $versionCode=[int64]$parts[0]*100000000+[int64]$parts[1]*100000+[int64]$parts[2]
+  if($versionCode -gt 2147483647){throw 'Android versionCode exceeds the platform limit.'}
+  $config=Get-Content src-tauri/tauri.conf.json -Raw|ConvertFrom-Json
+  $config.bundle.android|Add-Member -NotePropertyName versionCode -NotePropertyValue $versionCode -Force
+  $config|ConvertTo-Json -Depth 20|Set-Content src-tauri/tauri.conf.json
   cargo tauri android init --ci
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
   $manifestPath=Join-Path $Snapshot 'src-tauri/gen/android/app/src/main/AndroidManifest.xml'
@@ -42,5 +48,5 @@ if($Platform -eq 'windows'){
   if(-not $apk -or -not $aab){throw 'Android APK and AAB are both required.'}
   Copy-Item -LiteralPath $apk.FullName -Destination (Join-Path $Output "SquashArcade-$version-android-arm64-unsigned.apk")
   Copy-Item -LiteralPath $aab.FullName -Destination (Join-Path $Output "SquashArcade-$version-android-arm64-unsigned.aab")
-  @{canonicalVersion=$version;signing='unsigned; production signing is a separate release step';abi='arm64-v8a'}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $Output 'platform.json')
+  @{canonicalVersion=$version;versionCode=$versionCode;signing='unsigned; production signing is a separate release step';abi='arm64-v8a'}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $Output 'platform.json')
 }

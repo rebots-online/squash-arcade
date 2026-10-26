@@ -1,19 +1,20 @@
 {
   "name": "argon-tennis",
   "private": true,
-  "version": "1.13.83621",
+  "version": "1.14.83639",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "node scripts/build-all.mjs",
     "lint": "tsc --noEmit && node scripts/lint-js.mjs",
     "preview": "vite preview --port=3000 --host=0.0.0.0",
-    "deploy": "surge ./dist squash-arcade.surge.sh",
+    "deploy": "node scripts/deploy.mjs",
     "predev": "[ -d node_modules/.bin ] || bun install || npm install",
     "prelint": "[ -d node_modules/.bin ] || bun install || npm install",
     "build:all": "node scripts/build-all.mjs",
     "icons": "node scripts/generate-icons.mjs",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "release": "npm run build && npm run deploy"
   },
   "dependencies": {
     "react": "^19.2.7",
@@ -27,6 +28,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.7.0",
     "sharp": "0.35.5",
+    "surge": "0.51.0",
     "typescript": "^6.0.3",
     "vite": "^7.3.5"
   }

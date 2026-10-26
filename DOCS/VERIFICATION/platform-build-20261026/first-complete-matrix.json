@@ -1,0 +1,68 @@
+{
+  "version": "1.13.83621",
+  "sourceCommit": "31374e25c6c52f31a481eb9ef7154936cdac0e19",
+  "sourceHash": "6ee94030caf4c4703b841814eb8259a248b80ba81165634310bc83413353b1fd",
+  "startedAt": "2026-10-26T12:29:32.836Z",
+  "status": "succeeded",
+  "platforms": {
+    "windows": {
+      "startedAt": "2026-10-26T12:29:41.881Z",
+      "log": "builds\\1.13.83621\\2026-10-26T12-29-32.836Z\\windows\\build.log",
+      "exitCode": 0,
+      "artifacts": [
+        {
+          "path": "builds\\1.13.83621\\2026-10-26T12-29-32.836Z\\windows\\artifacts\\SquashArcade-1.13.83621-windows-x64-setup.exe",
+          "bytes": 20858031,
+          "sha256": "8cd07869113cf2ce518cd100eb673cddf975034557ec5d5d0ce726e17e08abad"
+        }
+      ],
+      "finishedAt": "2026-10-26T12:36:28.359Z"
+    },
+    "appimage": {
+      "startedAt": "2026-10-26T12:29:41.888Z",
+      "log": "builds\\1.13.83621\\2026-10-26T12-29-32.836Z\\appimage\\build.log",
+      "exitCode": 0,
+      "artifacts": [
+        {
+          "path": "builds\\1.13.83621\\2026-10-26T12-29-32.836Z\\appimage\\artifacts\\SquashArcade-1.13.83621-linux-x86_64.AppImage",
+          "bytes": 96713208,
+          "sha256": "908690afddcd457018fa73ff1cc3de1214795e538051af7c29ef8d610ca251ef"
+        }
+      ],
+      "finishedAt": "2026-10-26T12:36:15.571Z"
+    },
+    "android": {
+      "startedAt": "2026-10-26T12:29:41.893Z",
+      "log": "builds\\1.13.83621\\2026-10-26T12-29-32.836Z\\android\\build.log",
+      "exitCode": 0,
+      "artifacts": [
+        {
+          "path": "builds\\1.13.83621\\2026-10-26T12-29-32.836Z\\android\\artifacts\\SquashArcade-1.13.83621-android-arm64-unsigned.aab",
+          "bytes": 24876710,
+          "sha256": "c83a3baf4b68bf064838dcacf96ce88974abf59e14efadf2fdb4e18c6f29bb38"
+        },
+        {
+          "path": "builds\\1.13.83621\\2026-10-26T12-29-32.836Z\\android\\artifacts\\SquashArcade-1.13.83621-android-arm64-unsigned.apk",
+          "bytes": 29908629,
+          "sha256": "cfe199c33d6c787cec4961603f49c490b118b201378505085c8cf51c5ea8f20f"
+        }
+      ],
+      "finishedAt": "2026-10-26T12:39:29.356Z"
+    },
+    "pwa": {
+      "startedAt": "2026-10-26T12:29:41.898Z",
+      "log": "builds\\1.13.83621\\2026-10-26T12-29-32.836Z\\pwa\\build.log",
+      "exitCode": 0,
+      "artifacts": [
+        {
+          "path": "builds\\1.13.83621\\2026-10-26T12-29-32.836Z\\pwa\\artifacts\\SquashArcade-1.13.83621-pwa.zip",
+          "bytes": 20588835,
+          "sha256": "9a13b2d6980acf9600d7fcf59b69c06a3d4359776ff77fdadfeb276cf1ff6752"
+        }
+      ],
+      "finishedAt": "2026-10-26T12:29:45.135Z"
+    }
+  },
+  "finishedAt": "2026-10-26T12:39:30.412Z",
+  "nextSourceVersion": "1.14.83639"
+}

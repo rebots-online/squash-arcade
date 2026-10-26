@@ -1,6 +1,5 @@
 import { spawn, execFileSync } from 'node:child_process';
 import { open, readdir, readFile, writeFile, mkdir, cp, rename, stat, unlink } from 'node:fs/promises';
-import { createWriteStream } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, resolve, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -61,17 +60,18 @@ try {
   manifest={version,sourceCommit,sourceHash,startedAt,status:'building',platforms:{}};
   await writeFile(join(runDirectory,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');
   console.log(`Launching all four platform workers for ${version}. Logs: ${runDirectory}`);
-  const worker=platform=>new Promise(done=>{
+  const worker=async platform=>{
     const directory=join(runDirectory,platform);
     const output=join(directory,'artifacts');
     const logPath=join(directory,'build.log');
-    const log=createWriteStream(logPath);
+    // Direct file descriptors avoid pipes held open by SDK/Gradle background tools.
+    const log=await open(logPath,'w');
+    return new Promise(done=>{
     const record={startedAt:new Date().toISOString(),log:relative(root,logPath),exitCode:null,artifacts:[]};
     manifest.platforms[platform]=record;
     console.log(`[${platform}] started ${record.startedAt}`);
     const snapshot=join(directory,'source');
-    const child=spawn(process.execPath,[join(snapshot,'scripts/build-platform.mjs'),platform,snapshot,output],{cwd:snapshot,env,stdio:['ignore','pipe','pipe'],windowsHide:true});
-    child.stdout.pipe(log);child.stderr.pipe(log);
+    const child=spawn(process.execPath,[join(snapshot,'scripts/build-platform.mjs'),platform,snapshot,output],{cwd:snapshot,env,stdio:['ignore',log.fd,log.fd],windowsHide:true});
     let completed=false;
     const finish=async(code,error)=>{
       if(completed)return;completed=true;
@@ -86,15 +86,17 @@ try {
           }
           const required={windows:['.exe'],appimage:['.AppImage'],android:['.apk','.aab'],pwa:['.zip']}[platform];
           for(const suffix of required)if(!record.artifacts.some(a=>a.path.endsWith(suffix)))throw new Error('Required artifact missing: '+suffix);
+          try{record.platformMetadata=JSON.parse(await readFile(join(output,'platform.json'),'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
         }catch(error){record.exitCode=1;record.error=error.message;}
       }
-      log.end();
+      await log.close();
       await writeFile(join(directory,'result.json'),JSON.stringify(record,null,2)+'\n');
       console.log(`[${platform}] ${record.exitCode===0?'succeeded':'FAILED'}; ${relative(root,logPath)}`);
       done(record);
     };
     child.once('error',error=>finish(1,error));child.once('exit',code=>finish(code??1));
-  });
+    });
+  };
   const results=await Promise.all(platforms.map(worker));
   if(results.some(record=>record.exitCode!==0))throw new Error('Platform matrix incomplete. Source version has not advanced; inspect the retained per-platform logs.');
   if(await fingerprint(await sourceFiles())!==sourceHash)throw new Error('Source changed during the build. Artifacts retained; source version has not advanced.');

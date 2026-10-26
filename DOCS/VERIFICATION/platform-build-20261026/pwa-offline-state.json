@@ -1,0 +1,11 @@
+{
+  "canvas": {
+    "height": 855,
+    "width": 1920
+  },
+  "online": false,
+  "phase": "SERVE_STANCE",
+  "server": "player",
+  "version": "v1.13.83621",
+  "workerControlled": true
+}
