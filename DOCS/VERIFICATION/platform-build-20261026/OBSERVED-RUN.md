@@ -23,3 +23,10 @@ Source commit f135fdce1b104a68d7e995cf7de8e14d8aa457e8, version 1.14.83639, atte
 
 The final frozen PWA candidate at localhost:43840 reported zero Chrome installability errors, a controlling service worker and 35 cached files. Offline normal reload loaded v1.14.83639, and clicking START MATCH entered SERVE_STANCE with the red player. The screenshot and state receipt are pwa-offline-play.png and pwa-offline-state.json. Tab networking was restored. This is browser observation, not installed native/device acceptance.
 
+
+## Operator correction: durable dist convention
+
+The 1.14 build's post-success copying into ignored dist/releases was not compliant with CC12. The coordinator was corrected to give workers durable output paths in tracked root dist at launch, retaining partial inventories immediately and never renaming/emptying root dist. New names are slug-first squash-arcade-vVERSION-QUALIFIER. Disposable snapshots are separated under dist/.work. CodeGraph and KStore CC12/CC13 were reread before the correction. A dated infrastructure notice was incorrectly treated as the standing instruction. The operator corrected it: the unavailable Git service is permanently absent, must not be mentioned or probed, and must not be a build/publication dependency. That current instruction supersedes the earlier interpretation. CLAUDE.md, architecture, checklist and build documentation now record it. The configured available GitHub remote is used; current packages are ordinary tracked binaries below its per-file limit, without GitHub LFS.
+
+The previous scripted deployment published web 1.14.83639, but readback succeeded only on the Surge HTTPS domain (36/36 files); custom Host edge checks failed (0/36 each), so npm run deploy correctly returned exit 1. This is not a fully verified three-domain deployment.
+

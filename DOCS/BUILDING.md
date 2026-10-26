@@ -51,10 +51,10 @@ production acceptance manifest or a public release pointer.
 
 Root dist is never moved, emptied or ignored. Frozen source/frontend and
 intermediates are isolated under ignored `dist/.work/`; shared toolchain caches
-remain disposable. Existing package versions and web files are preserved. Large
-binary packages must use Forgejo-backed LFS (CC13), never GitHub LFS. Publication
-of binaries is incomplete until the Forgejo object upload and remote readback
-succeed. The deployment command reads the built version's durable PWA web tree.
+remain disposable. Existing package versions and web files are preserved. Current operator override treats the unavailable Git service as permanently
+absent. Use the configured available remote; no unavailable service may block
+a build. Current packages fit the ordinary GitHub per-file limit and are
+tracked as ordinary Git binaries; do not enable GitHub LFS. The deployment command reads the built version's durable PWA web tree.
 
 ## Working recipe details from the first runs
 

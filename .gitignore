@@ -17,4 +17,5 @@ STAGING_*/
 # Versioned platform artifacts and retained attempt logs (not source).
 /builds/
 /.build-lock
+!/dist/**/*.log
 /dist/.work/
