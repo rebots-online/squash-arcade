@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { setSourceVersion } from './source-version.mjs';
 import { requireBuildAll } from './build-context.mjs';
 import { artifactNames, targets } from './build-targets.mjs';
+import { assertProductIdentity } from './build-product.mjs';
 requireBuildAll();
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
@@ -37,6 +38,7 @@ const run=(command,args,options={})=>new Promise((done,fail)=>{
 });
 let manifest,runDirectory,releaseDirectory,inventoryPath;
 try {
+  await assertProductIdentity();
   const version=(await readFile('version.txt','utf8')).trim();
   const pkg=JSON.parse(await readFile('package.json','utf8'));
   if(pkg.version!==version)throw new Error('Canonical and package versions differ.');

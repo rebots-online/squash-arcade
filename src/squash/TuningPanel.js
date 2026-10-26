@@ -335,13 +335,13 @@ export class TuningPanel {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `argon-squash-preset-${Date.now()}.json`;
+      a.download = `virtual-squash-preset-${Date.now()}.json`;
       a.click();
       URL.revokeObjectURL(url);
     });
 
     this.container.querySelector('#btn-preset-import')?.addEventListener('click', () => {
-      const raw = window.prompt('Paste Argon Squash Preset JSON:');
+      const raw = window.prompt('Paste Virtual Squash Preset JSON:');
       if (raw) {
         try {
           this.store.importJSON(raw);

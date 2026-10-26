@@ -21,9 +21,10 @@ const metadata = JSON.parse(await readFile(join(directory,'deployment.json'),'ut
 const cache = `squash-arcade-${metadata.version}-${hash.digest('hex').slice(0,16)}`;
 const worker = `const CACHE=${JSON.stringify(cache)};
 const FILES=${JSON.stringify(files.map(file=>'./'+file))};
-self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES))));
-// New builds wait until the old app is closed, preserving the active game's assets.
-self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('squash-arcade-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
+self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting())));
+// Activation happens once per new worker. Navigate legacy clients too: their
+// old registration code has no controllerchange update handler.
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('squash-arcade-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()).then(()=>self.clients.matchAll({type:'window',includeUncontrolled:true})).then(clients=>Promise.all(clients.map(client=>{client.postMessage({type:'SQUASH_SW_NAVIGATING'});return client.navigate(client.url).catch(()=>{});})))));
 self.addEventListener('fetch',event=>{
  const url=new URL(event.request.url);
  if(event.request.method!=='GET'||url.origin!==self.location.origin||url.pathname.includes('/api/'))return;

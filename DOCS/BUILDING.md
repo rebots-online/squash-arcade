@@ -64,3 +64,6 @@ evidence; none alone establishes installed-device or production acceptance.
 
 Observed 2026-10-26 full-matrix attempt: Windows four packages, Linux three packages and both web variants succeeded. Android's reused Java daemon (2h43m lifetime) crashed on native allocation; its crash log showed 1.2GB physical RAM free. The recipe now uses a fresh single-use Gradle JVM, two workers/active processors, a 1536MB heap with bounded metaspace/code cache and in-process Kotlin, plus bounded Cargo jobs. All targets still start together. Failed-version retries copy prior packages to stamped retained paths in root dist before replacing current files; the inventory correlates hashes. No manual platform retry is allowed.
 
+
+Brand gate: the existing primary identity is Virtual Squash, with the existing ROCHE court wordmark. Legacy page/OpenGraph titles, companion text, soundtrack display labels and tuning prompts/exports are rejected before compilation. Native and PWA display names must agree with the page. PWA updates now activate and navigate legacy app clients automatically so a cached deprecated title is not left visible until the user forces a reload.
+

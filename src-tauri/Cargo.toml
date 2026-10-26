@@ -1,7 +1,7 @@
 [package]
 name = "squash-arcade"
 version = "1.16.83680"
-description = "Squash Arcade"
+description = "Virtual Squash"
 authors = ["Robin L. M. Cheung"]
 license = "LicenseRef-Proprietary"
 repository = "https://github.com/rebots-online/squash-arcade"

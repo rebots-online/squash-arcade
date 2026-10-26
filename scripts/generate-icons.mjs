@@ -6,7 +6,7 @@ import { getMiiAvatarSVG } from '../src/mii_avatars.js';
 const portrait = getMiiAvatarSVG('player1', { uid: 'squash-app' })
   .replace('<svg ', '<svg x="110" y="130" width="700" height="700" ');
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
-<title>Squash Arcade — red player with squash racquet</title>
+<title>Virtual Squash — red player with squash racquet</title>
 <defs><radialGradient id="court"><stop stop-color="#20435f"/><stop offset="1" stop-color="#071321"/></radialGradient>
 <linearGradient id="rim"><stop stop-color="#fff4bc"/><stop offset=".45" stop-color="#ffca41"/><stop offset="1" stop-color="#f8882b"/></linearGradient>
 <clipPath id="strings"><ellipse cy="-265" rx="91" ry="139"/></clipPath></defs>

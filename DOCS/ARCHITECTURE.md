@@ -475,6 +475,23 @@ The favicon/app icon uses the existing red player1 Mii SVG, tilted slightly one 
 
 ### Operator build correction — 2026-10-26
 
+Brand correction: use the existing primary title and narrator identity, Virtual
+Squash, consistently in page/OpenGraph titles, visible labels, companion page,
+PWA name/short name, native product/window metadata and icon accessibility text.
+ROCHE SQUASH remains the existing court/sponsor wordmark. Remove legacy Argon
+branding from visible soundtrack labels and tuning export/prompt text. Internal
+class/storage/track IDs and vendor URLs retain compatibility; they are not app
+display names. A pre-build identity check fails before compilation if title,
+PWA/native metadata disagree or visible HTML retains Argon/Remix branding.
+
+PWA updates must apply without user-forced refresh. A new worker precaches then
+skips waiting, claims clients and navigates existing app windows once, including
+legacy clients lacking a controllerchange handler. New clients use a guarded
+controllerchange fallback, suppressed when the worker announces its own navigation.
+Registration checks updates periodically and on visibility return; stale Vite
+chunk failures get a bounded recovery reload. The worker only navigates during
+activation, so registering the unchanged script cannot create a reload loop.
+
 `build_all.sh` at repository root is the sole build/deployment entry. It owns the
 complete build then deployment, or `--deploy-existing` to finish delivery of an
 already completed build without manufacturing another version. Helpers reject
