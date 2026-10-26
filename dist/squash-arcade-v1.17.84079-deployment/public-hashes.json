@@ -1,0 +1,671 @@
+{
+  "version": "1.17.84079",
+  "sourceCommit": "bbfeca2af924f3a35f1e9cbd66487d4afec445e5",
+  "sourceHash": "19a7dc9679290e04597cd84ed18d88bed12d095142ada8598ad87fdd42a64802",
+  "checkedAt": "2026-10-26T20:08:52.367Z",
+  "domains": {
+    "squash-arcade.surge.sh": {
+      "route": "public HTTPS",
+      "results": [
+        {
+          "file": "arcade-briefing.css",
+          "status": 200,
+          "sha256": "d6c003a129ec3ba13f5a8918fbc317177b98e941dbcbf570ede1fad1c2ee2a97",
+          "matches": true
+        },
+        {
+          "file": "assets/audio/red-player-identity.wav",
+          "status": 200,
+          "sha256": "2b01e69d12366adc2810d89e86e0d30f773516bec6fe11d9d71ddff39938b590",
+          "matches": true
+        },
+        {
+          "file": "assets/index-B2yBSDOC.js",
+          "status": 200,
+          "sha256": "b8c83028aee02fb484672adb5fbb2e1fcf65314cc7e8b407080765313dae8abb",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hand_landmark_full.tflite",
+          "status": 200,
+          "sha256": "8c026882c9ec059ce0f8e75266bee5a9a23c341a40e0000df755374d3d1b9b68",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hand_landmark_lite.tflite",
+          "status": 200,
+          "sha256": "d7fde8ac11f8ce03f8663775bfc323f4fc9f2a38062b4f4efa142874ef5b2a48",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hands.binarypb",
+          "status": 200,
+          "sha256": "ab76c4215fca99cc2db1b5885cb8398d210e59ebe685245f72e692b4b58421e4",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hands_solution_packed_assets.data",
+          "status": 200,
+          "sha256": "bdce7b66bfc5b39ba86a47775c98e0b186fe73f8308c2279f852af4c89ffdf42",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hands_solution_simd_wasm_bin.wasm",
+          "status": 200,
+          "sha256": "78ef7eb86ebc6424ac06b13f89b9a1fc01ff35e07520e37de98887cf88c06653",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hands_solution_wasm_bin.wasm",
+          "status": 200,
+          "sha256": "4e70eaf8063e0e9ac10e682d9d6b55c08d0788f0a8d49925e2e484636526e157",
+          "matches": true
+        },
+        {
+          "file": "assets/models/mii_crowd.glb",
+          "status": 200,
+          "sha256": "dc18bd9b109b7178f484c6c43758a2fbad95d911ef45a127b0eeff2689557e49",
+          "matches": true
+        },
+        {
+          "file": "assets/models/mii_opponent.glb",
+          "status": 200,
+          "sha256": "4990efaac9296fe577e96e3add9a8cbb9224f6af1505a8986a3cc280f03cbde7",
+          "matches": true
+        },
+        {
+          "file": "assets/models/mii_player.glb",
+          "status": 200,
+          "sha256": "a1345a6fbcf7088f13d397f4eafff0675a722cc890426ee3e34499b47082489b",
+          "matches": true
+        },
+        {
+          "file": "assets/models/stadium_court.glb",
+          "status": 200,
+          "sha256": "94a137e33c6b419f927d748b5611a21293ac0e72bb2f55f77d7a69f81d776da6",
+          "matches": true
+        },
+        {
+          "file": "assets/models/tennis_ball.glb",
+          "status": 200,
+          "sha256": "a7ea5f13e4f36dcca5f389e6d6ec392a43be72fa26f592ee11132d6f80939c73",
+          "matches": true
+        },
+        {
+          "file": "assets/models/tennis_net.glb",
+          "status": 200,
+          "sha256": "94ea3a8a0a7183f8e0512abae1d735261fa0173dcd45f918d7a64928f7b88799",
+          "matches": true
+        },
+        {
+          "file": "assets/models/tennis_racket.glb",
+          "status": 200,
+          "sha256": "dc478764925a35dad60b8df22a667a63dd01f40167651bddc169e8cade0d1bc1",
+          "matches": true
+        },
+        {
+          "file": "companion.html",
+          "status": 200,
+          "sha256": "fedc09c3be19fc811f85dbfb24c968cb0b75f0d6582defe00532d6e93f8e3656",
+          "matches": true
+        },
+        {
+          "file": "court-hud.css",
+          "status": 200,
+          "sha256": "d43dd67a7fdb9b60013d711f43c5d24cba84a3e9e58e0f1073043fde375f743e",
+          "matches": true
+        },
+        {
+          "file": "deployment.json",
+          "status": 200,
+          "sha256": "3b6cf29dafb226dfe0a2fc8109c00b814f493fc413943031c3f1f7ad1c5da84e",
+          "matches": true
+        },
+        {
+          "file": "favicon.ico",
+          "status": 200,
+          "sha256": "d182a3e56c62a499a2307690ef4f2dd854307894519a884ec854e3edd7499297",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-1024.png",
+          "status": 200,
+          "sha256": "c72789b279fd6d99f43c40b26ad3b68c08ccd59ee3765090e9727dd8ea465256",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-128.png",
+          "status": 200,
+          "sha256": "921cd464ebabe29abd281de6fe86349abb328b295c93a47c68bcc69719181ed7",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-16.png",
+          "status": 200,
+          "sha256": "2ad870f225a31be407214a2583407cd95f06a65dfe31c466a8de97306b509eca",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-180.png",
+          "status": 200,
+          "sha256": "60b8d74c9fb3a8e4e4b5864fd4610e8d766610cf5c5fb0ac083bd6b11141994f",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-192.png",
+          "status": 200,
+          "sha256": "61a75211fdf7ffedff73e8e3dd8c9488d8df7eaea2063b35cd316f052ec5a3a0",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-256.png",
+          "status": 200,
+          "sha256": "050b326151da014c98f7226f3f34a740d7202238549b125ddbe86ba7c3813f19",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-32.png",
+          "status": 200,
+          "sha256": "5b937245fb701d05fb25a771f56060650dcb2b0989e25b2dde298c3dc3e20028",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-48.png",
+          "status": 200,
+          "sha256": "a7085599bb3599f1f0103111df49e2046e0119c13f1a4754281da7d41a4e19d0",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-512.png",
+          "status": 200,
+          "sha256": "055b89edbb75d7f84f521d7997962ed0782dab27f25dfef983cf281ef382364a",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-64.png",
+          "status": 200,
+          "sha256": "21abd43c3c44732bbd2e190be09cde2f46f850da3486720b686d4c3d78d5f14c",
+          "matches": true
+        },
+        {
+          "file": "icons/maskable-512.png",
+          "status": 200,
+          "sha256": "055b89edbb75d7f84f521d7997962ed0782dab27f25dfef983cf281ef382364a",
+          "matches": true
+        },
+        {
+          "file": "icons/red-mii-racquet.svg",
+          "status": 200,
+          "sha256": "7e6a33cc61a4a45aa5d4d055057d10eb0bd9b6448a21d87130d07a21c526d29d",
+          "matches": true
+        },
+        {
+          "file": "index.html",
+          "status": 200,
+          "sha256": "0aee9bc3e33b32a84022e2ccef99cf9f8fc635e51f59d7fcbce3a3dc2e4ceb01",
+          "matches": true
+        },
+        {
+          "file": "manifest.webmanifest",
+          "status": 200,
+          "sha256": "9cfefad4075875cd4cfefc701182d98b1b460e65455a4b50f5f6c9cfa8f8d0af",
+          "matches": true
+        },
+        {
+          "file": "styles.css",
+          "status": 200,
+          "sha256": "b31a7711231d2e8a92a44e7d7f11a606cc96abae0ed2167795517b1334f63bda",
+          "matches": true
+        },
+        {
+          "file": "sw.js",
+          "status": 200,
+          "sha256": "ea0b2281036ac79c41af5e025af1ec19a99ad219c8e6790d4100fbdf58d1141a",
+          "matches": true
+        }
+      ]
+    },
+    "squash.robin.mba": {
+      "route": "public HTTPS edge with original hostname/SNI and certificate validation",
+      "results": [
+        {
+          "file": "arcade-briefing.css",
+          "status": 200,
+          "sha256": "d6c003a129ec3ba13f5a8918fbc317177b98e941dbcbf570ede1fad1c2ee2a97",
+          "matches": true
+        },
+        {
+          "file": "assets/audio/red-player-identity.wav",
+          "status": 200,
+          "sha256": "2b01e69d12366adc2810d89e86e0d30f773516bec6fe11d9d71ddff39938b590",
+          "matches": true
+        },
+        {
+          "file": "assets/index-B2yBSDOC.js",
+          "status": 200,
+          "sha256": "b8c83028aee02fb484672adb5fbb2e1fcf65314cc7e8b407080765313dae8abb",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hand_landmark_full.tflite",
+          "status": 200,
+          "sha256": "8c026882c9ec059ce0f8e75266bee5a9a23c341a40e0000df755374d3d1b9b68",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hand_landmark_lite.tflite",
+          "status": 200,
+          "sha256": "d7fde8ac11f8ce03f8663775bfc323f4fc9f2a38062b4f4efa142874ef5b2a48",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hands.binarypb",
+          "status": 200,
+          "sha256": "ab76c4215fca99cc2db1b5885cb8398d210e59ebe685245f72e692b4b58421e4",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hands_solution_packed_assets.data",
+          "status": 200,
+          "sha256": "bdce7b66bfc5b39ba86a47775c98e0b186fe73f8308c2279f852af4c89ffdf42",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hands_solution_simd_wasm_bin.wasm",
+          "status": 200,
+          "sha256": "78ef7eb86ebc6424ac06b13f89b9a1fc01ff35e07520e37de98887cf88c06653",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hands_solution_wasm_bin.wasm",
+          "status": 200,
+          "sha256": "4e70eaf8063e0e9ac10e682d9d6b55c08d0788f0a8d49925e2e484636526e157",
+          "matches": true
+        },
+        {
+          "file": "assets/models/mii_crowd.glb",
+          "status": 200,
+          "sha256": "dc18bd9b109b7178f484c6c43758a2fbad95d911ef45a127b0eeff2689557e49",
+          "matches": true
+        },
+        {
+          "file": "assets/models/mii_opponent.glb",
+          "status": 200,
+          "sha256": "4990efaac9296fe577e96e3add9a8cbb9224f6af1505a8986a3cc280f03cbde7",
+          "matches": true
+        },
+        {
+          "file": "assets/models/mii_player.glb",
+          "status": 200,
+          "sha256": "a1345a6fbcf7088f13d397f4eafff0675a722cc890426ee3e34499b47082489b",
+          "matches": true
+        },
+        {
+          "file": "assets/models/stadium_court.glb",
+          "status": 200,
+          "sha256": "94a137e33c6b419f927d748b5611a21293ac0e72bb2f55f77d7a69f81d776da6",
+          "matches": true
+        },
+        {
+          "file": "assets/models/tennis_ball.glb",
+          "status": 200,
+          "sha256": "a7ea5f13e4f36dcca5f389e6d6ec392a43be72fa26f592ee11132d6f80939c73",
+          "matches": true
+        },
+        {
+          "file": "assets/models/tennis_net.glb",
+          "status": 200,
+          "sha256": "94ea3a8a0a7183f8e0512abae1d735261fa0173dcd45f918d7a64928f7b88799",
+          "matches": true
+        },
+        {
+          "file": "assets/models/tennis_racket.glb",
+          "status": 200,
+          "sha256": "dc478764925a35dad60b8df22a667a63dd01f40167651bddc169e8cade0d1bc1",
+          "matches": true
+        },
+        {
+          "file": "companion.html",
+          "status": 200,
+          "sha256": "fedc09c3be19fc811f85dbfb24c968cb0b75f0d6582defe00532d6e93f8e3656",
+          "matches": true
+        },
+        {
+          "file": "court-hud.css",
+          "status": 200,
+          "sha256": "d43dd67a7fdb9b60013d711f43c5d24cba84a3e9e58e0f1073043fde375f743e",
+          "matches": true
+        },
+        {
+          "file": "deployment.json",
+          "status": 200,
+          "sha256": "3b6cf29dafb226dfe0a2fc8109c00b814f493fc413943031c3f1f7ad1c5da84e",
+          "matches": true
+        },
+        {
+          "file": "favicon.ico",
+          "status": 200,
+          "sha256": "d182a3e56c62a499a2307690ef4f2dd854307894519a884ec854e3edd7499297",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-1024.png",
+          "status": 200,
+          "sha256": "c72789b279fd6d99f43c40b26ad3b68c08ccd59ee3765090e9727dd8ea465256",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-128.png",
+          "status": 200,
+          "sha256": "921cd464ebabe29abd281de6fe86349abb328b295c93a47c68bcc69719181ed7",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-16.png",
+          "status": 200,
+          "sha256": "2ad870f225a31be407214a2583407cd95f06a65dfe31c466a8de97306b509eca",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-180.png",
+          "status": 200,
+          "sha256": "60b8d74c9fb3a8e4e4b5864fd4610e8d766610cf5c5fb0ac083bd6b11141994f",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-192.png",
+          "status": 200,
+          "sha256": "61a75211fdf7ffedff73e8e3dd8c9488d8df7eaea2063b35cd316f052ec5a3a0",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-256.png",
+          "status": 200,
+          "sha256": "050b326151da014c98f7226f3f34a740d7202238549b125ddbe86ba7c3813f19",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-32.png",
+          "status": 200,
+          "sha256": "5b937245fb701d05fb25a771f56060650dcb2b0989e25b2dde298c3dc3e20028",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-48.png",
+          "status": 200,
+          "sha256": "a7085599bb3599f1f0103111df49e2046e0119c13f1a4754281da7d41a4e19d0",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-512.png",
+          "status": 200,
+          "sha256": "055b89edbb75d7f84f521d7997962ed0782dab27f25dfef983cf281ef382364a",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-64.png",
+          "status": 200,
+          "sha256": "21abd43c3c44732bbd2e190be09cde2f46f850da3486720b686d4c3d78d5f14c",
+          "matches": true
+        },
+        {
+          "file": "icons/maskable-512.png",
+          "status": 200,
+          "sha256": "055b89edbb75d7f84f521d7997962ed0782dab27f25dfef983cf281ef382364a",
+          "matches": true
+        },
+        {
+          "file": "icons/red-mii-racquet.svg",
+          "status": 200,
+          "sha256": "7e6a33cc61a4a45aa5d4d055057d10eb0bd9b6448a21d87130d07a21c526d29d",
+          "matches": true
+        },
+        {
+          "file": "index.html",
+          "status": 200,
+          "sha256": "0aee9bc3e33b32a84022e2ccef99cf9f8fc635e51f59d7fcbce3a3dc2e4ceb01",
+          "matches": true
+        },
+        {
+          "file": "manifest.webmanifest",
+          "status": 200,
+          "sha256": "9cfefad4075875cd4cfefc701182d98b1b460e65455a4b50f5f6c9cfa8f8d0af",
+          "matches": true
+        },
+        {
+          "file": "styles.css",
+          "status": 200,
+          "sha256": "b31a7711231d2e8a92a44e7d7f11a606cc96abae0ed2167795517b1334f63bda",
+          "matches": true
+        },
+        {
+          "file": "sw.js",
+          "status": 200,
+          "sha256": "ea0b2281036ac79c41af5e025af1ec19a99ad219c8e6790d4100fbdf58d1141a",
+          "matches": true
+        }
+      ]
+    },
+    "squash-arcade.robin.mba": {
+      "route": "public HTTPS edge with original hostname/SNI and certificate validation",
+      "results": [
+        {
+          "file": "arcade-briefing.css",
+          "status": 200,
+          "sha256": "d6c003a129ec3ba13f5a8918fbc317177b98e941dbcbf570ede1fad1c2ee2a97",
+          "matches": true
+        },
+        {
+          "file": "assets/audio/red-player-identity.wav",
+          "status": 200,
+          "sha256": "2b01e69d12366adc2810d89e86e0d30f773516bec6fe11d9d71ddff39938b590",
+          "matches": true
+        },
+        {
+          "file": "assets/index-B2yBSDOC.js",
+          "status": 200,
+          "sha256": "b8c83028aee02fb484672adb5fbb2e1fcf65314cc7e8b407080765313dae8abb",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hand_landmark_full.tflite",
+          "status": 200,
+          "sha256": "8c026882c9ec059ce0f8e75266bee5a9a23c341a40e0000df755374d3d1b9b68",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hand_landmark_lite.tflite",
+          "status": 200,
+          "sha256": "d7fde8ac11f8ce03f8663775bfc323f4fc9f2a38062b4f4efa142874ef5b2a48",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hands.binarypb",
+          "status": 200,
+          "sha256": "ab76c4215fca99cc2db1b5885cb8398d210e59ebe685245f72e692b4b58421e4",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hands_solution_packed_assets.data",
+          "status": 200,
+          "sha256": "bdce7b66bfc5b39ba86a47775c98e0b186fe73f8308c2279f852af4c89ffdf42",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hands_solution_simd_wasm_bin.wasm",
+          "status": 200,
+          "sha256": "78ef7eb86ebc6424ac06b13f89b9a1fc01ff35e07520e37de98887cf88c06653",
+          "matches": true
+        },
+        {
+          "file": "assets/mediapipe/hands/hands_solution_wasm_bin.wasm",
+          "status": 200,
+          "sha256": "4e70eaf8063e0e9ac10e682d9d6b55c08d0788f0a8d49925e2e484636526e157",
+          "matches": true
+        },
+        {
+          "file": "assets/models/mii_crowd.glb",
+          "status": 200,
+          "sha256": "dc18bd9b109b7178f484c6c43758a2fbad95d911ef45a127b0eeff2689557e49",
+          "matches": true
+        },
+        {
+          "file": "assets/models/mii_opponent.glb",
+          "status": 200,
+          "sha256": "4990efaac9296fe577e96e3add9a8cbb9224f6af1505a8986a3cc280f03cbde7",
+          "matches": true
+        },
+        {
+          "file": "assets/models/mii_player.glb",
+          "status": 200,
+          "sha256": "a1345a6fbcf7088f13d397f4eafff0675a722cc890426ee3e34499b47082489b",
+          "matches": true
+        },
+        {
+          "file": "assets/models/stadium_court.glb",
+          "status": 200,
+          "sha256": "94a137e33c6b419f927d748b5611a21293ac0e72bb2f55f77d7a69f81d776da6",
+          "matches": true
+        },
+        {
+          "file": "assets/models/tennis_ball.glb",
+          "status": 200,
+          "sha256": "a7ea5f13e4f36dcca5f389e6d6ec392a43be72fa26f592ee11132d6f80939c73",
+          "matches": true
+        },
+        {
+          "file": "assets/models/tennis_net.glb",
+          "status": 200,
+          "sha256": "94ea3a8a0a7183f8e0512abae1d735261fa0173dcd45f918d7a64928f7b88799",
+          "matches": true
+        },
+        {
+          "file": "assets/models/tennis_racket.glb",
+          "status": 200,
+          "sha256": "dc478764925a35dad60b8df22a667a63dd01f40167651bddc169e8cade0d1bc1",
+          "matches": true
+        },
+        {
+          "file": "companion.html",
+          "status": 200,
+          "sha256": "fedc09c3be19fc811f85dbfb24c968cb0b75f0d6582defe00532d6e93f8e3656",
+          "matches": true
+        },
+        {
+          "file": "court-hud.css",
+          "status": 200,
+          "sha256": "d43dd67a7fdb9b60013d711f43c5d24cba84a3e9e58e0f1073043fde375f743e",
+          "matches": true
+        },
+        {
+          "file": "deployment.json",
+          "status": 200,
+          "sha256": "3b6cf29dafb226dfe0a2fc8109c00b814f493fc413943031c3f1f7ad1c5da84e",
+          "matches": true
+        },
+        {
+          "file": "favicon.ico",
+          "status": 200,
+          "sha256": "d182a3e56c62a499a2307690ef4f2dd854307894519a884ec854e3edd7499297",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-1024.png",
+          "status": 200,
+          "sha256": "c72789b279fd6d99f43c40b26ad3b68c08ccd59ee3765090e9727dd8ea465256",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-128.png",
+          "status": 200,
+          "sha256": "921cd464ebabe29abd281de6fe86349abb328b295c93a47c68bcc69719181ed7",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-16.png",
+          "status": 200,
+          "sha256": "2ad870f225a31be407214a2583407cd95f06a65dfe31c466a8de97306b509eca",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-180.png",
+          "status": 200,
+          "sha256": "60b8d74c9fb3a8e4e4b5864fd4610e8d766610cf5c5fb0ac083bd6b11141994f",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-192.png",
+          "status": 200,
+          "sha256": "61a75211fdf7ffedff73e8e3dd8c9488d8df7eaea2063b35cd316f052ec5a3a0",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-256.png",
+          "status": 200,
+          "sha256": "050b326151da014c98f7226f3f34a740d7202238549b125ddbe86ba7c3813f19",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-32.png",
+          "status": 200,
+          "sha256": "5b937245fb701d05fb25a771f56060650dcb2b0989e25b2dde298c3dc3e20028",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-48.png",
+          "status": 200,
+          "sha256": "a7085599bb3599f1f0103111df49e2046e0119c13f1a4754281da7d41a4e19d0",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-512.png",
+          "status": 200,
+          "sha256": "055b89edbb75d7f84f521d7997962ed0782dab27f25dfef983cf281ef382364a",
+          "matches": true
+        },
+        {
+          "file": "icons/icon-64.png",
+          "status": 200,
+          "sha256": "21abd43c3c44732bbd2e190be09cde2f46f850da3486720b686d4c3d78d5f14c",
+          "matches": true
+        },
+        {
+          "file": "icons/maskable-512.png",
+          "status": 200,
+          "sha256": "055b89edbb75d7f84f521d7997962ed0782dab27f25dfef983cf281ef382364a",
+          "matches": true
+        },
+        {
+          "file": "icons/red-mii-racquet.svg",
+          "status": 200,
+          "sha256": "7e6a33cc61a4a45aa5d4d055057d10eb0bd9b6448a21d87130d07a21c526d29d",
+          "matches": true
+        },
+        {
+          "file": "index.html",
+          "status": 200,
+          "sha256": "0aee9bc3e33b32a84022e2ccef99cf9f8fc635e51f59d7fcbce3a3dc2e4ceb01",
+          "matches": true
+        },
+        {
+          "file": "manifest.webmanifest",
+          "status": 200,
+          "sha256": "9cfefad4075875cd4cfefc701182d98b1b460e65455a4b50f5f6c9cfa8f8d0af",
+          "matches": true
+        },
+        {
+          "file": "styles.css",
+          "status": 200,
+          "sha256": "b31a7711231d2e8a92a44e7d7f11a606cc96abae0ed2167795517b1334f63bda",
+          "matches": true
+        },
+        {
+          "file": "sw.js",
+          "status": 200,
+          "sha256": "ea0b2281036ac79c41af5e025af1ec19a99ad219c8e6790d4100fbdf58d1141a",
+          "matches": true
+        }
+      ]
+    }
+  }
+}

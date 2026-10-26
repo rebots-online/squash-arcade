@@ -1,0 +1,16 @@
+        Info Looking up installed tauri packages to check mismatched versions...
+   Compiling squash-arcade v1.17.84079 (/home/robin/.cache/squash-arcade/work/2026-10-26T19-59-22.155Z-linux/src-tauri)
+warning: squash-arcade@1.17.84079: STATIC_VCRUNTIME is deprecated; use build.windows.staticVCRuntime in tauri.conf.json or tauri_build::WindowsAttributes::static_vc_runtime instead.
+    Finished `release` profile [optimized] target(s) in 1m 53s
+       Built application at: /home/robin/.cache/squash-arcade/targets/linux/release/squash-arcade
+        Info Patching /home/robin/.cache/squash-arcade/targets/linux/release/squash-arcade with bundle type information: appimage
+    Bundling Virtual Squash_1.17.84079_amd64.AppImage (/home/robin/.cache/squash-arcade/targets/linux/release/bundle/appimage/Virtual Squash_1.17.84079_amd64.AppImage)
+        Info Patching /home/robin/.cache/squash-arcade/targets/linux/release/squash-arcade with bundle type information: deb
+    Bundling Virtual Squash_1.17.84079_amd64.deb (/home/robin/.cache/squash-arcade/targets/linux/release/bundle/deb/Virtual Squash_1.17.84079_amd64.deb)
+        Info Patching /home/robin/.cache/squash-arcade/targets/linux/release/squash-arcade with bundle type information: rpm
+    Bundling Virtual Squash-1.17.84079-1.x86_64.rpm (/home/robin/.cache/squash-arcade/targets/linux/release/bundle/rpm/Virtual Squash-1.17.84079-1.x86_64.rpm)
+    Finished 3 bundles at:
+        /home/robin/.cache/squash-arcade/targets/linux/release/bundle/appimage/Virtual Squash_1.17.84079_amd64.AppImage
+        /home/robin/.cache/squash-arcade/targets/linux/release/bundle/deb/Virtual Squash_1.17.84079_amd64.deb
+        /home/robin/.cache/squash-arcade/targets/linux/release/bundle/rpm/Virtual Squash-1.17.84079-1.x86_64.rpm
+

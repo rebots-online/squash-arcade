@@ -1,0 +1,6 @@
+{
+  "runtime": "Microsoft Edge WebView2; standalone EXE is not an installer",
+  "signing": "unsigned",
+  "platformVersion": "1.17.18543",
+  "canonicalVersion": "1.17.84079"
+}

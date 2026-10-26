@@ -1,0 +1,8 @@
+{
+  "expected": "E:\\devProjects\\squash-arcade\\dist\\.work\\1.17.84079\\2026-10-26T19-59-22.155Z\\android\\source\\src-tauri\\icons\\android\\mipmap-xxxhdpi\\ic_launcher_round.png",
+  "actual": "E:\\devProjects\\squash-arcade\\dist\\squash-arcade-v1.17.84079-android-ic_launcher_round.png",
+  "width": 192,
+  "height": 192,
+  "pixelsMatch": true,
+  "rgbaSha256": "49889c8419beaf4962ba7efc03f6b52c5f86def9c9d53c9e96c704b101cf29d9"
+}

@@ -1,0 +1,7 @@
+{
+  "abi": "arm64-v8a",
+  "canonicalVersion": "1.17.84079",
+  "versionCode": 101784079,
+  "icon": "red Mii; generated Android resources copied and hash-verified",
+  "signing": "unsigned; production signing is a separate release step"
+}

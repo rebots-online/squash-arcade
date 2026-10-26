@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-26T19:46:12.278Z",
-  "sourceCommit": "9212ddc2d71b4cdaa6b05dcf27652d80b42db33a",
+  "generatedAt": "2026-10-26T19:59:22.067Z",
+  "sourceCommit": "bbfeca2af924f3a35f1e9cbd66487d4afec445e5",
   "scope": "Repository-defined speech sinks, producers and grammar; not an exhaustive literal set for open numeric/public-text domains.",
   "sourceFiles": [
     {

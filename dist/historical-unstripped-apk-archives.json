@@ -1,0 +1,18 @@
+[
+  {
+    "original": "dist\\squash-arcade-v1.16.83680-android-arm64-unsigned.apk",
+    "bytes": 175846133,
+    "archive": "dist\\squash-arcade-v1.16.83680-historical-unstripped-apk.zip",
+    "archiveSha256": "640aafe57930d21935a459a9b58e123c2677941de85cf841fcfa1c3db205bacd",
+    "status": "Historical unstripped APK preserved unchanged locally and losslessly archived for Git file-size compatibility; superseded by the scripted stripped install APK.",
+    "sha256": "2b46727dff9c9a4c4f4a17b8679c4ccd054219a6e1e90e844b421e478a7ccbb7"
+  },
+  {
+    "original": "dist\\squash-arcade-v1.16.84066-android-arm64-unsigned.apk",
+    "bytes": 175877117,
+    "archive": "dist\\squash-arcade-v1.16.84066-historical-unstripped-apk.zip",
+    "archiveSha256": "f5a3ae1762295a26d295b96de62f11cb5f504ce479e8829dfa388742803462ae",
+    "status": "Historical unstripped APK preserved unchanged locally and losslessly archived for Git file-size compatibility; superseded by the scripted stripped install APK.",
+    "sha256": "fe4b0bd04a48b57b9a24f76c0f0dc504b0add0d0e3f9c210f02db506c581ff46"
+  }
+]
