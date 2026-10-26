@@ -29,7 +29,7 @@ status: source-reviewed; deployment-and-device-verification-pending
 | Handheld phone as racket | Companion page present; backend-dependent | `public/companion.html` collects motion/orientation and posts events to `/api/racket/*` |
 | Two phone controllers / 1v1 rooms | Development/preview backend scaffolding | Room/telemetry handlers currently reside in `vite.config.ts`, not production `dist/` |
 | TV casting / Chromecast receiver | Not established | Screen mirroring or external display may work; dedicated Cast integration isn't provided |
-| Tauri 2 Android, Windows, Linux packaging | Not present | Requires a new `src-tauri/` project and platform validation |
+| Tauri 2 Android, Windows, Linux packaging | Scripted native shell | `npm run build` coordinates Windows, AppImage, Android and PWA; see the release manifest for actual build results |
 | Hosted/paid LLM inference | **None — no inference path exists** | Unused `@google/genai` dependency and `GEMINI_API_KEY` define removed (TASK-18); see the audit below |
 
 ## What it is
@@ -197,9 +197,15 @@ A TV-connected PC running the game is the easiest proof-of-concept shared displa
 
 This is a source audit, **not** a billing-account inspection, exhaustive security audit, license clearance, or a guarantee of zero third-party costs.
 
-## Native applications — planned, not currently built
+## Scripted multiplatform build
 
-The browser frontend is a candidate for **Tauri 2** packaging into Android APK/AAB, Windows MSI/NSIS, and Linux desktop bundles. This repository does not currently include `src-tauri/` or verified native packaging. A future implementation must handle camera/sensor permissions, WebView/GPU support, mobile safe areas, offline asset bundling and the multiplayer backend boundary. Do not describe the existing app as a native Android app solely because it can run in a mobile browser.
+Run `npm ci`, then `npm run build` (or `npm run build:all`) on the provisioned Windows host. The coordinator uses the shared `E:/DevTools/pearl-build-env.ps1` environment for Windows/Android and the `Ubuntu-24.04` WSL distribution for AppImage. Override these with `SQUASH_WINDOWS_ENV`, `SQUASH_WSL_DISTRO` and `SQUASH_LINUX_NODE` when needed. Shared caches are reused.
+
+One source/frontend snapshot feeds four concurrently started workers: Windows NSIS installer, Linux AppImage, Android arm64 APK/AAB, and a PWA ZIP plus deployable web directory. Results, logs, SHA-256 hashes and start/end times are retained under `builds/<version>/<attempt>/`. The build fails if any target fails or lacks its required artifacts. Android and Windows release outputs are unsigned until the separate production-signing step; installing/running on target devices is a separate acceptance gate. The current Linux build baseline is Ubuntu 24.04; older-distribution compatibility is not asserted.
+
+The successful artifacts retain the version they were built with. Immediately after all workers succeed and the source fingerprint is rechecked, the source MINOR advances in version.txt, package.json/package-lock.json and Cargo metadata. Failed attempts retain the source version. `public/deployment.json` and `dist/` describe the last successful build; the source version describes the next build. A lock prevents overlapping coordinators.
+
+`npm run icons` regenerates the favicon/PWA/native icon sets from the existing red Mii SVG and the opposing-diagonal squash racquet. The production PWA caches local game files for offline startup; camera models, remote music and phone/multiplayer services retain their existing network requirements.
 
 ## Testing and known limitations
 

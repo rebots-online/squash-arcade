@@ -1,7 +1,6 @@
 node_modules/
 **/dist/
 !/dist/
-package-lock.json
 .env
 .env.*
 *.log
@@ -14,3 +13,7 @@ package-lock.json
 .codegraph/
 .playwright-mcp/
 STAGING_*/
+
+# Versioned platform artifacts and retained attempt logs (not source).
+/builds/
+/.build-lock
