@@ -7,6 +7,7 @@ import { setSourceVersion } from './source-version.mjs';
 import { requireBuildAll } from './build-context.mjs';
 import { artifactNames, targets } from './build-targets.mjs';
 import { assertProductIdentity } from './build-product.mjs';
+import { publishWeb } from './publish-web.mjs';
 requireBuildAll();
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
@@ -36,7 +37,7 @@ const run=(command,args,options={})=>new Promise((done,fail)=>{
   const child=spawn(command,args,{cwd:root,stdio:'inherit',windowsHide:true,...options});
   child.once('error',fail);child.once('exit',code=>code===0?done():fail(new Error(`${command} exited ${code}`)));
 });
-let manifest,runDirectory,releaseDirectory,inventoryPath;
+let manifest,runDirectory,releaseDirectory,inventoryPath,webPublication;
 try {
   await assertProductIdentity();
   await run(process.execPath,['scripts/catalog-speech.mjs']);
@@ -132,22 +133,31 @@ try {
     child.once('error',error=>finish(1,error));child.once('exit',code=>finish(code??1));
     });
   };
-  const results=await Promise.all(platforms.map(worker));
+  const jobs=Object.fromEntries(platforms.map(platform=>[platform,worker(platform)]));
+  // Publish playable web bytes as soon as both web workers finish. Native jobs
+  // remain concurrent and cannot postpone this feedback opportunity.
+  webPublication=Promise.all([jobs.web,jobs.pwa]).then(async results=>{
+    if(results.some(record=>record.exitCode!==0))return {status:'skipped',error:'Web/PWA build failed.'};
+    return publishWeb(manifest,join(base,'pwa-web'));
+  }).catch(error=>({status:'failed',error:error.message}));
+  const results=await Promise.all(Object.values(jobs));
   if(results.some(record=>record.exitCode!==0))throw new Error('Platform matrix incomplete. Source version has not advanced; inspect the retained per-platform logs.');
   if(await fingerprint(await sourceFiles())!==sourceHash)throw new Error('Source changed during the build. Artifacts retained; source version has not advanced.');
   const [major,minor]=version.split('.').map(Number);
   const next=`${major}.${minor+1}.${String(Math.floor(Date.now()/60000)%100000).padStart(5,'0')}`;
+  manifest.nextSourceVersion=next;
   await setSourceVersion(next);
   manifest.status='succeeded';manifest.finishedAt=new Date().toISOString();manifest.nextSourceVersion=next;
   await writeFile(completePath,JSON.stringify(manifest,null,2)+'\n');
   await writeFile(inventoryPath,JSON.stringify({...manifest,status:'completed-inventory'},null,2)+'\n');
-  // Preserve the old root web tree without moving any part of durable dist.
-  await cp(join(base,'pwa-web'),join(root,'dist'),{recursive:true});
-  await cp(join(base,'public/deployment.json'),join(root,'public/deployment.json'));
   console.log(`All packages were produced directly in ${relative(root,releaseDirectory)}.`);
   console.log(`All platforms built ${version}. Source immediately advanced to ${next}.`);
+  manifest.webDeployment=await webPublication;
+  await writeFile(completePath,JSON.stringify(manifest,null,2)+'\n');
+  await writeFile(inventoryPath,JSON.stringify({...manifest,status:'completed-inventory'},null,2)+'\n');
+  if(manifest.webDeployment.status!=='succeeded')throw new Error(manifest.webDeployment.error);
 }catch(error){
-  if(manifest){manifest.status='failed';manifest.error=error.message;manifest.finishedAt=new Date().toISOString();await writeFile(inventoryPath,JSON.stringify(manifest,null,2)+'\n');}
+  if(manifest){if(webPublication)manifest.webDeployment=await webPublication;manifest.status=manifest.status==='succeeded'?'deployment-failed':'failed';manifest.error=error.message;manifest.finishedAt=new Date().toISOString();await writeFile(inventoryPath,JSON.stringify(manifest,null,2)+'\n');}
   console.error(error.message);process.exitCode=1;
 }finally{
   await lock.close();await unlink(lockPath);

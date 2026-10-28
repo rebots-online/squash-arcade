@@ -12,7 +12,8 @@ scope_locations:
 
 # TASK LIST
 
-  🟡 TASK-67: correcting replay key handling when start/menu/audio buttons retain focus, including fresh keydown after a lost keyup; scripted release and browser verification pending.
+  🟡 TASK-67: replay keyboard fix published as 1.18.86681, 36/36 served files verified on each domain; interactive acceptance remains open because browser control stopped.
+  🟢 TASK-68: web publication decoupled from native completion; scripted recovery reused all twelve packages and advanced source to 1.19.86701. The next normal run still needs observed overlapping deployment/native timing.
 
 ⚪ Squash Arcade — E:\devProjects\squash-arcade
   🟢 Operator evaluation of deployed v1.12.83046: TASK-61/62 complete with scoped runtime evidence. Browser identity clip playback observed; speaker listening and physical motion controls remain operator gates.

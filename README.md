@@ -200,10 +200,13 @@ This is a source audit, **not** a billing-account inspection, exhaustive securit
 ## Scripted multiplatform build
 
 Only ./build_all.sh may build or deploy. On Windows use Git Bash. The default
-command starts Windows, Linux, Android, ordinary web and PWA workers together,
-requires the complete twelve-package matrix, automatically advances source
-minor after success, then deploys and verifies all three configured domains.
+command starts Windows, Linux, Android, ordinary web and PWA workers together.
+As soon as web and PWA succeed, it deploys and verifies all three configured
+domains while native workers continue. The complete twelve-package matrix is
+still required before the source minor advances automatically.
 ./build_all.sh --deploy-existing retries delivery without another build/version.
+./build_all.sh --recover-release VERSION verifies and finalizes already completed
+packages after an interrupted version/deployment step, without recompilation.
 Helpers reject direct invocation.
 
 All final files are directly in tracked root dist: standalone/installer EXEs,

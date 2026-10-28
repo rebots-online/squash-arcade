@@ -9,8 +9,19 @@ requireBuildAll();
 const root=resolve(import.meta.dirname,'..');
 process.chdir(root);
 const metadata=JSON.parse(await readFile('dist/deployment.json','utf8'));
-const build=JSON.parse(await readFile(`dist/squash-arcade-v${metadata.version}-build-manifest.json`,'utf8'));
-if(build.status!=='succeeded'||build.sourceHash!==metadata.sourceHash)throw new Error('Deployment requires a complete successful platform build matching dist.');
+const build=JSON.parse(await readFile(`dist/squash-arcade-v${metadata.version}-web-build-manifest.json`,'utf8').catch(error=>{
+  if(error.code!=='ENOENT')throw error;
+  return readFile(`dist/squash-arcade-v${metadata.version}-build-manifest.json`,'utf8');
+}));
+if(!['succeeded','web-ready'].includes(build.status)||build.sourceHash!==metadata.sourceHash||build.version!==metadata.version)throw new Error('Deployment requires a successful web/PWA build matching dist.');
+for(const platform of ['web','pwa']) {
+  const result=build.platforms[platform];
+  if(result?.exitCode!==0||!result.artifacts?.length)throw new Error(`${platform} artifact is incomplete.`);
+  for(const artifact of result.artifacts) {
+    const bytes=await readFile(artifact.path);
+    if(bytes.length!==artifact.bytes||createHash('sha256').update(bytes).digest('hex')!==artifact.sha256)throw new Error(`Changed web artifact: ${artifact.path}`);
+  }
+}
 const pwaArtifact=build.platforms.pwa.artifacts.find(file=>file.path.endsWith('.zip'));
 const flatWeb=join(root,'dist',`squash-arcade-v${metadata.version}-pwa`);
 const frozenWeb=await readdir(flatWeb).then(()=>flatWeb).catch(error=>{if(error.code==='ENOENT')return join(root,pwaArtifact.path,'..','web');throw error;});

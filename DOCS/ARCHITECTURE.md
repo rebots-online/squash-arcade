@@ -500,7 +500,8 @@ when an earlier build is open/locked, and keeps the filename's BUILD truthful to
 the attempt. Failed attempts retain their stamped BUILD and do not advance MINOR.
 Retry ZIP writers use Force only after the coordinator has retained the previous
 versioned bytes and their hashes; otherwise a failed-version retry cannot package
-already-existing web/PWA filenames. Failed matrices never deploy or advance MINOR.
+already-existing web/PWA filenames. Failed matrices never advance MINOR; under
+the 2026-10-28 correction a successful web/PWA pair deploys independently.
 
 Brand correction: use the existing primary title and narrator identity, Virtual
 Squash, consistently in page/OpenGraph titles, visible labels, companion page,
@@ -520,8 +521,12 @@ chunk failures get a bounded recovery reload. The worker only navigates during
 activation, so registering the unchanged script cannot create a reload loop.
 
 `build_all.sh` at repository root is the sole build/deployment entry. It owns the
-complete build then deployment, or `--deploy-existing` to finish delivery of an
-already completed build without manufacturing another version. Helpers reject
+concurrent build with web deployment immediately after the web/PWA workers finish,
+or `--deploy-existing` to finish delivery of a prepared web release without
+manufacturing another version. Native completion cannot delay web evaluation.
+`--recover-release VERSION` verifies all twelve completed package hashes and
+finishes interrupted version finalization and deployment without recompilation.
+Helpers reject
 execution outside its inherited build context. npm aliases enter this shell
 script through the platform launcher; none invokes a build/deploy helper directly.
 The source minor advances automatically immediately after complete compilation;

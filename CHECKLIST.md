@@ -13,6 +13,14 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 - **Status**: [/]
 - **Contract**: Keep pointer exceptions for start/menu/audio controls, but route every keyboard down/up through PointPresentation while the point presentation owns input. A fresh non-repeat keydown skips even after a lost keyup; repeats from a held rally key do not. Consume the skip gesture through release so it cannot also serve, open a menu or change a shot.
 - **Verification**: Inspect the capture-handler and release path; observe focused-button keyboard skipping and subsequent serve input in the browser when available. No automated tests. Build and deploy only with build_all.sh, publish all twelve packages in dist, and commit/push with remote readback.
+- **Observed delivery**: Source 6a2a5a4 is live in 1.18.86681 on all three domains, 36/36 file hashes each. All twelve packages hash-verified. Browser control timed out and stopped, so interactive replay-skip acceptance remains open; no automated tests were run.
+
+## TASK-68 — Publish web while native builds continue; recover completed releases
+
+- **Status**: [X]
+- **Contract**: User correction 2026-10-28. Keep build_all.sh as sole entry and launch all platform workers concurrently, but publish the web/PWA output immediately after those two workers succeed. Keep full matrix completion, automatic minor increment and native acceptance separate. Add hash-verified scripted recovery after successful compilation but failed finalization; never require recompiling identical completed packages.
+- **Verification**: JavaScript/shell syntax checks and review of completion promises. Exercise shared web publication through build_all.sh --recover-release 1.18.86681; verify twelve artifact hashes, source increment and all three live domains. The next normal run must supply actual overlapping web/native timing evidence. No automated tests.
+- **Observed delivery**: Recovery exited 0 with 12/12 package hashes and 36/36 served-file hashes on each domain. Source automatically advanced to 1.19.86701. A direct-write retry still hit the Windows package.json lock; atomic same-directory replacement succeeded. Scheduling syntax/review complete; next-normal-run timing remains unobserved.
 
 ## TASK-66 — Complete speech inventory and current OpenRouter TTS research
 
