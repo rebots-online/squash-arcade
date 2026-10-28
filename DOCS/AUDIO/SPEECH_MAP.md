@@ -1,6 +1,6 @@
 # Speech map — Virtual Squash
 
-Generated 2026-10-26T19:59:22.067Z. Source commit bbfeca2af924f3a35f1e9cbd66487d4afec445e5; individual file hashes are in speech-catalog.json.
+Generated 2026-10-28T15:21:23.135Z. Source commit 6a2a5a498f98ade0e409eaac869a2541fc49a3a4; individual file hashes are in speech-catalog.json.
 
 Found 16 speech call sites, 72 inventory records and 40 unique fixed texts including unconfirmed/legacy producers. The optional score bank contains 6800 full utterances through score 30.
 
@@ -28,39 +28,39 @@ This is the complete source-linked map of repository-owned speech inputs/produce
 - **fixed** — Down! Handout, five-four.
   Source: src/audio_engine.js:1445 (toggleRefereeVoice); id 8c25233d88f629a1.
 - **template** — {btn.dataset.callout}
-  Source: src/game_engine.js:1440 (_bindJukeboxAndRefereeControls); id d2a043b3a20fa568.
+  Source: src/game_engine.js:1443 (_bindJukeboxAndRefereeControls); id d2a043b3a20fa568.
 - **fixed** — Down! Handout, five-four.
-  Source: src/game_engine.js:1440 (_bindJukeboxAndRefereeControls); id 83ce1d3526fed96d.
+  Source: src/game_engine.js:1443 (_bindJukeboxAndRefereeControls); id 83ce1d3526fed96d.
 - **fixed** — Stop play! Yes, Let. Safety reminder: always call a Let when obstructed instead of striking your opponent.
-  Source: src/game_engine.js:1473 (_bindJukeboxAndRefereeControls); id ebf5d8a97348d6c3.
+  Source: src/game_engine.js:1476 (_bindJukeboxAndRefereeControls); id ebf5d8a97348d6c3.
 - **fixed** — Down! Handout, five-four.
-  Source: src/game_engine.js:1645 (toggleRefereeVoice); id 2cd13ab690d6164d.
+  Source: src/game_engine.js:1648 (toggleRefereeVoice); id 2cd13ab690d6164d.
 - **fixed** — Quick note — you don't run to the ball in this game; your player does that. Your only job is shot selection: keys one to five, a click, or spacebar. Call the spin!
-  Source: src/game_engine.js:2450 (_runRacketSpinCeremony); id ca1ef9082f4c2427.
+  Source: src/game_engine.js:2453 (_runRacketSpinCeremony); id ca1ef9082f4c2427.
 - **template** — {this.rulesEngine.getHighStakesLabel()}
-  Source: src/game_engine.js:2603 (_setupPointServe); id d40b2586d7b1619d.
+  Source: src/game_engine.js:2606 (_setupPointServe); id d40b2586d7b1619d.
 - **template** — {letDecision.refereeCallout} {letDecision.safetyWarningText}
-  Source: src/game_engine.js:2771 (_replayLetRally); id e34a418312a4b67b.
+  Source: src/game_engine.js:2774 (_replayLetRally); id e34a418312a4b67b.
 - **template** — {letDecision.refereeCallout}
-  Source: src/game_engine.js:2771 (_replayLetRally); id b77e3332e78455d7.
+  Source: src/game_engine.js:2774 (_replayLetRally); id b77e3332e78455d7.
 - **fixed** — Yes, Let! Play a let.
-  Source: src/game_engine.js:2771 (_replayLetRally); id 1cd0277970065bf1.
+  Source: src/game_engine.js:2774 (_replayLetRally); id 1cd0277970065bf1.
 - **fixed** — Server, use the left box.
-  Source: src/game_engine.js:2978 (_updateServeReadiness); id a43242060f2d7a35.
+  Source: src/game_engine.js:2981 (_updateServeReadiness); id a43242060f2d7a35.
 - **fixed** — Server, use the right box.
-  Source: src/game_engine.js:2978 (_updateServeReadiness); id b38910e139affe12.
+  Source: src/game_engine.js:2981 (_updateServeReadiness); id b38910e139affe12.
 - **fixed** — Receiver, give the server room.
-  Source: src/game_engine.js:2978 (_updateServeReadiness); id 91fedb49bafc63fd.
+  Source: src/game_engine.js:2981 (_updateServeReadiness); id 91fedb49bafc63fd.
 - **template** — {this.rulesEngine.formatRefereeCallout(outcome,reason,decisionMeta)}
-  Source: src/game_engine.js:3950 (_awardPoint); id c3332a5d80f7c1ad.
+  Source: src/game_engine.js:3953 (_awardPoint); id c3332a5d80f7c1ad.
 - **template** — {decisionMeta.refereeCallout} {decisionMeta.safetyWarningText}
-  Source: src/game_engine.js:4038 (_showPointOutcome); id 6f2ad24f38d07886.
+  Source: src/game_engine.js:4041 (_showPointOutcome); id 6f2ad24f38d07886.
 - **template** — {this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)} {decisionMeta.safetyWarningText}
-  Source: src/game_engine.js:4038 (_showPointOutcome); id 1658587efdbb4483.
+  Source: src/game_engine.js:4041 (_showPointOutcome); id 1658587efdbb4483.
 - **template** — {decisionMeta.refereeCallout} {this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)}
-  Source: src/game_engine.js:4038 (_showPointOutcome); id 227708848043d526.
+  Source: src/game_engine.js:4041 (_showPointOutcome); id 227708848043d526.
 - **template** — {this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)}
-  Source: src/game_engine.js:4038 (_showPointOutcome); id d46720e4dc73b539.
+  Source: src/game_engine.js:4041 (_showPointOutcome); id d46720e4dc73b539.
 - **template** — {c.speech}
   Source: src/squash/ArcadeBriefing.js:158 (showChapter); id 277146171b17abc0.
 
@@ -80,7 +80,7 @@ This is the complete source-linked map of repository-owned speech inputs/produce
 ### rules-or-safety-producer
 
 - **fixed** — ⚠️ REFEREE REMINDER: You were obstructed by your opponent! Call "Let, please!" immediately (Press F / L, raise an open hand ✋, or hold phone upright) instead of letting the ball bounce twice.
-  Source: src/game_engine.js:3660 (_stepPhysics); id 470a573fcbb6bcb0.
+  Source: src/game_engine.js:3663 (_stepPhysics); id 470a573fcbb6bcb0.
 - **fixed** — Stop play! Ball hit opponent! Stroke awarded, but SECOND SAFETY WARNING to Player 1: Never strike the ball when your opponent is in the line of fire! Hold your shot and call Let, please!
   Source: src/squash/RulesEngine.js:109 (evaluateBallPlayerBodyCollision); id 7940e005313bd109.
 - **fixed** — Stop play! Ball hit opponent! Stroke awarded, but SECOND SAFETY WARNING to Player 2: Never strike the ball when your opponent is in the line of fire! Hold your shot and call Let, please!
@@ -251,17 +251,17 @@ This is the complete source-linked map of repository-owned speech inputs/produce
 - src/audio_engine.js:586 playNarratorUSPInvite → beginBriefingNarration(item.speech)
 - src/audio_engine.js:1445 toggleRefereeVoice → playVoiceCallout('Down! Handout, five-four.')
 - src/audio_engine.js:1675 announceScore → playVoiceCallout(raw)
-- src/game_engine.js:1440 _bindJukeboxAndRefereeControls → announceScore(phrase)
-- src/game_engine.js:1473 _bindJukeboxAndRefereeControls → announceScore('Stop play! Yes, Let. Safety reminder: always call a Let when obstructed instead of striking your opponent.')
-- src/game_engine.js:1645 toggleRefereeVoice → announceScore('Down! Handout, five-four.')
-- src/game_engine.js:2450 _runRacketSpinCeremony → announceScore("Quick note — you don't run to the ball in this game; your player does that. " + 'Your only job is shot selection: keys one to five, a click, or spacebar. Call the spin!')
-- src/game_engine.js:2603 _setupPointServe → announceScore(highStakes)
-- src/game_engine.js:2771 _replayLetRally → announceScore(voiceText)
-- src/game_engine.js:2978 _updateServeReadiness → playVoiceCallout(text)
-- src/game_engine.js:3950 _awardPoint → announceScore(callout)
-- src/game_engine.js:4000 _showPointOutcome → announceScore(refereeCallout)
-- src/game_engine.js:4016 _showPointOutcome → announceScore(refereeCallout)
-- src/game_engine.js:4038 _showPointOutcome → announceScore(refereeCallout)
+- src/game_engine.js:1443 _bindJukeboxAndRefereeControls → announceScore(phrase)
+- src/game_engine.js:1476 _bindJukeboxAndRefereeControls → announceScore('Stop play! Yes, Let. Safety reminder: always call a Let when obstructed instead of striking your opponent.')
+- src/game_engine.js:1648 toggleRefereeVoice → announceScore('Down! Handout, five-four.')
+- src/game_engine.js:2453 _runRacketSpinCeremony → announceScore("Quick note — you don't run to the ball in this game; your player does that. " + 'Your only job is shot selection: keys one to five, a click, or spacebar. Call the spin!')
+- src/game_engine.js:2606 _setupPointServe → announceScore(highStakes)
+- src/game_engine.js:2774 _replayLetRally → announceScore(voiceText)
+- src/game_engine.js:2981 _updateServeReadiness → playVoiceCallout(text)
+- src/game_engine.js:3953 _awardPoint → announceScore(callout)
+- src/game_engine.js:4003 _showPointOutcome → announceScore(refereeCallout)
+- src/game_engine.js:4019 _showPointOutcome → announceScore(refereeCallout)
+- src/game_engine.js:4041 _showPointOutcome → announceScore(refereeCallout)
 - src/squash/ArcadeBriefing.js:158 showChapter → beginBriefingNarration(c.speech)
 
 ## Gaps that must not be hidden by generation

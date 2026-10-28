@@ -1,0 +1,35 @@
+{
+  "version": "1.18.86681",
+  "sourceCommit": "6a2a5a498f98ade0e409eaac869a2541fc49a3a4",
+  "sourceHash": "05cb236df88e1059e1424f76fa8f299f62e247dea9c96380cf6a1c91b00b6a74",
+  "startedAt": "2026-10-28T15:21:23.236Z",
+  "status": "web-ready",
+  "platforms": {
+    "web": {
+      "startedAt": "2026-10-28T15:21:32.659Z",
+      "log": "dist\\squash-arcade-v1.18.86681-2026-10-28T15-21-23.236Z-web-build.log",
+      "exitCode": 0,
+      "artifacts": [
+        {
+          "path": "dist\\squash-arcade-v1.18.86681-web.zip",
+          "bytes": 20587853,
+          "sha256": "831e0260674b2578186a10b56a6707a2da217d42c15d0086e3122b8d168432e4"
+        }
+      ],
+      "finishedAt": "2026-10-28T15:21:36.175Z"
+    },
+    "pwa": {
+      "startedAt": "2026-10-28T15:21:32.672Z",
+      "log": "dist\\squash-arcade-v1.18.86681-2026-10-28T15-21-23.236Z-pwa-build.log",
+      "exitCode": 0,
+      "artifacts": [
+        {
+          "path": "dist\\squash-arcade-v1.18.86681-pwa.zip",
+          "bytes": 20589308,
+          "sha256": "d8051ab2e8c495a1af0c2268ff4bd16b37fdfafa0d59d2827ef3c2ca22ca95c9"
+        }
+      ],
+      "finishedAt": "2026-10-28T15:21:36.393Z"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-26T19:59:22.067Z",
-  "sourceCommit": "bbfeca2af924f3a35f1e9cbd66487d4afec445e5",
+  "generatedAt": "2026-10-28T15:21:23.135Z",
+  "sourceCommit": "6a2a5a498f98ade0e409eaac869a2541fc49a3a4",
   "scope": "Repository-defined speech sinks, producers and grammar; not an exhaustive literal set for open numeric/public-text domains.",
   "sourceFiles": [
     {
@@ -13,7 +13,7 @@
     },
     {
       "file": "src/game_engine.js",
-      "sha256": "6fd1c08223c611e10e47056bfc2120a30fac1fada93a352ca21ac15c2822593b"
+      "sha256": "de3290200c8cf80a7183e5c0970246bdd00b30f1d2050ef35baf76d5d760812a"
     },
     {
       "file": "src/hud_ui.js",
@@ -93,7 +93,7 @@
     },
     {
       "file": "src/squash/PointPresentation.js",
-      "sha256": "9415608e6a5a3890b8daa0c945a0b31be10e2730f3e58ea5542caad6b697e41a"
+      "sha256": "9353f95f6f7e534d4d856d5e614cbbd924fd8d7e384c43af611f860219378f9b"
     },
     {
       "file": "src/squash/RacketGrip.js",
@@ -372,7 +372,7 @@
       "text": "{btn.dataset.callout}",
       "source": {
         "file": "src/game_engine.js",
-        "line": 1440,
+        "line": 1443,
         "owner": "_bindJukeboxAndRefereeControls"
       },
       "expression": "phrase"
@@ -384,7 +384,7 @@
       "text": "Down! Handout, five-four.",
       "source": {
         "file": "src/game_engine.js",
-        "line": 1440,
+        "line": 1443,
         "owner": "_bindJukeboxAndRefereeControls"
       },
       "expression": "phrase"
@@ -396,7 +396,7 @@
       "text": "Stop play! Yes, Let. Safety reminder: always call a Let when obstructed instead of striking your opponent.",
       "source": {
         "file": "src/game_engine.js",
-        "line": 1473,
+        "line": 1476,
         "owner": "_bindJukeboxAndRefereeControls"
       },
       "expression": "'Stop play! Yes, Let. Safety reminder: always call a Let when obstructed instead of striking your opponent.'"
@@ -408,7 +408,7 @@
       "text": "Down! Handout, five-four.",
       "source": {
         "file": "src/game_engine.js",
-        "line": 1645,
+        "line": 1648,
         "owner": "toggleRefereeVoice"
       },
       "expression": "'Down! Handout, five-four.'"
@@ -420,7 +420,7 @@
       "text": "Quick note — you don't run to the ball in this game; your player does that. Your only job is shot selection: keys one to five, a click, or spacebar. Call the spin!",
       "source": {
         "file": "src/game_engine.js",
-        "line": 2450,
+        "line": 2453,
         "owner": "_runRacketSpinCeremony"
       },
       "expression": "\"Quick note — you don't run to the ball in this game; your player does that. \" + 'Your only job is shot selection: keys one to five, a click, or spacebar. Call the spin!'"
@@ -432,7 +432,7 @@
       "text": "{this.rulesEngine.getHighStakesLabel()}",
       "source": {
         "file": "src/game_engine.js",
-        "line": 2603,
+        "line": 2606,
         "owner": "_setupPointServe"
       },
       "expression": "highStakes"
@@ -444,7 +444,7 @@
       "text": "{letDecision.refereeCallout} {letDecision.safetyWarningText}",
       "source": {
         "file": "src/game_engine.js",
-        "line": 2771,
+        "line": 2774,
         "owner": "_replayLetRally"
       },
       "expression": "voiceText"
@@ -456,7 +456,7 @@
       "text": "{letDecision.refereeCallout}",
       "source": {
         "file": "src/game_engine.js",
-        "line": 2771,
+        "line": 2774,
         "owner": "_replayLetRally"
       },
       "expression": "voiceText"
@@ -468,7 +468,7 @@
       "text": "Yes, Let! Play a let.",
       "source": {
         "file": "src/game_engine.js",
-        "line": 2771,
+        "line": 2774,
         "owner": "_replayLetRally"
       },
       "expression": "voiceText"
@@ -480,7 +480,7 @@
       "text": "Server, use the left box.",
       "source": {
         "file": "src/game_engine.js",
-        "line": 2978,
+        "line": 2981,
         "owner": "_updateServeReadiness"
       },
       "expression": "text"
@@ -492,7 +492,7 @@
       "text": "Server, use the right box.",
       "source": {
         "file": "src/game_engine.js",
-        "line": 2978,
+        "line": 2981,
         "owner": "_updateServeReadiness"
       },
       "expression": "text"
@@ -504,7 +504,7 @@
       "text": "Receiver, give the server room.",
       "source": {
         "file": "src/game_engine.js",
-        "line": 2978,
+        "line": 2981,
         "owner": "_updateServeReadiness"
       },
       "expression": "text"
@@ -516,7 +516,7 @@
       "text": "⚠️ REFEREE REMINDER: You were obstructed by your opponent! Call \"Let, please!\" immediately (Press F / L, raise an open hand ✋, or hold phone upright) instead of letting the ball bounce twice.",
       "source": {
         "file": "src/game_engine.js",
-        "line": 3660,
+        "line": 3663,
         "owner": "_stepPhysics"
       },
       "expression": "'⚠️ REFEREE REMINDER: You were obstructed by your opponent! Call \"Let, please!\" immediately (Press F / L, raise an open hand ✋, or hold phone upright) instead of letting the ball bounce twice.'"
@@ -528,7 +528,7 @@
       "text": "{this.rulesEngine.formatRefereeCallout(outcome,reason,decisionMeta)}",
       "source": {
         "file": "src/game_engine.js",
-        "line": 3950,
+        "line": 3953,
         "owner": "_awardPoint"
       },
       "expression": "callout"
@@ -540,7 +540,7 @@
       "text": "{decisionMeta.refereeCallout} {decisionMeta.safetyWarningText}",
       "source": {
         "file": "src/game_engine.js",
-        "line": 4038,
+        "line": 4041,
         "owner": "_showPointOutcome"
       },
       "expression": "refereeCallout"
@@ -552,7 +552,7 @@
       "text": "{this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)} {decisionMeta.safetyWarningText}",
       "source": {
         "file": "src/game_engine.js",
-        "line": 4038,
+        "line": 4041,
         "owner": "_showPointOutcome"
       },
       "expression": "refereeCallout"
@@ -564,7 +564,7 @@
       "text": "{decisionMeta.refereeCallout} {this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)}",
       "source": {
         "file": "src/game_engine.js",
-        "line": 4038,
+        "line": 4041,
         "owner": "_showPointOutcome"
       },
       "expression": "refereeCallout"
@@ -576,7 +576,7 @@
       "text": "{this.rulesEngine.formatRefereeCallout(outcome, reason, decisionMeta)}",
       "source": {
         "file": "src/game_engine.js",
-        "line": 4038,
+        "line": 4041,
         "owner": "_showPointOutcome"
       },
       "expression": "refereeCallout"
@@ -1143,7 +1143,7 @@
     },
     {
       "file": "src/game_engine.js",
-      "line": 1440,
+      "line": 1443,
       "owner": "_bindJukeboxAndRefereeControls",
       "sink": "announceScore",
       "argument": "phrase",
@@ -1160,7 +1160,7 @@
     },
     {
       "file": "src/game_engine.js",
-      "line": 1473,
+      "line": 1476,
       "owner": "_bindJukeboxAndRefereeControls",
       "sink": "announceScore",
       "argument": "'Stop play! Yes, Let. Safety reminder: always call a Let when obstructed instead of striking your opponent.'",
@@ -1173,7 +1173,7 @@
     },
     {
       "file": "src/game_engine.js",
-      "line": 1645,
+      "line": 1648,
       "owner": "toggleRefereeVoice",
       "sink": "announceScore",
       "argument": "'Down! Handout, five-four.'",
@@ -1186,7 +1186,7 @@
     },
     {
       "file": "src/game_engine.js",
-      "line": 2450,
+      "line": 2453,
       "owner": "_runRacketSpinCeremony",
       "sink": "announceScore",
       "argument": "\"Quick note — you don't run to the ball in this game; your player does that. \" +\r\n        'Your only job is shot selection: keys one to five, a click, or spacebar. Call the spin!'",
@@ -1199,7 +1199,7 @@
     },
     {
       "file": "src/game_engine.js",
-      "line": 2603,
+      "line": 2606,
       "owner": "_setupPointServe",
       "sink": "announceScore",
       "argument": "highStakes",
@@ -1212,7 +1212,7 @@
     },
     {
       "file": "src/game_engine.js",
-      "line": 2771,
+      "line": 2774,
       "owner": "_replayLetRally",
       "sink": "announceScore",
       "argument": "voiceText",
@@ -1233,7 +1233,7 @@
     },
     {
       "file": "src/game_engine.js",
-      "line": 2978,
+      "line": 2981,
       "owner": "_updateServeReadiness",
       "sink": "playVoiceCallout",
       "argument": "text",
@@ -1254,7 +1254,7 @@
     },
     {
       "file": "src/game_engine.js",
-      "line": 3950,
+      "line": 3953,
       "owner": "_awardPoint",
       "sink": "announceScore",
       "argument": "callout",
@@ -1267,7 +1267,7 @@
     },
     {
       "file": "src/game_engine.js",
-      "line": 4000,
+      "line": 4003,
       "owner": "_showPointOutcome",
       "sink": "announceScore",
       "argument": "refereeCallout",
@@ -1292,7 +1292,7 @@
     },
     {
       "file": "src/game_engine.js",
-      "line": 4016,
+      "line": 4019,
       "owner": "_showPointOutcome",
       "sink": "announceScore",
       "argument": "refereeCallout",
@@ -1317,7 +1317,7 @@
     },
     {
       "file": "src/game_engine.js",
-      "line": 4038,
+      "line": 4041,
       "owner": "_showPointOutcome",
       "sink": "announceScore",
       "argument": "refereeCallout",

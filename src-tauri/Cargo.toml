@@ -1,6 +1,6 @@
 [package]
 name = "squash-arcade"
-version = "1.18.84088"
+version = "1.19.86701"
 description = "Virtual Squash"
 authors = ["Robin L. M. Cheung"]
 license = "LicenseRef-Proprietary"

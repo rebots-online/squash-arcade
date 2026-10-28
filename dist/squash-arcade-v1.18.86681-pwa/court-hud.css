@@ -1,0 +1,86 @@
+/* Persistent court chrome. Settings keep their original live control elements. */
+#btn-quick-start,#title-modal #btn-start-match { border:3px solid #fff29a;border-radius:18px;background:linear-gradient(160deg,#ffdc51,#fa841e);color:#472000;box-shadow:inset 0 2px 1px #ffffffb0,0 4px 0 #9a450a,0 0 22px #ffc94745;font-weight:900;cursor:pointer; }
+#btn-quick-start { position:fixed;z-index:125;right:24px;bottom:110px;padding:16px 24px;min-height:64px; }
+#btn-quick-start[hidden] { display:none; }
+#btn-quick-start strong { display:block;font-size:23px;letter-spacing:.04em; }
+#btn-quick-start span { display:block;font-size:11px;margin-top:4px; }
+#title-modal #btn-start-match { width:100%;min-height:60px;margin:0 0 14px;padding:12px;font-size:24px;flex-shrink:0; }
+.racket-spin-setting { display:flex;align-items:center;gap:10px;padding:10px 0;cursor:pointer;font-size:14px; }
+.racket-spin-setting input { width:22px;height:22px;accent-color:#ffad28; }
+.racket-spin-setting small { display:block;font-size:11px;margin-top:4px; }
+#top-hud-bar { top:max(8px,env(safe-area-inset-top));left:12px;right:12px;display:flex;align-items:center;gap:12px; }
+#scoreboard-pill { height:62px;max-width:340px;min-width:220px;padding:3px 12px;gap:10px;box-sizing:border-box; }
+#scoreboard-pill .mii-avatar-badge { width:36px;height:36px;flex:0 0 36px; }
+#scoreboard-pill .mii-side-player { flex-direction:column; }
+#scoreboard-pill .you-chip { position:static;transform:none;font-size:10px;padding:3px 6px;white-space:nowrap; }
+#score-center-display { font-size:26px;gap:8px;min-width:0;padding:0;flex:1; }
+#btn-mobile-menu { display:inline-flex;pointer-events:auto;margin-left:auto;min-height:44px;white-space:nowrap;font-size:14px; }
+#title-modal.side-docked-menu { padding:78px 12px 20px!important;z-index:120; }
+#title-modal.side-docked-menu.menu-collapsed { display:none!important; }
+#title-modal .side-docked-card { width:min(480px,calc(100vw - 24px))!important;max-width:calc(100vw - 24px)!important;max-height:calc(100dvh - 98px)!important;overflow-y:auto;overscroll-behavior:contain; }
+#title-modal .compact-preview-diagram,#title-modal .progressive-menu-instruction,.mobile-menu-tools { display:none!important; }
+#title-modal .wii-logo-header h1 { font-size:29px;margin:4px 0; }
+#title-modal .squash-subtitle-tag { font-size:11px; }
+#title-modal .side-menu-top-bar { position:sticky;top:-12px;background:#eaf5ff;z-index:2;padding:6px 0; }
+.play-methods { color:#123048;text-align:left; }
+.play-methods h2 { margin:4px 0;font-size:15px;letter-spacing:.08em; }
+.play-methods p { font-size:12px;margin:3px 0 10px; }
+.play-methods button { width:100%;display:flex;align-items:center;gap:12px;border:2px solid #84edff;border-radius:15px;padding:12px;margin:7px 0;color:white;cursor:pointer;text-align:left;background:linear-gradient(160deg,#16bddc,#005caa);box-shadow:inset 0 2px 1px #ffffff75,0 3px 0 #004b7f; }
+.play-methods button:nth-of-type(2) { background:linear-gradient(150deg,#b266f0,#5828a2);border-color:#dcadff;box-shadow:inset 0 2px 1px #ffffff75,0 3px 0 #39216d; }
+.play-methods button:nth-of-type(3) { background:linear-gradient(150deg,#38c7a0,#087f70);border-color:#8bffcf;box-shadow:inset 0 2px 1px #ffffff75,0 3px 0 #065c4b; }
+.play-methods b { font-size:24px;color:#fff8b0; }.play-methods span { flex:1; }.play-methods strong,.play-methods small { display:block; }.play-methods strong { font-size:16px; }.play-methods small { font-size:11px;margin-top:3px; }.play-methods em { font-size:9px;font-weight:900;font-style:normal; }
+.court-menu-settings { border:1px solid #80b2cc;border-radius:12px;background:#102c42;color:#e6f5ff;padding:10px;margin:10px 0; }
+.court-menu-settings summary { font-size:13px;font-weight:800;cursor:pointer;min-height:30px; }
+.court-menu-controls { display:flex;flex-direction:column;gap:10px; }
+.court-menu-controls .motion-buttons-col,.court-menu-controls .webcam-btn-group,.court-menu-controls .top-hud-left-group,.court-menu-controls .top-hud-right-group,.court-menu-controls .dock-pill-row { display:flex!important;flex-wrap:wrap;gap:6px;position:static!important;transform:none;align-items:stretch; }
+.court-menu-controls #bottom-left-dock { position:static!important;display:block!important;transform:none;width:100%; }
+.court-menu-controls button { min-height:40px;font-size:11px;white-space:normal; }
+.court-menu-controls .hud-tactical-pill { flex:1 1 100px;justify-content:center; }
+.court-menu-controls .wii-games-pill { display:none; }
+.court-menu-controls #webcam-pip-card { position:relative;align-self:center; }
+#court-upper-readout { position:fixed;top:78px;left:12px;width:min(440px,calc(100vw - 24px));z-index:18;pointer-events:none;display:flex;flex-direction:column;gap:5px; }
+#court-upper-readout .red-control-card { align-self:stretch;font-size:10px;text-align:left;padding:5px 9px;gap:2px; }
+#court-upper-readout .red-control-card strong { display:block; }
+#court-upper-readout .red-control-card span { font-size:10px; }
+#court-upper-readout #timing-gauge-card { display:block!important;width:100%;box-sizing:border-box;padding:6px 9px;border-radius:10px; }
+#court-upper-readout .gauge-header { font-size:9px;margin-bottom:4px; }
+#court-upper-readout .timing-bar-track { height:14px; }
+#court-upper-readout .timing-zone { font-size:8px; }
+#bottom-right-dock { left:12px;right:12px;bottom:calc(24px + env(safe-area-inset-bottom,0px));width:auto;display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none; }
+#bottom-right-dock .motion-controls-row:empty { display:none; }
+#bottom-right-dock .squash-shot-selector-row { flex-wrap:nowrap;justify-content:center;pointer-events:auto;gap:5px; }
+.squash-shot-selector-row .shot-chip { min-height:38px;padding:6px 10px;font-size:12px; }
+#let-advisory-banner { max-width:600px; }
+#timing-popup { top:78px!important;right:12px!important;left:auto!important;max-width:280px;font-size:11px; }
+#point-replay-toast { top:144px;right:12px; }
+#btn-sound-gate { top:20px;left:calc(50% - 45px);bottom:auto;transform:none;padding:8px 12px;min-height:40px;font-size:0;border-radius:24px;animation:none;letter-spacing:0; }
+#btn-sound-gate::after { content:'🔊 Sound';font-size:12px; }#btn-sound-gate:hover { transform:none; }
+.method-fallback { max-width:420px;border:3px solid #69dcff;border-radius:24px;background:#102c42;color:white;padding:24px; }.method-fallback::backdrop { background:#030d1dd9; }.method-fallback button { padding:12px;margin:6px; }
+button:focus-visible,summary:focus-visible { outline:3px solid #ffc929;outline-offset:3px; }
+.briefing-active #center-banner-layer,.briefing-active #timing-popup,.briefing-active #point-replay-toast,.briefing-active #wonder-intro-overlay { visibility:hidden!important; }
+@media(max-width:600px) {
+  #btn-quick-start { right:12px;left:12px;bottom:125px;padding:12px; }
+  #top-hud-bar { left:8px;right:8px;gap:8px; }
+  #scoreboard-pill { flex:1;min-width:0;max-width:270px;height:58px; }
+  #court-upper-readout { top:74px;left:8px;width:calc(100vw - 16px); }
+  #court-upper-readout .red-control-card { padding:4px 8px;flex-direction:row;justify-content:space-between;align-items:center;gap:8px; }
+  #red-control-hint { max-width:54%;font-size:10px; }
+  #red-shot-choice { text-align:right;font-size:10px!important; }
+  #timing-popup { top:151px!important;right:8px!important;max-width:220px;padding:5px 9px!important; }
+  #timing-popup-grade { font-size:11px!important; }#timing-popup-detail { font-size:9px!important; }
+  #point-replay-toast { top:151px;left:8px;right:auto; }
+  .squash-shot-selector-row .shot-chip { min-height:38px;font-size:10px;padding:5px 7px; }
+  #bottom-right-dock { left:4px;right:4px; }.squash-shot-selector-row { gap:3px!important; }
+  #btn-sound-gate { top:auto;left:8px;bottom:72px;min-height:32px;padding:5px 8px; }
+}
+@media(max-height:500px) and (min-width:601px) {
+  #scoreboard-pill { height:48px;max-width:245px;min-width:200px; }
+  #court-upper-readout { left:270px;right:110px;top:8px;width:auto;max-width:440px;gap:2px; }
+  #court-upper-readout .red-control-card { padding:2px 6px;font-size:9px; }
+  #court-upper-readout .gauge-header { display:none; }
+  #court-upper-readout #timing-gauge-card { padding:3px 6px; }
+  #timing-popup { top:65px!important;max-width:200px; }
+  #point-replay-toast { top:65px;left:12px;right:auto; }
+  #bottom-right-dock { bottom:18px; }
+  #btn-sound-gate { left:12px;top:65px; }
+}

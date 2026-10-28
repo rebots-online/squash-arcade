@@ -1,0 +1,34 @@
+{
+  "startedAt": "2026-10-28T15:21:32.653Z",
+  "log": "dist\\squash-arcade-v1.18.86681-2026-10-28T15-21-23.236Z-windows-build.log",
+  "exitCode": 0,
+  "artifacts": [
+    {
+      "path": "dist\\squash-arcade-v1.18.86681-windows-x64.exe",
+      "bytes": 27643904,
+      "sha256": "3900cbd7ff1a479bd1d91d5dbc7e3b2e92ad42ee46e419a207d3dfb6616c67b7"
+    },
+    {
+      "path": "dist\\squash-arcade-v1.18.86681-windows-x64-setup.exe",
+      "bytes": 20856557,
+      "sha256": "e80f5d0d9b3966b36f5200a562a7b46dbbe778f42ed5354818ddafc93321e7d9"
+    },
+    {
+      "path": "dist\\squash-arcade-v1.18.86681-windows-x64.msi",
+      "bytes": 21757952,
+      "sha256": "efa13cd0ad2de786c77362277d8d08af5b1c4607c87b80d5a719ff0b326d06d4"
+    },
+    {
+      "path": "dist\\squash-arcade-v1.18.86681-windows-x64.msix",
+      "bytes": 21504232,
+      "sha256": "8c1c992f061fa1fec41e21c81e7ac949cdce2af94ad294b94e91d0e5742d2c90"
+    }
+  ],
+  "finishedAt": "2026-10-28T15:28:15.827Z",
+  "platformMetadata": {
+    "signing": "unsigned",
+    "canonicalVersion": "1.18.86681",
+    "platformVersion": "1.18.21145",
+    "runtime": "Microsoft Edge WebView2; standalone EXE is not an installer"
+  }
+}
