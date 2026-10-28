@@ -12,6 +12,8 @@ scope_locations:
 
 # TASK LIST
 
+  🟡 TASK-67: correcting replay key handling when start/menu/audio buttons retain focus, including fresh keydown after a lost keyup; scripted release and browser verification pending.
+
 ⚪ Squash Arcade — E:\devProjects\squash-arcade
   🟢 Operator evaluation of deployed v1.12.83046: TASK-61/62 complete with scoped runtime evidence. Browser identity clip playback observed; speaker listening and physical motion controls remain operator gates.
   🟠 Queued TASK-50: opponent-aware volley placement

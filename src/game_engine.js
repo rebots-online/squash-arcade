@@ -507,7 +507,10 @@ export class ArgonTennisEngine {
     this.pendingPointOutcome = null;
     for (const type of ['keydown','keyup','pointerdown','pointerup','pointercancel','click']) {
       window.addEventListener(type, event => {
-        if (this.arcadeBriefing?.active || event.target?.closest?.('#title-modal, #btn-mobile-menu, #btn-sound-gate, #btn-quick-start')) return;
+        const isKeyboard = event.type === 'keydown' || event.type === 'keyup';
+        // Buttons keep keyboard focus after activation. Their pointer exceptions
+        // must not disable "any key" replay skipping (or swallow its keyup).
+        if (this.arcadeBriefing?.active || (!isKeyboard && event.target?.closest?.('#title-modal, #btn-mobile-menu, #btn-sound-gate, #btn-quick-start'))) return;
         const result=this.pointPresentation.input(event);
         if(result.consume){event.preventDefault();event.stopImmediatePropagation();}
         if(result.skip) this._finishPointPresentation();

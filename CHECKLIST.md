@@ -8,6 +8,12 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 ## TASK-63 — Concurrent Windows, AppImage, Android and PWA release build
 
+## TASK-67 — Any-key replay skip despite retained button focus
+
+- **Status**: [/]
+- **Contract**: Keep pointer exceptions for start/menu/audio controls, but route every keyboard down/up through PointPresentation while the point presentation owns input. A fresh non-repeat keydown skips even after a lost keyup; repeats from a held rally key do not. Consume the skip gesture through release so it cannot also serve, open a menu or change a shot.
+- **Verification**: Inspect the capture-handler and release path; observe focused-button keyboard skipping and subsequent serve input in the browser when available. No automated tests. Build and deploy only with build_all.sh, publish all twelve packages in dist, and commit/push with remote readback.
+
 ## TASK-66 — Complete speech inventory and current OpenRouter TTS research
 
 - **Status**: [X]

@@ -102,10 +102,12 @@ export class PointPresentation {
   input(e) {
     const down=e.type==='keydown',up=e.type==='keyup';
     if(down||up) {
-      const held=this.keys.has(e.code),swallowed=this.swallowedKeys.has(e.code);
+      const swallowed=this.swallowedKeys.has(e.code);
       if(up){this.keys.delete(e.code);this.swallowedKeys.delete(e.code);return {consume:this.active||swallowed,skip:false};}
       this.keys.add(e.code);
-      if(this.active){this.swallowedKeys.add(e.code);return {consume:true,skip:!held&&!e.repeat};}
+      // A fresh keydown is authoritative: focus changes can lose the preceding
+      // keyup. Auto-repeat from a key held during the rally still cannot skip.
+      if(this.active){this.swallowedKeys.add(e.code);return {consume:true,skip:!e.repeat};}
       return {consume:swallowed,skip:false};
     }
     if(e.type==='pointerdown') {
