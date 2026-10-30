@@ -82,9 +82,15 @@ verification and RTDN remain recovery paths. Play subscription renewal `paidAt`
 is null unless its actual order timestamp is known: subscription signup time is
 never presented as the latest payment date.
 
-No provider/project has been selected, no dependencies installed, no deployment,
-automated tests, build or paid observation performed as part of this source
-delivery. Activation additionally requires configured Firebase Auth providers,
+The operator selected `rochemediaservices-infra` as the Firebase target.
+Project/app identifiers and provider bindings remain environment-configurable.
+The configured `STRIPE_SECRET_KEY` selects the Stripe merchant; Price IDs and
+webhook secret must belong to that merchant. Stripe connector reauthentication
+is independent of the application runtime and is not required by this service.
+Dependencies were installed with lifecycle scripts disabled. No deployment,
+automated tests, application build or paid observation has been performed.
+The shared Roche-account design also requires product-scoped storage before
+this currently single-product backend is activated in the common project. Activation additionally requires configured Firebase Auth providers,
 domains, actual Play catalogs/base plans, Stripe Prices/customer portal, webhook
 destinations and the device return page. Real purchase/renewal/refund/restore,
 ownership, cancellation and invoice observations remain required by the rubric.
