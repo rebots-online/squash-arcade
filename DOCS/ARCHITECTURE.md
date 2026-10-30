@@ -1,9 +1,9 @@
 ---
 doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
-version: "2.7.0"
+version: "2.8.0"
 status: "TARGET — replay shadows follow recorded poses; volley tactics and serve repertoire queued"
-updated_at: "2026-10-25"
+updated_at: "2026-10-30"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
 kstore_namespace: "mba.robin.squasharcade"
 kstore_schema_version: "1.3"
@@ -40,6 +40,106 @@ owns_modules:
 ---
 
 # ARGON SQUASH — AUTHORITATIVE ARCHITECTURE (`DOCS/ARCHITECTURE.md`)
+
+## 0. Active delivery: BILL-01 — purchase access and account management
+
+Operator authorization 2026-10-30: one cohesive change adds discoverable purchasing, Firebase identity, provider-verified access, cancellation and receipt retrieval across the existing platforms. This section supersedes older no-billing scope statements for BILL-01 only. Architecture is published before the checklist; the checklist and continuous-demonstration script are published before coder execution. No build, signing or deployment is authorized during this source/design cycle: the operator's preceding stop-build instruction remains in effect. Existing signed-output files from the interrupted signing operation are preserved and excluded from this change. No mock payment, invented account, fake receipt or offline paid-state fabrication is permitted.
+
+### 0.1 Commercial and platform contract
+
+The court's AI showcase and instructional viewing remain free. Starting a human-controlled match requires an authenticated account and verified full-game access; viewing account, restoration, cancellation and receipts never requires paying again. A currently running paid match is allowed to finish if its subscription expires mid-match; another match requires current access. The four offers confer the same game entitlement: monthly, six-month, annual and lifetime. Subscription periods renew automatically; lifetime is a non-consumable one-time unlock covering this game's paid gameplay, not unlimited future third-party services. Pricing defaults are USD 0.99/month, 3.99/six months, 5.99/year, 9.99/lifetime, explicitly new operator-configurable launch defaults, not verified market statistics. No invented trial or discount is offered.
+
+| Distribution | Checkout | Existing Play access | Cancellation and documents |
+|---|---|---|---|
+| Android Play build, mba.robin.squash | Native Google Play Billing; one subscription with three base plans and separate lifetime INAPP product | Query existing purchases on connection/resume, verify server-side, bind once to authenticated UID | Manage subscription in Google Play; open Google order history/receipt destination, with Google tax invoice availability accurately described |
+| Ordinary Windows/Linux Tauri builds | Stripe-hosted Checkout in system browser | Same Firebase UID restores server-verified Android purchases; offer instructions to buy on the Android app using that account | Stripe Customer Portal for Stripe purchases; Google management for Google purchases; provider-specific receipt link |
+| Browser/PWA, including PWA installed on Android | Stripe-hosted Checkout | Same shared entitlement restoration | Same provider-specific management |
+
+Google Play gift cards are redeemed with Google and fund eligible purchases through Google Play, subject to region/account restrictions. The app never collects gift-card codes. Desktop/web show an explicit secondary route, "Use Google Play balance", explaining purchase in the Android app and account restoration here; it must not impersonate a native Play checkout or promise balance is redeemable through Stripe. Only display an Android-install link when the actual Play listing is configured. Google Pay as a Stripe payment method is distinct from Google Play balance. A separate Play-distributed native PC edition is outside this release: Google's Native PC SDK is not automatically supplied by Tauri, and its current FAQ excludes subscriptions.
+
+### 0.2 Screens, entry points and gameplay ownership
+
+Persistent HUD text button "Account" sits next to Menu, visible before interaction and during play at every supported viewport. Within the menu, "Account & purchases" is a second route to the same view. No payment entry is hidden inside settings. The existing Start Match remains the main gameplay action; when access is known absent, its action opens the purchase view and its visible label becomes "Get access to play". While access is unresolved, use "Checking access" with a bounded status and retry; never assert "Buy again" or deny an already paid customer on a network timeout. Anonymous users can open the view and see the real catalog, but sign in before starting checkout so purchases have a recoverable UID.
+
+Account is a named accessible dialog on desktop (max-width 64rem) and a full-height sheet on small screens, with Purchase / Account / Receipts navigation, visible Close, trapped keyboard focus and restored triggering focus. No game action receives input while it is open. Register dialog ownership in the engine's existing modal-pause computation; briefing must not auto-open over it, AI/gameplay pauses, and replay handlers must exempt its input. Do not merely assign isPausedForModal once because the engine recomputes it. Sound-gate and replay overlay must remain below the account surface. Scope text-selection styles so order references and account email can be selected/copied. Close never cancels an in-flight provider transaction.
+
+Purchase view: left-aligned "Your next match starts here", brief full-game benefits, four selectable rows rather than equal pricing cards, real localized price and renewal cadence from provider catalog, one primary "Continue with Google Play" or "Continue to checkout" action. Lifetime explicitly says one payment and no renewal. Restore purchases is always reachable. No fabricated crossed-out prices, savings percentages, urgency, testimonial, balance or user avatar. Disabled/busy state prevents repeated checkout while a durable pending intent exists. Inline actionable provider errors preserve selection and ownership context.
+
+Account view: actual account identity, provider, plan, access status, renews-on or access-until date (never conflate cancellation with immediate expiry), Refresh access, Restore purchases, Manage subscription, Receipts and Sign out. A lifetime owner has no cancellation control and sees "Lifetime access". Existing active or pending access suppresses a second purchase across providers. A provider-owned management route is selected from the transaction's provider, never the device's platform.
+
+Receipts view: real transactions with date, amount/currency, status, provider and document action. Stripe can expose hosted invoice/PDF or receipt URL returned by Stripe; one-time Checkout enables invoice creation where supported/configured. Google opens its order-history/receipt experience; the app must not fabricate a Stripe-like invoice PDF for a Google sale or promise tax invoices in unsupported regions. Empty account history says "No purchases on this account" only after a successful authoritative query, with Restore purchases. Loading, connection failure, pending payment and no purchases are distinct states.
+
+Design uses the invoked Stitch taste: scoped slate surfaces, restrained gold accent, sans-serif hierarchy, grid layout, minimum 44px targets, no glow or decorative looping animation on purchase confirmation, reduced-motion support. Preserve the existing court and red-player identity. DESIGN.md is the visual contract. Figma target: https://www.figma.com/design/QotfEXkcNAg4dBllelZ1qw . Design-to-code must obtain high-fidelity get_design_context with screenshot before UI coding, include figma-design-to-code in skillNames, reuse suitable existing components, download exact static assets through supported Figma mechanisms, and compare actual geometry later. Design states use real data or genuinely empty states; no dummy customer or transaction records.
+
+### 0.3 Identity and entitlement data
+
+Firebase Auth owns identity, with Google sign-in and email/password recovery. Firestore users/{uid} owns profile and server-maintained access projection; arbitrary billing fields are not stored as mutable Firebase Auth profile properties. Auth ID token proves identity, not payment. Server verifies it on every private endpoint. Clients can edit only allowed profile preferences and cannot write billing, entitlement, customer mappings or provider events.
+
+Web sign-in uses Firebase SDK supported browser flows. Native WebViews must not embed Google's OAuth page: open hosted account sign-in in the system browser, then complete a single-use device authorization exchange bound to the initiating client secret and approved UID, expiring after five minutes. Poll token is never placed in the public browser link. Only authenticated browser approval can bind a UID. Exchange consumes the record atomically, returns a Firebase custom token once, and the native Web SDK signs in with that token. Native account session uses supported persistent Firebase storage; sign-out clears local account/entitlement state. No client-provided UID is accepted as proof.
+
+| Entity | Fields and purpose | Engaged by |
+|---|---|---|
+| users/{uid} | displayName, email from Auth, access {state, provider, plan, validUntil, lifetime, revision, checkedAt}; access server-only | BILL-01-B, C |
+| billingAccounts/{uid} | stripeCustomerId, Play obfuscated account binding; server-only | BILL-01-B |
+| purchaseClaims/{providerKeyHash} | ownerUid, provider, productId, purchaseRef, state, validUntil, acknowledged; unique ownership, no token in readable profile | BILL-01-B, D |
+| users/{uid}/purchases/{purchaseId} | sanitized amount, currency, product, paidAt, provider, status, document availability | BILL-01-B, C |
+| billingEvents/{providerEventId} | receivedAt, processedAt, event type, reconciliation outcome; deduplicated | BILL-01-B |
+| checkoutIntents/{uid_requestId} | provider session/reference, selected plan, pending/completed/expired, createdAt; retry resumes existing provider intent | BILL-01-B, C |
+| deviceAuthorizations/{id} | hash of client secret, expiry, approvedUid, consumedAt; deny direct client access | BILL-01-B, C |
+
+Entitlement states: checking, none, pending, active, grace, canceled_active, expired, revoked, error. Active/grace/canceled_active grant until authoritative expiry; lifetime grants unless revoked. Pending never grants. Error does not mean none. Reconcile independent purchases before deriving aggregate access: revoking one purchase must not erase another valid purchase. Provider state and revision prevent stale or reordered webhooks rolling access backward incorrectly. Client UI subscribes to its server projection; expiry is evaluated server-side and refreshed at match admission. Custom claims may be an optimization later, never sole validity authority.
+
+### 0.4 Production backend and APIs
+
+Firebase Functions Gen2 HTTP API plus Firestore are the production target. No emulator/fake customer path is shipped. Endpoint base comes from configured VITE_SQUASH_API_BASE_URL; secrets resolve from canonical internal pointers into process environment only. Public schema contains no installation-specific IDs or credentials. Missing required configuration is a named operator preflight failure, not customer-facing "coming soon" UI.
+
+| Method/path | Request and response | Authority |
+|---|---|---|
+| GET /catalog?platform=web or android | available real offers {plan, provider, productId, priceId/basePlanId, formattedPrice, currency, interval}; Android final price from native ProductDetails | validated server catalog; no client price override |
+| GET /account | profile, current aggregate access and sanitized purchase list | verified Firebase ID token |
+| POST /checkout | {plan, requestId}; returns {url, intentId} or existing pending intent | Stripe customer mapping, server-selected price and allowlisted return URLs |
+| POST /portal | returns short-lived customer portal URL | UID's own Stripe customer only |
+| POST /restore | reconciles the UID's known purchases and returns current access | provider reads, not localStorage |
+| POST /play/verify | {purchaseToken, productId}; returns ownership state | Google API package/product/state and obfuscatedAccountId validation; unique claim owner |
+| GET /purchases/:id/document | returns provider-owned document/manage URL | UID ownership check, never arbitrary redirect |
+| POST /match-access | returns current entitlement and admission decision | latest server projection and expiry; no unpaid game start |
+| POST /device/start, /device/approve, /device/exchange | one-use browser/native identity handoff as above | secret hash and expiry; approval requires ID token |
+| POST /webhooks/stripe | raw body signature validation, provider object retrieval and reconciliation | configured webhook secret |
+| POST /webhooks/play | authenticated Pub/Sub notification -> Google API re-query -> reconcile | verified configured push identity/topic, deduplicated event |
+
+Stripe Checkout uses subscription mode for the three recurring Prices and payment mode for lifetime; dynamic payment methods, no raw card collection. UID maps to Stripe Customer server-side. Provider create calls use deterministic idempotency keys for durable intents. Success return is only a trigger to reconcile; it never grants access. Handle checkout.session.completed/async_payment_succeeded/async_payment_failed, invoice.paid/payment_failed, customer.subscription.updated/deleted, charge.refunded, charge.dispute.created/closed and early fraud warnings by re-reading provider objects. A fraud warning alone is recorded for review, not automatic proof that a paid entitlement has ended. Full refunds/revocations remove the affected purchase; partial refunds retain access unless provider state says otherwise. Cancellation uses provider portal and preserves paid-through access.
+
+Google Play bridge queries SUBS and INAPP products and existing purchases on start/resume, opens the native sheet with the returned offer token, and sends only PURCHASED tokens for server fulfillment. Server verifies package mba.robin.squash, configured product/base plan, purchase state and authenticated owner binding, persists entitlement, then acknowledges. Persist acknowledgment retry state if provider acknowledgment fails after entitlement grant; do not ask the user to repurchase. Never consume lifetime. Pending/cancel/error callbacks retain recoverable UI. RTDN, re-query and scheduled reconciliation cover renewal, grace, hold, cancellation, expiry and revocation. First-time claims of purchases lacking account binding need an explicit supported recovery path; never silently attach arbitrary tokens to whichever UID submits first.
+
+### 0.5 Closed implementation inventory
+
+| File/module | Named responsibilities and interfaces | Task |
+|---|---|---|
+| DESIGN.md; Figma screens | scoped tokens, desktop/mobile purchase, actual empty account/receipt states, interaction annotations | BILL-01-A |
+| functions/package.json; functions/src/index.js | Firebase HTTP export, route dispatch, Auth verification, CORS allowlist, raw webhook body handling | BILL-01-B |
+| functions/src/catalog.js | loadCatalog, validateConfiguration; configured provider IDs and exact periods | BILL-01-B |
+| functions/src/entitlements.js | reconcilePurchases, computeAccess, claimPurchase, matchAccess; transactional ownership | BILL-01-B |
+| functions/src/stripe.js | createCheckout, createPortal, reconcileStripe, getStripeDocument, handleStripeWebhook | BILL-01-B |
+| functions/src/play.js | verifyPlayPurchase, acknowledgePlayPurchase, handlePlayNotification, reconcilePlay | BILL-01-B |
+| functions/src/device-auth.js | startDeviceAuthorization, approveDeviceAuthorization, exchangeDeviceAuthorization | BILL-01-B |
+| firebase.json; firestore.rules; firestore.indexes.json | service targets and own-profile/read-only access, backend-only billing writes | BILL-01-B |
+| src/account/firebase.js; src/account/api.js | configured Auth singleton; bearer-authenticated account API and recoverable errors | BILL-01-C |
+| src/account/AccountController.js | open/close, signIn/signOut, purchase, restore, manage, documents, beforeStartMatch; no duplicated game state | BILL-01-C |
+| src/account/AccountView.js; public/account.css | accessible provider-aware views and focus restoration; Figma fidelity | BILL-01-C |
+| public/account-auth.html; src/account/device-auth-page.js | system-browser account approval, no private client secret in URL | BILL-01-C |
+| src/squash/CourtHUD.js; src/game_engine.js; index.html | HUD/menu entry, match gate, pause and event ownership, stylesheet/module wiring | BILL-01-C |
+| src-tauri/plugins/play-billing/ | Tauri Android Kotlin BillingClient plugin, Rust command bridge and capability declarations; queryProducts, queryPurchases, purchase | BILL-01-D |
+| src/account/native-billing.js | exact native platform detection and bridge event translation | BILL-01-D |
+| .env.example; internal .env | full annotated union; public config blank for Firebase/project/store IDs; general price defaults; internal credential pointers only | BILL-01-B, integration |
+| DOCS/TEST_RUBRIC.md; CHECKLIST.md | requirement-to-observation script, review/correction commits, real evidence and unresolved inputs | BILL-01-E |
+
+### 0.6 Execution inputs and acceptance
+
+Current live inspection: no Firebase project binding exists for this checkout; connected Firebase account lists no Virtual Squash project. Operator project selection is pending. Stripe connector requires reauthentication; merchant selection and live Price IDs are pending. Play catalog IDs, active store listing, publisher service binding and RTDN provisioning are not established. These are explicitly unresolved production inputs, not permission to fabricate values or ship a nonworking purchase facade. The target architecture is fixed; affected activation tasks remain BLOCKED until real bindings are available. Independent design and source work can proceed against the exact contracts above, but no task is COMPLETE merely because source exists.
+
+One cohesive delivery cycle covers this entire change. Publish architecture, then publish four-state checklist and preauthored continuous recording rubric, then assign coder subagents with exclusive file ownership. Supervisor reviews identity, money-to-access semantics, pending/retry/double-charge behavior, restoration, correct provider cancellation/documents, modal input isolation and design fidelity; deficiencies return to the same coder. Commit and push implementation and each correction boundary, verifying remote SHA. No automated tests under the existing operator override; syntax/static checks and real user-path observations are distinct evidence. No builds while the stop-build instruction remains. Final live acceptance requires enabled production services, real authorized purchase observation, cancellation retaining paid-through access, receipt retrieval, cross-platform restore, Android device proof and one continuous recording mapped to commits/timecodes. Do not mark COMPLETE or publish the new flow without that evidence.
+
+Primary reference contract: https://developer.android.com/google/play/billing/integrate ; https://developer.android.com/games/playgames/native-pc/faq ; https://docs.stripe.com/checkout/fulfillment ; https://docs.stripe.com/customer-management ; https://firebase.google.com/docs/auth . Exact provider capability findings are recorded in the billing implementation evidence.
 
 ## 1. Governing Philosophy & Scope
 
