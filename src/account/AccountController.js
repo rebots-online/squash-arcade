@@ -25,6 +25,7 @@ export class AccountController {
         this.run(async()=>{await this.verifyNative(event.purchases||[]);await this.refresh();});
       });
       observeIdentity(user => {
+        if(this.state.user?.uid!==user?.uid)this.checkoutRequestId=null;
         this.identityGeneration = (this.identityGeneration || 0)+1;
         this.state.user=user;this.state.account=null;this.state.nativePending=false;this.state.checkoutPending=false;
         this.render();
@@ -62,7 +63,10 @@ export class AccountController {
     const account=await accountRequest('/account');
     if(uid!==this.state.user?.uid||generation!==this.identityGeneration)return;
     this.state.account=account;
-    if(account.access?.state!=='pending'&&!account.billing?.pendingCheckout)this.state.checkoutPending=false;
+    if(account.access?.state!=='pending'&&!account.billing?.pendingCheckout){
+      this.state.checkoutPending=false;
+      this.checkoutRequestId=null;
+    }
     this.render();return account;
   }
   async verifyNative(purchases) {
@@ -79,7 +83,10 @@ export class AccountController {
     const account=await accountRequest('/restore',{method:'POST',body:{}});
     if(uid!==this.state.user?.uid||generation!==this.identityGeneration)return;
     this.state.account=account;
-    if(account.access?.state!=='pending'&&!account.billing?.pendingCheckout)this.state.checkoutPending=false;
+    if(account.access?.state!=='pending'&&!account.billing?.pendingCheckout){
+      this.state.checkoutPending=false;
+      this.checkoutRequestId=null;
+    }
     if(account.billing?.reconciliationIncomplete)this.state.message='Some purchase records could not be refreshed. Verified access remains available; restore again to check the remaining records.';
     this.render();
   }
@@ -165,6 +172,18 @@ export class AccountController {
         if(result.url)await this.openExternal(result.url);
         else this.state.message='Checking your existing access. Refresh your account.';
       }
+    });
+  }
+  resumeCheckout() {
+    return this.run(async()=>{
+      const pending=this.state.account?.billing?.pendingCheckout;
+      if(!pending||pending.provider!=='stripe'||pending.state!=='creating')return;
+      // The server resumes the existing account reservation and Stripe key.
+      this.checkoutRequestId ||= crypto.randomUUID();
+      const result=await accountRequest('/checkout',{method:'POST',body:{plan:pending.plan,requestId:this.checkoutRequestId}});
+      await this.refresh();
+      if(result.url)await this.openExternal(result.url);
+      else this.state.message='Your checkout is being checked. Use Check status before trying again.';
     });
   }
   async manage() { if(this.state.account?.billing?.manageUrl){await this.openExternal(this.state.account.billing.manageUrl);return;}const result=await accountRequest('/portal',{method:'POST',body:{}});await this.openExternal(result.url); }

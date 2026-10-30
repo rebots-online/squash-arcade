@@ -71,6 +71,7 @@ export class AccountView {
       content.append(element('p', 'Your checkout is in progress. Check its status before starting another purchase.'));
       const pending = s.account.billing.pendingCheckout;
       if (pending.url) content.append(button('Resume checkout', () => c.run(() => c.openExternal(pending.url)), true));
+      else if(pending.state==='creating')content.append(button('Resume checkout',()=>c.resumeCheckout(),true));
       content.append(button('Check status', () => c.run(() => c.restore())));
     } else if (s.account?.access?.state === 'pending' || s.nativePending || s.checkoutPending) {
       content.append(element('p', 'Your payment is pending verification. You do not need to pay again.'), button('Check status', () => c.run(() => c.restore())));
