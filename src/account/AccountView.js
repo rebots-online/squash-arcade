@@ -44,6 +44,7 @@ export class AccountView {
     const c = this.controller, state = c.state;
     const focused = document.activeElement;
     const focusedName=this.dialog.contains(focused)?focused.getAttribute('name'):null;
+    const focusedRadioValue=focused?.type==='radio'?focused.value:null;
     const focusedLabel=this.dialog.contains(focused)&&focused.matches('button')?focused.textContent:null;
     const values=Object.fromEntries([...this.dialog.querySelectorAll('.account-auth-form input')].map(input=>[input.name,input.value]));
     this.dialog.replaceChildren();
@@ -60,7 +61,7 @@ export class AccountView {
     if (state.busy) { this.dialog.setAttribute('aria-busy', 'true'); content.querySelectorAll('button,input').forEach(b => { b.disabled = true; }); }
     else this.dialog.removeAttribute('aria-busy');
     for(const input of this.dialog.querySelectorAll('.account-auth-form input'))if(Object.hasOwn(values,input.name))input.value=values[input.name];
-    const target=focusedName?[...this.dialog.querySelectorAll('input')].find(input=>input.name===focusedName):focusedLabel?[...this.dialog.querySelectorAll('button')].find(b=>b.textContent===focusedLabel):null;
+    const target=focusedName?[...this.dialog.querySelectorAll('input')].find(input=>input.name===focusedName&&(focusedRadioValue===null||input.value===focusedRadioValue)):focusedLabel?[...this.dialog.querySelectorAll('button')].find(b=>b.textContent===focusedLabel):null;
     target?.focus({preventScroll:true});
   }
   purchase(content) {
@@ -112,7 +113,7 @@ export class AccountView {
     content.append(element('p', s.account?.profile?.email || s.user.email || s.user.uid));
     const a = s.account?.access;
     const labels = { none:'No match access',pending:'Payment pending',active:'Access active',grace:'Access active — payment needs attention',canceled_active:'Renewal canceled — access remains active',expired:'Access expired',revoked:'Access revoked',checking:'Checking access',error:'Access could not be checked' };
-    content.append(element('h2', a?.lifetime && c.hasAccess() ? 'Lifetime access' : labels[a?.state] || 'Checking access'));
+    content.append(element('h2', a?.lifetime && c.hasAccess() ? 'Lifetime access' : labels[a?.state] || (s.error ? 'Access could not be checked' : 'Checking access')));
     if (a?.plan) content.append(element('p', PLAN_NAMES[a.plan] || a.plan));
     if (a?.provider) content.append(element('p', `Purchased through ${a.provider === 'google_play' ? 'Google Play' : 'Stripe'}`));
     if (a?.validUntil && !a.lifetime) content.append(element('p', `Access until ${new Date(a.validUntil).toLocaleString()}`));
@@ -127,7 +128,7 @@ export class AccountView {
     const c = this.controller, s = c.state;
     content.append(element('h1', 'Your receipts'));
     if (!s.user) { content.append(element('p', 'Sign in to view purchases made with your account.'), button('Sign in', () => this.open('Account'), true)); return; }
-    if (!s.account) { content.append(element('p', 'Checking your purchases…'),button('Refresh purchases',()=>c.run(()=>c.refresh()))); return; }
+    if (!s.account) { content.append(element('p', s.error ? 'Your purchases could not be checked. Retry without purchasing again.' : 'Checking your purchases…'),button('Refresh purchases',()=>c.run(()=>c.refresh()))); return; }
     if(s.account.billing?.historyIncomplete){content.append(element('p','Purchase history could not be fully checked.'),button('Retry purchase history',()=>c.run(()=>c.restore())));return;}
     if (!s.account.purchases?.length) { content.append(element('h2', 'No purchases yet'),element('p','Purchases made with this account will appear here. Already bought access on another device? Restore your purchases.'),button('Restore purchases',()=>c.restoreAction(),true),button('Browse access options',()=>this.open('Purchase')));return; }
     for (const p of s.account.purchases) {

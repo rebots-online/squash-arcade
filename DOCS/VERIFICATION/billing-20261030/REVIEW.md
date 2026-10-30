@@ -100,3 +100,9 @@ after an ambiguous checkout older than Stripe's idempotency window, and a lost
 consumed native authorization response. These must be resolved or exercised with
 actual configured accounts before product acceptance. The implementation does
 not claim those unobserved cases passed.
+
+## 2026-10-30 follow-up source review
+
+The same UI coder corrected five defects found by the design reviewer: initialization retries now preserve one auth observer/native listener and cannot select a web catalog before platform detection; failed ownership checks show retry rather than purchase-required copy; failed account/history loads no longer claim indefinite loading; hosted native sign-in supports changing the restored browser account; radio selection restores focus to the selected plan. Reviewer returned a concurrent-initialization race and hidden-form CSS defect; both were corrected and re-reviewed. All affected JS syntax checks passed. This is source acceptance only, not rendered/runtime/payment acceptance.
+
+Live configured Firestore inspection found an empty named database and no default database. DATA_STRUCTURES.md records the evidence and the scoped implementation contract. KStore build preflight evidence is in BUILD-PREFLIGHT.md. No real customer transaction or new native artifact has been observed.

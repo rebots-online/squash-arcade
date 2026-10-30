@@ -99,7 +99,7 @@ export class CourtHUD {
   updateAccess() {
     const a = this.engine.account;
     const state = a?.state;
-    const label = a?.hasAccess() ? 'START MATCH' : state?.user && !state.account && !state.error ? 'CHECKING ACCESS' : 'GET ACCESS TO PLAY';
+    const label = a?.hasAccess() ? 'START MATCH' : state?.user && (state.error || !state.account) ? (state.error ? 'RETRY ACCESS CHECK' : 'CHECKING ACCESS') : 'GET ACCESS TO PLAY';
     if (this.quickStart) this.quickStart.querySelector('strong').textContent = label;
     const menuLabel = document.getElementById('btn-start-match-label');
     if (menuLabel) menuLabel.textContent = label;

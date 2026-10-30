@@ -15,6 +15,8 @@ Firebase's environment tool confirms the configured project is `rochemediaservic
 
 These observations do not establish whether Firebase Auth already contains identities; no Auth user directory or user values were enumerated. They do establish that the observed Firestore database has no discoverable document schema to reuse. Selecting the actual database binding and documenting the intended Squash-owned structure are still implementation decisions, not a migration of verified existing user records. No database was created or selected by this inspection.
 
+Sections 1–5 below are the source inventory at the stated baseline commit. Section 7 is the subsequent implementation contract; older contradictions below explain why that correction is required, not the current wording of architecture/checklist.
+
 ## 1. Identity and value conventions already implemented
 
 Firebase Auth supplies the canonical `uid`, email and display name. `identity()` verifies a Firebase ID token and uses its UID; clients do not choose an owner UID in purchase requests. `account()` reads the profile from Firebase Auth with `auth.getUser(uid)`. The backend does not currently copy email or display name into the Firestore user document and does not create an additional per-platform identity.

@@ -12,26 +12,32 @@ export class AccountController {
     this.plan = null;
     this.view = new AccountView(this);
     this.ready = this.initialize();
-    window.addEventListener('focus', () => { if(this.state.user && !this.state.busy)this.run(()=>this.restore(),false); });
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden&&this.state.user&&!this.state.busy)this.run(()=>this.restore(),false);});
+    window.addEventListener('focus', () => { if(this.startupReady && this.state.user && !this.state.busy)this.run(()=>this.restore(),false); });
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden&&this.startupReady&&this.state.user&&!this.state.busy)this.run(()=>this.restore(),false);});
   }
   get isOpen() { return this.view.dialog.open; }
-  async initialize() {
+  initialize() {
+    this.initializing ||= this.initializeOnce().finally(()=>{this.initializing=null;});
+    return this.initializing;
+  }
+  async initializeOnce() {
     try {
-      this.state.android = await isNativeAndroid();
-      if (this.state.android) this.unsubscribePlay = await listenPlayPurchases(event => {
-        if(event.status==='canceled'){this.state.busy=false;this.state.checkoutPending=false;this.state.message='Purchase canceled.';this.render();return;}
-        if(event.status==='error'){this.state.busy=false;this.state.error='Google Play could not complete this request. Restore purchases to check its status.';this.render();return;}
-        this.run(async()=>{await this.verifyNative(event.purchases||[]);await this.refresh();});
-      });
-      observeIdentity(user => {
+      if (!this.unsubscribeIdentity) this.unsubscribeIdentity = observeIdentity(user => {
         if(this.state.user?.uid!==user?.uid)this.checkoutRequestId=null;
         this.identityGeneration = (this.identityGeneration || 0)+1;
         this.state.user=user;this.state.account=null;this.state.nativePending=false;this.state.checkoutPending=false;
         this.render();
-        if(user)this.run(()=>this.restore(),false);
+        if(user && this.startupReady)this.run(()=>this.restore(),false);
       });
+      this.state.android = await isNativeAndroid();
+      if (this.state.android && !this.unsubscribePlay) this.unsubscribePlay = await listenPlayPurchases(event => {
+        if(event.status==='canceled'){this.state.busy=false;this.state.checkoutPending=false;this.state.message='Purchase canceled.';this.render();return;}
+        if(event.status==='error'){this.state.busy=false;this.state.error='Google Play could not complete this request. Restore purchases to check its status.';this.render();return;}
+        this.run(async()=>{await this.verifyNative(event.purchases||[]);await this.refresh();});
+      });
+      this.startupReady = true;
       await this.catalog();
+      if(this.state.user)await this.restore();
     } catch(error) { this.state.error=error.message;this.state.catalogLoading=false;this.render(); }
   }
   render() { this.view.render();this.engine.courtHUD?.updateAccess?.(); }
@@ -49,6 +55,7 @@ export class AccountController {
     finally{if(busy)this.state.busy=false;this.render();}
   }
   async catalog() {
+    if(!this.startupReady)throw new Error('Account initialization did not finish. Use Retry to reconnect.');
     this.state.catalogLoading=true;this.render();
     try {
       const result=await accountRequest(`/catalog?platform=${this.state.android?'android':'web'}`,{anonymous:true});
@@ -78,6 +85,7 @@ export class AccountController {
   }
   async restore() {
     if(!this.state.user)return;
+    if(!this.startupReady)throw new Error('Account initialization did not finish. Use Retry to reconnect.');
     const uid=this.state.user.uid,generation=this.identityGeneration;
     if(this.state.android)await this.verifyNative(await queryPlayPurchases());
     const account=await accountRequest('/restore',{method:'POST',body:{}});
@@ -91,7 +99,7 @@ export class AccountController {
     this.render();
   }
   restoreAction() { if(!this.state.user){this.open('Account');return;}return this.run(()=>this.restore()); }
-  retry() { return this.run(async()=>{await this.catalog();if(this.state.user)await this.restore();}); }
+  retry() { return this.run(async()=>{if(!this.startupReady){this.ready=this.initialize();await this.ready;if(!this.startupReady)return;}else await this.catalog();if(this.state.user)await this.restore();}); }
   hasAccess() {
     const a=this.state.account?.access;
     return Boolean(a&&['active','grace','canceled_active'].includes(a.state)&&(a.lifetime||Date.parse(a.validUntil)>Date.now()));
