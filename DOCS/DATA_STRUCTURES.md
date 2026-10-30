@@ -1,8 +1,19 @@
 # Squash billing data structures — implemented source and unfinished account work
 
-Source inventory read on 2026-10-30 at repository HEAD `aac86ac2c0b4f6d09d4a6d21c1304948e2ac3ffa`. This document describes the current `functions/src` implementation, `firestore.rules`, `firebase.json`, and `firestore.indexes.json`. It does not assert that these collections exist in the selected live project or that this source has been deployed. No live records, credentials, builds, migrations or payment operations were inspected or changed for this inventory.
+Source inventory read on 2026-10-30 at repository HEAD `aac86ac2c0b4f6d09d4a6d21c1304948e2ac3ffa`. This document describes the current `functions/src` implementation, `firestore.rules`, `firebase.json`, and `firestore.indexes.json`. The later read-only live inspection below distinguishes actual project state from source. No builds, migrations, provider payments or user-data writes were performed for this inventory; inspection output contains only database/collection names, field-type summaries and rules, not user values or credentials.
 
 Scope is Squash only. The requested behavior is one Firebase Auth identity and one canonical user record, with Squash-owned data isolated from other product data. Example field names in earlier discussion are not adopted here as a schema. In particular, the literal example-derived account-field table currently in architecture §0.3 and the checklist must not be treated as an implemented or accepted storage contract. This document introduces no replacement field names.
+
+## Read-only live inspection — 2026-10-30
+
+Firebase's environment tool confirms the configured project is `rochemediaservices-infra` and the project directory is this Squash checkout. The connector provides a rules reader but no collection/document query tool, so the bounded metadata read used the already configured Firebase CLI authentication helper against the Firestore and Firebase Rules APIs. Tokens remained in process memory and were not printed or written to project files.
+
+- The Firestore database-list response contains one database: `ai-studio-8a7887f0-0d81-4fe6-aaf4-4270210410eb`, type `FIRESTORE_NATIVE`.
+- The `(default)` database document endpoint returned HTTP 404. Current `getFirestore()` in `functions/src/core.js` targets `(default)`, so the backend has an unresolved database-target mismatch with the observed live project.
+- The existing named database's root collection listing returned an empty list with no continuation token. A bounded read of its `users` collection returned zero documents with no continuation token. Consequently no existing canonical user field names or types were found there; an existing user schema cannot be inferred or invented.
+- The Firebase Rules API lists one release, `cloud.firestore/ai-studio-8a7887f0-0d81-4fe6-aaf4-4270210410eb`. Its deployed rules deny every client read and write and define no field-level schema. This agrees with the Firebase connector's rules response.
+
+These observations do not establish whether Firebase Auth already contains identities; no Auth user directory or user values were enumerated. They do establish that the observed Firestore database has no discoverable document schema to reuse. Selecting the actual database binding and documenting the intended Squash-owned structure are still implementation decisions, not a migration of verified existing user records. No database was created or selected by this inspection.
 
 ## 1. Identity and value conventions already implemented
 
@@ -123,7 +134,7 @@ This remains account-level identity handoff, not a second user account or purcha
 | API and admission | Returns and consumes generic `access` | API, UI and match admission must consume the final product-specific canonical record consistently; unknown verification is not false validity |
 | Shared project rules | Owner user read/preferences write; all other paths denied | This single-application rules file has not been merged with actual shared-project rules. Deploying it as-is could disable unrelated application access |
 | Reconciliation job | Pages every document in global `users` | Scope work to actual Squash billing membership, rather than assuming every account is a Squash customer |
-| Live schema | Only source inspected for this inventory | No deployed collection shape, existing-data migration or shared-rule compatibility has been verified |
+| Live schema | Named database has no listed collections/users; deployed rules deny all; source targets absent `(default)` | No existing user field contract was found. Resolve the actual database binding and define the intended product-owned structure without adopting rejected example names |
 
 ## 5. Minimal recommended correction sequence
 
@@ -134,3 +145,24 @@ This remains account-level identity handoff, not a second user account or purcha
 5. Review the complete resulting schema and customer journey, publish the correction through the supervising agent, and retain real purchase/restore/cancel/document/admission observation as unfinished until the real activation prerequisites are satisfied. The operator has authorized builds through `build_all.sh`; that prescribed build entry point supersedes the earlier build stop.
 
 This inventory is documentation only. It does not migrate the current global collections, implement canonical product-specific fields, or mark the billing delivery complete.
+
+## 7. Squash implementation contract after live inspection
+
+The configured project has no existing Firestore user records or field contract to preserve. Retain the source's existing `access` field name and access-state structure, scoped by a configured application product ID rather than replacing it with the rejected illustrative labels. This is the implementation correction established here before coding; it is not claimed to be a recovered historical schema.
+
+```text
+users/{Firebase UID}
+  access
+    {SQUASH_PRODUCT_ID}
+      paid: boolean
+      state, provider, plan, validUntil, lifetime, revision, checkedAt
+  preferences: existing user preferences
+```
+
+`paid` is derived server-side from verified active/grace/canceled_active state and current expiry or lifetime. Update it and the corresponding details atomically. Unknown provider failures must not write `paid: false`. Match admission still rechecks validity so a stale persisted boolean never grants expired access. Other product keys remain untouched. Missing app keys do not create default accounts or balances.
+
+Use `FIRESTORE_DATABASE_ID` to select the actual configured database, never silently choose the nonexistent default. Keep both `FIRESTORE_DATABASE_ID` and `SQUASH_PRODUCT_ID` required in backend configuration, with blank portable examples and actual deployment bindings in canonical internal configuration. The selected Squash product ID is `squash`; it is an application namespace, not another product's balance label.
+
+Private collections are `products/{SQUASH_PRODUCT_ID}/billingAccounts`, `/purchaseClaims`, `/billingEvents` and `/checkoutIntents`. User history is `users/{uid}/products/{SQUASH_PRODUCT_ID}/purchases`. Account-level `deviceAuthorizations` remains unchanged. Centralize these paths. Include the application product ID in provider metadata, obfuscated Play account ID derivation, and provider-reference hashes. Reconciliation enumerates this product's billing membership, never all users.
+
+The existing API remains `{profile, access, billing, purchases}` for this application's scoped projection; `access` now includes `paid`. UI does not receive another application's private record. Require product ownership during event processing and transaction recovery, and preserve provider-level purchase uniqueness. No live migration is required for the inspected empty database; recheck before deployment, and stop rather than overwrite unexpected existing data.
