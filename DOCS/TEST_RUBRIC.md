@@ -29,3 +29,25 @@ Each row is independently evaluated; implementation, fresh review, rendered obse
 | TASK-45 | Whole-court envelope projection at desktop/mobile aspects and lateral extremes | All court boundaries visible in normal play, resize and after replay |
 
 Release evidence: all baseline plus new tests, lint, fresh whole-branch review, versioned build; pushed commits; exact Surge file hashes; public desktop/mobile-width UI and gameplay. Physical-device and human feel remain operator evaluation unless directly observed.
+# BILL-01 continuous purchase/account demonstration — preauthored 2026-10-30
+
+Architecture: DOCS/ARCHITECTURE.md §0 at 47ae44e. No build or payment is run by writing this rubric. All observations below are NOT_STARTED until recorded. Provider/configuration and build-stop dependencies are BLOCKED in CHECKLIST.md. Use real accounts and real authorized transactions only; no mock, sandbox or fabricated state. A purchase requires an explicit approved item/amount before the financial action. Native observations cannot be replaced by responsive browser screenshots.
+
+Recording script: start continuous capture before launching the actual artifact, display its version, navigate through the listed actions without edits or synthetic state, retain the original recording and a requirement/task/source-commit/timecode table. If more than one platform needs a recording, each platform session is continuous and linked. Correct defects with the same coder, publish corrections, then repeat the affected full session. Never mark a row passed from planned behavior.
+
+| Requirement/task | Actions and observable outcome |
+|---|---|
+| Entry/A,C | Launch web and Windows; Account visible beside Menu before match start at desktop and narrow view. No clipping/overlap; Tab and Close recover focus; court inputs and auto-briefing stay suspended while dialog open. |
+| Identity/B,C | Real Google or email sign-in; native opens system browser and one-use account approval; correct UID returns. Restart retains identity. Sign-out clears private view without claiming cancellation. |
+| Catalog/B,C,D | Load real provider options and localized total/cadence for monthly, six-month, annual, lifetime; compare native Play sheet or Stripe Checkout values. No fabricated fallback prices. |
+| Android purchase/B,D | On Play-installed Android build, select approved item, open native Play sheet, show actual gift-card/Play-balance eligibility without app-owned code form, complete only user-authorized payment; backend verifies, grants and acknowledges, then match starts. |
+| Desktop/web purchase/B,C | Select approved Stripe item, open hosted checkout, complete authorized payment; no access from URL alone, backend confirmation produces access and game start. |
+| Restore/B,C,D | Restart and restore the real purchase; sign into Windows/web with same UID after Android purchase, observe active access and Google provider management, no second payment demand. |
+| Pending/retry/B,C,D | Observe a real canceled or pending provider flow when available; do not fabricate it. Double-click checkout cannot create repeated purchase; close/reopen preserves intent and Check status. Network interruption does not become no-purchase or false success. Unavailable real condition remains unobserved. |
+| Cancel/B,C | Manage subscription routes to originating provider; perform only authorized cancellation. Return shows cancellation after reconciliation and access until paid-through date. Lifetime shows no cancel-subscription action. |
+| Receipts/B,C | Open actual Stripe invoice/PDF/receipt; Google order history/receipt uses Google destination and accurate invoice wording. No cross-UID transaction access. Empty history comes from successful real account lookup. |
+| Match gate/B,C | No active access opens purchase view; active customer starts as red; expiration prevents next match while current match may finish. Provider error offers retry and never requests repeat payment for ambiguous paid state. |
+| Visual/A,C | Compare implemented requested views against Figma screenshot, all real static asset positions/geometry, touch targets, keyboard/software-keyboard scrolling, reduced motion and selectable order IDs. |
+
+Required evidence record per row: NOT_STARTED / IN_PROGRESS / BLOCKED / COMPLETE; actual observation; platform/artifact version; implementation/correction commit; recording filename/hash and timecode; unresolved input if blocked. This rubric does not reopen unrelated gameplay tasks below.
+
