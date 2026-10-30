@@ -19,3 +19,10 @@ Auth API reference used for the scoped update: https://docs.cloud.google.com/ide
 ## Remaining acceptance
 
 Deploy actual billing functions and named-database rules through build_all.sh --deploy-account, verify runtime identity/config secret and actual service URL, complete all native/web builds through build_all.sh, verify final artifact signatures, and execute the existing continuous customer-journey rubric. No successful purchase, new release artifact or completed delivery is claimed by this record.
+## Prescribed invocations after published source 799ed59
+
+`build_all.sh --deploy-account` exited1 before cloud deployment on these fourteen unresolved provider bindings: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_MONTHLY, STRIPE_PRICE_SIX_MONTH, STRIPE_PRICE_ANNUAL, STRIPE_PRICE_LIFETIME, PLAY_SUBSCRIPTION_PRODUCT_ID, PLAY_BASE_PLAN_MONTHLY, PLAY_BASE_PLAN_SIX_MONTH, PLAY_BASE_PLAN_ANNUAL, PLAY_LIFETIME_PRODUCT_ID, PLAY_PUSH_AUDIENCE, PLAY_PUSH_SERVICE_ACCOUNT, PLAY_PUBSUB_SUBSCRIPTION. Other required deployment bindings resolved successfully.
+
+The subsequent default `build_all.sh` exited1 before compilation with only VITE_SQUASH_API_BASE_URL unresolved. The five signing bindings, four Firebase app bindings and account-auth route resolved. No build processes are running from these invocations, and no new artifacts were produced. The remaining real provider bindings are required to activate the intended purchase flow; no fallback endpoint or payment facade was inserted.
+
+Supervising review covered exact canonical resolution, secret version preservation, CLI discovery isolation, named-database targeting and rules preservation, injected runtime configuration, actual service URL readback and no broad credential search. Same-coder corrections handled lazy database initialization, optional listing configuration, exact canonical write ownership and URL/origin validation. Source syntax checks passed; actual cloud deployment, runtime purchases and complete platform outputs remain unverified.
