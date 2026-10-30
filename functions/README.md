@@ -20,7 +20,7 @@ claims or checkout return parameters. Deploy the Firestore rules with the servic
 
 Authenticated requests use a Firebase ID token. `/account` returns `profile`,
 `billing.playObfuscatedAccountId`, `access` and sanitized `purchases`. Play account
-binding is SHA-256 of `play:` plus Firebase UID. Pass that value unchanged to the
+binding is SHA-256 of `{SQUASH_PRODUCT_ID}:play:{Firebase UID}`. Pass that value unchanged to the
 native billing flow. A token without the expected binding is refused with
 `ACCOUNT_BINDING_REQUIRED`; legacy unbound purchases require an operator-assisted
 ownership recovery process and are never automatically claimed.
@@ -89,8 +89,43 @@ webhook secret must belong to that merchant. Stripe connector reauthentication
 is independent of the application runtime and is not required by this service.
 Dependencies were installed with lifecycle scripts disabled. No deployment,
 automated tests, application build or paid observation has been performed.
-The shared Roche-account design also requires product-scoped storage before
-this currently single-product backend is activated in the common project. Activation additionally requires configured Firebase Auth providers,
+The shared Roche-account storage uses the required `FIRESTORE_DATABASE_ID` and
+`SQUASH_PRODUCT_ID` bindings. Missing values fail explicitly; no default database
+is silently selected. The portable static `firebase.json` intentionally has no
+Firestore deployment target. Before activation, the prescribed build/deployment
+coordinator must generate a deployment config containing the named Firestore
+target from the resolved `FIRESTORE_DATABASE_ID`, together with `firestore.rules`
+and `firestore.indexes.json`. Default-database rules deployment is not permitted.
+That generated-config adapter is an outstanding activation requirement; this
+backend correction does not implement or run deployment coordination.
+
+Private billing collections live under `products/{SQUASH_PRODUCT_ID}`. Public
+purchase history lives at `users/{uid}/products/{SQUASH_PRODUCT_ID}/purchases`.
+`users/{uid}.access[{SQUASH_PRODUCT_ID}]` holds the existing details plus the
+server-derived `paid` Boolean. A transaction writes that product's fields together,
+preserving every other product map. Successful expiry reconciliation refreshes
+the persisted flag; provider failure never writes a false default. A user with no
+purchase claims gets no default persisted product record. API `access` remains
+the current application's projection, so existing consumers stay scoped without
+receiving other product fields. `paid` is additional; match admission still
+requires current expiry/state validation.
+
+Provider reference hashes, checkout/customer idempotency, Stripe metadata and
+Play account binding include the application product ID. Stripe metadata must
+match both UID and application product before restoration/webhook fulfillment.
+Refunds, disputes and fraud-warning events retrieve the actual charge, invoice
+and subscription chain before checking ownership. Subscription metadata is read
+from the subscription; it is not assumed to exist on its PaymentIntent. One-time
+payments use their actual PaymentIntent metadata. Customer IDs must agree across
+the chain, and unrelated product events cannot fulfill purchases here.
+Play's verified account binding and configured package/catalog bind its product.
+Scheduled reconciliation enumerates this product's billing membership, including
+Play-only customers, rather than all canonical users. Device authorization stays
+account-level. This source does not migrate any previous global collection or
+old provider metadata; the inspected database was empty. Recheck before deploying
+and reconcile unexpected existing records without overwriting them.
+
+Activation additionally requires configured Firebase Auth providers,
 domains, actual Play catalogs/base plans, Stripe Prices/customer portal, webhook
 destinations and the device return page. Real purchase/renewal/refund/restore,
 ownership, cancellation and invoice observations remain required by the rubric.

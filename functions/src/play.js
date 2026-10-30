@@ -1,6 +1,6 @@
 import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
-import { db, hash, required, fail, providerKey } from './core.js';
+import { productId as applicationProductId, productDoc, productCollection, playAccountId, required, fail, providerKey } from './core.js';
 import { plans, playProduct, basePlan } from './catalog.js';
 import { claimPurchase } from './entitlements.js';
 
@@ -9,7 +9,7 @@ const packageName = () => required('PLAY_PACKAGE_NAME');
 export async function verifyPlayPurchase(uid, { purchaseToken, productId }) {
   if (typeof purchaseToken !== 'string' || purchaseToken.length > 4096 || !purchaseToken || typeof productId !== 'string') fail('INVALID_PURCHASE', 'Invalid Google Play purchase.');
   const observedAt = Date.now(); const api = publisher();
-  const existing = (await db.doc(`purchaseClaims/${providerKey('google_play', purchaseToken)}`).get()).data();
+  const existing = (await productDoc('purchaseClaims', providerKey('google_play', purchaseToken)).get()).data();
   if (existing && existing.ownerUid !== uid) fail('PURCHASE_OWNED', 'This purchase belongs to another account.', 409);
   if (existing && existing.productId !== productId) fail('INVALID_PRODUCT', 'Purchase product identity mismatch.', 409);
   if (existing?.supersededBy) return { id: existing.id, state: 'revoked' };
@@ -21,10 +21,10 @@ export async function verifyPlayPurchase(uid, { purchaseToken, productId }) {
     plan = 'lifetime';
     state = data.purchaseState === 0 ? 'active' : data.purchaseState === 2 ? 'pending' : 'revoked';
     acknowledged = data.acknowledgementState === 1; orderId = data.orderId || null; paidAt = Number(data.purchaseTimeMillis) || null;
-    if (data.obfuscatedExternalAccountId !== hash(`play:${uid}`)) fail('ACCOUNT_BINDING_REQUIRED', 'Restore this purchase using its original application account.', 409);
+    if (data.obfuscatedExternalAccountId !== playAccountId(uid)) fail('ACCOUNT_BINDING_REQUIRED', 'Restore this purchase using its original application account.', 409);
   } else {
     ({ data } = await api.purchases.subscriptionsv2.get({ packageName: packageName(), token: purchaseToken }));
-    if (data.externalAccountIdentifiers?.obfuscatedExternalAccountId !== hash(`play:${uid}`)) fail('ACCOUNT_BINDING_REQUIRED', 'Restore this purchase using its original application account.', 409);
+    if (data.externalAccountIdentifiers?.obfuscatedExternalAccountId !== playAccountId(uid)) fail('ACCOUNT_BINDING_REQUIRED', 'Restore this purchase using its original application account.', 409);
     const line = data.lineItems?.filter(item => item.productId === productId).sort((a, b) => Date.parse(b.expiryTime) - Date.parse(a.expiryTime))[0];
     plan = existing?.basePlanId === line?.offerDetails?.basePlanId ? existing.plan : plans.find(candidate => candidate !== 'lifetime' && basePlan(candidate) === line?.offerDetails?.basePlanId);
     if (!line || !plan) fail('INVALID_PRODUCT', 'Unrecognized Google Play subscription base plan.');
@@ -35,7 +35,7 @@ export async function verifyPlayPurchase(uid, { purchaseToken, productId }) {
     // startTime is subscription signup, not the latest renewal transaction time.
     paidAt = existing?.orderId === orderId ? existing.paidAt || null : null;
     if (data.linkedPurchaseToken) {
-      const old = await db.doc(`purchaseClaims/${providerKey('google_play', data.linkedPurchaseToken)}`).get();
+      const old = await productDoc('purchaseClaims', providerKey('google_play', data.linkedPurchaseToken)).get();
       if (old.exists && old.data().ownerUid !== uid) fail('PURCHASE_OWNED', 'The previous subscription belongs to another account.', 409);
       await claimPurchase(uid, { ...(old.exists ? old.data() : { provider: 'google_play', purchaseRef: data.linkedPurchaseToken, productId, plan, lifetime: false, validUntil: null, paidAt: null, acknowledged: false }), state: 'revoked', supersededBy: providerKey('google_play', purchaseToken), observedAt });
     }
@@ -45,9 +45,9 @@ export async function verifyPlayPurchase(uid, { purchaseToken, productId }) {
     try {
       if (lifetime) await api.purchases.products.acknowledge({ packageName: packageName(), productId, token: purchaseToken, requestBody: {} });
       else await api.purchases.subscriptions.acknowledge({ packageName: packageName(), subscriptionId: productId, token: purchaseToken, requestBody: {} });
-      await db.doc(`purchaseClaims/${id}`).update({ acknowledged: true, acknowledgementRetry: false });
+      await productDoc('purchaseClaims', id).update({ acknowledged: true, acknowledgementRetry: false });
     } catch {
-      await db.doc(`purchaseClaims/${id}`).update({ acknowledgementRetry: true });
+      await productDoc('purchaseClaims', id).update({ acknowledgementRetry: true });
     }
   }
   return { id, state };
@@ -63,19 +63,19 @@ export async function handlePlayNotification(req) {
   if (!message?.messageId || !message.data) fail('INVALID_PUSH', 'Missing notification.');
   const notification = JSON.parse(Buffer.from(message.data, 'base64').toString('utf8'));
   if (notification.packageName !== packageName()) fail('INVALID_PUSH', 'Package mismatch.', 403);
-  const event = db.doc(`billingEvents/play_${hash(message.messageId)}`);
+  const event = productDoc('billingEvents', `play_${providerKey('google_play', message.messageId)}`);
   if ((await event.get()).data()?.processedAt) return;
-  await event.set({ receivedAt: Date.now(), type: 'play_notification' }, { merge: true });
+  await event.set({ appProductId: applicationProductId(), receivedAt: Date.now(), type: 'play_notification' }, { merge: true });
   const token = notification.subscriptionNotification?.purchaseToken || notification.oneTimeProductNotification?.purchaseToken || notification.voidedPurchaseNotification?.purchaseToken;
   if (token) {
-    const claim = await db.doc(`purchaseClaims/${providerKey('google_play', token)}`).get();
+    const claim = await productDoc('purchaseClaims', providerKey('google_play', token)).get();
     if (claim.exists) await verifyPlayPurchase(claim.data().ownerUid, { purchaseToken: token, productId: claim.data().productId });
     // Unknown ownership is retained for later authenticated restore, never assigned by a notification.
   }
   await event.set({ processedAt: Date.now(), outcome: token ? 'reconciled_or_unclaimed' : 'notification_without_purchase' }, { merge: true });
 }
 export async function reconcilePlay(uid) {
-  const claims = await db.collection('purchaseClaims').where('ownerUid', '==', uid).get();
+  const claims = await productCollection('purchaseClaims').where('ownerUid', '==', uid).get();
   const failures = [];
   for (const doc of claims.docs) {
     const claim = doc.data();

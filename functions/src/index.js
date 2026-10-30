@@ -1,9 +1,9 @@
 import { onRequest } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { logger } from 'firebase-functions';
-import { db, identity, required, fail } from './core.js';
+import { productCollection, historyDoc, identity, required, fail } from './core.js';
 import { loadCatalog } from './catalog.js';
-import { account, ownedPurchase, isAllowed, computeAccess } from './entitlements.js';
+import { account, ownedPurchase, isAllowed, computeAccess, persistVerifiedAccess } from './entitlements.js';
 import { createCheckout, createPortal, getStripeDocument, handleStripeWebhook, reconcileStripe } from './stripe.js';
 import { verifyPlayPurchase, handlePlayNotification, reconcilePlay } from './play.js';
 import { startDeviceAuthorization, approveDeviceAuthorization, exchangeDeviceAuthorization } from './device-auth.js';
@@ -11,9 +11,10 @@ import { startDeviceAuthorization, approveDeviceAuthorization, exchangeDeviceAut
 export async function reconcilePurchases(uid, { history = true } = {}) {
   const startedAt = Date.now();
   const results = await Promise.allSettled([reconcileStripe(uid, { history }), reconcilePlay(uid)]);
+  if (results.every(result => result.status === 'fulfilled')) await persistVerifiedAccess(uid);
   const current = await account(uid);
   if (results.some(result => result.status === 'rejected')) {
-    const claims = await db.collection('purchaseClaims').where('ownerUid', '==', uid).get();
+    const claims = await productCollection('purchaseClaims').where('ownerUid', '==', uid).get();
     const verified = computeAccess(claims.docs.map(doc => doc.data()).filter(claim => claim.observedAt >= startedAt), current.access.revision);
     // Never deny one independently verified paid purchase because an unrelated
     // historical/provider lookup failed; never grant from the failed stale claim.
@@ -56,7 +57,7 @@ export const billingApi = onRequest({ region: 'us-central1', timeoutSeconds: 120
       default: {
         const document = /^\/purchases\/([a-f0-9]{64})\/document$/.exec(path);
         if (req.method !== 'GET' || !document) fail('NOT_FOUND', 'Endpoint not found.', 404);
-        const history = await db.doc(`users/${uid}/purchases/${document[1]}`).get();
+        const history = await historyDoc(uid, document[1]).get();
         if (!history.exists || !history.data().documentAvailable) fail('DOCUMENT_PENDING', 'Your payment document is not available yet.', 409);
         const purchase = await ownedPurchase(uid, history.data().claimId);
         purchase.invoiceId = history.data().invoiceId || null;
@@ -74,10 +75,10 @@ export const billingApi = onRequest({ region: 'us-central1', timeoutSeconds: 120
 });
 
 export const reconcileBilling = onSchedule({ schedule: 'every 30 minutes', region: 'us-central1', timeoutSeconds: 540, memory: '256MiB' }, async () => {
-  // Page the server-owned user ledger; every failed owner is retried next run.
+  // Only this product's billing membership participates; never scan all accounts.
   let cursor = null;
   for (;;) {
-    let query = db.collection('users').orderBy('__name__').limit(100);
+    let query = productCollection('billingAccounts').orderBy('__name__').limit(100);
     if (cursor) query = query.startAfter(cursor);
     const page = await query.get(); if (page.empty) break;
     for (const user of page.docs) {

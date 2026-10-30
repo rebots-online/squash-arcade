@@ -7,7 +7,10 @@ service cloud.firestore {
       allow create: if owner(uid) && request.resource.data.keys().hasOnly(['preferences']);
       allow update: if owner(uid) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['preferences']);
       allow delete: if false;
-      match /purchases/{purchase} { allow read: if owner(uid); allow write: if false; }
+      match /products/{product}/purchases/{purchase} {
+        allow read: if owner(uid) && resource.data.appProductId == product;
+        allow write: if false;
+      }
     }
     match /{document=**} { allow read, write: if false; }
   }

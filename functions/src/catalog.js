@@ -8,7 +8,7 @@ export const priceId = plan => required(`STRIPE_PRICE_${suffix[plan] || fail('IN
 export const playProduct = plan => required(plan === 'lifetime' ? 'PLAY_LIFETIME_PRODUCT_ID' : 'PLAY_SUBSCRIPTION_PRODUCT_ID');
 export const basePlan = plan => plan === 'lifetime' ? null : required(`PLAY_BASE_PLAN_${suffix[plan]}`);
 export function validateConfiguration() {
-  for (const name of ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'CHECKOUT_SUCCESS_URL', 'CHECKOUT_CANCEL_URL', 'BILLING_RETURN_URL', 'ACCOUNT_AUTH_URL', 'BILLING_ALLOWED_ORIGINS', 'PLAY_PACKAGE_NAME', 'PLAY_PUSH_AUDIENCE', 'PLAY_PUSH_SERVICE_ACCOUNT', 'PLAY_PUBSUB_SUBSCRIPTION']) required(name);
+  for (const name of ['FIRESTORE_DATABASE_ID', 'SQUASH_PRODUCT_ID', 'STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'CHECKOUT_SUCCESS_URL', 'CHECKOUT_CANCEL_URL', 'BILLING_RETURN_URL', 'ACCOUNT_AUTH_URL', 'BILLING_ALLOWED_ORIGINS', 'PLAY_PACKAGE_NAME', 'PLAY_PUSH_AUDIENCE', 'PLAY_PUSH_SERVICE_ACCOUNT', 'PLAY_PUBSUB_SUBSCRIPTION']) required(name);
   for (const plan of plans) { priceId(plan); playProduct(plan); basePlan(plan); }
   return true;
 }
