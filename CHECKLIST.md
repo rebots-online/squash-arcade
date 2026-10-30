@@ -14,16 +14,18 @@ Legend: 🟩 COMPLETE · 🟨 IN_PROGRESS · 🟥 BLOCKED · ⬜ NOT_STARTED. A 
 |---|---|---|
 | 🟩 COMPLETE | Document actual source data structures | DOCS/DATA_STRUCTURES.md published; live schema is a separate task below. |
 | 🟩 COMPLETE | Correct architecture and build authorization | Rejected illustrative fields withdrawn; root build_all.sh is the sole build/deploy entry. |
-| 🟨 IN_PROGRESS | Verify existing account schema and isolate Squash data | Live database inspected: named database exists, default absent, no user records. Implement DATA_STRUCTURES.md §7: required database/product bindings, users/{uid}.access[productId] with paid Boolean, centralized scoped bookkeeping/history, product-aware provider ownership and reconciliation; preserve other fields. |
-| 🟨 IN_PROGRESS | Purchase and account UI | Source exists; show actual web and Windows purchase, management and receipts routes. |
+| 🟨 IN_PROGRESS | Verify existing account schema and isolate Squash data | Live database inspected: named database exists, default absent, no user records. DATA_STRUCTURES.md §7 implemented in 701cc77: explicit database/product bindings, scoped paid/access projection, bookkeeping/history and provider ownership. Syntax and semantic review passed; deployment and live acceptance remain open. |
+| 🟨 IN_PROGRESS | Purchase and account UI | Source and five recovery/navigation corrections published in d84ce3b; same-reviewer corrections accepted. Actual web/Windows purchase, management and receipt journeys remain unobserved. |
 | 🟨 IN_PROGRESS | Firebase identity and verified access | Actual Virtual Squash Firebase web app registered; public config stored in KStore with exact readback. Service activation remains unfinished. |
 | 🟥 BLOCKED | Stripe checkout, cancellation and invoice retrieval | Actual runtime credentials/catalog/webhook bindings are unresolved. |
 | 🟥 BLOCKED | Android Play subscriptions and lifetime purchase | Actual product/base-plan/publisher/RTDN bindings and Play installation track are unresolved. |
-| 🟨 IN_PROGRESS | Resolve canonical configuration inside the build script | Resolve only explicit pointers, contemporaneously into process environment. |
-| 🟨 IN_PROGRESS | Organization production Android signing | Signing source written; referenced KStore signing document returns 404, so existing key bindings and final artifacts remain unverified. |
-| ⬜ NOT_STARTED | Complete production build matrix | Windows standalone EXE + NSIS EXE + MSI; Linux AppImage + RPM + DEB; signed Android APK/AAB; web/PWA and existing matrix extras. Only build_all.sh. |
+| 🟩 COMPLETE | Build configuration resolver source and Firebase pointer readback | Published fb8768c; actual build_all.sh preflight resolved all four Firebase pointers. Missing production bindings still prevent the release. |
+| 🟥 BLOCKED | Organization production Android signing | Signing source reviewed/published fb8768c; referenced KStore signing document returns 404. All five signing bindings and final signatures remain unverified. |
+| 🟥 BLOCKED | Complete production build matrix | Windows standalone EXE + NSIS EXE + MSI; Linux AppImage + RPM + DEB; signed Android APK/AAB; web/PWA and existing matrix extras. Only build_all.sh; latest invocation stopped before compilation on signing and service URL bindings. |
 | ⬜ NOT_STARTED | Show startup, initialization splash and idle screen | Observe real web and Windows artifacts; document each platform's behavior. |
 | ⬜ NOT_STARTED | Continuous purchase/account demonstration | Execute DOCS/TEST_RUBRIC.md with real provider state and authorized transactions, correcting defects with the same coder. |
+
+Backend activation still requires the coordinator to generate the named-database deployment configuration from FIRESTORE_DATABASE_ID, resolve the real provider runtime configuration, deploy the service, and verify the returned API/auth URLs. Static firebase.json intentionally has no default-database rules target. Canonical backend bindings are recorded at PROJECTS/SquashArcade/CONFIG/backend.md; unavailable provider values remain empty.
 
 Builds and production signing are authorized. No additional permission is needed to invoke build_all.sh once required configuration resolves. Missing configuration is not a build prohibition. No automated tests; source syntax and semantic review plus real application observation remain required. No fabricated accounts, prices, transactions or success states.
 
