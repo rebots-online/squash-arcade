@@ -37,6 +37,8 @@ if($Platform -eq 'windows'){
   if($LASTEXITCODE -ne 0){exit $LASTEXITCODE}
   @{canonicalVersion=$version;platformVersion=$nativeVersion;signing='unsigned';runtime='Microsoft Edge WebView2; standalone EXE is not an installer'}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $Output "squash-arcade-v$version-windows-metadata.json")
 }else{
+  . (Join-Path $Snapshot 'scripts/android-signing.ps1')
+  Invoke-SquashAndroidSigning -ValidateOnly | Out-Null
   $env:CARGO_PROFILE_RELEASE_DEBUG='2'
   $parts=$version.Split('.')
   $versionCode=[int64]$parts[0]*100000000+[int64]$parts[1]*100000+[int64]$parts[2]
@@ -100,13 +102,20 @@ if($Platform -eq 'windows'){
     $oldLibrary.Delete()
     [void][IO.Compression.ZipFileExtensions]::CreateEntryFromFile($apkPackage,$packedLibrary,'lib/arm64-v8a/libapp_lib.so',[IO.Compression.CompressionLevel]::NoCompression)
   }finally{$apkPackage.Dispose()}
-  $finalApk=Join-Path $Output "squash-arcade-v$version-android-arm64-unsigned.apk"
-  & $zipAlign.FullName -P 16 -f 4 $unalignedApk $finalApk
+  $alignedApk=Join-Path $Snapshot '.android-aligned.apk'
+  & $zipAlign.FullName -P 16 -f 4 $unalignedApk $alignedApk
   if($LASTEXITCODE -ne 0){throw 'Android APK alignment failed.'}
-  & $zipAlign.FullName -c -P 16 4 $finalApk
+  & $zipAlign.FullName -c -P 16 4 $alignedApk
   if($LASTEXITCODE -ne 0){throw 'Android APK alignment verification failed.'}
-  if((Get-Item -LiteralPath $finalApk).Length -ge 100MB){throw 'APK exceeds the tracked release-file limit.'}
-  Copy-Item -LiteralPath $aab.FullName -Destination (Join-Path $Output "squash-arcade-v$version-android-arm64-unsigned.aab")
+  $signedApk=Join-Path $Snapshot '.android-production-signed.apk'
+  $signedBundle=Join-Path $Snapshot '.android-production-signed.aab'
+  $signing=Invoke-SquashAndroidSigning -AlignedApk $alignedApk -UnsignedBundle $aab.FullName -SignedApk $signedApk -SignedBundle $signedBundle
+  & $zipAlign.FullName -c -P 16 4 $signedApk
+  if($LASTEXITCODE -ne 0){throw 'Signed APK alignment verification failed.'}
+  if((Get-Item -LiteralPath $signedApk).Length -ge 100MB){throw 'APK exceeds the tracked release-file limit.'}
+  $finalApk=Join-Path $Output "squash-arcade-v$version-android-arm64-production-signed.apk"
+  Copy-Item -LiteralPath $signedApk -Destination $finalApk -Force
+  Copy-Item -LiteralPath $signedBundle -Destination (Join-Path $Output "squash-arcade-v$version-android-arm64-production-signed.aab") -Force
   $aapt=Get-ChildItem -LiteralPath "$env:ANDROID_HOME/build-tools" -Recurse -Filter aapt2.exe | Sort-Object FullName -Descending | Select-Object -First 1
   if(-not $aapt){throw 'Android SDK aapt2 is required for packaged icon verification.'}
   $resources=(& $aapt.FullName dump resources $apk.FullName) -join "`n"
@@ -129,5 +138,5 @@ if($Platform -eq 'windows'){
   New-Item -ItemType Directory -Path (Join-Path $symbols 'arm64-v8a') -Force|Out-Null
   Copy-Item -LiteralPath (Join-Path $env:CARGO_TARGET_DIR 'aarch64-linux-android/release/libapp_lib.so') -Destination (Join-Path $symbols 'arm64-v8a/libapp_lib.so')
   Compress-Archive -Path (Join-Path $symbols '*') -DestinationPath (Join-Path $Output "squash-arcade-v$version-android-arm64-debug-symbols.zip") -CompressionLevel Optimal -Force
-  @{canonicalVersion=$version;versionCode=$versionCode;signing='unsigned; production signing is a separate release step';abi='arm64-v8a';icon='red Mii; generated Android resources copied and hash-verified'}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $Output "squash-arcade-v$version-android-metadata.json")
+  @{canonicalVersion=$version;versionCode=$versionCode;signing=$signing.signing;certificateSha256=$signing.certificateSha256;apkSignatureVerified=$signing.apkSignatureVerified;aabSignatureVerified=$signing.aabSignatureVerified;abi='arm64-v8a';icon='red Mii; generated Android resources copied and hash-verified'}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $Output "squash-arcade-v$version-android-metadata.json")
 }

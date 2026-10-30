@@ -9,6 +9,7 @@ import { artifactNames, targets } from './build-targets.mjs';
 import { assertProductIdentity } from './build-product.mjs';
 import { publishWeb } from './publish-web.mjs';
 import { accountBuildEnvironment } from './account-config.mjs';
+import { resolveBuildEnvironment } from './resolve-build-env.mjs';
 requireBuildAll();
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
@@ -40,6 +41,7 @@ const run=(command,args,options={})=>new Promise((done,fail)=>{
 });
 let manifest,runDirectory,releaseDirectory,inventoryPath,webPublication;
 try {
+  await resolveBuildEnvironment(root);
   const accountEnvironment = accountBuildEnvironment(root);
   await assertProductIdentity();
   await run(process.execPath,['scripts/catalog-speech.mjs']);
