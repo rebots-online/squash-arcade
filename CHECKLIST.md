@@ -328,3 +328,14 @@ Current operator override: no automated tests for follow-up work. TASK-40–45 t
 
 
 Independent source/deterministic review accepted all six entities at d8ad00d after follow-up repairs. Review evidence and the separate browser/deployment gates: DOCS/VERIFICATION/smart-volleys/RESULTS.md.
+
+### BILL-01 activation completion recipe (architecture b306906)
+
+| State | Owner / files | Work and acceptance |
+|---|---|---|
+| ⬜ NOT_STARTED | Android coder: scripts/recover-android-signing.ps1 | Read only the exact operator-authorized recovery document and existing organization keystore, verify documented certificate via keytool with password in process env, restore missing canonical KStore record and normalized five bindings with exact readback. Refuse existing-record overwrite. Emit no credential values. This helper restores configuration, never builds/signs artifacts. |
+| ⬜ NOT_STARTED | Backend coder: scripts/deploy-account.mjs, functions/src/runtime-config.js, core.js/index.js, build_all.sh | Add --deploy-account sole-entry activation. Resolve complete backend config; create/reuse SQUASH_ARCADE_BILLING_CONFIG through direct Secret Manager REST with configured CLI identity and no body logging. Bind secret to both exports and use its config during discovery/runtime. Generate root nonsecret named-database Firebase config, deploy billing codebase plus named DB rules, read actual v2 state/URL/secret/runtime identity, persist verified public service URL to KStore. Preserve existing secret versions. No deployment by coder. |
+| ⬜ NOT_STARTED | Configuration coder: scripts/resolve-build-env.mjs, configuration docs/examples | Refactor reusable explicit-pointer resolution for backend allowlist plus existing build allowlist, retain exact readback/names-only failures/atomic process publication. Backend optional listing only if configured. Remove internal KStore mentions from public example; keep internal live union. Supply backend resolver interface to backend coder. No runtime secret writes. |
+| ⬜ NOT_STARTED | Supervisor | Review each exact code path, return deficiencies to original coder, publish source/corrections. Execute recovery then --deploy-account and complete default build_all.sh only with actual resolved production inputs. Verify all required formats and production certs; retain full continuous journey recording. |
+
+Read-only CLI recipe was verified against installed Firebase CLI15.34.1 and Functions SDK. Secret-set CLI is deliberately not used because its debug logger can retain the encoded request body. Do not weaken customer acceptance or mark activation complete from syntax checks.
