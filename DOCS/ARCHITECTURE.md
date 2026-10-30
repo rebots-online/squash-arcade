@@ -1,7 +1,7 @@
 ---
 doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
-version: "2.8.1"
+version: "2.8.2"
 status: "TARGET — replay shadows follow recorded poses; volley tactics and serve repertoire queued"
 updated_at: "2026-10-30"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
@@ -43,7 +43,7 @@ owns_modules:
 
 ## 0. Active delivery: BILL-01 — purchase access and account management
 
-Operator authorization 2026-10-30: one cohesive change adds discoverable purchasing, Firebase identity, provider-verified access, cancellation and receipt retrieval across the existing platforms. This section supersedes older no-billing scope statements for BILL-01 only. Architecture is published before the checklist; the checklist and continuous-demonstration script are published before coder execution. No build, signing or deployment is authorized during this source/design cycle: the operator's preceding stop-build instruction remains in effect. Existing signed-output files from the interrupted signing operation are preserved and excluded from this change. No mock payment, invented account, fake receipt or offline paid-state fabrication is permitted.
+Operator authorization 2026-10-30: one cohesive change adds discoverable purchasing, Firebase identity, provider-verified access, cancellation and receipt retrieval across the existing platforms. This section supersedes older no-billing scope statements for BILL-01 only. Architecture is published before the checklist; the checklist and continuous-demonstration script are published before coder execution. The operator subsequently authorized completion and production builds. Only root build_all.sh may invoke build or deployment helpers. Android APK/AAB must use the existing organization production key; Windows requires standalone EXE, NSIS installer EXE and MSI; Linux requires AppImage, RPM and DEB. Existing signed-output files from the interrupted signing operation are preserved and excluded from this change. No mock payment, invented account, fake receipt or offline paid-state fabrication is permitted.
 
 ### 0.1 Commercial and platform contract
 
@@ -73,39 +73,21 @@ Design uses the invoked Stitch taste: scoped slate surfaces, restrained gold acc
 
 ### 0.3 Identity and entitlement data
 
-#### Canonical account — operator correction, 2026-10-30
+#### Account contract correction — 2026-10-30
 
-One Firebase Auth UID, one Firestore `users/{uid}` record in the configured project (selected deployment: `rochemediaservices-infra`). This is the account model. Apps read what they need; apps that do not need an account need not use it. No per-app user directories, duplicate profiles, authentication tenants or separate account-sharing feature. This contract supersedes the global `users/{uid}.access` schema below.
+Data structures are documented first in DOCS/DATA_STRUCTURES.md. That inventory records actual source fields and explicitly identifies unfinished product isolation; it is not proof of a deployed schema. Earlier example-derived field names are withdrawn. Do not implement another product's balances or treat illustrative user labels as schema names.
 
-| Field in users/{uid} | Type and meaning | Writer |
-|---|---|---|
-| account.squash | Boolean: currently paid/valid Squash access, yes or no | Squash verification service |
-| account["natally-credits"] | Integer: actual remaining Natally credits | Existing Natally credit authority only |
-| accountDetails.squash | state, provider, plan, validUntil, lifetime, revision, checkedAt, verified purchase reference | Squash verification service |
+Use one Firebase Auth UID and one canonical users/{uid} record in the configured project (selected deployment: rochemediaservices-infra). Squash reads and atomically updates only its own verified access data, preserving every unrelated field. Applications that do not need accounts need not consume this record. No duplicate per-platform profiles or separate account-sharing feature is introduced.
 
-The operator's `362` illustrates the field's meaning; it is not a balance to seed. Missing fields are not invented balances. Read/verification failure must not write false or zero. Squash must never initialize, spend, reset or overwrite Natally credits. Writers atomically update only their owned nested fields and preserve every unrelated field; never replace the whole account map.
+Recover the existing account field/path contract from the configured project and canonical KStore definitions before changing persistence. Current source uses a generic access map and unscoped bookkeeping; that implementation must not be deployed into the common project as if product isolation were complete. Final bindings must be documented in DATA_STRUCTURES.md before the coordinated backend/API/UI/rules correction. Do not replace the project's existing Firestore rules wholesale.
 
-Verified fulfillment, renewal, restoration, expiration and revocation update `account.squash` and `accountDetails.squash` together. Cancellation keeps access true through paid-through validity; lifetime remains true unless revoked. Match admission refreshes validity before using the boolean. GET /account exposes this account map and Squash details; UI and admission replace the old global access field with this contract.
+Verified fulfillment, renewal, restoration, expiration and revocation determine Squash validity. Cancellation retains paid-through access; lifetime remains valid unless revoked. Verification failure is unknown/error, never a false paid flag. Transactions remain bound to their canonical UID. Product isolation must cover claim aggregation, customer mappings, events, checkout intents, history and reconciliation together.
 
-Provider records are transaction bookkeeping, not additional accounts: Squash billingAccounts, purchaseClaims, billingEvents and checkoutIntents live under `products/squash`, reference the canonical UID, and cannot collide with another product. Sanitized `users/{uid}/purchases` records carry `product: squash` and collision-free provider/transaction IDs. Device authorizations remain account-level. Existing live data and rules must be inspected before deployment; migrate only verified Squash access, preserve other products, and never merge identities merely by email.
-
-Customer copy: "Use your Roche account to sign in to our games and manage your purchases in one place." No separate sharing opt-in or account per game. Provider-specific cancellation and documents remain attached to their actual transactions. Project/app/provider bindings remain environment configuration.
-
-Implementation status: specification adopted; the current single-product source still requires the canonical-field and transaction-path changes before activation. This spec changes no live user records.
-
-Firebase Auth owns identity, with Google sign-in and email/password recovery. Firestore users/{uid} owns the profile, canonical account map and server-maintained accountDetails.squash; arbitrary billing fields are not stored as mutable Firebase Auth profile properties. Auth ID token proves identity, not payment. Server verifies it on every private endpoint. Clients can edit only allowed profile preferences and cannot write billing, entitlement, customer mappings or provider events.
+Customer copy: "Use your Roche account to sign in to our games and manage your purchases in one place." Firebase Auth owns identity; Firestore owns server-maintained access. Auth tokens prove identity, not payment. Clients cannot write access, provider mappings or provider events. Project, app and provider bindings remain environment configuration.
 
 Web sign-in uses Firebase SDK supported browser flows. Native WebViews must not embed Google's OAuth page: open hosted account sign-in in the system browser, then complete a single-use device authorization exchange bound to the initiating client secret and approved UID, expiring after five minutes. Poll token is never placed in the public browser link. Only authenticated browser approval can bind a UID. Exchange consumes the record atomically, returns a Firebase custom token once, and the native Web SDK signs in with that token. Native account session uses supported persistent Firebase storage; sign-out clears local account/entitlement state. No client-provided UID is accepted as proof.
 
-| Entity | Fields and purpose | Engaged by |
-|---|---|---|
-| users/{uid} | Common profile; account.squash boolean; account["natally-credits"] integer owned by Natally; accountDetails.squash verification metadata; account fields server-only | BILL-01-B, C |
-| products/squash/billingAccounts/{uid} | stripeCustomerId, Play obfuscated account binding; server-only | BILL-01-B |
-| products/squash/purchaseClaims/{providerKeyHash} | ownerUid, provider, productId, purchaseRef, state, validUntil, acknowledged; unique ownership, no token in readable profile | BILL-01-B, D |
-| users/{uid}/purchases/{purchaseId} | sanitized amount, currency, product, paidAt, provider, status, document availability | BILL-01-B, C |
-| products/squash/billingEvents/{providerEventId} | receivedAt, processedAt, event type, reconciliation outcome; deduplicated | BILL-01-B |
-| products/squash/checkoutIntents/{uid_requestId} | provider session/reference, selected plan, pending/completed/expired, createdAt; retry resumes existing provider intent | BILL-01-B, C |
-| deviceAuthorizations/{id} | hash of client secret, expiry, approvedUid, consumedAt; deny direct client access | BILL-01-B, C |
+The implemented entity inventory and unresolved product-scoping differences are recorded in DOCS/DATA_STRUCTURES.md. That document must contain the verified final paths before persistence changes are assigned.
 
 Entitlement states: checking, none, pending, active, grace, canceled_active, expired, revoked, error. Active/grace/canceled_active grant until authoritative expiry; lifetime grants unless revoked. Pending never grants. Error does not mean none. Reconcile independent purchases before deriving aggregate access: revoking one purchase must not erase another valid purchase. Provider state and revision prevent stale or reordered webhooks rolling access backward incorrectly. Client UI subscribes to its server projection; expiry is evaluated server-side and refreshed at match admission. Custom claims may be an optimization later, never sole validity authority.
 
