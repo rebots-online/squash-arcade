@@ -1,7 +1,7 @@
 ---
 doc_id: "ARGON-SQUASH-ARCH-001"
 title: "Argon Squash — Physical Chess, Wonder First: Modular Architecture & Digital Twin"
-version: "2.8.0"
+version: "2.8.1"
 status: "TARGET — replay shadows follow recorded poses; volley tactics and serve repertoire queued"
 updated_at: "2026-10-30"
 target_execution_model: "GLM-5.3 / Non-Reasoning Deterministic Executor"
@@ -72,6 +72,26 @@ Receipts view: real transactions with date, amount/currency, status, provider an
 Design uses the invoked Stitch taste: scoped slate surfaces, restrained gold accent, sans-serif hierarchy, grid layout, minimum 44px targets, no glow or decorative looping animation on purchase confirmation, reduced-motion support. Preserve the existing court and red-player identity. DESIGN.md is the visual contract. Figma target: https://www.figma.com/design/QotfEXkcNAg4dBllelZ1qw . Design-to-code must obtain high-fidelity get_design_context with screenshot before UI coding, include figma-design-to-code in skillNames, reuse suitable existing components, download exact static assets through supported Figma mechanisms, and compare actual geometry later. Design states use real data or genuinely empty states; no dummy customer or transaction records.
 
 ### 0.3 Identity and entitlement data
+
+#### Canonical account — operator correction, 2026-10-30
+
+One Firebase Auth UID, one Firestore `users/{uid}` record in the configured project (selected deployment: `rochemediaservices-infra`). This is the account model. Apps read what they need; apps that do not need an account need not use it. No per-app user directories, duplicate profiles, authentication tenants or separate account-sharing feature. This contract supersedes the global `users/{uid}.access` schema below.
+
+| Field in users/{uid} | Type and meaning | Writer |
+|---|---|---|
+| account.squash | Boolean: currently paid/valid Squash access, yes or no | Squash verification service |
+| account["natally-credits"] | Integer: actual remaining Natally credits | Existing Natally credit authority only |
+| accountDetails.squash | state, provider, plan, validUntil, lifetime, revision, checkedAt, verified purchase reference | Squash verification service |
+
+The operator's `362` illustrates the field's meaning; it is not a balance to seed. Missing fields are not invented balances. Read/verification failure must not write false or zero. Squash must never initialize, spend, reset or overwrite Natally credits. Writers atomically update only their owned nested fields and preserve every unrelated field; never replace the whole account map.
+
+Verified fulfillment, renewal, restoration, expiration and revocation update `account.squash` and `accountDetails.squash` together. Cancellation keeps access true through paid-through validity; lifetime remains true unless revoked. Match admission refreshes validity before using the boolean. GET /account exposes this account map and Squash details; UI and admission replace the old global access field with this contract.
+
+Provider records are transaction bookkeeping, not additional accounts: Squash billingAccounts, purchaseClaims, billingEvents and checkoutIntents live under `products/squash`, reference the canonical UID, and cannot collide with another product. Sanitized `users/{uid}/purchases` records carry `product: squash` and collision-free provider/transaction IDs. Device authorizations remain account-level. Existing live data and rules must be inspected before deployment; migrate only verified Squash access, preserve other products, and never merge identities merely by email.
+
+Customer copy: "Use your Roche account to sign in to our games and manage your purchases in one place." No separate sharing opt-in or account per game. Provider-specific cancellation and documents remain attached to their actual transactions. Project/app/provider bindings remain environment configuration.
+
+Implementation status: specification adopted; the current single-product source still requires the canonical-field and transaction-path changes before activation. This spec changes no live user records.
 
 Firebase Auth owns identity, with Google sign-in and email/password recovery. Firestore users/{uid} owns profile and server-maintained access projection; arbitrary billing fields are not stored as mutable Firebase Auth profile properties. Auth ID token proves identity, not payment. Server verifies it on every private endpoint. Clients can edit only allowed profile preferences and cannot write billing, entitlement, customer mappings or provider events.
 
