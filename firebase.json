@@ -1,0 +1,4 @@
+{
+  "functions": [{ "source": "functions", "codebase": "billing", "runtime": "nodejs22" }],
+  "firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json" }
+}
