@@ -1,0 +1,6 @@
+{
+  "identifier": "play-platform",
+  "description": "Native runtime identity for provider selection",
+  "windows": ["main"],
+  "permissions": ["play-billing:default"]
+}

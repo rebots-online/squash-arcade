@@ -1,0 +1,4 @@
+[[permission]]
+identifier = "billing"
+description = "Query Play products and purchases and open the native purchase sheet."
+commands.allow = ["queryProducts", "queryPurchases", "purchase", "registerListener", "removeListener"]

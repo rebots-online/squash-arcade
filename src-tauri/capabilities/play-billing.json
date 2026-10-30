@@ -1,0 +1,7 @@
+{
+  "identifier": "play-billing",
+  "description": "Google Play billing only in the native Android application",
+  "platforms": ["android"],
+  "windows": ["main"],
+  "permissions": ["play-billing:billing"]
+}
