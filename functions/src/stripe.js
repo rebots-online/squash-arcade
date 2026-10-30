@@ -56,7 +56,7 @@ export async function reconcileStripePurchase(uid, purchase) {
     if (payment.revoked) state = 'revoked';
     record = { provider: 'stripe', kind: 'subscription', purchaseRef: sub.id, priceId: item.price.id, productId: objectId(item.price.product), plan, state, lifetime: false, validUntil: sub.current_period_end * 1000, paidAt: invoice?.status_transitions?.paid_at ? invoice.status_transitions.paid_at * 1000 : null, amount: invoice?.amount_paid ?? null, currency: invoice?.currency?.toUpperCase() || null, invoiceId: invoice?.id || null, settlement: invoice?.status === 'paid' ? (invoice.paid_out_of_band ? 'out_of_band' : invoice.payment_intent ? 'payment_intent' : 'invoice_settlement') : null, receiptUrl: payment.receiptUrl, observedAt };
   } else {
-    const session = await stripe.checkout.sessions.retrieve(purchase.sessionId || purchase.purchaseRef, { expand: ['line_items'] });
+    const session = await stripe.checkout.sessions.retrieve(purchase.sessionId || purchase.purchaseRef, { expand: ['line_items', 'invoice'] });
     if (session.metadata.firebaseUid !== uid) fail('PURCHASE_OWNED', 'Purchase account mismatch.', 409);
     const item = session.line_items?.data[0];
     if (session.line_items?.data.length !== 1 || !item?.price) fail('INVALID_PRODUCT', 'Unsupported checkout contents.', 502);
@@ -64,7 +64,8 @@ export async function reconcileStripePurchase(uid, purchase) {
     if (plan !== 'lifetime') fail('INVALID_PRODUCT', 'Lifetime price required.', 502);
     const payment = await paidState(stripe, session.payment_intent);
     const failed = session.status === 'expired' || session.status === 'complete' && ['canceled', 'requires_payment_method'].includes(payment.paymentStatus);
-    record = { provider: 'stripe', kind: 'payment', sessionId: session.id, purchaseRef: session.id, paymentIntentId: objectId(session.payment_intent) || null, priceId: item.price.id, productId: objectId(item.price.product), plan, state: payment.revoked ? 'revoked' : session.payment_status === 'paid' && payment.paymentSucceeded ? 'active' : failed ? 'expired' : 'pending', lifetime: true, validUntil: null, paidAt: session.payment_status === 'paid' ? session.created * 1000 : null, amount: session.amount_total, currency: session.currency?.toUpperCase() || null, invoiceId: objectId(session.invoice) || null, receiptUrl: payment.receiptUrl, observedAt };
+    const invoicePaidAt = typeof session.invoice === 'object' ? session.invoice?.status_transitions?.paid_at : null;
+    record = { provider: 'stripe', kind: 'payment', sessionId: session.id, purchaseRef: session.id, paymentIntentId: objectId(session.payment_intent) || null, priceId: item.price.id, productId: objectId(item.price.product), plan, state: payment.revoked ? 'revoked' : session.payment_status === 'paid' && payment.paymentSucceeded ? 'active' : failed ? 'expired' : 'pending', lifetime: true, validUntil: null, paidAt: invoicePaidAt ? invoicePaidAt * 1000 : null, amount: session.amount_total, currency: session.currency?.toUpperCase() || null, invoiceId: objectId(session.invoice) || null, receiptUrl: payment.receiptUrl, observedAt };
   }
   await claimPurchase(uid, record);
 }
@@ -164,6 +165,16 @@ export async function createCheckout(uid, { plan, requestId }) {
   return { url: session.url, intentId };
 }
 export async function createPortal(uid) {
+  const current = await account(uid);
+  if (current.access.provider === 'google_play') {
+    if (current.access.lifetime) fail('NO_SUBSCRIPTION', 'Lifetime access has no subscription to cancel.', 409);
+    const claims = await db.collection('purchaseClaims').where('ownerUid', '==', uid).get();
+    const purchase = claims.docs.map(doc => doc.data()).find(claim => claim.provider === 'google_play' && claim.plan === current.access.plan && !claim.supersededBy && !claim.lifetime);
+    if (!purchase) fail('NO_SUBSCRIPTION', 'No Google Play subscription was found.', 404);
+    const url = new URL('https://play.google.com/store/account/subscriptions');
+    url.searchParams.set('sku', purchase.productId); url.searchParams.set('package', required('PLAY_PACKAGE_NAME'));
+    return { url: url.href };
+  }
   const billing = await db.doc(`billingAccounts/${uid}`).get();
   if (!billing.data()?.stripeCustomerId) fail('NO_STRIPE_ACCOUNT', 'This account has no Stripe purchases.', 404);
   const portal = await stripeClient().billingPortal.sessions.create({ customer: billing.data().stripeCustomerId, return_url: httpsUrl('BILLING_RETURN_URL') });

@@ -3,6 +3,13 @@ import { RELAY_ENABLED } from '../motion_controls.js';
 export class CourtHUD {
   constructor(engine) {
     this.engine = engine;
+    const account = document.createElement('button');
+    account.id = 'btn-account'; account.type = 'button'; account.textContent = 'Account';
+    account.addEventListener('click', e => { e.stopPropagation(); engine.account?.open('Account'); });
+    for (const type of ['pointerdown', 'pointerup', 'keydown', 'keyup']) account.addEventListener(type, e => e.stopPropagation());
+    const menuButton=document.getElementById('btn-mobile-menu');
+    const accountNav=document.createElement('div'); accountNav.id='court-account-nav';
+    menuButton?.before(accountNav); accountNav.append(account); if(menuButton)accountNav.append(menuButton);
     const card = document.querySelector('#title-modal .side-docked-card');
     const header = document.querySelector('#title-modal .wii-logo-header');
     if (!card || !header) return;
@@ -26,6 +33,10 @@ export class CourtHUD {
       <button type="button" data-play-method="phone"><b>02</b><span><strong>Phone racket</strong><small>Wii-style · your phone is your racket</small></span><em>SHOW ME →</em></button>
       <button type="button" data-play-method="camera"><b>03</b><span><strong>Camera play</strong><small>Kinect-style · step back, lunge and swing</small></span><em>SHOW ME →</em></button>`;
     header.after(start);
+    const accountMenu = document.createElement('button');
+    accountMenu.type = 'button'; accountMenu.className = 'account-button'; accountMenu.textContent = 'Account & purchases';
+    accountMenu.onclick = () => engine.account?.open('Purchase');
+    start.after(accountMenu);
     start.addEventListener('click', e => {
       const method = e.target.closest('[data-play-method]')?.dataset.playMethod;
       if (!method) return;
@@ -83,6 +94,15 @@ export class CourtHUD {
   update() {
     const e = this.engine;
     this.quickStart.hidden = !(e.spectatorMatchMode || e.autoPlayMode || e.introDirector?.active || ['TITLE', 'MATCH_OVER'].includes(e.phase)) || e._isSideMenuExpanded() || e.arcadeBriefing?.active || e.isPausedForModal;
+  }
+
+  updateAccess() {
+    const a = this.engine.account;
+    const state = a?.state;
+    const label = a?.hasAccess() ? 'START MATCH' : state?.user && !state.account && !state.error ? 'CHECKING ACCESS' : 'GET ACCESS TO PLAY';
+    if (this.quickStart) this.quickStart.querySelector('strong').textContent = label;
+    const menuLabel = document.getElementById('btn-start-match-label');
+    if (menuLabel) menuLabel.textContent = label;
   }
 
   startMatch(mode) {

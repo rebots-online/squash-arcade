@@ -17,9 +17,14 @@
     "release": "node scripts/build-entry.mjs"
   },
   "dependencies": {
+    "@tauri-apps/api": "2.12.4",
+    "@tauri-apps/plugin-opener": "2.7.2",
+    "firebase": "13.1.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "three": "0.160.0"
+    "three": "0.160.0",
+    "@fontsource-variable/geist": "5.3.0",
+    "@fontsource-variable/geist-mono": "5.3.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "2.11.4",

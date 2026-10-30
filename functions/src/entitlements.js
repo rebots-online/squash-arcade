@@ -1,10 +1,11 @@
-import { db, auth, providerKey, iso, fail, hash } from './core.js';
+import { db, auth, providerKey, iso, fail, hash, required } from './core.js';
 
 export function computeAccess(purchases, revision = 0, now = Date.now()) {
   const valid = purchases.filter(p => !p.supersededBy && ['active', 'grace', 'canceled_active'].includes(p.state) && (p.lifetime || p.validUntil > now));
   valid.sort((a, b) => Number(b.lifetime) - Number(a.lifetime) || (b.validUntil || 0) - (a.validUntil || 0));
-  const best = valid[0] || purchases.find(p => !p.supersededBy && p.state === 'pending') || purchases.find(p => !p.supersededBy && p.state === 'revoked');
-  return { state: best?.state || (purchases.length ? 'expired' : 'none'), provider: best?.provider || null, plan: best?.plan || null, validUntil: iso(best?.validUntil), lifetime: !!best?.lifetime, revision, checkedAt: iso(now) };
+  const best = valid[0] || purchases.find(p => !p.supersededBy && p.state === 'pending') || purchases.find(p => !p.supersededBy && p.state === 'revoked') || purchases.filter(p => !p.supersededBy).sort((a, b) => (b.validUntil || b.observedAt || 0) - (a.validUntil || a.observedAt || 0))[0];
+  const state = valid[0] ? best.state : ['pending', 'revoked'].includes(best?.state) ? best.state : purchases.length ? 'expired' : 'none';
+  return { state, provider: best?.provider || null, plan: best?.plan || null, validUntil: iso(best?.validUntil), lifetime: !!best?.lifetime, revision, checkedAt: iso(now) };
 }
 export function isAllowed(access) { return ['active', 'grace', 'canceled_active'].includes(access.state) && (access.lifetime || Date.parse(access.validUntil) > Date.now()); }
 export async function claimPurchase(uid, purchase) {
@@ -36,7 +37,15 @@ export async function account(uid) {
   const pendingCheckout = intent?.ownerUid === uid && ['creating', 'pending'].includes(intent.state) ? { intentId, provider: 'stripe', plan: intent.plan, state: intent.state, url: intent.url || null, createdAt: iso(intent.createdAt) } : null;
   let access = computeAccess(claims.docs.map(d => d.data()), projection.data()?.access?.revision || 0);
   if (pendingCheckout && !isAllowed(access)) access = { ...access, state: 'pending', provider: 'stripe', plan: intent.plan, lifetime: false, validUntil: null };
-  return { profile: { uid, email: user.email || null, displayName: user.displayName || null }, billing: { playObfuscatedAccountId: hash(`play:${uid}`), pendingCheckout, historyIncomplete: !!billing.data()?.historyIncomplete }, access, purchases: purchases.docs.map(d => d.data()).sort((a, b) => (b.paidAt || '').localeCompare(a.paidAt || '')) };
+  let manageUrl = null;
+  if (access.provider === 'google_play' && !access.lifetime) {
+    const purchase = claims.docs.map(doc => doc.data()).find(claim => claim.provider === 'google_play' && claim.plan === access.plan && !claim.supersededBy && !claim.lifetime);
+    if (purchase) {
+      const url = new URL('https://play.google.com/store/account/subscriptions');
+      url.searchParams.set('sku', purchase.productId); url.searchParams.set('package', required('PLAY_PACKAGE_NAME')); manageUrl = url.href;
+    }
+  }
+  return { profile: { uid, email: user.email || null, displayName: user.displayName || null }, billing: { playObfuscatedAccountId: hash(`play:${uid}`), pendingCheckout, manageUrl, historyIncomplete: !!billing.data()?.historyIncomplete }, access, purchases: purchases.docs.map(d => d.data()).sort((a, b) => (b.paidAt || '').localeCompare(a.paidAt || '')) };
 }
 export async function ownedPurchase(uid, id) {
   if (!/^[a-f0-9]{64}$/.test(id)) fail('NOT_FOUND', 'Purchase not found.', 404);

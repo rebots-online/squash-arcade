@@ -8,6 +8,7 @@ import { requireBuildAll } from './build-context.mjs';
 import { artifactNames, targets } from './build-targets.mjs';
 import { assertProductIdentity } from './build-product.mjs';
 import { publishWeb } from './publish-web.mjs';
+import { accountBuildEnvironment } from './account-config.mjs';
 requireBuildAll();
 
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
@@ -16,7 +17,7 @@ if(process.platform!=='win32') throw new Error('This manual recipe coordinates t
 const lockPath=join(root,'.build-lock');
 const lock=await open(lockPath,'wx').catch(error=>{throw new Error(`A build is already locked at ${lockPath}: ${error.message}`);});
 await lock.writeFile(JSON.stringify({pid:process.pid,startedAt:new Date().toISOString()}));
-const roots=['build_all.sh','src','public','scripts','src-tauri','index.html','package.json','package-lock.json','version.txt','tsconfig.json','vite.config.ts'];
+const roots=['build_all.sh','src','public','scripts','src-tauri','index.html','account-auth.html','package.json','package-lock.json','version.txt','tsconfig.json','vite.config.ts'];
 async function sourceFiles(){
   const files=[];
   async function visit(path){
@@ -39,6 +40,7 @@ const run=(command,args,options={})=>new Promise((done,fail)=>{
 });
 let manifest,runDirectory,releaseDirectory,inventoryPath,webPublication;
 try {
+  const accountEnvironment = accountBuildEnvironment(root);
   await assertProductIdentity();
   await run(process.execPath,['scripts/catalog-speech.mjs']);
   const pendingVersion=(await readFile('version.txt','utf8')).trim();
@@ -74,7 +76,7 @@ try {
   }
   const base=join(runDirectory,'source');
   for(const file of files){await mkdir(dirname(join(base,file)),{recursive:true});await cp(file,join(base,file));}
-  const env={...process.env,SQUASH_SOURCE_COMMIT:sourceCommit,SQUASH_SOURCE_HASH:sourceHash,SQUASH_BUILT_AT:startedAt};
+  const env={...process.env,...accountEnvironment,SQUASH_SOURCE_COMMIT:sourceCommit,SQUASH_SOURCE_HASH:sourceHash,SQUASH_BUILT_AT:startedAt};
   await run(process.execPath,[join(base,'scripts/stamp-build.mjs')],{cwd:base,env});
   await run(process.execPath,[join(root,'node_modules/vite/bin/vite.js'),'build'],{cwd:base,env});
   const plain=join(base,'native-web');

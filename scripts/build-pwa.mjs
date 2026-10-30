@@ -29,7 +29,10 @@ self.addEventListener('fetch',event=>{
  const url=new URL(event.request.url);
  if(event.request.method!=='GET'||url.origin!==self.location.origin||url.pathname.includes('/api/'))return;
  event.respondWith(caches.open(CACHE).then(async cache=>{
-  if(event.request.mode==='navigate')return (await cache.match('./index.html'))||fetch(event.request);
+  if(event.request.mode==='navigate'){
+   const entry=url.pathname.endsWith('/account-auth.html')?'./account-auth.html':'./index.html';
+   return (await cache.match(entry))||fetch(event.request);
+  }
   return (await cache.match(event.request,{ignoreSearch:true}))||fetch(event.request);
  }));
 });

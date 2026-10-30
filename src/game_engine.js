@@ -1,5 +1,6 @@
 import { syncRacketGrip } from './squash/RacketGrip.js';
 import { CourtHUD } from './squash/CourtHUD.js';
+import { AccountController } from './account/AccountController.js';
 import { ArcadeBriefing } from './squash/ArcadeBriefing.js';
 // ============================================================================
 // ARGON SQUASH — MAIN GAME ENGINE & MODULE ORCHESTRATOR
@@ -510,7 +511,7 @@ export class ArgonTennisEngine {
         const isKeyboard = event.type === 'keydown' || event.type === 'keyup';
         // Buttons keep keyboard focus after activation. Their pointer exceptions
         // must not disable "any key" replay skipping (or swallow its keyup).
-        if (this.arcadeBriefing?.active || (!isKeyboard && event.target?.closest?.('#title-modal, #btn-mobile-menu, #btn-sound-gate, #btn-quick-start'))) return;
+        if (this.account?.isOpen || event.target?.closest?.('#account-dialog, #btn-account') || this.arcadeBriefing?.active || (!isKeyboard && event.target?.closest?.('#title-modal, #btn-mobile-menu, #btn-sound-gate, #btn-quick-start'))) return;
         const result=this.pointPresentation.input(event);
         if(result.consume){event.preventDefault();event.stopImmediatePropagation();}
         if(result.skip) this._finishPointPresentation();
@@ -591,6 +592,7 @@ export class ArgonTennisEngine {
     this._initHudAndControllers();
     this.courtHUD = new CourtHUD(this);
     this.arcadeBriefing = new ArcadeBriefing(this);
+    this.account = new AccountController(this);
 
     // 6. Initialize Skills-Demo IntroDirector & Live Tuning Lab Panel
     this.introDirector = new IntroDirector(this);
@@ -1045,6 +1047,7 @@ export class ArgonTennisEngine {
     this._initProgressiveMenuSteps();
 
     window.addEventListener('keydown', (e) => {
+      if (this.account?.isOpen) return;
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) {
         return;
       }
@@ -1145,7 +1148,7 @@ export class ArgonTennisEngine {
     const rulesOpen = !document.getElementById('squash-rules-modal')?.classList.contains('hidden');
     const guideOpen = !document.getElementById('controls-guide-modal')?.classList.contains('hidden');
     const jbOpen = !document.getElementById('jukebox-modal')?.classList.contains('hidden');
-    this.isPausedForModal = Boolean(rulesOpen || guideOpen || jbOpen);
+    this.isPausedForModal = Boolean(rulesOpen || guideOpen || jbOpen || this.account?.isOpen || this._matchAdmissionPending);
   }
 
   _isSideMenuExpanded() {
@@ -2340,7 +2343,25 @@ export class ArgonTennisEngine {
     }
   }
 
-  startNewMatch({ showStartBanner = true } = {}) {
+  async startNewMatch({ showStartBanner = true } = {}) {
+    if (this._matchAdmissionPending) return;
+    this._matchAdmissionPending = true;
+    const previousAdmission=this._humanMatchAdmitted;
+    let admitted=false;
+    try {
+      if (!this.account || !(await this.account.admitMatch())) return;
+      admitted=true;
+      this._humanMatchAdmitted = true;
+      this.spectatorMatchMode = false;
+      this.autoPlayMode = false;
+    } finally {
+      this._matchAdmissionPending = false;
+      if(!admitted){
+        this._humanMatchAdmitted=previousAdmission;
+        if(!previousAdmission){this.spectatorMatchMode=true;this.autoPlayMode=true;this.persistentStateLock=false;this._syncSpectatorModeUI();}
+      }
+      this._syncModalPauseState();
+    }
     this.arcadeBriefing?.close();
     this._racketSpinGeneration = (this._racketSpinGeneration || 0) + 1;
     this._racketSpinPending = this.matchConfig.racketSpin === true;
@@ -2507,7 +2528,7 @@ export class ArgonTennisEngine {
 
     // Keyboard path: arrows call the spin, then pick serve/receive.
     window.addEventListener('keydown', (e) => {
-      if (this.phase !== 'RACKET_SPIN' || ov.classList.contains('hidden')) return;
+      if (this.account?.isOpen || this.phase !== 'RACKET_SPIN' || ov.classList.contains('hidden')) return;
       if (e.code === 'ArrowUp') {
         e.preventDefault();
         resolveSpin('up');
@@ -2775,7 +2796,17 @@ export class ArgonTennisEngine {
     }
   }
 
+  _ensureHumanMatchInput() {
+    if (this.account?.isOpen || this._matchAdmissionPending) return false;
+    if (!this._humanMatchAdmitted || this.spectatorMatchMode || this.autoPlayMode) {
+      this.courtHUD?.startMatch('mouse');
+      return false;
+    }
+    return true;
+  }
+
   _handleUserTossInput() {
+    if (!this._ensureHumanMatchInput()) return false;
     this.lastHumanInputTime = this.elapsedTime;
     if (this.spectatorMatchMode || this.autoPlayMode) {
       if (this.phase === 'SERVE_STANCE') {
@@ -2797,6 +2828,7 @@ export class ArgonTennisEngine {
   }
 
   _handleUserSwingInput(evt = {}) {
+    if (!this._ensureHumanMatchInput()) return;
     this.lastHumanInputTime = this.elapsedTime;
 
     // When "barging in" during automated AI demo / spectator play (in ANY phase),
@@ -2914,6 +2946,7 @@ export class ArgonTennisEngine {
   }
 
   _handleP2TossInput() {
+    if (!this._ensureHumanMatchInput()) return false;
     this.userHasInteracted = true;
     this.isMultiplayer = true;
     if (this.phase === 'TITLE') {
@@ -2933,6 +2966,7 @@ export class ArgonTennisEngine {
   }
 
   _handleP2SwingInput(evt = {}) {
+    if (!this._ensureHumanMatchInput()) return;
     this.userHasInteracted = true;
     this.isMultiplayer = true;
     this._applyDifficultyTuning('1v1');
