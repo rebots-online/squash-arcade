@@ -50,4 +50,3 @@ Recording script: start continuous capture before launching the actual artifact,
 | Visual/A,C | Compare implemented requested views against Figma screenshot, all real static asset positions/geometry, touch targets, keyboard/software-keyboard scrolling, reduced motion and selectable order IDs. |
 
 Required evidence record per row: NOT_STARTED / IN_PROGRESS / BLOCKED / COMPLETE; actual observation; platform/artifact version; implementation/correction commit; recording filename/hash and timecode; unresolved input if blocked. This rubric does not reopen unrelated gameplay tasks below.
-

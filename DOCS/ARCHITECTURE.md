@@ -126,7 +126,7 @@ Google Play bridge queries SUBS and INAPP products and existing purchases on sta
 | src/account/firebase.js; src/account/api.js | configured Auth singleton; bearer-authenticated account API and recoverable errors | BILL-01-C |
 | src/account/AccountController.js | open/close, signIn/signOut, purchase, restore, manage, documents, beforeStartMatch; no duplicated game state | BILL-01-C |
 | src/account/AccountView.js; public/account.css | accessible provider-aware views and focus restoration; Figma fidelity | BILL-01-C |
-| public/account-auth.html; src/account/device-auth-page.js | system-browser account approval, no private client secret in URL | BILL-01-C |
+| account-auth.html; src/account/device-auth-page.js | system-browser account approval, no private client secret in URL | BILL-01-C |
 | src/squash/CourtHUD.js; src/game_engine.js; index.html | HUD/menu entry, match gate, pause and event ownership, stylesheet/module wiring | BILL-01-C |
 | src-tauri/plugins/play-billing/ | Tauri Android Kotlin BillingClient plugin, Rust command bridge and capability declarations; queryProducts, queryPurchases, purchase | BILL-01-D |
 | src/account/native-billing.js | exact native platform detection and bridge event translation | BILL-01-D |
