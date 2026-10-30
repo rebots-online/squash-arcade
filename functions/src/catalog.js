@@ -12,10 +12,10 @@ export function validateConfiguration() {
   for (const plan of plans) { priceId(plan); playProduct(plan); basePlan(plan); }
   return true;
 }
-export async function validatePrice(plan, price) {
+export async function validatePrice(plan, price, { forSale = true } = {}) {
   const count = { monthly: 1, six_month: 6, annual: 12 }[plan];
   const months = price.recurring?.interval === 'year' ? price.recurring.interval_count * 12 : price.recurring?.interval === 'month' ? price.recurring.interval_count : null;
-  if (!price.active || price.unit_amount == null || (plan === 'lifetime' ? price.type !== 'one_time' : price.type !== 'recurring' || months !== count)) fail('CATALOG_INVALID', `Provider price does not match ${plan}.`, 503);
+  if (forSale && !price.active || price.unit_amount == null || (plan === 'lifetime' ? price.type !== 'one_time' : price.type !== 'recurring' || months !== count)) fail('CATALOG_INVALID', `Provider price does not match ${plan}.`, 503);
   return price;
 }
 export async function loadCatalog(platform) {

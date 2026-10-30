@@ -3,12 +3,26 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { logger } from 'firebase-functions';
 import { db, identity, required, fail } from './core.js';
 import { loadCatalog } from './catalog.js';
-import { account, ownedPurchase, isAllowed } from './entitlements.js';
+import { account, ownedPurchase, isAllowed, computeAccess } from './entitlements.js';
 import { createCheckout, createPortal, getStripeDocument, handleStripeWebhook, reconcileStripe } from './stripe.js';
 import { verifyPlayPurchase, handlePlayNotification, reconcilePlay } from './play.js';
 import { startDeviceAuthorization, approveDeviceAuthorization, exchangeDeviceAuthorization } from './device-auth.js';
 
-export async function reconcilePurchases(uid) { await reconcileStripe(uid); await reconcilePlay(uid); return account(uid); }
+export async function reconcilePurchases(uid, { history = true } = {}) {
+  const startedAt = Date.now();
+  const results = await Promise.allSettled([reconcileStripe(uid, { history }), reconcilePlay(uid)]);
+  const current = await account(uid);
+  if (results.some(result => result.status === 'rejected')) {
+    const claims = await db.collection('purchaseClaims').where('ownerUid', '==', uid).get();
+    const verified = computeAccess(claims.docs.map(doc => doc.data()).filter(claim => claim.observedAt >= startedAt), current.access.revision);
+    // Never deny one independently verified paid purchase because an unrelated
+    // historical/provider lookup failed; never grant from the failed stale claim.
+    if (!isAllowed(verified)) fail('VERIFICATION_INCOMPLETE', 'Your account could not be fully verified. Retry without purchasing again.', 502);
+    current.access = verified;
+    current.billing.reconciliationIncomplete = true;
+  }
+  return current;
+}
 
 export const billingApi = onRequest({ region: 'us-central1', timeoutSeconds: 120, memory: '256MiB' }, async (req, res) => {
   res.set('Cache-Control', 'no-store');
@@ -37,7 +51,7 @@ export const billingApi = onRequest({ region: 'us-central1', timeoutSeconds: 120
       case 'POST /portal': result = await createPortal(uid); break;
       case 'POST /restore': result = await reconcilePurchases(uid); break;
       case 'POST /play/verify': await verifyPlayPurchase(uid, req.body || {}); result = await account(uid); break;
-      case 'POST /match-access': { const current = await reconcilePurchases(uid); result = { allowed: isAllowed(current.access), access: current.access }; break; }
+      case 'POST /match-access': { const current = await reconcilePurchases(uid, { history: false }); result = { allowed: isAllowed(current.access), access: current.access }; break; }
       case 'POST /device/approve': result = await approveDeviceAuthorization(uid, req.body?.id); break;
       default: {
         const document = /^\/purchases\/([a-f0-9]{64})\/document$/.exec(path);
@@ -46,6 +60,7 @@ export const billingApi = onRequest({ region: 'us-central1', timeoutSeconds: 120
         if (!history.exists || !history.data().documentAvailable) fail('DOCUMENT_PENDING', 'Your payment document is not available yet.', 409);
         const purchase = await ownedPurchase(uid, history.data().claimId);
         purchase.invoiceId = history.data().invoiceId || null;
+        purchase.receiptUrl = history.data().receiptUrl || null;
         result = purchase.provider === 'stripe' ? await getStripeDocument(purchase) : { url: 'https://payments.google.com/payments/u/0/home#activity' };
       }
     }
@@ -66,7 +81,7 @@ export const reconcileBilling = onSchedule({ schedule: 'every 30 minutes', regio
     if (cursor) query = query.startAfter(cursor);
     const page = await query.get(); if (page.empty) break;
     for (const user of page.docs) {
-      try { await reconcilePurchases(user.id); }
+      try { await reconcilePurchases(user.id, { history: false }); }
       catch { logger.warn('Scheduled billing reconciliation needs retry', { accountRef: user.id }); }
     }
     cursor = page.docs.at(-1);

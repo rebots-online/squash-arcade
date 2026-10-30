@@ -23,14 +23,20 @@ export async function claimPurchase(uid, purchase) {
     tx.set(user, { access }, { merge: true });
     const transactionRef = record.invoiceId || record.orderId || record.purchaseRef;
     const historyId = providerKey(record.provider, transactionRef);
-    tx.set(db.doc(`users/${uid}/purchases/${historyId}`), { id: historyId, claimId: id, invoiceId: record.invoiceId || null, orderId: record.orderId || null, provider: record.provider, plan: record.plan, productId: record.productId, status: record.state, paidAt: iso(record.paidAt), amount: record.amount ?? null, currency: record.currency ?? null, documentAvailable: record.provider === 'google_play' ? !!record.orderId : !!(record.invoiceId || record.receiptUrl) });
+    tx.set(db.doc(`users/${uid}/purchases/${historyId}`), { id: historyId, claimId: id, invoiceId: record.invoiceId || null, receiptUrl: record.receiptUrl || null, orderId: record.orderId || null, provider: record.provider, plan: record.plan, productId: record.productId, status: record.state, paidAt: iso(record.paidAt), amount: record.amount ?? null, currency: record.currency ?? null, documentAvailable: record.provider === 'google_play' ? !!record.orderId : !!(record.invoiceId || record.receiptUrl) });
   });
   return id;
 }
 export async function account(uid) {
   const [user, claims, purchases] = await Promise.all([auth.getUser(uid), db.collection('purchaseClaims').where('ownerUid', '==', uid).get(), db.collection(`users/${uid}/purchases`).get()]);
   const projection = await db.doc(`users/${uid}`).get();
-  return { profile: { uid, email: user.email || null, displayName: user.displayName || null }, billing: { playObfuscatedAccountId: hash(`play:${uid}`) }, access: computeAccess(claims.docs.map(d => d.data()), projection.data()?.access?.revision || 0), purchases: purchases.docs.map(d => d.data()).sort((a, b) => (b.paidAt || '').localeCompare(a.paidAt || '')) };
+  const billing = await db.doc(`billingAccounts/${uid}`).get();
+  const intentId = billing.data()?.activeIntentId;
+  const intent = intentId ? (await db.doc(`checkoutIntents/${intentId}`).get()).data() : null;
+  const pendingCheckout = intent?.ownerUid === uid && ['creating', 'pending'].includes(intent.state) ? { intentId, provider: 'stripe', plan: intent.plan, state: intent.state, url: intent.url || null, createdAt: iso(intent.createdAt) } : null;
+  let access = computeAccess(claims.docs.map(d => d.data()), projection.data()?.access?.revision || 0);
+  if (pendingCheckout && !isAllowed(access)) access = { ...access, state: 'pending', provider: 'stripe', plan: intent.plan, lifetime: false, validUntil: null };
+  return { profile: { uid, email: user.email || null, displayName: user.displayName || null }, billing: { playObfuscatedAccountId: hash(`play:${uid}`), pendingCheckout, historyIncomplete: !!billing.data()?.historyIncomplete }, access, purchases: purchases.docs.map(d => d.data()).sort((a, b) => (b.paidAt || '').localeCompare(a.paidAt || '')) };
 }
 export async function ownedPurchase(uid, id) {
   if (!/^[a-f0-9]{64}$/.test(id)) fail('NOT_FOUND', 'Purchase not found.', 404);
