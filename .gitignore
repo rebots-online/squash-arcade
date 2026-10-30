@@ -17,5 +17,6 @@ STAGING_*/
 # Versioned platform artifacts and retained attempt logs (not source).
 /builds/
 /.build-lock
+/.firebase.billing.*.json
 !/dist/**/*.log
 /dist/.work/

@@ -2,15 +2,25 @@ import { createHash } from 'node:crypto';
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
+import { runtimeValue } from './runtime-config.js';
 
 if (!getApps().length) initializeApp();
-export const db = getFirestore(required('FIRESTORE_DATABASE_ID'));
+// Firebase's export discovery intentionally does not inject runtime secrets.
+// Resolve the named database only when a request/job first uses Firestore.
+export const db = new Proxy({}, {
+  get(_target, property) {
+    const database = getFirestore(required('FIRESTORE_DATABASE_ID'));
+    const value = Reflect.get(database, property, database);
+    return typeof value === 'function' ? value.bind(database) : value;
+  }
+});
 export const auth = getAuth();
 export const hash = value => createHash('sha256').update(value).digest('hex');
 export const iso = value => value ? new Date(value).toISOString() : null;
 export function fail(code, message, status = 400) { throw Object.assign(new Error(message), { code, status }); }
 export function required(name) {
-  const value = process.env[name]?.trim();
+  const raw = runtimeValue(name);
+  const value = typeof raw === 'string' ? raw.trim() : undefined;
   if (!value || /^(kstore:|secret:|pointer:)/i.test(value)) fail('CONFIGURATION_REQUIRED', `Required runtime binding: ${name}`, 503);
   return value;
 }

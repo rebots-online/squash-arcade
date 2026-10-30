@@ -33,6 +33,16 @@ Preflight evaluates the entire allowlist, including valid configured pointers wh
 
 ## Limits and verification
 
+### Backend activation resolver
+
+`resolveAccountEnvironment(root)` is the backend coordinator interface. It returns a plain in-memory object and never mutates process environment. Required runtime names come from the complete checked-in `functions/.env.example` schema, plus `FIREBASE_PROJECT_ID`, `FIREBASE_CLI_PATH` and internal `KSTORE_URL`. `PLAY_LISTING_URL` is the only optional runtime name: omit it from the result when absent/empty, and resolve/validate its pointer normally when configured. The deployment CLI binding identifies the installed `firebase-tools/lib/bin/firebase.js`; the coordinator runs it using its current Node process.
+
+Backend precedence, lowest to highest: root `.env`, `functions/.env`, root `.env.local`, `functions/.env.local`, process environment. Existing files and comments are never rewritten. Only schema/deployment names are resolved or returned. Stripe secret and webhook credentials in files must be explicit canonical pointers; already-resolved parent-process values remain supported. All failures are collected as names only and no partial configuration is returned.
+
+Both exported resolvers share the same exact canonical document engine. The existing build resolver retains its original allowlist, precedence and atomic process publication. Backend deployment must filter the returned configuration to runtime-schema names before uploading the intended runtime secret; CLI/project/service configuration is not part of that secret. `VITE_SQUASH_API_BASE_URL` is deliberately not required here: the deployment coordinator discovers the real service URL, reads only its explicitly declared original pointer and writes the verified value back through the canonical document service.
+
+Public environment examples contain only portable application/deployment bindings with installation values blank. Internal service-address and pointer instructions remain in this configuration contract and live internal files, not public examples. The internal live files are unchanged by this source work.
+
 This resolver implements the discovered Admin-Manual document endpoint, not a general secrets backend. It does not guess a KStore address or auth protocol, provision Firebase/Stripe/Play resources, resolve undeclared variables, or make an unavailable binding usable. Paths within a keystore-file assignment remain paths for the existing Android signing process; file existence and certificate identity remain that process's responsibility.
 
 This coder change receives syntax checks and source review only, without network tests or mocked documents. Builds are authorized through the existing root `build_all.sh` coordinator. Its actual invocation verifies exact live resolution contemporaneously with the build using the declared bindings; no additional approval is required by this document.

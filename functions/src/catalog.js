@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { required, fail } from './core.js';
+import { runtimeValue } from './runtime-config.js';
 
 export const plans = ['monthly', 'six_month', 'annual', 'lifetime'];
 const suffix = { monthly: 'MONTHLY', six_month: 'SIX_MONTH', annual: 'ANNUAL', lifetime: 'LIFETIME' };
@@ -20,13 +21,13 @@ export async function validatePrice(plan, price, { forSale = true } = {}) {
 }
 export async function loadCatalog(platform) {
   if (!['web', 'android'].includes(platform)) fail('INVALID_PLATFORM', 'Unsupported billing platform.');
-  if (platform === 'android') return { offers: plans.map(plan => ({ plan, provider: 'google_play', productId: playProduct(plan), basePlanId: basePlan(plan), formattedPrice: null, currency: null, interval: plan })), playListingUrl: process.env.PLAY_LISTING_URL || null };
+  if (platform === 'android') return { offers: plans.map(plan => ({ plan, provider: 'google_play', productId: playProduct(plan), basePlanId: basePlan(plan), formattedPrice: null, currency: null, interval: plan })), playListingUrl: runtimeValue('PLAY_LISTING_URL') || null };
   const stripe = stripeClient();
   const offers = await Promise.all(plans.map(async plan => {
     const price = await validatePrice(plan, await stripe.prices.retrieve(priceId(plan), { expand: ['product'] }));
     const digits = new Intl.NumberFormat('en', { style: 'currency', currency: price.currency }).resolvedOptions().maximumFractionDigits;
     return { plan, provider: 'stripe', productId: typeof price.product === 'string' ? price.product : price.product.id, priceId: price.id, formattedPrice: new Intl.NumberFormat('en', { style: 'currency', currency: price.currency }).format(price.unit_amount / (10 ** digits)), currency: price.currency.toUpperCase(), interval: plan };
   }));
-  return { offers, playListingUrl: process.env.PLAY_LISTING_URL || null };
+  return { offers, playListingUrl: runtimeValue('PLAY_LISTING_URL') || null };
 }
 export function planForPrice(id) { return plans.find(plan => priceId(plan) === id) || fail('CATALOG_INVALID', 'Unrecognized provider price.', 503); }

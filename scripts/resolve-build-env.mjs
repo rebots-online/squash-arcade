@@ -44,6 +44,25 @@ function documentAssignment(document, path, variable) {
   return value;
 }
 
+function serviceOrigin(value) {
+  const service = new URL(value);
+  if (!['https:', 'http:'].includes(service.protocol) || service.username || service.password || service.search || service.hash || service.pathname !== '/') throw new Error();
+  return service;
+}
+
+async function resolvePointerValue(value, configured, documents) {
+  const reference = pointer(value.trim());
+  if (!documents.has(reference.path)) {
+    const endpoint = new URL('/doc', serviceOrigin(configured.KSTORE_URL));
+    endpoint.searchParams.set('id', reference.path);
+    endpoint.searchParams.set('source_type', 'admin-manual');
+    const response = await fetch(endpoint, { signal: AbortSignal.timeout(20000), redirect: 'error', headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error();
+    documents.set(reference.path, await response.json());
+  }
+  return documentAssignment(documents.get(reference.path), reference.path, reference.variable);
+}
+
 /** Resolve only explicit allowlisted pointers, in memory, for the existing coordinator. */
 export async function resolveBuildEnvironment(root) {
   let configured;
@@ -62,22 +81,50 @@ export async function resolveBuildEnvironment(root) {
       continue;
     }
     try {
-      const reference = pointer(value.trim());
-      if (!documents.has(reference.path)) {
-        const service = new URL(configured.KSTORE_URL);
-        if (!['https:', 'http:'].includes(service.protocol) || service.username || service.password || service.search || service.hash || service.pathname !== '/') throw new Error();
-        const endpoint = new URL('/doc', service);
-        endpoint.searchParams.set('id', reference.path);
-        endpoint.searchParams.set('source_type', 'admin-manual');
-        const response = await fetch(endpoint, { signal: AbortSignal.timeout(20000), redirect: 'error', headers: { Accept: 'application/json' } });
-        if (!response.ok) throw new Error();
-        documents.set(reference.path, await response.json());
-      }
-      resolved[name] = documentAssignment(documents.get(reference.path), reference.path, reference.variable);
+      resolved[name] = await resolvePointerValue(value, configured, documents);
     } catch { failures.push(name); }
   }
   // Publish only after every requested pointer succeeds; do not partially mutate on failure.
   if(failures.length)throw new Error(failures.join(', '));
   for (const [name, value] of Object.entries(resolved)) process.env[name] = value;
   return resolved;
+}
+
+/** Full deployment preflight. Returns memory-only config; never mutates process/files. */
+export async function resolveAccountEnvironment(root) {
+  let configured;
+  let runtimeBindings;
+  try {
+    runtimeBindings = Object.keys(parse(await readFile(join(root, 'functions', '.env.example'), 'utf8')));
+    if(!runtimeBindings.length || runtimeBindings.some(name=>! /^[A-Z_][A-Z0-9_]*$/.test(name)))throw new Error();
+    configured = {
+      ...await fileAssignments(join(root, '.env')),
+      ...await fileAssignments(join(root, 'functions', '.env')),
+      ...await fileAssignments(join(root, '.env.local')),
+      ...await fileAssignments(join(root, 'functions', '.env.local')),
+      ...process.env
+    };
+  } catch { throw new Error('FIREBASE_PROJECT_ID'); }
+  const names = [...new Set([...runtimeBindings, 'FIREBASE_PROJECT_ID', 'FIREBASE_CLI_PATH', 'KSTORE_URL'])];
+  const secretBindings = new Set(['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET']);
+  const documents = new Map();
+  const result = {};
+  const failures = [];
+  for(const name of names) {
+    const value = configured[name];
+    if(name==='PLAY_LISTING_URL' && (value===undefined || (typeof value==='string'&&!value.trim())))continue;
+    if(typeof value!=='string'||!value.trim()||/^(?:secret|pointer):/i.test(value.trim())){failures.push(name);continue;}
+    try {
+      if(name==='KSTORE_URL') {
+        serviceOrigin(value);
+        result[name]=value;
+      } else if(/^kstore:/i.test(value.trim()))result[name]=await resolvePointerValue(value,configured,documents);
+      else {
+        if(secretBindings.has(name)&&!Object.hasOwn(process.env,name))throw new Error();
+        result[name]=value;
+      }
+    } catch { failures.push(name); }
+  }
+  if(failures.length)throw new Error(failures.join(', '));
+  return result;
 }

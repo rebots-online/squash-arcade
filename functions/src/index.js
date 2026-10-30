@@ -7,6 +7,7 @@ import { account, ownedPurchase, isAllowed, computeAccess, persistVerifiedAccess
 import { createCheckout, createPortal, getStripeDocument, handleStripeWebhook, reconcileStripe } from './stripe.js';
 import { verifyPlayPurchase, handlePlayNotification, reconcilePlay } from './play.js';
 import { startDeviceAuthorization, approveDeviceAuthorization, exchangeDeviceAuthorization } from './device-auth.js';
+import { BILLING_CONFIG_SECRET } from './runtime-config.js';
 
 export async function reconcilePurchases(uid, { history = true } = {}) {
   const startedAt = Date.now();
@@ -25,7 +26,7 @@ export async function reconcilePurchases(uid, { history = true } = {}) {
   return current;
 }
 
-export const billingApi = onRequest({ region: 'us-central1', timeoutSeconds: 120, memory: '256MiB' }, async (req, res) => {
+export const billingApi = onRequest({ region: 'us-central1', timeoutSeconds: 120, memory: '256MiB', secrets: [BILLING_CONFIG_SECRET], invoker: 'public' }, async (req, res) => {
   res.set('Cache-Control', 'no-store');
   try {
     const origin = req.headers.origin;
@@ -74,7 +75,7 @@ export const billingApi = onRequest({ region: 'us-central1', timeoutSeconds: 120
   }
 });
 
-export const reconcileBilling = onSchedule({ schedule: 'every 30 minutes', region: 'us-central1', timeoutSeconds: 540, memory: '256MiB' }, async () => {
+export const reconcileBilling = onSchedule({ schedule: 'every 30 minutes', region: 'us-central1', timeoutSeconds: 540, memory: '256MiB', secrets: [BILLING_CONFIG_SECRET] }, async () => {
   // Only this product's billing membership participates; never scan all accounts.
   let cursor = null;
   for (;;) {

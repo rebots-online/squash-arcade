@@ -1,5 +1,43 @@
 # Production billing service
 
+## Prescribed activation entry point
+
+Run account activation only through root `build_all.sh --deploy-account`.
+`scripts/deploy-account.mjs` resolves the full annotated backend schema in memory
+through the existing exact-pointer resolver. `FIREBASE_PROJECT_ID` selects the
+project and `FIREBASE_CLI_PATH` identifies the installed firebase-tools
+`lib/bin/firebase.js`; neither is hardcoded. The original declared
+`VITE_SQUASH_API_BASE_URL` pointer identifies the canonical document to update
+after deployment, even when that document does not yet contain the API value.
+
+The coordinator stores the backend values in the product-owned
+`SQUASH_ARCADE_BILLING_CONFIG` Secret Manager JSON secret using direct authenticated
+REST, never the CLI secret-upload command. It compares existing values in memory,
+reuses an identical version, verifies exact version readback, and preserves old
+versions. It refuses a different product's existing config. Both Gen2 functions
+explicitly bind this secret. The HTTP function permits public invocation while
+private routes retain ID-token authentication and webhooks retain provider auth.
+The injected JSON is authoritative over individual process variables.
+
+Functions export discovery is secret-free: Firestore initialization is lazy, and
+the deploy CLI subprocess receives neither the JSON secret nor resolved backend
+bindings. The installed CLI filters discovery environment variables, so no
+inherited-secret assumption is made. The coordinator creates only a nonsecret
+root deployment JSON targeting the resolved named database, then removes it in a
+finally block. Crash leftovers match the ignored `.firebase.billing.*.json`
+pattern. No plaintext credential/environment file is generated.
+
+Activation reads back both Cloud Functions v2 resources as ACTIVE with service
+accounts and the exact secret version, obtains the actual HTTP URL, observes the
+public catalog route and unauthenticated account rejection, then updates only the
+declared API URL assignment in its existing canonical document. Existing content
+and inline comments are preserved; if absent, an annotated dotenv block is added.
+A fresh revision/content check precedes the write and exact content readback
+follows it. KStore exposes no atomic compare-and-swap for this endpoint, so a
+concurrent write between that final check and POST remains a service limitation.
+The nonsecret deployment receipt is `builds/account/account-deployment.json`.
+Provider purchases and real client account journeys remain separate acceptance.
+
 Source entry is `src/index.js`: Gen2 HTTP export `billingApi` and scheduled
 `reconcileBilling`. The API URL is the function URL plus the documented paths;
 there is no additional `/api` prefix. Region is `us-central1`.
@@ -92,12 +130,9 @@ automated tests, application build or paid observation has been performed.
 The shared Roche-account storage uses the required `FIRESTORE_DATABASE_ID` and
 `SQUASH_PRODUCT_ID` bindings. Missing values fail explicitly; no default database
 is silently selected. The portable static `firebase.json` intentionally has no
-Firestore deployment target. Before activation, the prescribed build/deployment
-coordinator must generate a deployment config containing the named Firestore
-target from the resolved `FIRESTORE_DATABASE_ID`, together with `firestore.rules`
-and `firestore.indexes.json`. Default-database rules deployment is not permitted.
-That generated-config adapter is an outstanding activation requirement; this
-backend correction does not implement or run deployment coordination.
+Firestore deployment target. The account coordinator generates the named target
+from resolved `FIRESTORE_DATABASE_ID`, with `firestore.rules` and
+`firestore.indexes.json`. Default-database rules deployment is not permitted.
 
 Private billing collections live under `products/{SQUASH_PRODUCT_ID}`. Public
 purchase history lives at `users/{uid}/products/{SQUASH_PRODUCT_ID}/purchases`.
