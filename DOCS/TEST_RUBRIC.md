@@ -50,3 +50,5 @@ Recording script: start continuous capture before launching the actual artifact,
 | Visual/A,C | Compare implemented requested views against Figma screenshot, all real static asset positions/geometry, touch targets, keyboard/software-keyboard scrolling, reduced motion and selectable order IDs. |
 
 Required evidence record per row: NOT_STARTED / IN_PROGRESS / BLOCKED / COMPLETE; actual observation; platform/artifact version; implementation/correction commit; recording filename/hash and timecode; unresolved input if blocked. This rubric does not reopen unrelated gameplay tasks below.
+
+BILL-01 data acceptance: actual backend uses configured named database; verified purchase atomically updates only users/{uid}.access[configured product] including paid and validity details. Product history and reconciliation stay scoped. Do not fabricate another product's data to demonstrate preservation. Compare actual source paths and observe real records only after authorized provider activity.

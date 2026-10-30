@@ -14,7 +14,7 @@ Legend: 🟩 COMPLETE · 🟨 IN_PROGRESS · 🟥 BLOCKED · ⬜ NOT_STARTED. A 
 |---|---|---|
 | 🟩 COMPLETE | Document actual source data structures | DOCS/DATA_STRUCTURES.md published; live schema is a separate task below. |
 | 🟩 COMPLETE | Correct architecture and build authorization | Rejected illustrative fields withdrawn; root build_all.sh is the sole build/deploy entry. |
-| 🟨 IN_PROGRESS | Verify existing account schema and isolate Squash data | Establish actual fields in the configured project; preserve unrelated data/rules; update all persistence and consumers together. |
+| 🟨 IN_PROGRESS | Verify existing account schema and isolate Squash data | Live database inspected: named database exists, default absent, no user records. Implement DATA_STRUCTURES.md §7: required database/product bindings, users/{uid}.access[productId] with paid Boolean, centralized scoped bookkeeping/history, product-aware provider ownership and reconciliation; preserve other fields. |
 | 🟨 IN_PROGRESS | Purchase and account UI | Source exists; show actual web and Windows purchase, management and receipts routes. |
 | 🟨 IN_PROGRESS | Firebase identity and verified access | Actual Virtual Squash Firebase web app registered; public config stored in KStore with exact readback. Service activation remains unfinished. |
 | 🟥 BLOCKED | Stripe checkout, cancellation and invoice retrieval | Actual runtime credentials/catalog/webhook bindings are unresolved. |
