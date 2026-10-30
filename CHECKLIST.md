@@ -6,6 +6,20 @@ Current four-state vocabulary: NOT_STARTED, IN_PROGRESS, BLOCKED, COMPLETE. COMP
 
 ## BILL-01 — Purchase and account delivery (one cohesive cycle)
 
+### Canonical account correction — architecture v2.8.1, published 48fa7fa
+
+Use exactly one `users/{uid}` record: `account.squash` is the paid-access boolean; `account["natally-credits"]` is Natally's actual credit balance. Apps consume only their own fields. No separate account-sharing feature or duplicate per-app users. Project and provider selection stay configurable in the annotated environment files.
+
+| Task | State | Implementation and acceptance |
+|---|---|---|
+| Canonical Squash field writes | NOT_STARTED | In functions/src/entitlements.js atomically write account.squash and accountDetails.squash from verified provider state. Replace old users/{uid}.access reads/writes; preserve all other nested fields. Natally credits are never seeded or changed by Squash. |
+| Bookkeeping paths | NOT_STARTED | Move Squash billingAccounts/purchaseClaims/billingEvents/checkoutIntents to products/squash; update every query, document lookup, webhook, reconciliation job and index together. Keep one canonical UID; add product discriminator to user purchase history. |
+| API, UI and rules | NOT_STARTED | GET /account, /match-access, controller and HUD consume canonical fields; rules preserve other applications and prohibit client billing writes. Copy says Roche account, without a sharing toggle or per-game registration. Preserve unknown/error vs false. |
+| Existing data reconciliation | BLOCKED | Inspect actual configured project records before any migration/deployment; migrate verified Squash records only, preserving existing account fields and purchase ownership. No fabricated balances or bulk identity merges. |
+| Semantic review and real evidence | BLOCKED | Return defects to the same coder; publish corrections. Build stop remains. When authorized/configured, continuously record real purchase/restore/cancel/expiry and show account.squash changes while unrelated account fields remain unchanged. No fabricated Natally balance for demonstration. |
+
+These are required changes to the existing BILL-01 implementation, not implemented claims. Architecture was committed/pushed before this checklist. No new product change begins while this delivery remains unaccepted.
+
 Status: IN_PROGRESS. Requirement authority: DOCS/ARCHITECTURE.md §0. Architecture committed/pushed before this checklist. Only this change's architecture is in progress. Build/sign/deploy remain stopped by operator; do not run them, including npm build, Tauri, Gradle or build_all.sh. No automated tests; source syntax and semantic review only until real observation is possible. No fakes, mock providers, fixture purchases or temporary customer-facing payment facade.
 
 ### BILL-01-A — Design and Figma contract
